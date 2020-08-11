@@ -106,6 +106,14 @@ cata_msg = {
     22: _("""
  noeud %(k1)s trop éloigné de la normale au segment
  distance = %(r1)f
+ 
+ si vous rencontrez cette alarme dans le cadre de l'utilisation de la 
+ commande DEFI_GROUP, elle est associée au mot-clé PRECISION de 
+ l'option SEGM_DROI_ORDO.
+ si vous rencontrez cette alarme dans le cadre de l'utilisation de la 
+ commande POST_RELEVE_T, elle est associée au mot-clé PRECISION.
+ si vous rencontrez cette alarme dans le cadre de l'utilisation de la 
+ commande DEFI_FOND_FISS, elle est associée au mot-clé PREC_NORM.
 """),
 
     23: _("""
