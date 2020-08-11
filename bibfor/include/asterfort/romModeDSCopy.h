@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,12 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine romModeDSCopy(ds_mode_in, ds_mode_out)
+    subroutine romModeDSCopy(modeIn, modeOut)
         use Rom_Datastructure_type
-        type(ROM_DS_Field), intent(in)  :: ds_mode_in
-        type(ROM_DS_Field), intent(out) :: ds_mode_out
+        type(ROM_DS_Field), intent(in)  :: modeIn
+        type(ROM_DS_Field), intent(out) :: modeOut
     end subroutine romModeDSCopy
 end interface

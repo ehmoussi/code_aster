@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_main_tr(ds_para_tr, ds_empi)
+    subroutine dbr_main_tr(paraTrunc, resultNameOut)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
-        type(ROM_DS_Empi), intent(inout) :: ds_empi
+        type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
+        character(len=8), intent(in) :: resultNameOut
     end subroutine dbr_main_tr
 end interface

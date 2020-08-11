@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_main_tr(ds_para_tr, ds_empi)
+subroutine dbr_main_tr(paraTrunc, resultNameOut)
 !
 use Rom_Datastructure_type
 !
@@ -37,8 +37,8 @@ implicit none
 #include "asterfort/romModeParaSave.h"
 #include "asterfort/romModeParaRead.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
-type(ROM_DS_Empi), intent(inout) :: ds_empi
+type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
+character(len=8), intent(in) :: resultNameOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,19 +48,20 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para_tr       : datastructure for truncation parameters
-! IO  ds_empi          : datastructure for empiric modes
+! In  paraTrunc       : datastructure for truncation parameters
+! In  resultNameOut   : name of output results
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_mode, nb_mode, iEqua, iret, nbEquaDom, nbEquaRom, idx_rom
-    character(len=24) :: mode_dom, mode_rom, field_name
-    character(len=8) :: model_rom
-    real(kind=8) :: mode_freq
-    integer :: nb_snap, nume_slice
-    real(kind=8), pointer :: v_mode_dom(:) => null()
-    real(kind=8), pointer :: v_mode_rom(:) => null()
+    integer :: nbMode, nbEquaDom, nbEquaRom
+    integer :: iMode, iEqua, iret, numeEquaRom, numeMode
+    character(len=24) :: modeDom, modeRom, modeSymbName, profChno
+    character(len=8) :: modelRom, resultNameIn, mesh
+    real(kind=8) :: modeSing
+    integer :: nbSnap, numeSlice, physNume
+    real(kind=8), pointer :: valeDom(:) => null(), valeRom(:) => null()
+    type(ROM_DS_Empi) :: baseIn
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,55 +70,62 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         call utmess('I', 'ROM5_68')
     endif
 !
-! - Get parameters
+! - Get parameters of operation
 !
-    nb_mode   = ds_para_tr%ds_empi_init%nb_mode
-    nbEquaDom = ds_para_tr%ds_empi_init%ds_mode%nbEqua
-    nbEquaRom = ds_para_tr%nb_equa_rom
-    model_rom = ds_para_tr%model_rom
+    nbEquaRom    = paraTrunc%nb_equa_rom
+    modelRom     = paraTrunc%model_rom
+    profChno     = paraTrunc%prof_chno_rom
+    physNume     = paraTrunc%idx_gd
+    baseIn       = paraTrunc%ds_empi_init
+!
+! - Get parameters of input base
+!
+    nbMode       = baseIn%nb_mode
+    nbEquaDom    = baseIn%ds_mode%nbEqua
+    resultNameIn = baseIn%base
+    mesh         = baseIn%ds_mode%mesh
 !
 ! - Compute
 !
-    do i_mode = 1, nb_mode
+    do iMode = 1, nbMode
+        numeMode = iMode
 ! ----- Read parameters
-        call romModeParaRead(ds_para_tr%ds_empi_init%base, i_mode,&
-                             field_name_ = field_name,&
-                             mode_freq_  = mode_freq,&
-                             nume_slice_ = nume_slice,&
-                             nb_snap_    = nb_snap)
+        call romModeParaRead(resultNameIn, numeMode,&
+                             modeSymbName_ = modeSymbName,&
+                             modeSing_     = modeSing,&
+                             numeSlice_    = numeSlice,&
+                             nbSnap_       = nbSnap)
 ! ----- Access to complete mode
-        call rsexch(' ', ds_para_tr%ds_empi_init%base, field_name, i_mode,&
-                    mode_dom, iret)
+        call rsexch(' '    , resultNameIn, modeSymbName, numeMode,&
+                    modeDom, iret)
         ASSERT(iret .eq. 0)
-        call jeveuo(mode_dom(1:19)//'.VALE', 'L', vr = v_mode_dom)
+        call jeveuo(modeDom(1:19)//'.VALE', 'L', vr = valeDom)
 ! ----- Create new mode (reduced)
-        call rsexch(' ', ds_empi%base, field_name, i_mode,&
-                    mode_rom, iret)
+        call rsexch(' '    , resultNameOut, modeSymbName, numeMode,&
+                    modeRom, iret)
         ASSERT(iret .eq. 100)
-        call vtcreb(mode_rom, 'G', 'R',&
-                    meshz = ds_para_tr%ds_empi_init%ds_mode%mesh,&
-                    prof_chnoz = ds_para_tr%prof_chno_rom,&
-                    idx_gdz = ds_para_tr%idx_gd,&
+        call vtcreb(modeRom, 'G', 'R',&
+                    meshz       = mesh,&
+                    prof_chnoz  = profChno,&
+                    idx_gdz     = physNume,&
                     nb_equa_inz = nbEquaRom)
-        call jeveuo(mode_rom(1:19)//'.VALE', 'E', vr = v_mode_rom)
+        call jeveuo(modeRom(1:19)//'.VALE', 'E', vr = valeRom)
 ! ----- Truncation
-        idx_rom = 0
+        numeEquaRom = 0
         do iEqua = 1, nbEquaDom
-            if (ds_para_tr%v_equa_rom(iEqua) .ne. 0) then
-                idx_rom = idx_rom + 1
-                ASSERT(idx_rom .le. nbEquaRom)
-                v_mode_rom(idx_rom) = v_mode_dom(iEqua)
+            if (paraTrunc%v_equa_rom(iEqua) .ne. 0) then
+                numeEquaRom = numeEquaRom + 1
+                ASSERT(numeEquaRom .le. nbEquaRom)
+                valeRom(numeEquaRom) = valeDom(iEqua)
             endif
         enddo
 ! ----- Save mode
-        call rsnoch(ds_empi%base, field_name, i_mode)
+        call rsnoch(resultNameOut, modeSymbName, numeMode)
 ! ----- Save parameters
-        call romModeParaSave(ds_empi%base, i_mode,&
-                             model_rom   ,&
-                             field_name  ,&
-                             mode_freq   ,&
-                             nume_slice  ,&
-                             nb_snap)     
+        call romModeParaSave(resultNameOut, numeMode    ,&
+                             modelRom     , modeSymbName,&
+                             modeSing     , numeSlice   ,&
+                             nbSnap)
     enddo
 !
 end subroutine

@@ -24,6 +24,7 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 #include "asterfort/romModeChck.h"
 !
@@ -43,22 +44,20 @@ aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type(ROM_DS_Field) :: ds_mode
+    type(ROM_DS_Field) :: mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_mode = ds_para_ortho%ds_empi_init%ds_mode
+    mode = ds_para_ortho%ds_empi_init%ds_mode
 !
 ! - Check empiric mode
 !
     if (.not. l_reuse) then
-        call romModeChck(ds_mode)
+        call romModeChck(mode)
     endif
 !
 ! - Only on nodal fields 
 !
-    if (ds_mode%fieldSupp .ne. 'NOEU') then
-        call utmess('F','ROM2_2')
-    endif
+    ASSERT(mode%fieldSupp .eq. 'NOEU')
 !
 end subroutine

@@ -17,50 +17,62 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romModeChck(ds_mode)
+subroutine romModeChck(mode)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/utmess.h"
 !
-type(ROM_DS_Field), intent(in) :: ds_mode
+type(ROM_DS_Field), intent(in) :: mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Check empiric mode
+! Check mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_mode          : datastructure for mode
+! In  mode             : mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: mesh, model
+    character(len=8) :: modeMesh, modeModel
     character(len=16) :: modeli
     integer :: nbDimGeom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    mesh  = ds_mode%mesh
-    model = ds_mode%model
+    modeMesh  = mode%mesh
+    modeModel = mode%model
 !
 ! - Check mesh
 !
-    call dismoi('DIM_GEOM', mesh, 'MAILLAGE', repi = nbDimGeom)
+    call dismoi('DIM_GEOM', modeMesh, 'MAILLAGE', repi = nbDimGeom)
     if (nbDimGeom .ne. 3) then
-        call utmess('F','ROM5_20')
+        call utmess('F','ROM10_10')
     endif
 !
 ! - Check model
 !
-    call dismoi('MODELISATION', model, 'MODELE', repk=modeli)
+    if (modeModel .eq. '#PLUSIEURS') then
+        call utmess('F','ROM10_11')
+    endif
+!
+! - Check modelization
+!
+    call dismoi('MODELISATION', modeModel, 'MODELE', repk = modeli)
     if (modeli .ne. '3D' .and. modeli .ne. '3D_DIAG' .and. modeli .ne. '3D_SI') then
-        call utmess('F','ROM5_20')
+        call utmess('F','ROM10_12')
+    endif
+!
+! - Check support
+!
+    if (mode%fieldSupp .ne. 'NOEU') then
+        call utmess('F','ROM10_13')
     endif
 !
 end subroutine

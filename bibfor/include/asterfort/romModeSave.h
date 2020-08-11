@@ -18,24 +18,18 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romModeSave(base       , iMode    , model    ,&
-                           fieldName  , fieldIden, fieldRefe,&
-                           fieldSupp  , nbEqua,&
-                           mode_vectr_,&
-                           mode_vectc_,&
-                           mode_freq_ ,&
-                           nume_slice_,&
-                           nb_snap_)
-        character(len=8), intent(in) :: base
-        integer, intent(in) :: iMode
-        character(len=8), intent(in) :: model
-        character(len=24), intent(in) :: fieldName, fieldIden, fieldRefe
-        character(len=4), intent(in) :: fieldSupp
-        integer, intent(in) :: nbEqua
-        real(kind=8), optional, intent(in) :: mode_vectr_(nbEqua)
-        complex(kind=8), optional, intent(in) :: mode_vectc_(nbEqua)
-        integer, optional, intent(in)     :: nume_slice_
-        real(kind=8), optional, intent(in) :: mode_freq_
-        integer, optional, intent(in)     :: nb_snap_
+    subroutine romModeSave(resultName, numeMode  , fieldIden, mode,&
+                           modeValeR_, modeValeC_,&
+                           modeSing_ , numeSlice_,&
+                           nbSnap_)
+        use Rom_Datastructure_type
+        character(len=8), intent(in) :: resultName
+        integer, intent(in) :: numeMode
+        type(ROM_DS_Field), intent(in) :: mode
+        character(len=24), intent(in) :: fieldIden
+        real(kind=8), optional, pointer :: modeValeR_(:)
+        complex(kind=8), optional, pointer :: modeValeC_(:)
+        real(kind=8), optional, intent(in) :: modeSing_
+        integer, optional, intent(in) :: numeSlice_, nbSnap_
     end subroutine romModeSave
 end interface

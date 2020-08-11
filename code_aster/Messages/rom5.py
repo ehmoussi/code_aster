@@ -59,8 +59,6 @@ cata_msg = {
 
    19 : _("""Vérifications de la conformité de la structure de données résultat utilisée."""),
 
-   20 : _("""On ne peut utiliser des bases empiriques qu'avec des maillages tridimensionnels."""),
-
    21 : _("""Tolérance pour l'algorithme glouton: %(r1)19.12e."""),
 
    22 : _("""Un mode empirique contient des conditions limites dualisés (AFFE_CHAR_THER ou AFFE_CHAR_MECA).

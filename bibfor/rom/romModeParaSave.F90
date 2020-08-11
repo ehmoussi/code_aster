@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,57 +17,58 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romModeParaSave(base , i_mode    ,&
-                           model, field_name, mode_freq, nume_slice, nb_snap)
+subroutine romModeParaSave(resultName, numeMode    ,&
+                           model     , modeSymbName,&
+                           modeSing  , numeSlice   ,&
+                           nbSnap)
 !
 implicit none
 !
 #include "jeveux.h"
 #include "asterfort/assert.h"
-#include "asterfort/jeveuo.h"
 #include "asterfort/rsadpa.h"
 !
-character(len=8), intent(in) :: base
-integer, intent(in) :: i_mode
+character(len=8), intent(in) :: resultName
+integer, intent(in) :: numeMode
 character(len=8), intent(in)  :: model
-character(len=24), intent(in) :: field_name
-integer, intent(in)           :: nume_slice
-real(kind=8), intent(in)      :: mode_freq
-integer, intent(in)           :: nb_snap
+character(len=24), intent(in) :: modeSymbName
+integer, intent(in)           :: numeSlice
+real(kind=8), intent(in)      :: modeSing
+integer, intent(in)           :: nbSnap
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Save parameters for empiric mode
+! Save parameters in base results datastructure for current mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  base             : name of empiric base
-! In  i_mode           : index of empiric modes
+! In  resultName       : name of results datastructure to save parameters
+! In  numeMode         : index of mode
 ! In  model            : name of model
-! In  field_name       : name of field where empiric modes have been constructed (NOM_CHAM)
-! In  nume_slice       : index of slices (for lineic bases)
-! In  mode_freq        : singular value for empiric mode
-! In  nb_snap          : number of snapshots used to construct empiric base
+! In  modeSymbName     : type of field for mode have been constructed (NOM_CHAM)
+! In  numeSlice        : index of slices (for lineic bases)
+! In  modeSing         : singular value for mode
+! In  nbSnap           : number of snapshots used to construct base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jv_para
+    integer :: jvPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call rsadpa(base, 'E', 1, 'NUME_MODE', i_mode, 0, sjv=jv_para)
-    zi(jv_para)   = i_mode
-    call rsadpa(base, 'E', 1, 'NUME_PLAN', i_mode, 0, sjv=jv_para)
-    zi(jv_para)   = nume_slice
-    call rsadpa(base, 'E', 1, 'FREQ', i_mode, 0, sjv=jv_para)
-    zr(jv_para)   = mode_freq
-    call rsadpa(base, 'E', 1, 'NB_SNAP', i_mode, 0, sjv=jv_para)
-    zi(jv_para)   = nb_snap
-    call rsadpa(base, 'E', 1, 'MODELE', i_mode, 0, sjv=jv_para)
-    zk8(jv_para)  = model
-    call rsadpa(base, 'E', 1, 'NOM_CHAM', i_mode, 0, sjv=jv_para)
-    zk24(jv_para) = field_name
+    call rsadpa(resultName, 'E', 1, 'NUME_MODE', numeMode, 0, sjv=jvPara)
+    zi(jvPara)   = numeMode
+    call rsadpa(resultName, 'E', 1, 'NUME_PLAN', numeMode, 0, sjv=jvPara)
+    zi(jvPara)   = numeSlice
+    call rsadpa(resultName, 'E', 1, 'FREQ'     , numeMode, 0, sjv=jvPara)
+    zr(jvPara)   = modeSing
+    call rsadpa(resultName, 'E', 1, 'NB_SNAP'  , numeMode, 0, sjv=jvPara)
+    zi(jvPara)   = nbSnap
+    call rsadpa(resultName, 'E', 1, 'MODELE'   , numeMode, 0, sjv=jvPara)
+    zk8(jvPara)  = model
+    call rsadpa(resultName, 'E', 1, 'NOM_CHAM' , numeMode, 0, sjv=jvPara)
+    zk24(jvPara) = modeSymbName
 !
 end subroutine

@@ -18,12 +18,12 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romMultiParaModeSave(ds_multipara, ds_empi,&
-                                    iMode       , mode   )
+    subroutine romMultiParaModeSave(multPara, base    ,&
+                                    numeMode, modeName)
         use Rom_Datastructure_type
-        type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-        type(ROM_DS_Empi), intent(inout) :: ds_empi
-        integer, intent(in) :: iMode
-        character(len=19), intent(in) :: mode
+        type(ROM_DS_MultiPara), intent(in) :: multPara
+        type(ROM_DS_Empi), intent(inout) :: base
+        integer, intent(in) :: numeMode
+        character(len=19), intent(in) :: modeName
     end subroutine romMultiParaModeSave
 end interface

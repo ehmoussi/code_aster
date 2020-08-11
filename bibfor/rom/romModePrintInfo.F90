@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romModePrintInfo(ds_mode)
+subroutine romModePrintInfo(mode)
 !
 use Rom_Datastructure_type
 !
@@ -26,22 +26,21 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_Field), intent(in) :: ds_mode
+type(ROM_DS_Field), intent(in) :: mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Print informations about empiric mode
+! Print informations about mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_mode          : datastructure for empiric mode
+! In  mode             : mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call utmess('I', 'ROM3_4', sk = ds_mode%fieldName)
-    call utmess('I', 'ROM3_6', si = ds_mode%nbNodeWithDof)
-    call utmess('I', 'ROM3_7', si = ds_mode%nbEqua)
+    call utmess('I', 'ROM10_1', sk = mode%fieldName)
+    call utmess('I', 'ROM10_2', si = mode%nbEqua)
 !
 end subroutine

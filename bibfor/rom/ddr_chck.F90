@@ -25,10 +25,11 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jenonu.h"
 #include "asterfort/jexnom.h"
+#include "asterfort/romModeChck.h"
+#include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaDDR), intent(in) :: ds_para
 !
@@ -48,7 +49,8 @@ type(ROM_DS_ParaDDR), intent(in) :: ds_para
     integer :: iret
     character(len=24) :: grelem_rid, grnode_int
     type(ROM_DS_Empi) :: empi_prim, empi_dual
-    character(len=8) :: mesh_prim, mesh_dual, model_prim, model_dual, mesh
+    character(len=8) :: mesh_prim, mesh_dual, mesh
+    type(ROM_DS_Field) :: modePrim, modeDual
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,23 +67,22 @@ type(ROM_DS_ParaDDR), intent(in) :: ds_para
     grelem_rid = ds_para%grelem_rid
     grnode_int = ds_para%grnode_int
 !
+! - Check modes
+!
+    modePrim = empi_prim%ds_mode
+    modeDual = empi_dual%ds_mode
+    call romModeChck(modePrim)
+    call romModeChck(modeDual)
+!
 ! - Check mesh
 !
-    mesh_prim = empi_prim%ds_mode%mesh
-    mesh_dual = empi_dual%ds_mode%mesh
+    mesh_prim = modePrim%mesh
+    mesh_dual = modeDual%mesh
     if (mesh_prim .ne. mesh_dual) then
         call utmess('F','ROM4_9')
     endif
     if (mesh .ne. mesh_prim) then
         call utmess('F','ROM4_10')
-    endif
-!
-! - Check model
-!
-    model_prim = empi_prim%ds_mode%model
-    model_dual = empi_dual%ds_mode%model
-    if (model_prim .eq. '#PLUSIEURS' .or. model_dual .eq. '#PLUSIEURS') then
-        call utmess('F','ROM4_11')
     endif
 !
 ! - Check groups
@@ -101,20 +102,14 @@ type(ROM_DS_ParaDDR), intent(in) :: ds_para
         endif
     endif
 !
-! - Check fields for empiric modes
+! - Check consistency of fields for modes
 !
-    if (empi_prim%ds_mode%fieldSupp .ne. 'NOEU') then
-        call utmess('F', 'ROM4_15')
-    endif
-    if (empi_dual%ds_mode%fieldSupp .ne. 'NOEU') then
-        call utmess('F', 'ROM4_15')
-    endif
-    if (empi_prim%ds_mode%fieldName .eq. 'TEMP') then
-        if (empi_dual%ds_mode%fieldName .ne. 'FLUX_NOEU') then
+    if (modePrim%fieldName .eq. 'TEMP') then
+        if (modeDual%fieldName .ne. 'FLUX_NOEU') then
             call utmess('F', 'ROM4_17', sk = 'FLUX_NOEU')
         endif
-    elseif (empi_prim%ds_mode%fieldName .eq. 'DEPL') then
-        if (empi_dual%ds_mode%fieldName .ne. 'SIEF_NOEU') then
+    elseif (modePrim%fieldName .eq. 'DEPL') then
+        if (modeDual%fieldName .ne. 'SIEF_NOEU') then
             call utmess('F', 'ROM4_17', sk = 'SIEF_NOEU')
         endif
     else

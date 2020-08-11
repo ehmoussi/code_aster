@@ -18,11 +18,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romFieldGetInfo(model, fieldName, fieldRefe, ds_field, l_chck_)
+    subroutine romFieldGetInfo(model, fieldName, fieldRefe, field, l_chck_)
         use Rom_Datastructure_type
         character(len=8), intent(in)        :: model
         character(len=24), intent(in)       :: fieldRefe, fieldName
-        type(ROM_DS_Field), intent(inout)   :: ds_field
+        type(ROM_DS_Field), intent(inout)   :: field
         aster_logical, optional, intent(in) :: l_chck_
     end subroutine romFieldGetInfo
 end interface

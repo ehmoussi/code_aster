@@ -17,59 +17,46 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_calcpod_save(ds_empi, nb_mode, nb_snap_redu, fieldIden, s, v)
+subroutine dbr_calcpod_save(base, nbMode, nbSnapRedu, fieldIden, modesSing, modesVale)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/as_allocate.h"
-#include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/romBaseSave.h"
 #include "asterfort/dbr_calcpod_savel.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
-integer, intent(in) :: nb_mode, nb_snap_redu
+type(ROM_DS_Empi), intent(in) :: base
+integer, intent(in) :: nbMode, nbSnapRedu
 character(len=24), intent(in) :: fieldIden
-real(kind=8), pointer :: v(:), s(:)
+real(kind=8), pointer :: modesVale(:), modesSing(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Compute
 !
-! Save empiric modes
+! Save base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
-! In  nb_mode          : number of empiric modes
-! In  nb_snap_redu     : number of snapshots used to construct empiric base
-! In  fieldIden        : identificator of field (name in results datastructure)
-! In  s                : singular values
-! In  v                : singular vectors
+! In  base             : datastructure for base
+! In  nbMode           : number of modes in base
+! In  nbSnapRedu       : number of snapshots used to construct base
+! In  fieldIden        : identificator of modes (name in results datastructure)
+! Ptr modesSing        : pointer to the singular values of modes
+! Ptr modesVale        : pointer to the values of modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: base_type
-    integer :: nbEqua
-    integer, pointer :: v_nume_slice(:) => null()
-!
-! --------------------------------------------------------------------------------------------------
-!
-    nbEqua    = ds_empi%ds_mode%nbEqua
-    base_type = ds_empi%base_type
-!
-    if (base_type .eq. 'LINEIQUE') then
-        call dbr_calcpod_savel(ds_empi, nb_mode, nb_snap_redu, fieldIden, nbEqua, s, v)
+    if (base%base_type .eq. 'LINEIQUE') then
+        call dbr_calcpod_savel(base     , nbMode   , nbSnapRedu,&
+                               fieldIden, modesSing, modesVale)
     else
-        AS_ALLOCATE(vi=v_nume_slice, size = nb_mode)
-        call romBaseSave(ds_empi, nb_mode, nb_snap_redu, mode_type = 'R',&
-                         fieldIden     = fieldIden,&
-                         mode_vectr_   = v, &
-                         v_mode_freq_  = s, &
-                         v_nume_slice_ = v_nume_slice)
-        AS_DEALLOCATE(vi = v_nume_slice)
+        call romBaseSave(base, nbMode   , nbSnapRedu,&
+                         'R' , fieldIden,&
+                         mode_vectr_  = modesVale,&
+                         v_modeSing_  = modesSing)
     endif
 !
 end subroutine

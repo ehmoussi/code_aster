@@ -17,12 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_calcpod_savel(ds_empi, nb_mode, nb_snap_redu, fieldIden, nbEqua, s, v)
+    subroutine dbr_calcpod_savel(base, nbMode, nbSnapRedu, fieldIden, modesSing, modesVale)
         use Rom_Datastructure_type
-        type(ROM_DS_Empi), intent(in) :: ds_empi
-        integer, intent(in) :: nb_mode, nb_snap_redu
+        type(ROM_DS_Empi), intent(in) :: base
+        integer, intent(in) :: nbMode, nbSnapRedu
         character(len=24), intent(in) :: fieldIden
-        integer, intent(in) :: nbEqua
-        real(kind=8), pointer :: v(:), s(:)
+        real(kind=8), pointer :: modesVale(:), modesSing(:)
     end subroutine dbr_calcpod_savel
 end interface

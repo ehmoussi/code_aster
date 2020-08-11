@@ -21,25 +21,23 @@
 
 from ..Utilities import _
 
+# Messages for DEFI_DOMAINE_REDUIT
+
 cata_msg = {
 
-    7 : _("""Échec lors du calcul des modes empiriques pour l'estimation du domaine réduit."""),
+    7 : _("""Échec lors du calcul des modes pour l'estimation du domaine réduit."""),
 
     9 : _("""Les bases ne sont pas définies sur le même maillage."""),
 
    10 : _("""Les bases ne sont pas définies sur le même maillage que le résultat."""),
 
-   11 : _("""Le modèle doit être le même sur tous les modes des bases."""),
-
    12 : _("""Le GROUP_NO %(k1)s fait déjà partie du maillage."""),
 
    13 : _("""Le GROUP_MA %(k1)s fait déjà partie du maillage."""),
 
-   15 : _("""Les modes empiriques ne sont pas des champs nodaux."""),
+   16 : _("""Les modes ne sont pas des champs du type attendu."""),
 
-   16 : _("""Les modes empiriques ne sont pas des champs du type attendu."""),
-
-   17 : _("""Les modes empiriques ne sont pas des champs gradients du type attendu (on attend %(k1)s). """),
+   17 : _("""Les modes ne sont pas des champs gradients du type attendu (on attend %(k1)s)."""),
 
    20 : _("""Calcul du domaine réduit. """),
 

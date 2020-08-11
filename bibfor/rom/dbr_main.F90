@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_main(ds_para)
+subroutine dbr_main(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/dbr_main_tr.h"
 #include "asterfort/dbr_main_ortho.h"
 !
-type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,11 +42,12 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para          : datastructure for parameters
+! IO  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    character(len=8) :: resultNameOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,19 +56,20 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
         call utmess('I', 'ROM7_9')
     endif
 !
-    if (ds_para%operation .eq. 'POD') then
-        call dbr_main_pod(ds_para%para_pod, ds_para%field_iden, ds_para%ds_empi)
-    elseif (ds_para%operation .eq. 'POD_INCR') then
-        call dbr_main_podincr(ds_para%l_reuse   , ds_para%para_pod,&
-                              ds_para%field_iden, ds_para%ds_empi)
-    elseif (ds_para%operation .eq. 'GLOUTON') then
-        call dbr_main_rb(ds_para%para_rb, ds_para%ds_empi)
-    elseif (ds_para%operation .eq. 'TRONCATURE') then
-        call dbr_main_tr(ds_para%para_tr, ds_para%ds_empi)
-    elseif (ds_para%operation .eq. 'ORTHO') then
-        call dbr_main_ortho(ds_para%para_ortho, ds_para%field_iden, ds_para%ds_empi)
+    if (cmdPara%operation .eq. 'POD') then
+        call dbr_main_pod(cmdPara%para_pod, cmdPara%field_iden, cmdPara%ds_empi)
+    elseif (cmdPara%operation .eq. 'POD_INCR') then
+        call dbr_main_podincr(cmdPara%l_reuse   , cmdPara%para_pod,&
+                              cmdPara%field_iden, cmdPara%ds_empi)
+    elseif (cmdPara%operation .eq. 'GLOUTON') then
+        call dbr_main_rb(cmdPara%para_rb, cmdPara%ds_empi)
+    elseif (cmdPara%operation .eq. 'TRONCATURE') then
+        resultNameOut = cmdPara%ds_empi%base
+        call dbr_main_tr(cmdPara%para_tr, resultNameOut)
+    elseif (cmdPara%operation .eq. 'ORTHO') then
+        call dbr_main_ortho(cmdPara%para_ortho, cmdPara%field_iden, cmdPara%ds_empi)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

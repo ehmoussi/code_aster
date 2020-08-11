@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,14 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romModeParaSave(base , i_mode    ,&
-                               model, field_name, mode_freq, nume_slice, nb_snap)
-        character(len=8), intent(in) :: base
-        integer, intent(in) :: i_mode
+    subroutine romModeParaSave(resultName, numeMode    ,&
+                               model     , modeSymbName, modeSing, numeSlice, nbSnap)
+        character(len=8), intent(in) :: resultName
+        integer, intent(in) :: numeMode
         character(len=8), intent(in)  :: model
-        character(len=24), intent(in) :: field_name
-        integer, intent(in)           :: nume_slice
-        real(kind=8), intent(in)      :: mode_freq
-        integer, intent(in)           :: nb_snap
+        character(len=24), intent(in) :: modeSymbName
+        integer, intent(in)           :: numeSlice
+        real(kind=8), intent(in)      :: modeSing
+        integer, intent(in)           :: nbSnap
     end subroutine romModeParaSave
 end interface

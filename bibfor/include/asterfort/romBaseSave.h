@@ -18,20 +18,18 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romBaseSave(ds_empi      , nb_mode, nb_snap, mode_type, fieldIden,&
-                           mode_vectr_  ,&
-                           mode_vectc_  ,&
-                           v_mode_freq_ ,&
-                           v_nume_slice_)
+    subroutine romBaseSave(base       , nbMode     , nbSnap,&
+                           mode_type  , fieldIden  ,&
+                           mode_vectr_, mode_vectc_,&
+                           v_modeSing_, v_numeSlice_)
         use Rom_Datastructure_type
-        type(ROM_DS_Empi), intent(in) :: ds_empi
-        integer, intent(in) :: nb_mode
-        integer, intent(in) :: nb_snap
+        type(ROM_DS_Empi), intent(in) :: base
+        integer, intent(in) :: nbMode, nbSnap
         character(len=1), intent(in) :: mode_type
         character(len=24), intent(in) :: fieldIden
         real(kind=8), optional, pointer :: mode_vectr_(:)
         complex(kind=8), optional, pointer :: mode_vectc_(:)
-        real(kind=8), optional, pointer :: v_mode_freq_(:)
-        integer, optional, pointer      :: v_nume_slice_(:)
+        real(kind=8), optional, pointer :: v_modeSing_(:)
+        integer, optional, pointer      :: v_numeSlice_(:)
     end subroutine romBaseSave
 end interface

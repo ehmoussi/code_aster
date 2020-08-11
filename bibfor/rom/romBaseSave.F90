@@ -17,11 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseSave(ds_empi      , nb_mode, nb_snap, mode_type, fieldIden,&
-                       mode_vectr_  ,&
-                       mode_vectc_  ,&
-                       v_mode_freq_ ,&
-                       v_nume_slice_)
+subroutine romBaseSave(base       , nbMode     , nbSnap,&
+                       mode_type  , fieldIden  ,&
+                       mode_vectr_, mode_vectc_,&
+                       v_modeSing_, v_numeSlice_)
 !
 use Rom_Datastructure_type
 !
@@ -31,95 +30,102 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 #include "asterfort/romModeSave.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
-integer, intent(in) :: nb_mode
-integer, intent(in) :: nb_snap
+type(ROM_DS_Empi), intent(in) :: base
+integer, intent(in) :: nbMode, nbSnap
 character(len=1), intent(in) :: mode_type
 character(len=24), intent(in) :: fieldIden
 real(kind=8), optional, pointer :: mode_vectr_(:)
 complex(kind=8), optional, pointer :: mode_vectc_(:)
-real(kind=8), optional, pointer :: v_mode_freq_(:)
-integer, optional, pointer      :: v_nume_slice_(:)
+real(kind=8), optional, pointer :: v_modeSing_(:)
+integer, optional, pointer      :: v_numeSlice_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Save empiric base
+! Save base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
-! In  nb_mode          : number of empiric modes
-! In  nb_snap          : number of snapshots used to construct empiric base
-! In  mode_type        : type of mode (real or complex, 'R' ou 'C')
-! In  fieldIden        : identificator of field (name in results datastructure)
-! In  mode_vectr       : singular vectors (R)
-! In  mode_vectc       : singular vectors (C)
-! In  v_mode_freq      : singular values
-! In  v_nume_slice     : index of slices (for lineic bases)
+! In  base            : datastructure for base
+! In  nbMode          : number of modes in base
+! In  nbSnap          : number of snapshots used to construct base
+! In  mode_type       : type of mode (real or complex, 'R' ou 'C')
+! In  fieldIden       : identificator of modes (name in results datastructure)
+! Ptr mode_vectr      : pointer to the values of modes (real)
+! Ptr mode_vectc      : pointer to the values of modes (complex)
+! Ptr v_modeSing      : pointer to the singular values of modes
+! Ptr v_numeSlice     : pointer to the index of slices (for lineic bases)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: iMode
-    integer :: nbEqua, nume_slice
-    real(kind=8) :: mode_freq
-    character(len=8)  :: base , model
-    character(len=24) :: fieldRefe, fieldName
-    character(len=4) :: fieldSupp
+    integer :: iMode, iEqua, numeMode
+    integer :: nbEqua, numeSlice
+    real(kind=8) :: modeSing
+    character(len=8)  :: resultName
+    type(ROM_DS_Field) :: mode
+    real(kind=8), pointer :: modeValeR(:) => null()
+    complex(kind=8), pointer :: modeValeC(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_2', si = nb_mode)
+        call utmess('I', 'ROM5_2', si = nbMode)
     endif
-!
-! - Initializations
-!
-    nbEqua     = 0
-    nume_slice = 0
-    mode_freq  = 0.d0
 !
 ! - Get parameters
 !
-    base      = ds_empi%base
-    nbEqua    = ds_empi%ds_mode%nbEqua
-    fieldName = ds_empi%ds_mode%fieldName
-    fieldRefe = ds_empi%ds_mode%fieldRefe
-    fieldSupp = ds_empi%ds_mode%fieldSupp
-    model     = ds_empi%ds_mode%model
+    resultName = base%base
+    mode       = base%ds_mode
+    nbEqua     = mode%nbEqua
+    AS_ALLOCATE(vr = modeValeR, size = nbEqua)
+    AS_ALLOCATE(vc = modeValeC, size = nbEqua)
 !
 ! - Save modes
 !
-    do iMode = 1, nb_mode
-        if (present(v_nume_slice_)) then
-            nume_slice = v_nume_slice_(iMode)
+    do iMode = 1, nbMode
+        numeMode  = iMode
+        numeSlice = 0
+        modeSing  = 0
+        if (present(v_numeSlice_)) then
+            numeSlice = v_numeSlice_(iMode)
         endif
-        if (present(v_mode_freq_)) then
-            mode_freq  = v_mode_freq_(iMode)
+        if (present(v_modeSing_)) then
+            modeSing  = v_modeSing_(iMode)
         endif
         if (mode_type .eq. 'R') then
-            call romModeSave(base     , iMode    , model ,&
-                             fieldName, fieldIden,&
-                             fieldRefe, fieldSupp, nbEqua,&
-                             mode_vectr_ = mode_vectr_(nbEqua*(iMode-1)+1:),&
-                             mode_freq_  = mode_freq   ,&
-                             nume_slice_ = nume_slice  ,&
-                             nb_snap_    = nb_snap)
+            do iEqua = 1, nbEqua
+                modeValeR(iEqua) = mode_vectr_(nbEqua*(iMode-1)+iEqua)
+            end do
+            call romModeSave(resultName, numeMode ,&
+                             fieldIden , mode     ,&
+                             modeValeR_ = modeValeR,&
+                             modeSing_  = modeSing ,&
+                             numeSlice_ = numeSlice,&
+                             nbSnap_    = nbSnap)
         elseif (mode_type .eq. 'C') then
-            call romModeSave(base     , iMode    , model    ,&
-                             fieldName, fieldIden,&
-                             fieldRefe, fieldSupp, nbEqua,&
-                             mode_vectc_ = mode_vectc_(nbEqua*(iMode-1)+1:),&
-                             mode_freq_  = mode_freq   ,&
-                             nume_slice_ = nume_slice  ,&
-                             nb_snap_    = nb_snap)
+            do iEqua = 1, nbEqua
+                modeValeC(iEqua) = mode_vectc_(nbEqua*(iMode-1)+iEqua)
+            end do
+            call romModeSave(resultName, numeMode ,&
+                             fieldIden , mode     ,&
+                             modeValeC_ = modeValeC,&
+                             modeSing_  = modeSing ,&
+                             numeSlice_ = numeSlice,&
+                             nbSnap_    = nbSnap)
         else
             ASSERT(ASTER_FALSE)
         endif
     end do
+!
+! - Clean
+!
+    AS_DEALLOCATE(vr = modeValeR)
+    AS_DEALLOCATE(vc = modeValeC)
 !
 end subroutine

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_calcpod_savel(ds_empi, nb_mode, nb_snap_redu, fieldIden, nbEqua, s, v)
+subroutine dbr_calcpod_savel(base, nbMode, nbSnapRedu, fieldIden, modesSing, modesVale)
 !
 use Rom_Datastructure_type
 !
@@ -28,82 +28,84 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/romBaseSave.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
-integer, intent(in) :: nb_mode, nb_snap_redu
+type(ROM_DS_Empi), intent(in) :: base
+integer, intent(in) :: nbMode, nbSnapRedu
 character(len=24), intent(in) :: fieldIden
-integer, intent(in) :: nbEqua
-real(kind=8), pointer :: v(:), s(:)
+real(kind=8), pointer :: modesVale(:), modesSing(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Compute
 !
-! Save empiric modes for lineic model
+! Save base for lineic model
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
-! In  nb_mode          : number of empiric modes
-! In  nb_snap_redu     : number of snapshots used to construct empiric base
-! In  fieldIden        : identificator of field (name in results datastructure)
-! In  nbEqua           : number of equations (length of empiric mode)
-! In  s                : singular values
-! In  v                : singular vectors
+! In  base             : datastructure for base
+! In  nbMode           : number of modes in base
+! In  nbSnapRedu       : number of snapshots used to construct base
+! In  fieldIden        : identificator of modes (name in results datastructure)
+! Ptr modesSing        : pointer to the singular values of modes
+! Ptr modesVale        : pointer to the values of modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_slice, i_mode, i_node, i_cmp, i_2d, i_equa
-    integer :: nb_slice, n_2d, nb_cmp
-    real(kind=8), pointer :: v_lin(:) => null()
-    real(kind=8), pointer :: s_lin(:) => null()
-    integer, pointer :: v_nume_slice(:) => null()
+    integer :: iSlice, iMode, nodeNume, cmpNume, i_2d, iEqua
+    integer :: nbSlice, n_2d, nbCmp, nbLineMode,nbEqua
+    real(kind=8), pointer :: lineModesVale(:) => null()
+    real(kind=8), pointer :: lineModesSing(:) => null()
+    integer, pointer :: numeSlice(:) => null()
+    type(ROM_DS_LineicNumb) :: lineicBase
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_cmp    = ds_empi%ds_lineic%nb_cmp
-    nb_slice  = ds_empi%ds_lineic%nb_slice
+    lineicBase = base%ds_lineic
+    nbEqua     = base%ds_mode%nbEqua
+    nbCmp      = lineicBase%nb_cmp
+    nbSlice    = lineicBase%nb_slice
+    nbLineMode = nbMode*nbSlice
 !
 ! - Create working objects
 !
-    AS_ALLOCATE(vr=v_lin, size = nbEqua*nb_mode*nb_slice)
-    AS_ALLOCATE(vr=s_lin, size = nb_mode*nb_slice)
-    AS_ALLOCATE(vi=v_nume_slice, size = nb_mode*nb_slice)
+    AS_ALLOCATE(vr = lineModesVale, size = nbEqua*nbMode*nbSlice)
+    AS_ALLOCATE(vr = lineModesSing, size = nbMode*nbSlice)
+    AS_ALLOCATE(vi = numeSlice, size = nbMode*nbSlice)
 !
 ! - Create index of slices
 !
-    do i_slice = 1, nb_slice
-        do i_mode = 1, nb_mode
-            s_lin(i_mode + nb_mode*(i_slice - 1)) = s(i_mode)
-            v_nume_slice(i_mode + nb_mode*(i_slice - 1)) = i_slice
+    do iSlice = 1, nbSlice
+        do iMode = 1, nbMode
+            lineModesSing(iMode + nbMode*(iSlice - 1)) = modesSing(iMode)
+            numeSlice(iMode + nbMode*(iSlice - 1))     = iSlice
         enddo
     enddo
 !
 ! - Create modes to save
 !
-    do i_equa = 1, nbEqua
-        i_node  = (i_equa - 1)/nb_cmp + 1
-        i_cmp   = i_equa - (i_node - 1)*nb_cmp
-        i_slice = ds_empi%ds_lineic%v_nume_pl(i_node)
-        n_2d    = ds_empi%ds_lineic%v_nume_sf(i_node)
-        i_2d    = (n_2d - 1)*nb_cmp + i_cmp
-        do i_mode = 1, nb_mode
-            v_lin(i_equa + nbEqua*(i_mode - 1 + nb_mode*(i_slice - 1))) =&
-                v(i_2d + nbEqua/nb_slice*(i_mode - 1))
+    do iEqua = 1, nbEqua
+        nodeNume = (iEqua - 1)/nbCmp + 1
+        cmpNume  = iEqua - (nodeNume - 1)*nbCmp
+        iSlice   = lineicBase%v_nume_pl(nodeNume)
+        n_2d     = lineicBase%v_nume_sf(nodeNume)
+        i_2d     = (n_2d - 1)*nbCmp + cmpNume
+        do iMode = 1, nbMode
+            lineModesVale(iEqua + nbEqua*(iMode - 1 + nbMode*(iSlice - 1))) =&
+                modesVale(i_2d + nbEqua/nbSlice*(iMode - 1))
         enddo
     enddo
 !
 ! - Save modes
 !
-    call romBaseSave(ds_empi, nb_mode*nb_slice, nb_snap_redu, mode_type = 'R',&
-                     fieldIden     = fieldIden,&
-                     mode_vectr_   = v_lin, &
-                     v_mode_freq_  = s_lin, &
-                     v_nume_slice_ = v_nume_slice)
+    call romBaseSave(base, nbLineMode, nbSnapRedu,&
+                     'R' , fieldIden ,&
+                     mode_vectr_  = lineModesVale,&
+                     v_modeSing_  = lineModesSing,&
+                     v_numeSlice_ = numeSlice)
 !
 ! - Cleaning
 !
-    AS_DEALLOCATE(vr = v_lin)
-    AS_DEALLOCATE(vr = s_lin)
-    AS_DEALLOCATE(vi = v_nume_slice)
+    AS_DEALLOCATE(vr = lineModesVale)
+    AS_DEALLOCATE(vr = lineModesSing)
+    AS_DEALLOCATE(vi = numeSlice)
 !
 end subroutine

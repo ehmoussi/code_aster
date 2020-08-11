@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseGetInfo(base, ds_empi)
+subroutine romBaseGetInfo(resultName, base)
 !
 use Rom_Datastructure_type
 !
@@ -33,73 +33,71 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "asterfort/romFieldGetInfo.h"
 !
-character(len=8), intent(in)     :: base
-type(ROM_DS_Empi), intent(inout) :: ds_empi
+character(len=8), intent(in)     :: resultName
+type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Get informations about empiric modes base
+! Get informations about base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  base             : name of empiric base
-! IO  ds_empi          : datastructure for empiric modes
+! In  resultName       : name of result datastructure
+! IO  base             : datastructure for base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret, nume_first, nume_pl, nb_snap, i_mode
-    integer :: nb_mode
-    character(len=8)  :: model, axe_line, base_type
-    character(len=24) :: surf_num, field_refe, field_name
-    type(ROM_DS_Field) :: ds_field
+    integer, parameter :: numeModeRefe = 1
+    integer :: iret, numeModeFirst, numeSlice, nbSnap, nbMode
+    character(len=8)  :: model, axe_line, baseType
+    character(len=24) :: surf_num, fieldRefe, modeSymbName
+    type(ROM_DS_Field) :: mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_mode = 0
-    model = ' '
-    axe_line = ' '
-    base_type = ' '
-    surf_num = ' '
-    field_refe = ' '
-    field_name = ' '
+    nbMode       = 0
+    model        = ' '
+    axe_line     = ' '
+    baseType     = ' '
+    surf_num     = ' '
+    fieldRefe    = ' '
+    modeSymbName = ' '
 !
 ! - Number of modes
 !
-    call rs_get_liststore(base, nb_mode)
+    call rs_get_liststore(resultName, nbMode)
 !
-! - Get main parameters in empiric base
+! - Get main parameters in empiric resultName
 !
-    i_mode = 1
-    call romModeParaRead(base  , i_mode     ,&
-                         model_      = model,&
-                         field_name_ = field_name, &
-                         nume_slice_ = nume_pl,&
-                         nb_snap_    = nb_snap)
-    if (nume_pl .ne. 0) then
-        base_type = 'LINEIQUE'
+    call romModeParaRead(resultName, numeModeRefe,&
+                         model_        = model,&
+                         modeSymbName_ = modeSymbName,&
+                         numeSlice_    = numeSlice,&
+                         nbSnap_       = nbSnap)
+    if (numeSlice .ne. 0) then
+        baseType = 'LINEIQUE'
     endif
 !
-! - Get _representative_ field in empiric base
+! - Get _representative_ field in empiric result
 !
-    call rs_getfirst(base, nume_first)
-    field_refe = base(1:8)//'FIELD_REFE'
-    call rsexch(' ', base, field_name, nume_first, field_refe, iret)
-    ASSERT(iret.eq.0)
+    call rs_getfirst(resultName, numeModeFirst)
+    call rsexch(' ', resultName, modeSymbName, numeModeFirst, fieldRefe, iret)
+    ASSERT(iret .eq. 0)
 !
-! - Get informations from field
+! - Get informations from mode
 !
-    ds_field = ds_empi%ds_mode
-    call romFieldGetInfo(model, field_name, field_refe, ds_empi%ds_mode)
+    call romFieldGetInfo(model, modeSymbName, fieldRefe, mode)
 !
 ! - Save informations about empiric modes
 !
-    ds_empi%base      = base
-    ds_empi%base_type = base_type
-    ds_empi%axe_line  = axe_line
-    ds_empi%surf_num  = surf_num
-    ds_empi%nb_mode   = nb_mode
-    ds_empi%nb_snap   = nb_snap
+    base%base       = resultName
+    base%base_type  = baseType
+    base%axe_line   = axe_line
+    base%surf_num   = surf_num
+    base%nb_mode    = nbMode
+    base%nb_snap    = nbSnap
+    base%ds_mode    = mode
 !
 end subroutine

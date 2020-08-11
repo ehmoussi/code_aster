@@ -88,7 +88,7 @@ implicit none
 ! ----- Components in the field: number and name
         character(len=8), pointer :: listCmpName(:) => null()
         integer                   :: nbCmp = 0
-! ----- For each dof: index of name of compoenent (from listCmpName)
+! ----- For each dof: index of name of components (from listCmpName)
         integer, pointer          :: equaCmpName(:) => null()
 ! ----- Flag if has Lagrange multipliers
         aster_logical             :: lLagr = ASTER_FALSE

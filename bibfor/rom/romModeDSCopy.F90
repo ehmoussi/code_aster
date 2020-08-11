@@ -18,34 +18,34 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1403
 !
-subroutine romModeDSCopy(ds_mode_in, ds_mode_out)
+subroutine romModeDSCopy(modeIn, modeOut)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-type(ROM_DS_Field), intent(in)  :: ds_mode_in
-type(ROM_DS_Field), intent(out) :: ds_mode_out
+type(ROM_DS_Field), intent(in)  :: modeIn
+type(ROM_DS_Field), intent(out) :: modeOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Copy datastructure of empiric mode
+! Copy datastructure of mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_mode_in       : datastructure for empiric mode
-! Out ds_mode_out      : datastructure for output empiric mode
+! In  modeIn           : input mode
+! Out modeOut          : output mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_mode_out%fieldName     = ds_mode_in%fieldName
-    ds_mode_out%fieldRefe     = ds_mode_in%fieldRefe
-    ds_mode_out%fieldSupp     = ds_mode_in%fieldSupp
-    ds_mode_out%mesh          = ds_mode_in%mesh
-    ds_mode_out%model         = ds_mode_in%model
-    ds_mode_out%nbEqua        = ds_mode_in%nbEqua
-    ds_mode_out%nbNodeWithDof = ds_mode_in%nbNodeWithDof
+    modeOut%fieldName     = modeIn%fieldName
+    modeOut%fieldRefe     = modeIn%fieldRefe
+    modeOut%fieldSupp     = modeIn%fieldSupp
+    modeOut%mesh          = modeIn%mesh
+    modeOut%model         = modeIn%model
+    modeOut%nbEqua        = modeIn%nbEqua
+    modeOut%nbNodeWithDof = modeIn%nbNodeWithDof
 !
 end subroutine
