@@ -309,6 +309,11 @@ character(len=19) :: lischa
             call utmess('F', 'MECANONLINE5_10')
         endif
     endif
+    if  (ndynlo(sddyna,'HHT_COMPLET')) then
+        if (alpha .eq. -1.0) then
+            call utmess('F', 'MECANONLINE5_17')
+        endif
+    endif
 !
 ! --- VERIFICATION DE LA PRESENCE D'ELEMENTS AVEC 'IMPE_ABSO'
 !

@@ -110,6 +110,11 @@ en accélération est possible
  Les modélisations de type THMS sont interdites en dynamique.
 """),
 
+    17 : _("""
+ Pour le schéma HHT complet ( SCHEMA='HHT' avec MODI_EQUI = 'OUI'), la valeur de ALPHA ne peut 
+ pas être -1.
+"""),
+
     19 : _("""
 Il y a plus d'amortissements modaux (AMOR_MODAL) que de modes.
 """),
