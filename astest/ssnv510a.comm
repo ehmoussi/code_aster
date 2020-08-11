@@ -204,6 +204,15 @@ TABDEPP = CALC_TABLE(TABLE = TABDEP,
                               _F(OPERATION = 'EXTR',
                                  NOM_PARA=('NOEUD','INST','COOR_X','COOR_Y','DX','DY','DX-DXP','DY-DY'))));
 
+
+TABDEPP = CALC_TABLE(reuse = TABDEPP,
+                     TABLE = TABDEPP,
+                     ACTION=(_F(OPERATION='TRI',
+                               NOM_PARA= ('COOR_X','COOR_Y',),
+                               ORDRE='CROISSANT'),
+                             ));
+IMPR_TABLE(TABLE=TABDEPP);
+
 IMPR_TABLE(TABLE=TABDEPP,
            TRI=_F(NOM_PARA = ('COOR_Y','COOR_X'),
                   ORDRE ='CROISSANT'));

@@ -965,6 +965,8 @@ class OrderableRow(object):
             left = left if left is not None else default
             right = other.data.get(col, default)
             right = right if right is not None else default
+            if left < right:
+                return True
             if left > right:
                 return False
         return True
