@@ -45,16 +45,17 @@ character(len=19), intent(in) :: sd_obsv
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nbPara = 16
+    integer, parameter :: nbPara = 17
     type(NL_DS_TableIO) :: tableio
-    character(len=24), parameter :: paraName(nbPara) = (/'NOM_OBSERVATION','TYPE_OBJET     ',&
-                                                           'NUME_REUSE     ','NUME_OBSE      ',&
-                                                           'INST           ','NOM_CHAM       ',&
-                                                           'EVAL_CHAM      ','NOM_CMP        ',&
-                                                           'NOM_VARI       ','EVAL_CMP       ',&
-                                                           'NOEUD          ','MAILLE         ',&
-                                                           'EVAL_ELGA      ','POINT          ',&
-                                                           'SOUS_POINT     ','VALE           '/)
+    character(len=24), parameter :: paraName(nbPara) = (/'NOM_OBSERVATION  ','TYPE_OBJET       ',&
+                                                         'NUME_REUSE       ','NUME_OBSE        ',&
+                                                         'INST             ','NOM_CHAM         ',&
+                                                         'EVAL_CHAM        ','NOM_CMP          ',&
+                                                         'NOM_VARI         ','EVAL_CMP         ',&
+                                                         'NOEUD            ','MAILLE           ',&
+                                                         'EVAL_ELGA        ','POINT            ',&
+                                                         'SOUS_POINT       ','VALE             ',&
+                                                         'NUME_GLOBAL_NOEUD' /)
     character(len=8),  parameter :: paraType(nbPara) = (/'K16','K16',&
                                                            'I  ','I  ',&
                                                            'R  ','K16',&
@@ -62,7 +63,8 @@ character(len=19), intent(in) :: sd_obsv
                                                            'K16','K8 ',&
                                                            'K8 ','K8 ',&
                                                            'K8 ','I  ',&
-                                                           'I  ','R  ' /)
+                                                           'I  ','R  ',&
+                                                           'I  '/)
     character(len=24) :: obsv_tabl
     character(len=24), pointer :: v_obsv_tabl(:) => null()
 !

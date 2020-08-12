@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ interface
                       type_extr, type_extr_cmp, type_extr_elem, type_sele_cmp, cmp_name  ,&
                       time     , valr,&
                       node_namez,&
-                      elem_namez, poin_numez, spoi_numez)
+                      elem_namez, poin_numez, spoi_numez, glob_numez)
         character(len=19), intent(in) :: sd_obsv
         character(len=19), intent(in) :: tabl_name
         character(len=4), intent(in) :: field_disc
@@ -39,6 +39,7 @@ interface
         character(len=8), optional, intent(in) :: node_namez
         character(len=8), optional, intent(in) :: elem_namez
         integer, optional, intent(in) :: poin_numez
+        integer, optional, intent(in) :: glob_numez
         integer, optional, intent(in) :: spoi_numez
     end subroutine nmobsz
 end interface

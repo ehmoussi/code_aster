@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ subroutine nmobsz(sd_obsv  , tabl_name    , title         , field_type   , field
                   type_extr, type_extr_cmp, type_extr_elem, type_sele_cmp, cmp_name  ,&
                   time     , valr,&
                   node_namez,&
-                  elem_namez, poin_numez, spoi_numez)
+                  elem_namez, poin_numez, spoi_numez, glob_numez)
 !
 implicit none
 !
@@ -46,6 +46,8 @@ implicit none
     character(len=8), optional, intent(in) :: elem_namez
     integer, optional, intent(in) :: poin_numez
     integer, optional, intent(in) :: spoi_numez
+    integer, optional, intent(in) :: glob_numez
+
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,11 +73,12 @@ implicit none
 ! In  elem_name        : name of element
 ! In  poin_nume        : index of point
 ! In  spoi_nume        : index of subpoint
+! In  glob_nume        : global index of of node or elem
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_para = 16
-    character(len=16) :: para_name(nb_para)
+    integer, parameter :: nb_para = 17
+    character(len=24) :: para_name(nb_para)
     real(kind=8) :: tabl_vale_r(nb_para)
     integer :: tabl_vale_i(nb_para)
     character(len=24) :: tabl_vale_k(nb_para), para_name_add(nb_para)
@@ -96,7 +99,7 @@ implicit none
                     'NOM_CHAM'       ,'EVAL_CHAM'   ,'NOM_CMP', 'NOM_VARI',&
                     'EVAL_CMP'       ,'NOEUD'       ,'MAILLE' ,&
                     'EVAL_ELGA'      ,'POINT'       ,'SOUS_POINT',&
-                    'VALE'           /
+                    'VALE'           ,'NUME_GLOBAL_NOEUD' /
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -199,6 +202,12 @@ implicit none
         i_para_add = i_para_add + 1
         tabl_vale_r(nb_vale_r) = valr
         nb_vale_r = nb_vale_r + 1
+        if(present(glob_numez)) then
+            para_name_add(i_para_add) = para_name(17)
+            i_para_add = i_para_add + 1
+            tabl_vale_i(nb_vale_i) = glob_numez
+            nb_vale_i = nb_vale_i + 1
+        end if
     else if (field_disc .eq. 'ELGA' .or. field_disc .eq. 'ELEM') then
         if (type_extr .eq. 'VALE') then
             para_name_add(i_para_add) = para_name(12)

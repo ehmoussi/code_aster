@@ -34,6 +34,7 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/nmobsz.h"
 #include "asterfort/sdmpic.h"
+#include "asterfort/isParallelMesh.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
@@ -113,9 +114,10 @@ implicit none
     real(kind=8) :: vale_r
     integer :: nb_node_r, nb_elem_r, nb_cmp_r, nb_poin_r, nb_spoi_r
     integer :: nb_poin_e, nb_spoi_e, nb_poin_elem, nb_spoi_elem
-    integer :: poin_nume, spoi_nume, node_nume, elem_nume
+    integer :: poin_nume, spoi_nume, node_nume, elem_nume, nume_glob
     character(len=8) :: node_name, elem_name
     character(len=16) :: cmp_name
+    aster_logical :: l_pmesh
     integer, pointer :: cesd(:) => null()
     character(len=8), pointer :: v_list_cmp(:) => null()
     character(len=16), pointer :: v_list_vari(:) => null()
@@ -123,12 +125,13 @@ implicit none
     integer, pointer :: v_list_elem(:) => null()
     integer, pointer :: v_list_poin(:) => null()
     integer, pointer :: v_list_spoi(:) => null()
+    integer, pointer :: v_nonulg(:) => null()
     real(kind=8), pointer :: v_work_node(:) => null()
     real(kind=8), pointer :: v_work_elem(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    l_pmesh = isParallelMesh(meshz)
 !
 ! - Convert to reduced field
 !
@@ -203,6 +206,9 @@ implicit none
     if (field_disc .eq. 'NOEU' .and. nb_node > 0) then
         call jeveuo(work_node, 'L', vr = v_work_node)
         call jeveuo(list_node, 'L', vi = v_list_node)
+        if(l_pmesh) then
+            call jeveuo(meshz(1:8)//'.NULOGL', 'L', vi = v_nonulg)
+        end if
 !
         do i_node = 1, nb_node_r
 !
@@ -210,16 +216,27 @@ implicit none
 !
             node_nume = v_list_node(i_node)
             call jenuno(jexnum(meshz(1:8)//'.NOMNOE', node_nume), node_name)
+            if(l_pmesh) then
+                nume_glob = v_nonulg(node_nume)
+            end if
 !
 ! --------- Write values
 !
             do i_cmp = 1, nb_cmp_r
                 vale_r   = v_work_node(i_cmp+nb_cmp*(i_node-1))
                 cmp_name = v_cmp_name(i_cmp)
-                call nmobsz(sd_obsv  , tabl_name    , title         , field_type   , field_disc,&
+                if(l_pmesh) then
+
+                    call nmobsz(sd_obsv  , tabl_name    , title         , field_type, field_disc,&
+                            type_extr, type_extr_cmp, type_extr_elem, type_sele_cmp, cmp_name,&
+                            time     , vale_r   ,&
+                            node_namez = node_name, glob_numez=nume_glob)
+                else
+                    call nmobsz(sd_obsv  , tabl_name    , title         , field_type, field_disc,&
                             type_extr, type_extr_cmp, type_extr_elem, type_sele_cmp, cmp_name,&
                             time     , vale_r   ,&
                             node_namez = node_name)
+                end if
                 nb_obsf_effe = nb_obsf_effe + 1
             end do
         end do

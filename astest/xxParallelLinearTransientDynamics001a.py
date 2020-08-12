@@ -90,6 +90,9 @@ DYNA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                         INFO=2,
                         )
 
+TAB= RECU_TABLE(CO=DYNA, NOM_TABLE='OBSERVATION')
+
+IMPR_TABLE(UNITE=6, TABLE=TAB)
 # depl=DYNA.getRealFieldOnNodes("DEPL",10)
 # v=depl.EXTR_COMP()
 
