@@ -948,7 +948,7 @@ RESU=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
               MODELE=MO_D_TGD,
               TOUT_ORDRE='OUI',
               UNITE=80,
-              FORMAT_MED=_F(NOM_RESU='00000076',
+              FORMAT_MED=_F(NOM_RESU='RE_D_TGD',
                             NOM_CHAM=('DEPL'),),
               )
 

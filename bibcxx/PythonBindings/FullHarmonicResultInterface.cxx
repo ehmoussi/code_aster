@@ -35,6 +35,5 @@ void exportFullHarmonicResultToPython() {
         .def( "__init__", py::make_constructor(
                               &initFactoryPtr< FullHarmonicResultClass, std::string >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FullHarmonicResultClass >))
-        .def( "printMedFile", &FullHarmonicResultClass::printMedFile );
+              py::make_constructor(&initFactoryPtr< FullHarmonicResultClass >));
 };

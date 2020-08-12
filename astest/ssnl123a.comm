@@ -282,7 +282,7 @@ BIS=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
               MODELE=MO,
               TOUT_ORDRE='OUI',
               UNITE=81,
-              FORMAT_MED=_F(NOM_RESU='0000000d',
+              FORMAT_MED=_F(NOM_RESU='STNL',
                             NOM_CHAM=('SIEF_ELGA'),),
               );
 

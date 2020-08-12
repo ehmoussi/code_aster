@@ -23,6 +23,12 @@ cata_msg = {
 
     1 : _("""Il faut autant de noms pour NOM_CHAM_MED que pour NOM_CHAM."""),
 
+    2 : _("""Le nom utilisateur n'a pas été trouvé, on utilise le nom automatique à la place %(k1)s.
+
+            Ceci peut engendrer des problèmes lors du post-traitement avec PARAVIS.
+            Il est possible de changer manuellement le nom avec NOM_CHAM_MED et NOM_RESU_MED.
+          """),
+
     6 : _("""On ne peut pas donner les noms des composantes du champ (NOM_CMP) quand on utilise le nom du résultat MED (NOM_RESU_MED)."""),
 
 

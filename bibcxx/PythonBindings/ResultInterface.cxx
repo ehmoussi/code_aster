@@ -44,6 +44,11 @@ void exportResultToPython() {
     ElementaryCharacteristicsPtr ( ResultClass::*c6 )( int ) =
         &ResultClass::getElementaryCharacteristics;
 
+    bool ( ResultClass::*c7 )( const std::string ) const =
+        &ResultClass::printMedFile;
+    bool ( ResultClass::*c8 )( const std::string, std::string ) const =
+        &ResultClass::printMedFile;
+
     py::class_< ResultClass, ResultClass::ResultPtr,
             py::bases< DataStructure > >( "Result", py::no_init )
         .def( "__init__",
@@ -71,7 +76,8 @@ void exportResultToPython() {
         .def( "getRanks", &ResultClass::getRanks )
         .def( "getRealFieldOnNodes", &ResultClass::getRealFieldOnNodes )
         .def( "getRealFieldOnCells", &ResultClass::getRealFieldOnCells )
-        .def( "printMedFile", &ResultClass::printMedFile )
+        .def( "printMedFile", c7 )
+        .def( "printMedFile", c8 )
         .def( "setMesh", &ResultClass::setMesh )
         .def( "update", &ResultClass::update );
 };

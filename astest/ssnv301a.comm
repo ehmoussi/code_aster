@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -514,8 +514,8 @@ CALCNL=STAT_NON_LINE(
                      CONVERGENCE=_F(
                                     RESI_GLOB_RELA = 1.E-6,
                                     ITER_GLOB_MAXI = 50),
-                     EXCIT=(_F(CHARGE = PRES), 
-                            _F(CHARGE = ROTA, FONC_MULT = ROTA_FO), 
+                     EXCIT=(_F(CHARGE = PRES),
+                            _F(CHARGE = ROTA, FONC_MULT = ROTA_FO),
                             _F(CHARGE = CONDLIM)),
                      RECH_LINEAIRE=_F(ITER_LINE_MAXI = 3)
                     )

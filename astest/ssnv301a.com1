@@ -26,7 +26,7 @@ MAYA=LIRE_MAILLAGE(FORMAT='MED', )
 
 
 MODEL2=AFFE_MODELE(    MAILLAGE=MAYA,
-                                
+
                                  AFFE=_F(  TOUT = 'OUI',
                                         PHENOMENE = 'MECANIQUE',
                                         MODELISATION = '3D')
@@ -67,7 +67,7 @@ MAT2=DEFI_MATERIAU(      ELAS_FO=_F(  E = E_FO,
                           )
 
 MODEL=AFFE_MODELE(    MAILLAGE=MAYA,
-                                
+
                                  AFFE=_F(  TOUT = 'OUI',
                                         PHENOMENE = 'THERMIQUE',
                                         MODELISATION = '3D')
@@ -77,7 +77,7 @@ MODEL=AFFE_MODELE(    MAILLAGE=MAYA,
 THERL=LIRE_RESU(TYPE_RESU='EVOL_THER',
               FORMAT='MED',UNITE=80,
               MODELE=MODEL,
-              FORMAT_MED=(_F( NOM_RESU='00000008',
+              FORMAT_MED=(_F( NOM_RESU='THERL',
                               NOM_CHAM    ='TEMP' ),
                               ) ,
               TOUT_ORDRE='OUI',);
@@ -139,14 +139,14 @@ CALCNL=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
                              RELATION = 'VMIS_ISOT_LINE',
                              DEFORMATION = 'PETIT_REAC'),
               EXCIT=(
-                             _F(CHARGE = PRES), 
+                             _F(CHARGE = PRES),
                              _F(CHARGE = ROTA,FONC_MULT = ROTA_FO),
                              _F(CHARGE = CONDLIM)),
-              FORMAT_MED=(_F( NOM_RESU='00000018',
+              FORMAT_MED=(_F( NOM_RESU='CALCNL',
                               NOM_CHAM    ='DEPL' ),
-                          _F( NOM_RESU='00000018',
+                          _F( NOM_RESU='CALCNL',
                               NOM_CHAM    ='SIEF_ELGA'),
-                          _F( NOM_RESU='00000018',
+                          _F( NOM_RESU='CALCNL',
                               NOM_CHAM    ='VARI_ELGA'),
                               ) ,
               TOUT_ORDRE='OUI',);
@@ -168,7 +168,7 @@ CALCNL=STAT_NON_LINE( reuse=CALCNL, ETAT_INIT=_F(EVOL_NOLI=CALCNL),
                        NEWTON=_F(  REAC_ITER = 1),
                        CONVERGENCE=_F( ITER_GLOB_MAXI = 50),
                        EXCIT=(
-                             _F(CHARGE = PRES), 
+                             _F(CHARGE = PRES),
                              _F(CHARGE = ROTA,FONC_MULT = ROTA_FO),
                              _F(CHARGE = CONDLIM)),
                      RECH_LINEAIRE=_F(ITER_LINE_MAXI = 3)

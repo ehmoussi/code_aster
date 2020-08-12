@@ -29,6 +29,7 @@ namespace py = boost::python;
 
 void exportFullResultToPython() {
 
+
     py::class_< FullResultClass, FullResultPtr,
             py::bases< ResultClass > >( "FullResult", py::no_init )
         .def( "__init__",
@@ -37,7 +38,6 @@ void exportFullResultToPython() {
         .def( "__init__",
               py::make_constructor( &initFactoryPtr< FullResultClass, std::string > ) )
         .def( "getDOFNumbering", &FullResultClass::getDOFNumbering )
-        .def( "printMedFile", &FullResultClass::printMedFile )
         .def( "setDOFNumbering", &FullResultClass::setDOFNumbering )
 #ifdef _USE_MPI
         .def( "setDOFNumbering", &FullResultClass::setParallelDOFNumbering )

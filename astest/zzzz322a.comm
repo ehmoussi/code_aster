@@ -73,7 +73,7 @@ IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=RE_DISTL,),);
 NVCHAM=LIRE_CHAMP(FORMAT='MED',
                   MODELE=MO_DISTL,
                   MAILLAGE=MA,
-                  NOM_MED='00000009SIEF_ELGA',
+                  NOM_MED='RE_DISTLSIEF_ELGA',
                   TYPE_CHAM='ELGA_SIEF_R',
                   INST=1.0,
                   UNITE=80,

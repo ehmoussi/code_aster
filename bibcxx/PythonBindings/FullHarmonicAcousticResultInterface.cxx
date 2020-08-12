@@ -37,6 +37,5 @@ void exportFullHarmonicAcousticResultToPython() {
               py::make_constructor(
                   &initFactoryPtr< FullHarmonicAcousticResultClass, std::string >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FullHarmonicAcousticResultClass >))
-        .def( "printMedFile", &FullHarmonicAcousticResultClass::printMedFile );
+              py::make_constructor(&initFactoryPtr< FullHarmonicAcousticResultClass >));
 };

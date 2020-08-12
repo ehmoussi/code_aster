@@ -119,7 +119,7 @@ IMPR_RESU(FORMAT='MED', UNITE=81,
 
 MODES=LIRE_RESU(FORMAT='MED', UNITE=81,
                 FORMAT_MED=_F(NOM_CHAM='DEPL',
-                              NOM_CHAM_MED='00000010DEPL',),
+                              NOM_CHAM_MED='MOD_CAL_DEPL',),
                 TYPE_RESU='MODE_MECA',
                 MATR_RIGI=K,
                 MATR_MASS=M,

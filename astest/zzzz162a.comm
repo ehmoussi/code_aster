@@ -183,7 +183,7 @@ for nom_cham,cmps in dic_champ_med.items():
 
 def med_name(result):
    """Returns the result name used for a field name."""
-   return '{0:_<8s}'.format(result.getName().strip())
+   return '{0:_<8s}'.format(result.userName.ljust(8,"_")[0:8])
 
 TAB=CREA_TABLE(LISTE=(_F(PARA='NUMERO',
                          LISTE_I=tab3,),
@@ -197,9 +197,9 @@ TAB=CREA_TABLE(LISTE=(_F(PARA='NUMERO',
 IMPR_TABLE(TABLE=TAB,UNITE=50,)
 TEST_FICHIER(FICHIER="./fort.50",
              NB_VALE_I=2,
-             VALE_CALC_I=1,
+             VALE_CALC_I=2,
              NB_VALE=0,
-             VALE_CALC_K="f41d7f05d3a9bc2d9284d05f814bbb73",
+             VALE_CALC_K="9ad3416e570da40ccfbd2089baa629cc",
              EXPR_IGNORE='ASTER',
 )
 
@@ -445,19 +445,19 @@ IMPR_RESU(FORMAT='MED', UNITE=71, RESU=_F(RESULTAT=U,),)
 UUU=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
               FORMAT='MED',
               MODELE=MOMECA,
-              FORMAT_MED=(_F( NOM_RESU=U.getName(),
+              FORMAT_MED=(_F( NOM_RESU="U",
                               NOM_CHAM    ='DEPL' ),
-                          _F( NOM_RESU=U.getName(),
+                          _F( NOM_RESU="U",
                               NOM_CHAM    ='SIGM_ELNO'),
-                          _F( NOM_RESU=U.getName(),
+                          _F( NOM_RESU="U",
                               NOM_CHAM    ='VARI_ELNO'),
-                          _F( NOM_RESU=U.getName(),
+                          _F( NOM_RESU="U",
                               NOM_CHAM    ='SIEF_ELGA'),
-                          _F( NOM_RESU=U.getName(),
+                          _F( NOM_RESU="U",
                               NOM_CHAM    ='VARI_ELGA'),
-                          _F( NOM_RESU=U.getName(),
+                          _F( NOM_RESU="U",
                               NOM_CHAM    ='SIGM_NOEU'),
-                          _F( NOM_RESU=U.getName(),
+                          _F( NOM_RESU="U",
                               NOM_CHAM    ='VARI_NOEU'),
                          ) ,
               UNITE=71,
@@ -479,7 +479,7 @@ IMPR_RESU(FORMAT="RESULTAT",UNITE=76,RESU=_F(RESULTAT=U,NOM_CHAM='SIEF_ELGA',INS
 MONU=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
                FORMAT='MED',
                MODELE=MOMECA,
-               FORMAT_MED=(_F( NOM_RESU=U.getName(),
+               FORMAT_MED=(_F( NOM_RESU="U",
                                NOM_CHAM    ='VARI_ELGA'),) ,
                UNITE=71,
                LIST_INST=L_INST,)
@@ -1005,9 +1005,9 @@ LUHYD=LIRE_RESU(TYPE_RESU='EVOL_THER',
                 UNITE=72,
                 FORMAT_MED=(
                 _F(NOM_CHAM='HYDR_ELNO',
-                   NOM_RESU='0000003b',),
+                   NOM_RESU='RESHYD',),
                 _F(NOM_CHAM='HYDR_NOEU',
-                   NOM_RESU='0000003b',),),
+                   NOM_RESU='RESHYD',),),
                 TOUT_ORDRE='OUI',)
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
@@ -1079,7 +1079,7 @@ MODEL2 = AFFE_MODELE(MAILLAGE=MAIL,
 MONU1=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
                FORMAT='MED',
                MODELE=MODEL1,
-               FORMAT_MED=(_F( NOM_RESU=U.getName(),
+               FORMAT_MED=(_F( NOM_RESU="U",
                                NOM_CHAM    ='VARI_ELGA'),) ,
                UNITE=71,
                INST=(0.,66.666,73.333,80.,),)
@@ -1089,7 +1089,7 @@ MONU1=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
                RESULTAT=MONU1,
                reuse=MONU1,
                MODELE=MODEL2,
-               FORMAT_MED=(_F( NOM_RESU=U.getName(),
+               FORMAT_MED=(_F( NOM_RESU="U",
                                NOM_CHAM    ='VARI_ELGA'),) ,
                UNITE=71,
                INST=(85.,90.,),)

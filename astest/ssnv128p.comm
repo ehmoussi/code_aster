@@ -240,7 +240,7 @@ CONT_NO=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
                   UNITE=81,
                   MODELE=MO,
                   TOUT_ORDRE='OUI',
-                  FORMAT_MED=_F(NOM_RESU=U2M.getName(),
+                  FORMAT_MED=_F(NOM_RESU="U2M",
                                 NOM_CHAM='CONT_NOEU'))
 
 # VERIF PROJECTION  (POINT LE PLUS A DROITE)

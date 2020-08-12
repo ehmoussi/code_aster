@@ -172,7 +172,7 @@ IMPR_RESU(  FORMAT = 'MED', UNITE = 38, PROC0 = 'NON',
 
 THER_1=LIRE_CHAMP( MAILLAGE=MA,
                    UNITE=38,
-                   NOM_MED='00000002'+'TEMP',
+                   NOM_MED='THERDEP_'+'TEMP',
                    NOM_CMP_MED=('TEMP',),
                    NOM_CMP=('TEMP',),
                    NUME_ORDRE = 10,

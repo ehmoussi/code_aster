@@ -88,7 +88,7 @@ Les valeurs des amortissements de deux instances de SPECTRE sont différentes.
 19: _("""
 Les impressions de figures ne peuvent pas être faites car il manque une bibliothèque.
 
-Cette librairie est disponible en lançant le calcul depuis Salome-Meca.
+Cette librairie est disponible en lançant le calcul depuis salome_meca.
 """),
 
 20: _("""

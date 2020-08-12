@@ -60,10 +60,6 @@ class FullResultClass : public ResultClass {
         return _dofNum;
     };
 
-    bool printMedFile( std::string fileName ) const {
-        return ResultClass::printMedFile( fileName );
-    };
-
     bool _setDOFNumbering( const BaseDOFNumberingPtr & );
     bool setDOFNumbering( const DOFNumberingPtr & );
 #ifdef _USE_MPI

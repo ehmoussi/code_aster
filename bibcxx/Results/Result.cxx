@@ -303,7 +303,8 @@ void ResultClass::listFields() const
     std::cout << std::endl;
 };
 
-bool ResultClass::printMedFile( const std::string fileName ) const
+bool ResultClass::printMedFile( const std::string fileName,
+                                std::string medName ) const
 {
     LogicalUnitFile a( fileName, Binary, New );
     ASTERINTEGER retour = a.getLogicalUnit();
@@ -317,6 +318,8 @@ bool ResultClass::printMedFile( const std::string fileName ) const
     SyntaxMapContainer dict2;
     dict2.container["RESULTAT"] = getName();
     dict2.container["TOUT_ORDRE"] = "OUI";
+    if(!medName.empty())
+        dict2.container["NOM_RESU_MED"] = medName.substr(0,8);
     listeResu.push_back( dict2 );
     dict.container["RESU"] = listeResu;
 

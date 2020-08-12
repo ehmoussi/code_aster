@@ -36,6 +36,6 @@ void exportFullTransientResultToPython() {
               py::make_constructor(
                   &initFactoryPtr< FullTransientResultClass, std::string >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FullTransientResultClass >))
-        .def( "printMedFile", &FullTransientResultClass::printMedFile );
+              py::make_constructor(&initFactoryPtr< FullTransientResultClass >));
 };
+//

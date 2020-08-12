@@ -75,47 +75,47 @@ stnl=STAT_NON_LINE(MODELE=model,
 
 ####################################################################################################
 #
-# Create base of SIEF_ELGA by POD method
+# Create base of recombSiefPOD_ELGA by POD method
 #
 ####################################################################################################
 
-# Create base (SIEF_ELGA)
+# Create base (recombSiefPOD_ELGA)
 baseSiefElgaPOD=DEFI_BASE_REDUITE(RESULTAT = stnl,
                          INFO     = 2,
                          NOM_CHAM = 'SIEF_ELGA',
                          TOLE_SVD = 1.E-3,);
 
 
-# Print base (SIEF_ELGA)
-IMPR_RESU(FORMAT='MED', UNITE=81, RESU=_F(RESULTAT=baseSiefElgaPOD))
+# Print base (recombSiefPOD_ELGA)
+IMPR_RESU(FORMAT='MED',UNITE=81,RESU=_F(RESULTAT=baseSiefElgaPOD))
 
 # Get table
 coorReduPOD=RECU_TABLE(CO=baseSiefElgaPOD, NOM_TABLE='COOR_REDUIT',);
 
-# Print reduced coordinates
+# Print reduced coordinates (TEMP)
 IMPR_TABLE(TABLE=coorReduPOD, UNITE=6)
 
 ####################################################################################################
 #
-# Create base of Sief_ELGA by POD_INCR method
+# Create base of recombSiefPOD_ELGA by POD_INCR method
 #
 ####################################################################################################
 
 # Create base
-base_d=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
+baseSiefElgaPODINCR=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
                           TOLE      = 1.E-3,
                           RESULTAT  = stnl,
                           INFO      = 2,
                           NOM_CHAM  = 'SIEF_ELGA',
                           TOLE_SVD  = 1.E-3,);
 
-# Print base (SIEF_ELGA)
-IMPR_RESU(FORMAT='MED', UNITE=81, RESU=_F(RESULTAT=base_d, NOM_RESU_MED = 'base_d__SIEF_ELGA'))
+# Print base (recombSiefPOD_ELGA)
+IMPR_RESU(FORMAT='MED',UNITE=82,RESU=_F(RESULTAT=baseSiefElgaPODINCR))
 
-# Get table of reduced coordinates
-coorReduPODINCR=RECU_TABLE(CO=base_d, NOM_TABLE='COOR_REDUIT',);
+# Get table
+coorReduPODINCR=RECU_TABLE(CO=baseSiefElgaPODINCR, NOM_TABLE='COOR_REDUIT',);
 
-# Print reduced coordinates
+# Print reduced coordinates (TEMP)
 IMPR_TABLE(TABLE=coorReduPODINCR, UNITE=6)
 
 ####################################################################################################
@@ -148,9 +148,9 @@ recombSiefPOD = CREA_CHAMP(OPERATION = 'ASSE',
 #
 ####################################################################################################
 
-modeSiefPODINCR_1 = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULTAT=base_d, NOM_CHAM='SIEF_ELGA',NUME_ORDRE=1);
-modeSiefPODINCR_2 = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULTAT=base_d, NOM_CHAM='SIEF_ELGA',NUME_ORDRE=2);
-modeSiefPODINCR_3 = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULTAT=base_d, NOM_CHAM='SIEF_ELGA',NUME_ORDRE=3);
+modeSiefPODINCR_1 = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULTAT=baseSiefElgaPODINCR, NOM_CHAM='SIEF_ELGA',NUME_ORDRE=1);
+modeSiefPODINCR_2 = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULTAT=baseSiefElgaPODINCR, NOM_CHAM='SIEF_ELGA',NUME_ORDRE=2);
+modeSiefPODINCR_3 = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULTAT=baseSiefElgaPODINCR, NOM_CHAM='SIEF_ELGA',NUME_ORDRE=3);
 
 coefSiefPODINCR_1 = -1.31805E+05
 coefSiefPODINCR_2 = -9.74083E+02

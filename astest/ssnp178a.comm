@@ -109,7 +109,7 @@ DEPL=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
               MODELE=model,
               TOUT_ORDRE='OUI',
               UNITE=80,
-              FORMAT_MED=_F(NOM_RESU='0000000b',
+              FORMAT_MED=_F(NOM_RESU='resnonl',
                             NOM_CHAM=("DEPL",),),
               )
 
@@ -118,7 +118,7 @@ SIEQ=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
               MODELE=model,
               TOUT_ORDRE='OUI',
               UNITE=80,
-              FORMAT_MED=_F(NOM_RESU='0000000b',
+              FORMAT_MED=_F(NOM_RESU='resnonl',
                             NOM_CHAM=("SIEQ_NOEU",),),
               )
 

@@ -782,7 +782,7 @@ IMPR_RESU(
 VARI=LIRE_CHAMP(MAILLAGE=CUBE,
                     FORMAT='MED',
                     UNITE=80,
-                    NOM_MED='00000024VARI_ELGA',
+                    NOM_MED='IMPLZ___VARI_ELGA',
                     NOM_CMP_IDEM='OUI',
                     INST=2.0,
                     TYPE_CHAM='ELGA_VARI_R',

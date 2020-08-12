@@ -298,7 +298,7 @@ IMPR_RESU( FORMAT='MED', UNITE=81,  RESU=_F(RESULTAT=SOLNL1))
 SOLNLMED=LIRE_RESU(TYPE_RESU='EVOL_NOLI', FORMAT='MED',  UNITE=81,
               MODELE=TROISD, TOUT_ORDRE='OUI',
               FORMAT_MED=(
-                   _F(NOM_RESU='00000010', NOM_CHAM='EPSP_ELNO'),
+                   _F(NOM_RESU='SOLNL1', NOM_CHAM='EPSP_ELNO'),
               )
               );
 
