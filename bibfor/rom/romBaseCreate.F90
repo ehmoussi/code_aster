@@ -17,31 +17,48 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romModePrintInfo(ds_mode)
+subroutine romBaseCreate(base, nbMode_)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterfort/assert.h"
+#include "asterfort/rscrsd.h"
+#include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_Field), intent(in) :: ds_mode
+type(ROM_DS_Empi), intent(in) :: base
+integer, intent(in), optional :: nbMode_
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Print informations about empiric mode
+! Create result datastructure for base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_mode          : datastructure for empiric mode
+! In  base             : base
+! In  nbMode           : number of modes to create in datatructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call utmess('I', 'ROM3_4', sk = ds_mode%fieldName)
-    call utmess('I', 'ROM3_6', si = ds_mode%nbNodeWithDof)
-    call utmess('I', 'ROM3_7', si = ds_mode%nbEqua)
+    integer :: nbMode, ifm, niv
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM12_3')
+    endif
+    nbMode = 0
+    if (present(nbMode_)) then
+        nbMode = nbMode_
+    endif
+    if (nbMode .eq. 0) then
+        nbMode = 10
+    endif
+    call rscrsd('G', base%base, 'MODE_EMPI', nbMode)
 !
 end subroutine

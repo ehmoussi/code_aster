@@ -122,8 +122,6 @@ cata_msg = {
 
    57 : _("""Lecture de la base à tronquer. La base tronquée sera nouvelle."""),
 
-   58 : _("""Création de la nouvelle base tronquée."""),
-
    59 : _("""Création de la nouvelle numérotation sur le domaine complet."""),
 
 }

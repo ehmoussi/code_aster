@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_calcpod_svd(m, n, q, s, v, nb_sing, nb_line_svd)
+    subroutine dbr_calcpod_svd(m, n, q, s, v, nb_sing)
         use Rom_Datastructure_type
         integer, intent(in) :: m, n
-        real(kind=8), pointer :: q(:)
-        real(kind=8), pointer :: v(:)
-        real(kind=8), pointer :: s(:)
+        real(kind=8), pointer :: q(:), v(:), s(:)
         integer, intent(out) :: nb_sing
-        integer, intent(out) :: nb_line_svd
     end subroutine dbr_calcpod_svd
 end interface

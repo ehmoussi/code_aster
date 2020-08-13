@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ real(kind=8), pointer :: s(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_equa      = ds_empi%ds_mode%nb_equa
+    nb_equa      = ds_empi%ds_mode%nbEqua
     base_type    = ds_empi%base_type
 !
     if (base_type .eq. 'LINEIQUE') then

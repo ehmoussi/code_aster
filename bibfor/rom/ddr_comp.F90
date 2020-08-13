@@ -82,10 +82,10 @@ integer, pointer  :: v_equa(:)
 ! - Get parameters
 !        
     mode        = '&&CEIM_MODE'
-    nb_equa     = ds_empi%ds_mode%nb_equa
+    nb_equa     = ds_empi%ds_mode%nbEqua
     nb_mode     = ds_empi%nb_mode
     base        = ds_empi%base
-    field_name  = ds_empi%ds_mode%field_name
+    field_name  = ds_empi%ds_mode%fieldName
 !
 ! - Prepare working objects
 !

@@ -77,9 +77,9 @@ real(kind=8), pointer :: q(:)
     result       = ds_snap%result
     nb_snap      = ds_snap%nb_snap
     list_snap    = ds_snap%list_snap
-    nb_equa      = ds_empi%ds_mode%nb_equa
+    nb_equa      = ds_empi%ds_mode%nbEqua
     base_type    = ds_empi%base_type
-    field_name   = ds_empi%ds_mode%field_name
+    field_name   = ds_empi%ds_mode%fieldName
     ASSERT(nb_snap .gt. 0)
     ASSERT(nb_equa .gt. 0)
 !

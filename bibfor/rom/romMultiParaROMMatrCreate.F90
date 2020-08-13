@@ -75,7 +75,7 @@ character(len=19), intent(in) :: syst_matr
 !
     nb_mode        = ds_empi%nb_mode
     nb_mode_maxi   = ds_empi%nb_mode_maxi
-    nb_equa        = ds_empi%ds_mode%nb_equa
+    nb_equa        = ds_empi%ds_mode%nbEqua
     nb_matr        = ds_multipara%nb_matr
 !
     if(ds_multipara%syst_type .eq.'R') then 

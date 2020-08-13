@@ -85,12 +85,12 @@ aster_logical, optional, intent(in) :: l_chck_
 !
 ! - Save informations
 !
-    ds_field%field_name  = field_name
-    ds_field%field_refe  = field_refe
+    ds_field%fieldName   = field_name
+    ds_field%fieldRefe   = field_refe
     ds_field%mesh        = mesh
     ds_field%model       = model
-    ds_field%nb_equa     = nb_equa
-    ds_field%nb_node     = nb_node
+    ds_field%nbEqua      = nb_equa
+    ds_field%nbNodeWithDof = nb_node
     ds_field%l_lagr      = l_lagr
     ds_field%nb_cmp      = nb_cmp
 !

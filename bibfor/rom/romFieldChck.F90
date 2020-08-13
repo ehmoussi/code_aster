@@ -56,7 +56,7 @@ character(len=*), optional, intent(in) :: field_name_
     if (present(field_name_)) then
         field_name = field_name_
     else
-        field_name = ds_field%field_name
+        field_name = ds_field%fieldName
     endif
 !
 ! - List of componets authorized in field

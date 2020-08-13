@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -64,11 +64,11 @@ type(ROM_DS_Field), intent(in) :: ds_mode
 !
 ! - Set zero
 !
-    call rsexch(' ', result, ds_mode%field_name, nume_store, field_save, iret)
+    call rsexch(' ', result, ds_mode%fieldName, nume_store, field_save, iret)
     ASSERT(iret .eq. 100)
-    call copisd('CHAMP_GD', 'G', ds_mode%field_refe, field_save)
+    call copisd('CHAMP_GD', 'G', ds_mode%fieldRefe, field_save)
     call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
     v_field_save(:) = 0.d0
-    call rsnoch(result, ds_mode%field_name, nume_store)
+    call rsnoch(result, ds_mode%fieldName, nume_store)
 !
 end subroutine

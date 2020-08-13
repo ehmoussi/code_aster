@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,13 +37,27 @@ character(len=*), intent(in) :: tabl_namez
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, pointer :: v_tbnp(:) => null()
-    character(len=19) :: tabl_name
+    integer, pointer :: tbnp(:) => null()
+    integer, pointer :: flag(:) => null()
+    character(len=24), pointer :: tblp(:) => null()
+    character(len=19) :: tablName
+    integer :: nbLine, iPara, nbPara
+    character(len=24) :: lineObje, lineFlag
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    tabl_name = tabl_namez
-    call jeveuo(tabl_name(1:19)//'.TBNP', 'E', vi=v_tbnp)
-    v_tbnp(2) = 0
+    tablName = tabl_namez
+!
+    call jeveuo(tablName(1:19)//'.TBNP', 'E', vi   = tbnp)
+    call jeveuo(tablName(1:19)//'.TBLP', 'E', vk24 = tblp)
+    nbPara = tbnp(1)
+    nbLine = tbnp(2)
+    do iPara = 1, nbPara
+        lineObje = tblp(1+4*(iPara-1)+2)
+        lineFlag = tblp(1+4*(iPara-1)+3)
+        call jeveuo(lineFlag, 'E', vi = flag)
+        flag(1:nbLine) = 0
+    end do
+    tbnp(2) = 0
 !
 end subroutine

@@ -17,43 +17,42 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_base_pod(base, ds_para_pod, l_reuse, ds_empi)
+subroutine dbr_init_base_pod(resultName, paraPod, lReuse, base)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/rscrsd.h"
 #include "asterfort/dbr_rnum.h"
+#include "asterfort/infniv.h"
+#include "asterfort/romBaseCreate.h"
+#include "asterfort/romBaseGetInfoFromResult.h"
 #include "asterfort/romBaseGetInfo.h"
 #include "asterfort/romTableCreate.h"
-#include "asterfort/romBaseGetInfoFromResult.h"
+#include "asterfort/utmess.h"
 !
-character(len=8), intent(in) :: base
-type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-aster_logical, intent(in) :: l_reuse
-type(ROM_DS_Empi), intent(inout) :: ds_empi
+character(len=8), intent(in) :: resultName
+type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
+aster_logical, intent(in) :: lReuse
+type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Prepare datastructure for empiric modes - For POD methods
+! Prepare datastructure for modes - For POD methods
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  base             : name of empiric base
-! In  ds_para_pod      : datastructure for parameters (POD)
-! In  l_reuse          : .true. if reuse
-! IO  ds_empi          : datastructure for empiric modes
+! In  resultName       : name of results datastructure to save base
+! In  paraPod          : datastructure for POD parameters
+! In  lReuse           : .true. if reuse
+! IO  base             : base
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode_crea, nb_mode_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,49 +61,36 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         call utmess('I', 'ROM2_12')
     endif
 !
-! - Get informations from parameters
+! - Create base
 !
-    nb_mode_crea = 0
-    nb_mode_maxi = ds_para_pod%nb_mode_maxi
-!
-! - Create empiric base
-!
-    if (.not.l_reuse) then
-        if (nb_mode_maxi .eq. 0) then
-            nb_mode_crea = 10
-        else
-            nb_mode_crea = nb_mode_maxi
-        endif
-        if (niv .ge. 2) then
-            call utmess('I', 'ROM7_11', si = nb_mode_crea)
-        endif
-        call rscrsd('G', base, 'MODE_EMPI', nb_mode_crea)
+    if (.not. lReuse) then
+        base%base = resultName
+        call romBaseCreate(base, paraPod%nb_mode_maxi)     
     endif
 !
 ! - Create table for the reduced coordinates in results datastructure
 !
-    call romTableCreate(base, ds_empi%tabl_coor)
+    call romTableCreate(resultName, base%tabl_coor)
 !
-! - Get informations about empiric modes base
+! - Get informations about base
 !
-    if (l_reuse) then
-        call romBaseGetInfo(base, ds_empi)
+    if (lReuse) then
+        call romBaseGetInfo(resultName, base)
     else
-        call romBaseGetInfoFromResult(ds_para_pod%ds_result_in, base, ds_empi)
-        ds_empi%base_type = ds_para_pod%base_type
-        ds_empi%axe_line  = ds_para_pod%axe_line
-        ds_empi%surf_num  = ds_para_pod%surf_num
-        ds_empi%nb_mode   = 0
-        ds_empi%nb_snap   = 0
+        call romBaseGetInfoFromResult(paraPod%ds_result_in, resultName, base)
+        base%base_type = paraPod%base_type
+        base%axe_line  = paraPod%axe_line
+        base%surf_num  = paraPod%surf_num
+        base%nb_mode   = 0
+        base%nb_snap   = 0
     endif
-!
 ! - Create numbering of nodes for the lineic model
 !
-    if (ds_empi%base_type .eq. 'LINEIQUE') then
+    if (base%base_type .eq. 'LINEIQUE') then
         if (niv .ge. 2) then
             call utmess('I', 'ROM2_40')
         endif
-        call dbr_rnum(ds_empi)
+        call dbr_rnum(base)
     endif
 !
 end subroutine

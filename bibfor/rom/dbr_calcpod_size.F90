@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ integer, intent(out) :: m, n
     nb_snap      = ds_snap%nb_snap
     base_type    = ds_empi%base_type
     nb_slice     = ds_empi%ds_lineic%nb_slice
-    nb_equa      = ds_empi%ds_mode%nb_equa
+    nb_equa      = ds_empi%ds_mode%nbEqua
 !
 ! - Prepare parameters for LAPACK
 !

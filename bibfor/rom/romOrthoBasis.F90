@@ -72,7 +72,7 @@ character(len=19), intent(in) :: new_basis
     nb_mode    = ds_empi%nb_mode
     field_iden = 'DEPL'
     base       = ds_empi%base
-    nb_equa    = ds_empi%ds_mode%nb_equa
+    nb_equa    = ds_empi%ds_mode%nbEqua
 !
 ! - Orthogonalization the basis
 !

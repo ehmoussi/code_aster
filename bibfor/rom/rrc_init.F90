@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -72,10 +72,10 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     l_prev_dual  = ds_para%l_prev_dual
     result_rom   = ds_para%result_rom
     mesh         = ds_para%ds_empi_prim%ds_mode%mesh
-    nb_equa_prim = ds_para%ds_empi_prim%ds_mode%nb_equa
-    mode_prim    = ds_para%ds_empi_prim%ds_mode%field_refe
-    nb_equa_dual = ds_para%ds_empi_dual%ds_mode%nb_equa
-    mode_dual    = ds_para%ds_empi_dual%ds_mode%field_refe
+    nb_equa_prim = ds_para%ds_empi_prim%ds_mode%nbEqua
+    mode_prim    = ds_para%ds_empi_prim%ds_mode%fieldRefe
+    nb_equa_dual = ds_para%ds_empi_dual%ds_mode%nbEqua
+    mode_dual    = ds_para%ds_empi_dual%ds_mode%fieldRefe
 !
 ! - Get table for reduced coordinates
 !
@@ -93,7 +93,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! - Type of result
 !
-    field_name = ds_para%ds_empi_prim%ds_mode%field_name
+    field_name = ds_para%ds_empi_prim%ds_mode%fieldName
     if (field_name .eq. 'DEPL') then
         ds_para%type_resu = 'EVOL_NOLI'
     elseif (field_name .eq. 'TEMP') then
@@ -124,7 +124,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 ! - Initializations for dual base
 !
     if (l_prev_dual) then
-        field_name = ds_para%ds_empi_dual%ds_mode%field_name
+        field_name = ds_para%ds_empi_dual%ds_mode%fieldName
         call rrc_init_dual(mesh        , result_rom , field_name,&
                            nb_equa_dual, mode_dual  , ds_para%grnode_int,&
                            ds_para%v_equa_ridd, ds_para%nb_equa_ridd,&

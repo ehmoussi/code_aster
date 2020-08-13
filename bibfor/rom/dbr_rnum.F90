@@ -82,8 +82,8 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     axe_line  = ds_empi%axe_line
     surf_num  = ds_empi%surf_num
     ds_line   = ds_empi%ds_lineic
-    nb_node   = ds_empi%ds_mode%nb_node
-    nb_equa   = ds_empi%ds_mode%nb_equa
+    nb_node   = ds_empi%ds_mode%nbNodeWithDof
+    nb_equa   = ds_empi%ds_mode%nbEqua
     tole_node = ds_line%tole_node
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_6', sr = tole_node)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_sing, nb_mode, nb_snap_redu, nb_line_svd, i_snap, nb_mode_maxi, m, n
+    integer :: nb_sing, nb_mode, nb_snap_redu, i_snap, nb_mode_maxi, m, n
     real(kind=8), pointer :: q(:) => null()
     real(kind=8), pointer :: v(:) => null()
     real(kind=8), pointer :: s(:) => null() 
@@ -66,7 +66,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     tabl_coor    = ds_empi%tabl_coor
     nb_snap_redu = ds_para_pod%ds_snap%nb_snap
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
-    nb_line_svd  = 0
 !
 ! - Get size of snapshots matrix
 !
@@ -79,7 +78,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Compute empiric modes by SVD
 !
-    call dbr_calcpod_svd(m, n, q, s, v, nb_sing, nb_line_svd)
+    call dbr_calcpod_svd(m, n, q, s, v, nb_sing)
 !
 ! - Select empiric modes
 !
@@ -91,7 +90,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Compute reduced coordinates
 !
-    call dbr_calcpod_redu(nb_snap_redu, nb_line_svd, q, v, nb_mode, v_gamma)
+    call dbr_calcpod_redu(nb_snap_redu, m, q, v, nb_mode, v_gamma)
 !
 ! - Save the reduced coordinates in a table
 !

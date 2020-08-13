@@ -78,7 +78,7 @@ integer, pointer, optional :: v_list_node_(:)
 ! - Get parameters
 !
     mesh       = ds_mode%mesh
-    field_name = ds_mode%field_name
+    field_name = ds_mode%fieldName
 !
 ! - Access to list of nodes
 !

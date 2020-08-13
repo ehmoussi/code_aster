@@ -94,7 +94,7 @@ aster_logical, intent(in), optional :: l_line_search_
 !
 ! - Check field in base
 !
-    field_name = ds_empi%ds_mode%field_name
+    field_name = ds_empi%ds_mode%fieldName
     if (phenom .eq. 'THER') then
         if (field_name .ne. 'TEMP') then
             call utmess('F', 'ROM5_32')

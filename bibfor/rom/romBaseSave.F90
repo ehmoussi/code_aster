@@ -86,9 +86,9 @@ integer, optional, pointer      :: v_nume_slice_(:)
 ! - Get parameters
 !
     base         = ds_empi%base
-    nb_equa      = ds_empi%ds_mode%nb_equa
-    field_name   = ds_empi%ds_mode%field_name
-    field_refe   = ds_empi%ds_mode%field_refe
+    nb_equa      = ds_empi%ds_mode%nbEqua
+    field_name   = ds_empi%ds_mode%fieldName
+    field_refe   = ds_empi%ds_mode%fieldRefe
     model        = ds_empi%ds_mode%model
 !
 ! - Save modes

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Get parameters
 !
     nb_mode     = ds_para_tr%ds_empi_init%nb_mode
-    nb_equa_dom = ds_para_tr%ds_empi_init%ds_mode%nb_equa
+    nb_equa_dom = ds_para_tr%ds_empi_init%ds_mode%nbEqua
     nb_equa_rom = ds_para_tr%nb_equa_rom
     model_rom   = ds_para_tr%model_rom
 !

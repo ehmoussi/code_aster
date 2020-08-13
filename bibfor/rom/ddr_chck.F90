@@ -103,12 +103,12 @@ type(ROM_DS_ParaDDR), intent(in) :: ds_para
 !
 ! - Check fields for empiric modes
 !
-    if (empi_prim%ds_mode%field_name .eq. 'TEMP') then
-        if (empi_dual%ds_mode%field_name .ne. 'FLUX_NOEU') then
+    if (empi_prim%ds_mode%fieldName .eq. 'TEMP') then
+        if (empi_dual%ds_mode%fieldName .ne. 'FLUX_NOEU') then
             call utmess('F', 'ROM4_17', sk = 'FLUX_NOEU')
         endif
-    elseif (empi_prim%ds_mode%field_name .eq. 'DEPL') then
-        if (empi_dual%ds_mode%field_name .ne. 'SIEF_NOEU') then
+    elseif (empi_prim%ds_mode%fieldName .eq. 'DEPL') then
+        if (empi_dual%ds_mode%fieldName .ne. 'SIEF_NOEU') then
             call utmess('F', 'ROM4_17', sk = 'SIEF_NOEU')
         endif
     else
