@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,37 +17,37 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_base_tr(base, ds_para_tr, l_reuse, ds_empi)
+subroutine dbr_init_base_tr(resultName, paraTrunc, lReuse, base)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/romBaseGetInfo.h"
-#include "asterfort/rscrsd.h"
-#include "asterfort/romBaseDSCopy.h"
 #include "asterfort/dbr_init_prof_tr.h"
+#include "asterfort/infniv.h"
+#include "asterfort/romBaseCreate.h"
+#include "asterfort/romBaseDSCopy.h"
+#include "asterfort/romBaseGetInfo.h"
+#include "asterfort/utmess.h"
 !
-character(len=8), intent(in) :: base
-type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
-aster_logical, intent(in) :: l_reuse
-type(ROM_DS_Empi), intent(inout) :: ds_empi
+character(len=8), intent(in) :: resultName
+type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
+aster_logical, intent(in) :: lReuse
+type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Prepare datastructure for empiric modes - For POD methods
+! Prepare datastructure for modes - Truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  base             : name of empiric base
-! IO  ds_para_tr       : datastructure for truncation parameters
-! In  l_reuse          : .true. if reuse
-! IO  ds_empi          : datastructure for empiric modes
+! In  resultName       : name of results datastructure to save base
+! IO  paraTrunc        : datastructure for truncation parameters
+! In  lReuse           : .true. if reuse
+! IO  base             : base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,18 +60,18 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         call utmess('I', 'ROM2_39')
     endif
 !
-! - Get informations about empiric base to truncate
+! - Get informations about base to truncate
 !
-    if (l_reuse) then
+    if (lReuse) then
         if (niv .ge. 2) then
             call utmess('I', 'ROM2_56')
         endif
-        call romBaseGetInfo(base, ds_empi)
+        call romBaseGetInfo(resultName, base)
     else
         if (niv .ge. 2) then
             call utmess('I', 'ROM2_57')
         endif
-        call romBaseGetInfo(ds_para_tr%base_init, ds_para_tr%ds_empi_init)
+        call romBaseGetInfo(paraTrunc%base_init, paraTrunc%ds_empi_init)
     endif
 !
 ! - Create PROF_CHNO for truncation
@@ -79,22 +79,19 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_55')
     endif
-    call dbr_init_prof_tr(base, ds_para_tr)
+    call dbr_init_prof_tr(resultName, paraTrunc)
 !
-! - Create empiric base (if necessary)
+! - Create base (if necessary)
 !
-    if (.not. l_reuse) then
-        if (niv .ge. 2) then
-            call utmess('I', 'ROM2_58')
-        endif
-        call rscrsd('G', base, 'MODE_EMPI', ds_para_tr%ds_empi_init%nb_mode)
-        call romBaseDSCopy(ds_para_tr%ds_empi_init, base, ds_empi)
+    if (.not. lReuse) then
+        call romBaseDSCopy(paraTrunc%ds_empi_init, resultName, base)
+        call romBaseCreate(base, paraTrunc%ds_empi_init%nb_mode)
     endif
 !
 ! - If reuse: check that name is the name between output result end keyword BASE
 !
-    if (l_reuse) then
-        if (ds_para_tr%base_init .ne. base) then
+    if (lReuse) then
+        if (paraTrunc%base_init .ne. resultName) then
             call utmess('F', 'ROM6_40')
         endif
     endif

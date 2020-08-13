@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dbr_calcpod_svd2(p, incr_end, g, s, b, nb_sing)
+    subroutine romBaseCreate(base, nbMode_)
         use Rom_Datastructure_type
-        integer, intent(in) :: p
-        integer, intent(in) :: incr_end
-        real(kind=8), pointer :: g(:)
-        real(kind=8), pointer :: b(:)
-        real(kind=8), pointer :: s(:)
-        integer, intent(out) :: nb_sing
-    end subroutine dbr_calcpod_svd2
+        type(ROM_DS_Empi), intent(in) :: base
+        integer, intent(in), optional :: nbMode_
+    end subroutine romBaseCreate
 end interface

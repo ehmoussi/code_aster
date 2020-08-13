@@ -62,7 +62,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     character(len=1) :: mode_type
     real(kind=8), pointer :: v(:) => null()
     real(kind=8), pointer :: s(:) => null()
-    integer :: nb_sing, nb_line_svd
+    integer :: nb_sing
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -100,7 +100,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Compute empiric modes by SVD
 !
-    call dbr_calcpod_svd(nb_mode, nbEqua, v_matr_phi, s, v, nb_sing, nb_line_svd)
+    call dbr_calcpod_svd(nb_mode, nbEqua, v_matr_phi, s, v, nb_sing)
 !
 ! - Save new base
 !

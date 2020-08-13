@@ -17,43 +17,39 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_pod_incr(l_reuse, ds_empi, ds_para_pod,&
-                        q, s, v, nb_mode, nb_snap_redu)
+subroutine dbr_pod_incr(lReuse, base, paraPod,&
+                        q, s, v, nbMode, nbSnap)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
+#include "asterc/r8prem.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
-#include "asterfort/norm_frobenius.h"
-#include "asterfort/dbr_calcpod_svd2.h"
+#include "asterfort/assert.h"
 #include "asterfort/dbr_calcpod_sele.h"
-#include "asterfort/romTableSave.h"
-#include "asterfort/romTableCreate.h"
-#include "asterfort/romBaseGetInfo.h"
-#include "asterfort/ltnotb.h"
-#include "asterfort/tbexve.h"
+#include "asterfort/dbr_calcpod_svd.h"
+#include "asterfort/detrsd.h"
+#include "asterfort/infniv.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/tbSuppressAllLines.h"
+#include "asterfort/norm_frobenius.h"
+#include "asterfort/romTableSave.h"
+#include "asterfort/romBaseCreate.h"
 #include "asterfort/rsexch.h"
+#include "asterfort/tbexve.h"
+#include "asterfort/tbSuppressAllLines.h"
+#include "asterfort/utmess.h"
 #include "blas/dgemm.h"
-#include "blas/dgesv.h"
 #include "blas/dgesvd.h"
-#include "asterc/r8prem.h"
+#include "blas/dgesv.h"
 !
-aster_logical, intent(in) :: l_reuse
-type(ROM_DS_Empi), intent(inout) :: ds_empi
-type(ROM_DS_ParaDBR_POD) , intent(in) :: ds_para_pod
-real(kind=8), pointer :: q(:)
-real(kind=8), pointer :: s(:)
-real(kind=8), pointer :: v(:)
-integer, intent(out) :: nb_mode
-integer, intent(out) :: nb_snap_redu
+aster_logical, intent(in) :: lReuse
+type(ROM_DS_Empi), intent(inout) :: base
+type(ROM_DS_ParaDBR_POD) , intent(in) :: paraPod
+real(kind=8), pointer :: q(:), s(:), v(:)
+integer, intent(out) :: nbMode, nbSnap
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,22 +59,23 @@ integer, intent(out) :: nb_snap_redu
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  l_reuse          : .true. if reuse
-! IO  ds_empi          : datastructure for empiric modes
-! In  ds_para_pod      : datastructure for parameters (POD)
-! IO  q                : pointer to snapshots matrix (be modified after SVD)
-! Out s                : singular values
-! Out v                : singular vectors
-! Out nb_mode          : number of modes selected
-! Out nb_snap_redu     : number of snapshots used in incremental algorithm
+! In  lReuse           : .true. if reuse
+! IO  base             : base
+! In  paraPod          : datastructure for parameters (POD)
+! Ptr q                : pointer to snapshots matrix (be modified after SVD)
+! Ptr s                : pointer to singular values
+! Ptr v                : pointer to singular vectors
+! Out nbMode           : number of modes selected
+! Out nbSnap           : number of snapshots used in incremental algorithm
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: incr_ini, incr_end, i_equa, i_snap, p, i_incr, k, i_mode
-    integer :: nbEqua, nb_snap, nb_sing, nb_mode_maxi
+    integer :: iAlgoIni, iAlgoEnd, iEqua, iSnap, iAlgoSnap, iAlgo, k, iMode, iCoorRedu
+    integer :: nbEqua, nbSing, nbModeMaxi, nbSnapResult
+    integer :: nbSnapPrev, nbModePrev
     real(kind=8) :: tole_incr, tole_svd
-    character(len=8)  :: base_type, base
+    character(len=8) :: baseName
     real(kind=8) :: norm_q, norm_r
     integer(kind=4) :: info
     real(kind=8), pointer :: qi(:)   => null()
@@ -96,8 +93,8 @@ integer, intent(out) :: nb_snap_redu
     character(len=19) :: tabl_user, tabl_coor
     character(len=24) :: typval
     integer :: nbval, iret
-    real(kind=8), pointer :: v_gm(:) => null()
-    character(len=24) :: mode
+    real(kind=8), pointer :: coorReduPrev(:) => null()
+    character(len=24) :: mode, fieldName
     real(kind=8), pointer :: v_mode(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -107,141 +104,186 @@ integer, intent(out) :: nb_snap_redu
 ! - Get parameters
 !
     mode         = '&&IPOD_MODE'
-    nbEqua       = ds_empi%ds_mode%nbEqua
-    nb_mode_maxi = ds_para_pod%nb_mode_maxi
-    base         = ds_empi%base
-    tabl_coor    = ds_empi%tabl_coor
-    base_type    = ds_para_pod%base_type
-    nb_snap      = ds_para_pod%ds_snap%nb_snap
-    tole_incr    = ds_para_pod%tole_incr
-    tole_svd     = ds_para_pod%tole_svd
-    tabl_user    = ds_para_pod%tabl_user
-    l_tabl_user  = ds_para_pod%l_tabl_user
-    ASSERT(base_type .eq. '3D')
+    nbEqua       = base%ds_mode%nbEqua
+    nbModeMaxi   = paraPod%nb_mode_maxi
+    nbSnapResult = paraPod%ds_snap%nb_snap
+    tole_incr    = paraPod%tole_incr
+    tole_svd     = paraPod%tole_svd
+    tabl_user    = paraPod%tabl_user
+    l_tabl_user  = paraPod%l_tabl_user
+    ASSERT(paraPod%base_type .eq. '3D')
+!
+! - Properties of previous base
+!
+    baseName     = base%base
+    nbModePrev   = base%nb_mode
+    nbSnapPrev   = base%nb_snap
+    tabl_coor    = base%tabl_coor
+    fieldName    = base%ds_mode%fieldName
 !
 ! - Allocate objects
 !
     AS_ALLOCATE(vr = qi, size = nbEqua)
     AS_ALLOCATE(vr = ri, size = nbEqua)
     AS_ALLOCATE(vr = rt, size = nbEqua)
-    if (l_reuse) then
+    if (.not. lReuse) then
+        ASSERT(nbModePrev .eq. 0)
+        ASSERT(nbSnapPrev .eq. 0)
+    endif
+    AS_ALLOCATE(vr = vt, size = nbEqua * (nbSnapResult + nbModePrev))
+    AS_ALLOCATE(vr = gt, size = (nbSnapResult + nbModePrev) * (nbSnapResult + nbSnapPrev))
+    AS_ALLOCATE(vr = g , size = (nbSnapResult + nbModePrev) * (nbSnapResult + nbSnapPrev))
+!
+! - Get previous reduced coordinates
+!
+    if (lReuse) then
         if (l_tabl_user) then
             call tbexve(tabl_user, 'COOR_REDUIT', '&&COORHR', 'V', nbval, typval)
         else
             call tbexve(tabl_coor, 'COOR_REDUIT', '&&COORHR', 'V', nbval, typval)
         endif
-        call jeveuo('&&COORHR', 'E', vr = v_gm)
+        call jeveuo('&&COORHR', 'E', vr = coorReduPrev)
         call tbSuppressAllLines(tabl_coor)
-        AS_ALLOCATE(vr = vt, size = nbEqua*(nb_snap+ds_empi%nb_mode))
-        AS_ALLOCATE(vr = gt, size = (nb_snap+ds_empi%nb_mode)*(nb_snap+ds_empi%nb_snap))
-        AS_ALLOCATE(vr = g , size = (nb_snap+ds_empi%nb_mode)*(nb_snap+ds_empi%nb_snap))
-    else
-        AS_ALLOCATE(vr = vt, size = nbEqua*nb_snap)
-        AS_ALLOCATE(vr = gt, size = nb_snap*nb_snap)
-        AS_ALLOCATE(vr = g , size = nb_snap*nb_snap)
     endif
 !
 ! - Initialize algorithm
 !
-    if (l_reuse) then
-        do i_mode = 1, ds_empi%nb_mode
-            call rsexch(' ', ds_empi%base, ds_empi%ds_mode%fieldName, i_mode, mode, iret)
-            call jeveuo(mode(1:19)//'.VALE', 'E', vr = v_mode)
-            do i_equa = 1, nbEqua
-                vt(i_equa+nbEqua*(i_mode-1)) = v_mode(i_equa)
+    if (lReuse) then
+! ----- Add previous modes in v
+        do iMode = 1, nbModePrev
+            call rsexch(' ', baseName, fieldName, iMode, mode, iret)
+            call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
+            do iEqua = 1, nbEqua
+                vt(iEqua+nbEqua*(iMode-1)) = v_mode(iEqua)
             end do
         enddo
-        do i_equa = 1, ds_empi%nb_mode*ds_empi%nb_snap
-            gt(i_equa) = v_gm(i_equa)
+! ----- Add previous reduced coordinates in gT
+        do iCoorRedu = 1, nbModePrev  * nbSnapPrev
+            gt(iCoorRedu) = coorReduPrev(iCoorRedu)
         enddo
     else
+! ----- Add first snap in v
         qi(1:nbEqua) = q(1:nbEqua)
         call norm_frobenius(nbEqua, qi, norm_q)
         if (norm_q .le. r8prem()) then
             norm_q = 1.d-16*sqrt(nbEqua*1.d0)
-            vt(1:nbEqua) = 1.d0/sqrt(nbEqua*1.d0)
-        else
-            vt(1:nbEqua) = qi(1:nbEqua)/norm_q
         endif
         vt(1:nbEqua) = qi(1:nbEqua)/norm_q
-        gt(1)         = norm_q
+! ----- Add norm of first snap in gT
+        gt(1)        = norm_q
     endif
 !
-    if (l_reuse) then
-        p        = ds_empi%nb_mode
-        incr_ini = ds_empi%nb_snap+1
-        incr_end = nb_snap+ds_empi%nb_snap
+! - Suppress previous result datastructure
+!
+    if (lReuse) then
+        call detrsd('RESULTAT', baseName)
+        call romBaseCreate(base, nbModePrev)
+    endif
+!
+! - Set bounds of algorithm
+!
+    if (lReuse) then
+        iAlgoSnap = nbModePrev
+        iAlgoIni  = nbSnapPrev + 1
+        iAlgoEnd  = nbSnapResult + nbSnapPrev
     else
-        p        = 1
-        incr_ini = 2
-        incr_end = nb_snap
+        iAlgoSnap = 1
+        iAlgoIni  = 2
+        iAlgoEnd  = nbSnapResult
     endif
 !
 ! - Main algorithm
 !
-    do i_incr = incr_ini, incr_end
-! ----- Get current snapshot for matrix of snapshots
-        if (l_reuse) then
-            do i_equa = 1, nbEqua
-                qi(i_equa) = q(i_equa+nbEqua*(i_incr-ds_empi%nb_snap-1))
+    do iAlgo = iAlgoIni, iAlgoEnd
+! ----- Get current snapshot
+        if (lReuse) then
+            do iEqua = 1, nbEqua
+                qi(iEqua) = q(iEqua+nbEqua*(iAlgo-nbSnapPrev-1))
             enddo
         else
-            do i_equa = 1, nbEqua
-                qi(i_equa) = q(i_equa+nbEqua*(i_incr-1))
+            do iEqua = 1, nbEqua
+                qi(iEqua) = q(iEqua+nbEqua*(iAlgo-1))
             enddo
         endif
+
 ! ----- Compute norm of current snapshot
         call norm_frobenius(nbEqua, qi, norm_q)
         if (norm_q .le. r8prem()) then
             cycle
         endif
-! ----- Compute kt = v^T q (projection of current snaphot on empiric base)
-        AS_ALLOCATE(vr  = kt  , size = p)
-        call dgemm('T', 'N', p, 1, nbEqua, 1.d0,&
+
+! ----- Compute {kt} = [v]^T {q} (projection of current snaphot on empiric base)
+        AS_ALLOCATE(vr  = kt  , size = iAlgoSnap)
+        call dgemm('T', 'N', iAlgoSnap, 1, nbEqua, 1.d0,&
                    vt, nbEqua,&
                    qi, nbEqua,&
-                   0.d0, kt, p)
-! ----- Compute kv = v^T v
-        AS_ALLOCATE(vr  = kv  , size = p*p)
-        call dgemm('T', 'N', p, p, nbEqua, 1.d0,&
+                   0.d0, kt, iAlgoSnap)
+
+! ----- Compute [kv] = [v]^T [v]
+        AS_ALLOCATE(vr  = kv  , size = iAlgoSnap*iAlgoSnap)
+        call dgemm('T', 'N', iAlgoSnap, iAlgoSnap, nbEqua, 1.d0,&
                    vt, nbEqua,&
                    vt, nbEqua,&
-                   0.d0, kv, p)
-! ----- Make SVD on kv x singu = kt
-        AS_ALLOCATE(vi4 = IPIV, size = p)
-        call dgesv(p, 1, kv, p, IPIV, kt, p, info)
-! ----- Compute residu r = v kt
-        call dgemm('N', 'N', nbEqua, 1, p, 1.d0,&
+                   0.d0, kv, iAlgoSnap)
+
+! ----- Solve [v]^T [v] {Y} = [v]^T {q} => {Y} are reduced coordinates
+        AS_ALLOCATE(vi4 = IPIV, size = iAlgoSnap)
+        call dgesv(iAlgoSnap, 1, kv, iAlgoSnap, IPIV, kt, iAlgoSnap, info)
+
+! ----- Compute residu {r} = [v] {Y}
+        call dgemm('N', 'N', nbEqua, 1, iAlgoSnap, 1.d0,&
                    vt, nbEqua,&
-                   kt, p,&
+                   kt, iAlgoSnap,&
                    0.d0, rt, nbEqua)
         ri = qi - rt
+
 ! ----- Compute norm of residu
         call norm_frobenius(nbEqua, ri, norm_r)
+
 ! ----- Select vector or not ?
         if (norm_r/norm_q .ge. tole_incr) then
-            do i_equa = 1, nbEqua
-                vt(i_equa+nbEqua*p) = ri(i_equa)/norm_r
+! --------- Add mode (residu !) at current iAlgoSnap iteration
+            do iEqua = 1, nbEqua
+                vt(iEqua + nbEqua*iAlgoSnap) = ri(iEqua)/norm_r
             enddo
-            do i_snap = 1, p
-                g(i_snap+(p+1)*(i_incr-1)) = kt(i_snap)
-                do k = 1, i_incr-1
-                    g(i_snap+(p+1)*(k-1))= gt(i_snap+p*(k-1))
+
+! --------- Add singular value
+! --------- G matrice rectangulaire en quatre morceaux.
+! --------- Partie du bas: iAlgoSnap+1
+! --------- Partie du haut: 1 => iAlgoSnap
+! --------- Partie gauche: 1 => iAlgo -1
+! --------- Partie droit: iAlgo
+
+! --------- Valeurs haut-gauche
+            do iSnap = 1, iAlgoSnap
+                g(iSnap+(iAlgoSnap+1)*(iAlgo-1)) = kt(iSnap)
+                do k = 1, iAlgo - 1
+                    g(iSnap+(iAlgoSnap+1)*(k-1))= gt(iSnap+iAlgoSnap*(k-1))
                 enddo
             enddo
-            do k = 1, i_incr-1
-                g((p+1)*k)= 0.d0
+
+! --------- Valeurs bas-gauche
+            do k = 1, iAlgo - 1
+                g((iAlgoSnap+1)*k)= 0.d0
             enddo
-            p = p +1
-            g(p*i_incr)=norm_r
-            do k = 1, p*i_incr
+
+! --------- Valeur bas-droite
+            g((iAlgoSnap + 1)*iAlgo) = norm_r
+
+! --------- Valeurs haut-droite
+            do k = 1, (iAlgoSnap + 1)*iAlgo
                 gt(k) = g(k)
             enddo
+
+! --------- Next snap
+            iAlgoSnap = iAlgoSnap + 1
+
         else
-            do i_snap = 1, p
-                gt(i_snap+p*(i_incr-1)) = kt(i_snap)
+            do iSnap = 1, iAlgoSnap
+                gt(iSnap+iAlgoSnap*(iAlgo-1)) = kt(iSnap)
             enddo
         endif
+
         AS_DEALLOCATE(vr = kt)
         AS_DEALLOCATE(vr = kv)
         AS_DEALLOCATE(vi4 = IPIV)
@@ -253,50 +295,53 @@ integer, intent(out) :: nb_snap_redu
     AS_DEALLOCATE(vr = ri)
     AS_DEALLOCATE(vr = rt)
 !
-! - Prepare matrix
+! - Final number of snapshots in base
 !
-    do i_equa = 1, p*incr_end
-        g(i_equa) = gt(i_equa)
+    nbSnap = iAlgoEnd
+!
+! - Prepare matrix of reduced coordinates
+!
+    do iSnap = 1, iAlgoSnap * nbSnap
+        g(iSnap) = gt(iSnap)
     end do
 !
-! - Compute SVD: Q = V S Wt
+! - Compute SVD on matrix of reduced coordinates: Q = V S Wt
 !
-    call dbr_calcpod_svd2(p, incr_end, g, s, b, nb_sing)
+    call dbr_calcpod_svd(iAlgoSnap, nbSnap, g, s, b, nbSing)
 !
 ! - Select empiric modes
 !
-    call dbr_calcpod_sele(nb_mode_maxi, tole_svd, s, nb_sing, nb_mode)
+    call dbr_calcpod_sele(nbModeMaxi, tole_svd, s, nbSing, nbMode)
 !
-! - Compute matrix V
+! - Compute matrix of singular vector: V <= V * B (dim : [nbMode x nbEqua] )
 !
-    AS_ALLOCATE(vr = v, size = nbEqua*nb_mode)
-    call dgemm('N', 'N', nbEqua, nb_mode, p, 1.d0,&
+    AS_ALLOCATE(vr = v, size = nbEqua*nbMode)
+    call dgemm('N', 'N', nbEqua, nbMode, iAlgoSnap, 1.d0,&
                vt, nbEqua,&
-               b, p,&
+               b, iAlgoSnap,&
                0.d0, v, nbEqua)
 !
-! - Compute reduced coordinates
+! - Compute reduced coordinates G <= B^T G (dim : [nbMode x nbSnap] )
 !
-    AS_ALLOCATE(vr = v_gamma, size = nb_mode*incr_end)
-    call dgemm('T', 'N', nb_mode, incr_end, p, 1.d0,&
-               b, p,&
-               gt, p,&
-               0.d0, v_gamma, nb_mode)
+    AS_ALLOCATE(vr = v_gamma, size = nbMode*nbSnap) 
+    call dgemm('T', 'N', nbMode, nbSnap, iAlgoSnap, 1.d0,&
+               b, iAlgoSnap,&
+               gt, iAlgoSnap,&
+               0.d0, v_gamma, nbMode)
 !
 ! - Save the reduced coordinates in a table
 !
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_39', ni = 2, vali = [incr_end, nb_mode])
+        call utmess('I', 'ROM5_39', ni = 2, vali = [nbSnap, nbMode])
     endif
-    do i_snap = 1, incr_end
-        call romTableSave(tabl_coor, nb_mode, v_gamma   ,&
-                          nume_snap_ = i_snap)
+    do iSnap = 1, nbSnap
+        call romTableSave(tabl_coor, nbMode, v_gamma,&
+                          nume_snap_ = iSnap)
     end do
 !
-! - Number of snapshots in empiric base
+! - Debug print
 !
-    nb_snap_redu = incr_end
-    call utmess('I', 'ROM7_14', si = nb_snap_redu)
+    call utmess('I', 'ROM7_14', si = nbSnap)
 !
 ! - Clean
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     real(kind=8), pointer :: q(:) => null()
     real(kind=8), pointer :: v(:) => null()
     real(kind=8), pointer :: s(:) => null()
-    integer :: nb_mode, nb_snap_redu, m, n
+    integer :: nbMode, nbSnap, m, n
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,11 +74,11 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Incremental POD method
 !
     call dbr_pod_incr(l_reuse, ds_empi, ds_para_pod,&
-                      q, s, v, nb_mode, nb_snap_redu)
+                      q, s, v, nbMode, nbSnap)
 !
 ! - Save empiric base
 !
-    call dbr_calcpod_save(ds_empi, nb_mode, nb_snap_redu, field_iden, s, v)
+    call dbr_calcpod_save(ds_empi, nbMode, nbSnap, field_iden, s, v)
 !
 ! - Cleaning
 !

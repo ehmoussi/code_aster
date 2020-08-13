@@ -15,49 +15,50 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine tbSuppressAllLines(tabl_namez)
+subroutine romBaseCreate(base, nbMode_)
+!
+use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/jeveuo.h"
-#include "asterfort/jedetr.h"
+#include "asterfort/assert.h"
+#include "asterfort/rscrsd.h"
+#include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
 !
-character(len=*), intent(in) :: tabl_namez
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Table
-!
-! Suppress all lines in table
+type(ROM_DS_Empi), intent(in) :: base
+integer, intent(in), optional :: nbMode_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  tabl_name        : name of table
+! Model reduction
+!
+! Create result datastructure for base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, pointer :: tbnp(:) => null()
-    integer, pointer :: flag(:) => null()
-    character(len=24), pointer :: tblp(:) => null()
-    character(len=19) :: tablName
-    integer :: nbLine, iPara, nbPara
-    character(len=24) :: lineObje, lineFlag
+! In  base             : base
+! In  nbMode           : number of modes to create in datatructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    tablName = tabl_namez
+    integer :: nbMode, ifm, niv
 !
-    call jeveuo(tablName(1:19)//'.TBNP', 'E', vi   = tbnp)
-    call jeveuo(tablName(1:19)//'.TBLP', 'E', vk24 = tblp)
-    nbPara = tbnp(1)
-    nbLine = tbnp(2)
-    do iPara = 1, nbPara
-        lineObje = tblp(1+4*(iPara-1)+2)
-        lineFlag = tblp(1+4*(iPara-1)+3)
-        call jeveuo(lineFlag, 'E', vi = flag)
-        flag(1:nbLine) = 0
-    end do
-    tbnp(2) = 0
+! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM12_3')
+    endif
+    nbMode = 0
+    if (present(nbMode_)) then
+        nbMode = nbMode_
+    endif
+    if (nbMode .eq. 0) then
+        nbMode = 10
+    endif
+    call rscrsd('G', base%base, 'MODE_EMPI', nbMode)
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_base_ortho(base, ds_para_ortho, l_reuse, ds_empi)
+subroutine dbr_init_base_ortho(resultName, paraOrtho, lReuse, base)
 !
 use Rom_Datastructure_type
 !
@@ -25,28 +25,28 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/romBaseGetInfo.h"
-#include "asterfort/rscrsd.h"
+#include "asterfort/romBaseCreate.h"
 #include "asterfort/romBaseDSCopy.h"
+#include "asterfort/romBaseGetInfo.h"
+#include "asterfort/utmess.h"
 !
-character(len=8), intent(in) :: base
-type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: ds_para_ortho
-aster_logical, intent(in) :: l_reuse
-type(ROM_DS_Empi), intent(inout) :: ds_empi
+character(len=8), intent(in) :: resultName
+type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: paraOrtho
+aster_logical, intent(in) :: lReuse
+type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Prepare datastructure for empiric modes - For Orthogonalization
+! Prepare datastructure for modes - For Orthogonalization
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  base             : name of empiric base
-! IO  ds_para_ortho    : datastructure for orthogonalization parameters
-! In  l_reuse          : .true. if reuse
-! IO  ds_empi          : datastructure for empiric modes
+! In  resultName       : name of results datastructure to save base
+! In  paraOrtho        : datastructure for rrthogonalization parameters
+! In  lReuse           : .true. if reuse
+! IO  base             : base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,34 +59,31 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         call utmess('I', 'ROM2_60')
     endif
 !
-! - Get informations about empiric base to orthogonalize
+! - Get informations about base to orthogonalize
 !
-    if (l_reuse) then
+    if (lReuse) then
         if (niv .ge. 2) then
             call utmess('I', 'ROM2_61')
         endif
-        call romBaseGetInfo(base, ds_empi)
+        call romBaseGetInfo(resultName, base)
     else
         if (niv .ge. 2) then
             call utmess('I', 'ROM2_62')
         endif
-        call romBaseGetInfo(ds_para_ortho%base_init, ds_para_ortho%ds_empi_init)
+        call romBaseGetInfo(paraOrtho%base_init, paraOrtho%ds_empi_init)
     endif
 !
-! - Create empiric base (if necessary)
+! - Create base (if necessary)
 !
-    if (.not. l_reuse) then
-        if (niv .ge. 2) then
-            call utmess('I', 'ROM2_63')
-        endif
-        call rscrsd('G', base, 'MODE_EMPI', ds_para_ortho%ds_empi_init%nb_mode)
-        call romBaseDSCopy(ds_para_ortho%ds_empi_init, base, ds_empi)
+    if (.not. lReuse) then
+        call romBaseDSCopy(paraOrtho%ds_empi_init, resultName, base)
+        call romBaseCreate(base, paraOrtho%ds_empi_init%nb_mode)
     endif
 !
 ! - If reuse: check that name is the name between output result end keyword BASE
 !
-    if (l_reuse) then
-        if (ds_para_ortho%base_init .ne. base) then
+    if (lReuse) then
+        if (paraOrtho%base_init .ne. resultName) then
             call utmess('F', 'ROM6_40')
         endif
     endif

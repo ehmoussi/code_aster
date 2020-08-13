@@ -37,8 +37,6 @@ cata_msg = {
 
    10 : _("""Consommation mémoire de la SVD: %(i1)d octets."""),
 
-   11 : _("""Création de la base empirique sur %(i1)d modes."""),
-
    12 : _("""Calcul des coordonnées réduites."""),
 
    13 : _("""Tolérance pour l'algorithme incrémental: %(r1)13.6G."""),
