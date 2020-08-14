@@ -226,7 +226,7 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
                     if(motcle.eq.'PRES_REP') then
                         if(lfonc .and. (.not.lfpres))then
                             call jeveuo(cartei//'.VALE', 'L', iret)
-                            call mepres(modele, cartei, lfonc, zr(iret), 0.0)
+                            call mepres(modele, cartei, lfonc, zr(iret), 0.d0)
                             lfpres=.true.
                             lfchar=.true.
                         endif
@@ -257,9 +257,9 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
         call mefor0(modele, ch2d3d, lfonc)
     endif
     if (.not.lpres) then
-        call mepres(modele, chpres, lfonc, 0.0, 0.0)
+        call mepres(modele, chpres, lfonc, 0.d0, 0.d0)
     endif
-   
+
 !
     call jedetr(oldfon)
     call jedema()
