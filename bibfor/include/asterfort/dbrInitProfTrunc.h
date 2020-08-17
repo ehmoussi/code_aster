@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_init_algo_tr(paraTrunc)
+    subroutine dbrInitProfTrunc(resultNameIn, resultNameOut, paraTrunc)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
-    end subroutine dbr_init_algo_tr
+        character(len=8), intent(in) :: resultNameIn, resultNameOut
+        type(ROM_DS_ParaDBR_Trunc), intent(inout) :: paraTrunc
+    end subroutine dbrInitProfTrunc
 end interface

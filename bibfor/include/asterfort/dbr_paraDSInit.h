@@ -21,7 +21,7 @@ interface
         use Rom_Datastructure_type
         type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
         type(ROM_DS_ParaDBR_Greedy), intent(in) :: paraGreedy
-        type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
+        type(ROM_DS_ParaDBR_Trunc), intent(in) :: paraTrunc
         type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
         type(ROM_DS_ParaDBR), intent(out) :: cmdPara
     end subroutine dbr_paraDSInit

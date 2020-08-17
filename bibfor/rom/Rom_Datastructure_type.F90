@@ -375,22 +375,28 @@ implicit none
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (TRUNCATION)
 !
-    type ROM_DS_ParaDBR_TR
+    type ROM_DS_ParaDBR_Trunc
+! ----- Name of base to truncate
+        character(len=8)        :: baseInitName = ' '
+
 ! ----- Base to truncate
-        character(len=8)        :: base_init = ' '
-! ----- Datastructure for empiric modes
-        type(ROM_DS_Empi)       :: ds_empi_init
+        type(ROM_DS_Empi)       :: baseinit
+
 ! ----- Model for truncation
-        character(len=8)        :: model_rom = ' '
+        character(len=8)        :: modelRom     = ' '
+
 ! ----- List of equations into RID
-        integer, pointer        :: v_equa_rom(:) => null()
+        integer, pointer        :: equaRom(:)   => null()
+
 ! ----- Profile of nodal field
-        character(len=24)       :: prof_chno_rom = ' '
+        character(len=24)       :: profChnoRom  = ' '
+
 ! ----- Number of equation for RID
-        integer                 :: nb_equa_rom = 0
+        integer                 :: nbEquaRom    = 0
+
 ! ----- Index of GRANDEUR
-        integer                 :: idx_gd = 0
-    end type ROM_DS_ParaDBR_TR
+        integer                 :: physNume     = 0
+    end type ROM_DS_ParaDBR_Trunc
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (ORTHO)
 !
@@ -419,7 +425,7 @@ implicit none
         type(ROM_DS_ParaDBR_Greedy) :: paraGreedy
 
 ! ----- Parameters for truncation method
-        type(ROM_DS_ParaDBR_TR )    :: paraTrunc
+        type(ROM_DS_ParaDBR_Trunc)  :: paraTrunc
 
 ! ----- Parameters for orthogonalization method
         type(ROM_DS_ParaDBR_ORTHO)  :: paraOrtho

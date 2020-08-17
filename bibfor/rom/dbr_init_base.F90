@@ -27,7 +27,7 @@ implicit none
 #include "asterfort/dbrInitBaseGreedy.h"
 #include "asterfort/dbr_init_base_ortho.h"
 #include "asterfort/dbr_init_base_pod.h"
-#include "asterfort/dbr_init_base_tr.h"
+#include "asterfort/dbrInitBaseTrunc.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
@@ -61,7 +61,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
         call dbrInitBaseGreedy(cmdPara%resultOut%resultName, cmdPara%paraGreedy,&
                                cmdPara%base)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
-        call dbr_init_base_tr(cmdPara%resultOut%resultName, cmdPara%paraTrunc,&
+        call dbrInitBaseTrunc(cmdPara%resultOut%resultName, cmdPara%paraTrunc,&
                               cmdPara%lReuse              , cmdPara%base)
     elseif (cmdPara%operation .eq. 'ORTHO') then
         call dbr_init_base_ortho(cmdPara%resultOut%resultName, cmdPara%paraOrtho,&

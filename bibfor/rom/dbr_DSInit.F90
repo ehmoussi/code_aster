@@ -47,7 +47,7 @@ type(ROM_DS_ParaDBR), intent(out) :: cmdPara
     integer :: ifm, niv
     type(ROM_DS_ParaDBR_POD)    :: paraPod
     type(ROM_DS_ParaDBR_Greedy) :: paraGreedy
-    type(ROM_DS_ParaDBR_TR)     :: paraTrunc
+    type(ROM_DS_ParaDBR_Trunc)  :: paraTrunc
     type(ROM_DS_ParaDBR_ORTHO)  :: paraOrtho
     type(ROM_DS_Solve)          :: solveROM, solveDOM
     type(ROM_DS_MultiPara)      :: multiPara

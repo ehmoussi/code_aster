@@ -17,25 +17,22 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_read_tr(paraTrunc)
+subroutine dbrCleanTrunc(paraTrunc)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/getvid.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/romBaseClean.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
+type(ROM_DS_ParaDBR_Trunc), intent(inout) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE
 !
-! Read parameters - For truncation
+! Clean datastructures for truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,34 +40,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-    integer :: nocc
-    character(len=8) :: model_rom, base_init
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM18_3')
-    endif
-!
-! - Initializations
-!
-    model_rom = ' '
-    base_init = ' '
-!
-! - Get parameters
-!
-    call getvid(' ', 'MODELE_REDUIT', scal = model_rom, nbret = nocc)
-    ASSERT(nocc .eq. 1)
-    call getvid(' ', 'BASE', scal = base_init, nbret = nocc)
-    if (nocc .eq. 0) then
-        base_init   = ' '
-    endif
-!
-! - Save parameters in datastructure
-!
-    paraTrunc%model_rom = model_rom
-    paraTrunc%base_init = base_init
+    AS_DEALLOCATE(vi = paraTrunc%equaRom)
+    call romBaseClean(paraTrunc%baseInit)
 !
 end subroutine

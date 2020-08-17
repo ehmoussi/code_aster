@@ -17,44 +17,80 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_para_info_tr(paraTrunc)
+subroutine dbrChckTrunc(paraTrunc, lReuse)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
+#include "asterfort/romModeChck.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
+type(ROM_DS_ParaDBR_Trunc), intent(in) :: paraTrunc
+aster_logical, intent(in) :: lReuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE
 !
-! Print informations about parameters - For truncation
+! Some checks - For truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  paraTrunc       : datastructure for parameters (truncation)
+! In  paraTrunc        : datastructure for parameters (truncation)
+! In  lReuse           : .true. if reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=8) :: base_init, model_rom
+    character(len=8) :: baseModel, modeModel
+    character(len=8) :: baseMesh, modeMesh, baseInitName
+    type(ROM_DS_Field) :: mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM18_56')
+        call utmess('I','ROM18_42')
     endif
 !
-! - Get parameters in datastructure
+! - Get parameters
 !
-    base_init = paraTrunc%base_init
-    model_rom = paraTrunc%model_rom
+    mode      = paraTrunc%baseInit%mode
+    modeModel = mode%model
+    modeMesh  = mode%mesh
+    baseModel = paraTrunc%modelRom
+!
+! - Check mesh
+!
+    call dismoi('NOM_MAILLA', baseModel, 'MODELE'  , repk = baseMesh)
+    if (modeMesh .ne. baseMesh) then
+        call utmess('F', 'ROM18_43')
+    endif
+    if (modeModel .eq. baseModel) then
+        call utmess('F', 'ROM18_44')
+    endif
+!
+! - Check empiric mode
+!
+    call romModeChck(mode)
+!
+! - No reuse:
+!
+    baseInitName = paraTrunc%baseInitName
+    if (lReuse) then
+        if (baseInitName .ne. ' ') then
+            call utmess('F', 'ROM18_21')
+        endif
+    endif
+!
+! - Only on nodal fields 
+!
+    if (mode%fieldSupp .ne. 'NOEU') then
+        call utmess('F','ROM18_45')
+    endif
 !
 end subroutine

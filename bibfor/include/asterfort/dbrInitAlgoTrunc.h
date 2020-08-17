@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_para_info_tr(paraTrunc)
+    subroutine dbrInitAlgoTrunc(paraTrunc)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
-    end subroutine dbr_para_info_tr
+        type(ROM_DS_ParaDBR_Trunc), intent(inout) :: paraTrunc
+    end subroutine dbrInitAlgoTrunc
 end interface

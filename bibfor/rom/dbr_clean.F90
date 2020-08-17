@@ -27,7 +27,7 @@ implicit none
 #include "asterfort/dbrCleanGreedy.h"
 #include "asterfort/dbr_clean_ortho.h"
 #include "asterfort/dbr_clean_pod.h"
-#include "asterfort/dbr_clean_tr.h"
+#include "asterfort/dbrCleanTrunc.h"
 #include "asterfort/romBaseClean.h"
 #include "asterfort/romResultClean.h"
 !
@@ -53,7 +53,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     elseif (cmdPara%operation .eq. 'GLOUTON') then
         call dbrCleanGreedy(cmdPara%paraGreedy)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
-        call dbr_clean_tr(cmdPara%paraTrunc)
+        call dbrCleanTrunc(cmdPara%paraTrunc)
     elseif (cmdPara%operation .eq. 'ORTHO') then
         call dbr_clean_ortho(cmdPara%paraOrtho)
     else

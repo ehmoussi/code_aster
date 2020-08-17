@@ -18,9 +18,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine dbr_chck_tr(paraTrunc, lReuse)
+    subroutine dbrChckTrunc(paraTrunc, lReuse)
         use Rom_Datastructure_type
-            type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
+            type(ROM_DS_ParaDBR_Trunc), intent(in) :: paraTrunc
             aster_logical, intent(in) :: lReuse
-    end subroutine dbr_chck_tr
+    end subroutine dbrChckTrunc
 end interface

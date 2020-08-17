@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_main_tr(paraTrunc, baseOut)
+subroutine dbrMainTrunc(paraTrunc, baseOut)
 !
 use Rom_Datastructure_type
 !
@@ -34,7 +34,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/vtcreb.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
+type(ROM_DS_ParaDBR_Trunc), intent(in) :: paraTrunc
 type(ROM_DS_Empi), intent(in) :: baseOut
 !
 ! --------------------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  paraTrunc        : datastructure for truncation parameters
+! In  paraTrunc        : datastructure for parameters (truncation)
 ! In  baseOut          : output base
 !
 ! --------------------------------------------------------------------------------------------------
@@ -70,11 +70,11 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 ! - Get parameters of operation
 !
     resultNameOut = baseOut%resultName
-    nbEquaRom     = paraTrunc%nb_equa_rom
-    modelRom      = paraTrunc%model_rom
-    profChno      = paraTrunc%prof_chno_rom
-    physNume      = paraTrunc%idx_gd
-    baseIn        = paraTrunc%ds_empi_init
+    nbEquaRom     = paraTrunc%nbEquaRom
+    modelRom      = paraTrunc%modelRom
+    profChno      = paraTrunc%profChnoRom
+    physNume      = paraTrunc%physNume
+    baseIn        = paraTrunc%baseInit
 !
 ! - Get parameters of input base
 !
@@ -114,7 +114,7 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 ! ----- Truncation
         numeEquaRom = 0
         do iEqua = 1, nbEquaDom
-            if (paraTrunc%v_equa_rom(iEqua) .ne. 0) then
+            if (paraTrunc%equaRom(iEqua) .ne. 0) then
                 numeEquaRom = numeEquaRom + 1
                 ASSERT(numeEquaRom .le. nbEquaRom)
                 valeRom(numeEquaRom) = valeDom(iEqua)

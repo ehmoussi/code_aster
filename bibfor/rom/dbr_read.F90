@@ -29,7 +29,7 @@ implicit none
 #include "asterfort/dbrReadGreedy.h"
 #include "asterfort/dbr_read_ortho.h"
 #include "asterfort/dbr_read_pod.h"
-#include "asterfort/dbr_read_tr.h"
+#include "asterfort/dbrReadTrunc.h"
 #include "asterfort/gcucon.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
@@ -98,7 +98,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     elseif (operation .eq. 'GLOUTON') then
         call dbrReadGreedy(cmdPara%paraGreedy)
     elseif (operation .eq. 'TRONCATURE') then
-        call dbr_read_tr(cmdPara%paraTrunc)
+        call dbrReadTrunc(cmdPara%paraTrunc)
     elseif (operation .eq. 'ORTHO') then
         call dbr_read_ortho(cmdPara%paraOrtho)
     else

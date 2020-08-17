@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_algo_tr(paraTrunc)
+subroutine dbrInitAlgoTrunc(paraTrunc)
 !
 use Rom_Datastructure_type
 !
@@ -34,7 +34,7 @@ implicit none
 #include "asterfort/romFieldNodesAreDefined.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
+type(ROM_DS_ParaDBR_Trunc), intent(inout) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,7 +44,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  paraTrunc         : datastructure for truncation parameters
+! IO  paraTrunc         : datastructure for parameters (truncation)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,9 +65,9 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 ! - Get parameters
 !
     noojb    = '12345678.00000.NUME.PRNO'
-    mode     = paraTrunc%ds_empi_init%mode
-    modelRom = paraTrunc%model_rom
-    modelDom = paraTrunc%ds_empi_init%mode%model
+    mode     = paraTrunc%baseInit%mode
+    modelRom = paraTrunc%modelRom
+    modelDom = paraTrunc%baseInit%mode%model
 !
 ! - Create numbering for ROM
 !
@@ -95,13 +95,13 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! - Prepare the list of equations from list of nodes
 !
-    call romFieldNodesAreDefined(mode, paraTrunc%v_equa_rom, numeDom,&
+    call romFieldNodesAreDefined(mode, paraTrunc%equaRom, numeDom,&
                                  nbNode_   = nbNodeRom,&
                                  listNode_ = numeNodeRom)
 !
 ! - Save parameters
 !
     call dismoi('NB_EQUA', numeRom, 'NUME_DDL', repi = nbEquaRom)
-    paraTrunc%nb_equa_rom = nbEquaRom
+    paraTrunc%nbEquaRom = nbEquaRom
 !
 end subroutine

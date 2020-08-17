@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_prof_tr(resultNameOut, paraTrunc)
+subroutine dbrInitProfTrunc(resultNameIn, resultNameOut, paraTrunc)
 !
 use Rom_Datastructure_type
 !
@@ -31,8 +31,8 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "asterfort/romModeParaRead.h"
 !
-character(len=8), intent(in) :: resultNameOut
-type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
+character(len=8), intent(in) :: resultNameIn, resultNameOut
+type(ROM_DS_ParaDBR_Trunc), intent(inout) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,8 +42,9 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  resultNameIn     : name of base to truncate
 ! In  resultNameOut    : name of results datastructure to save base
-! IO  paraTrunc        : datastructure for truncation parameters
+! IO  paraTrunc        : datastructure for parameters (truncation)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,11 +52,9 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
     integer :: iret, physNume
     character(len=24) :: profChnoNew, modeSymbName, modeRefe
     character(len=19) :: profChnoRefe
-    character(len=8) :: resultNameIn
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    resultNameIn = paraTrunc%base_init
 !
 ! - Get symbolic name of mode
 !
@@ -69,8 +68,8 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! - Get parameters from numbering
 !
-    call dismoi('NUM_GD'   , modeRefe, 'CHAM_NO', repi=physNume)
-    call dismoi('PROF_CHNO', modeRefe, 'CHAM_NO', repk=profChnoRefe)
+    call dismoi('NUM_GD'   , modeRefe, 'CHAM_NO', repi = physNume)
+    call dismoi('PROF_CHNO', modeRefe, 'CHAM_NO', repk = profChnoRefe)
 !
 ! - Create name of new PROF_CHNO
 !
@@ -83,7 +82,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! - Save parameters
 !
-    paraTrunc%prof_chno_rom = profChnoNew
-    paraTrunc%idx_gd        = physNume
+    paraTrunc%profChnoRom = profChnoNew
+    paraTrunc%physNume    = physNume
 !
 end subroutine

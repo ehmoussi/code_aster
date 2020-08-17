@@ -15,14 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
 interface
-    subroutine dbr_init_base_tr(resultName, paraTrunc, lReuse, base)
+    subroutine dbrParaInfoTrunc()
         use Rom_Datastructure_type
-        character(len=8), intent(in) :: resultName
-        type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
-        aster_logical, intent(in) :: lReuse
-        type(ROM_DS_Empi), intent(inout) :: base
-    end subroutine dbr_init_base_tr
+    end subroutine dbrParaInfoTrunc
 end interface

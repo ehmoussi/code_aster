@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_main_tr(paraTrunc, baseOut)
+    subroutine dbrMainTrunc(paraTrunc, baseOut)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
+        type(ROM_DS_ParaDBR_Trunc), intent(in) :: paraTrunc
         type(ROM_DS_Empi), intent(in) :: baseOut
-    end subroutine dbr_main_tr
+    end subroutine dbrMainTrunc
 end interface

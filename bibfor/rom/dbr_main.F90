@@ -28,7 +28,7 @@ implicit none
 #include "asterfort/dbr_main_ortho.h"
 #include "asterfort/dbr_main_pod.h"
 #include "asterfort/dbr_main_podincr.h"
-#include "asterfort/dbr_main_tr.h"
+#include "asterfort/dbrMainTrunc.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
@@ -62,7 +62,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     elseif (cmdPara%operation .eq. 'GLOUTON') then
         call dbrMainGreedy(cmdPara%paraGreedy, cmdPara%base)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
-        call dbr_main_tr(cmdPara%paraTrunc, cmdPara%base)
+        call dbrMainTrunc(cmdPara%paraTrunc, cmdPara%base)
     elseif (cmdPara%operation .eq. 'ORTHO') then
         call dbr_main_ortho(cmdPara%paraOrtho, cmdPara%base)
     else

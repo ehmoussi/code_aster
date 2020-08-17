@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_init_prof_tr(resultNameOut, paraTrunc)
+    subroutine dbrCleanTrunc(paraTrunc)
         use Rom_Datastructure_type
-        character(len=8), intent(in) :: resultNameOut
-        type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
-    end subroutine dbr_init_prof_tr
+        type(ROM_DS_ParaDBR_Trunc), intent(inout) :: paraTrunc
+    end subroutine dbrCleanTrunc
 end interface

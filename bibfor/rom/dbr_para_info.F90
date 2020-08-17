@@ -28,7 +28,7 @@ implicit none
 #include "asterfort/dbrParaInfoGreedy.h"
 #include "asterfort/dbr_para_info_ortho.h"
 #include "asterfort/dbr_para_info_pod.h"
-#include "asterfort/dbr_para_info_tr.h"
+#include "asterfort/dbrParaInfoTrunc.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
@@ -79,7 +79,7 @@ type(ROM_DS_ParaDBR), intent(in) :: cmdPara
         call dbrParaInfoGreedy(cmdPara%paraGreedy)
 
     elseif (operation .eq. 'TRONCATURE') then
-        call dbr_para_info_tr(cmdPara%paraTrunc)
+        call dbrParaInfoTrunc()
 
     elseif (operation .eq. 'ORTHO') then
         call dbr_para_info_ortho(cmdPara%paraOrtho)
