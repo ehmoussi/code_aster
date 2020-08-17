@@ -25,7 +25,7 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/dbrInitBaseGreedy.h"
-#include "asterfort/dbr_init_base_ortho.h"
+#include "asterfort/dbrInitBaseOrtho.h"
 #include "asterfort/dbr_init_base_pod.h"
 #include "asterfort/dbrInitBaseTrunc.h"
 #include "asterfort/infniv.h"
@@ -64,8 +64,8 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
         call dbrInitBaseTrunc(cmdPara%resultOut%resultName, cmdPara%paraTrunc,&
                               cmdPara%lReuse              , cmdPara%base)
     elseif (cmdPara%operation .eq. 'ORTHO') then
-        call dbr_init_base_ortho(cmdPara%resultOut%resultName, cmdPara%paraOrtho,&
-                                 cmdPara%lReuse              , cmdPara%base)
+        call dbrInitBaseOrtho(cmdPara%resultOut%resultName, cmdPara%paraOrtho,&
+                              cmdPara%lReuse              , cmdPara%base)
     else
         ASSERT(ASTER_FALSE)
     endif

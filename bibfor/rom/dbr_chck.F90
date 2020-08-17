@@ -26,7 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/dbrChckGreedy.h"
-#include "asterfort/dbr_chck_ortho.h"
+#include "asterfort/dbrChckOrtho.h"
 #include "asterfort/dbr_chck_pod.h"
 #include "asterfort/dbrChckTrunc.h"
 #include "asterfort/infniv.h"
@@ -62,7 +62,7 @@ type(ROM_DS_ParaDBR), intent(in) :: cmdPara
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
         call dbrChckTrunc(cmdPara%paraTrunc, cmdPara%lReuse)
     elseif (cmdPara%operation .eq. 'ORTHO') then
-        call dbr_chck_ortho(cmdPara%paraOrtho, cmdPara%lReuse)
+        call dbrChckOrtho(cmdPara%paraOrtho, cmdPara%lReuse)
     else
         ASSERT(ASTER_FALSE)
     endif

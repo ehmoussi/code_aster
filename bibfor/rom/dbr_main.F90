@@ -25,7 +25,7 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/dbrMainGreedy.h"
-#include "asterfort/dbr_main_ortho.h"
+#include "asterfort/dbrMainOrtho.h"
 #include "asterfort/dbr_main_pod.h"
 #include "asterfort/dbr_main_podincr.h"
 #include "asterfort/dbrMainTrunc.h"
@@ -64,7 +64,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
         call dbrMainTrunc(cmdPara%paraTrunc, cmdPara%base)
     elseif (cmdPara%operation .eq. 'ORTHO') then
-        call dbr_main_ortho(cmdPara%paraOrtho, cmdPara%base)
+        call dbrMainOrtho(cmdPara%paraOrtho, cmdPara%base)
     else
         ASSERT(ASTER_FALSE)
     endif

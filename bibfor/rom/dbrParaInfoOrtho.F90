@@ -17,21 +17,28 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_algo_ortho()
+subroutine dbrParaInfoOrtho(paraOrtho)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
+!
+type(ROM_DS_ParaDBR_Ortho), intent(in) :: paraOrtho
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE
 !
-! Initializations for algorith - For orthogonalization
+! Print informations about parameters - For orthogonalization
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  paraOrtho        : datastructure for parameters (orthogonalization)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,9 +48,8 @@ implicit none
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM18_29')
+        call utmess('I', 'ROM18_46')
+        call utmess('I', 'ROM18_47', sr = paraOrtho%alpha)
     endif
-!
-    ! Nothing to do
 !
 end subroutine

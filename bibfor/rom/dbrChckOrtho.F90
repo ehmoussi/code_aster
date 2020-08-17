@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_ortho(paraOrtho, lReuse)
+subroutine dbrChckOrtho(paraOrtho, lReuse)
 !
 use Rom_Datastructure_type
 !
@@ -29,7 +29,7 @@ implicit none
 #include "asterfort/romModeChck.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
+type(ROM_DS_ParaDBR_Ortho), intent(in) :: paraOrtho
 aster_logical, intent(in) :: lReuse
 !
 ! --------------------------------------------------------------------------------------------------
@@ -40,14 +40,14 @@ aster_logical, intent(in) :: lReuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  paraOrtho        : datastructure for orthogonalization parameters
+! In  paraOrtho        : datastructure for parameters (orthogonalization)
 ! In  lReuse           : .true. if reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     type(ROM_DS_Field) :: mode
-    character(len=8) :: baseInit
+    character(len=8) :: baseInitName
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,7 +58,7 @@ aster_logical, intent(in) :: lReuse
 !
 ! - Initialisations
 !
-    mode = paraOrtho%ds_empi_init%mode
+    mode = paraOrtho%baseInit%mode
 !
 ! - Check empiric mode
 !
@@ -68,9 +68,9 @@ aster_logical, intent(in) :: lReuse
 !
 ! - No reuse:
 !
-    baseInit = paraOrtho%base_init
+    baseInitName = paraOrtho%baseInitName
     if (lReuse) then
-        if (baseInit .ne. ' ') then
+        if (baseInitName .ne. ' ') then
             call utmess('F', 'ROM18_21')
         endif
     endif

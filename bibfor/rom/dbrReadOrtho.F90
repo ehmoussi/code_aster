@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_read_ortho(paraOrtho)
+subroutine dbrReadOrtho(paraOrtho)
 !
 use Rom_Datastructure_type
 !
@@ -30,7 +30,7 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: paraOrtho
+type(ROM_DS_ParaDBR_Ortho), intent(inout) :: paraOrtho
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,7 +46,7 @@ type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: paraOrtho
 !
     integer :: ifm, niv
     integer :: nocc
-    character(len=8) :: base_init
+    character(len=8) :: baseInitName
     real(kind=8) :: alpha
 !
 ! --------------------------------------------------------------------------------------------------
@@ -58,21 +58,21 @@ type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: paraOrtho
 !
 ! - Initializations
 !
-    base_init = ' '
-    alpha     = 0.d0
+    baseInitName = ' '
+    alpha        = 0.d0
 !
 ! - Get parameters
 !
-    call getvid(' ', 'BASE', scal = base_init, nbret = nocc)
+    call getvid(' ', 'BASE', scal = baseInitName, nbret = nocc)
     if (nocc .eq. 0) then
-        base_init = ' '
+        baseInitName = ' '
     endif
     call getvr8(' ', 'ALPHA', scal = alpha, nbret = nocc)
     ASSERT(nocc .eq. 1)
 !
 ! - Save parameters in datastructure
 !
-    paraOrtho%alpha     = alpha
-    paraOrtho%base_init = base_init
+    paraOrtho%alpha        = alpha
+    paraOrtho%baseInitName = baseInitName
 !
 end subroutine

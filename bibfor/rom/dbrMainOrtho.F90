@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_main_ortho(paraOrtho, baseOut)
+subroutine dbrMainOrtho(paraOrtho, baseOut)
 !
 use Rom_Datastructure_type
 !
@@ -34,7 +34,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/vpgskp.h"
 !
-type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
+type(ROM_DS_ParaDBR_Ortho), intent(in) :: paraOrtho
 type(ROM_DS_Empi), intent(in) :: baseOut
 !
 ! --------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 !
 ! - Create [PHI] matrix from base
 !
-    call romBaseCreateMatrix(paraOrtho%ds_empi_init, matrPhi)
+    call romBaseCreateMatrix(paraOrtho%baseInit, matrPhi)
 !
 ! - Compute
 !

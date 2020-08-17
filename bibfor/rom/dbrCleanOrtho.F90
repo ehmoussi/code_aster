@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_clean_ortho(paraOrtho)
+subroutine dbrCleanOrtho(paraOrtho)
 !
 use Rom_Datastructure_type
 !
@@ -26,7 +26,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/romBaseClean.h"
 !
-type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: paraOrtho
+type(ROM_DS_ParaDBR_Ortho), intent(inout) :: paraOrtho
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -40,6 +40,6 @@ type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: paraOrtho
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call romBaseClean(paraOrtho%ds_empi_init)
+    call romBaseClean(paraOrtho%baseInit)
 !
 end subroutine

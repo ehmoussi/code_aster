@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
 interface
-    subroutine dbr_chck_ortho(paraOrtho, lReuse)
+    subroutine dbrParaInfoOrtho(paraOrtho)
         use Rom_Datastructure_type
-            type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
-            aster_logical, intent(in) :: lReuse
-    end subroutine dbr_chck_ortho
+        type(ROM_DS_ParaDBR_Ortho), intent(in) :: paraOrtho
+    end subroutine dbrParaInfoOrtho
 end interface

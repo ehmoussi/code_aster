@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_base_ortho(resultName, paraOrtho, lReuse, base)
+subroutine dbrInitBaseOrtho(resultName, paraOrtho, lReuse, base)
 !
 use Rom_Datastructure_type
 !
@@ -31,7 +31,7 @@ implicit none
 #include "asterfort/utmess.h"
 !
 character(len=8), intent(in) :: resultName
-type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: paraOrtho
+type(ROM_DS_ParaDBR_Ortho), intent(inout) :: paraOrtho
 aster_logical, intent(in) :: lReuse
 type(ROM_DS_Empi), intent(inout) :: base
 !
@@ -44,7 +44,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  resultName       : name of results datastructure to save base
-! IO  paraOrtho        : datastructure for orthogonalization parameters
+! IO  paraOrtho        : datastructure for parameters (orthogonalization)
 ! In  lReuse           : .true. if reuse
 ! IO  base             : base
 !
@@ -70,7 +70,7 @@ type(ROM_DS_Empi), intent(inout) :: base
         if (niv .ge. 2) then
             call utmess('I', 'ROM18_24')
         endif
-        call romBaseGetInfo(paraOrtho%base_init, paraOrtho%ds_empi_init)
+        call romBaseGetInfo(paraOrtho%baseInitName, paraOrtho%baseInit)
     endif
 !
 ! - Create base (if necessary)
@@ -79,14 +79,14 @@ type(ROM_DS_Empi), intent(inout) :: base
         if (niv .ge. 2) then
             call utmess('I', 'ROM18_25')
         endif
-        call romBaseDSCopy(paraOrtho%ds_empi_init, resultName, base)
-        call romBaseCreate(base, paraOrtho%ds_empi_init%nbMode)
+        call romBaseDSCopy(paraOrtho%baseInit, resultName, base)
+        call romBaseCreate(base, paraOrtho%baseInit%nbMode)
     endif
 !
 ! - If reuse: check that name is the name between output result end keyword BASE
 !
     if (lReuse) then
-        if (paraOrtho%base_init .ne. resultName) then
+        if (paraOrtho%baseInitName .ne. resultName) then
             call utmess('F', 'ROM18_21')
         endif
     endif

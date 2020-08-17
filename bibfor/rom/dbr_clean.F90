@@ -25,7 +25,7 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/dbrCleanGreedy.h"
-#include "asterfort/dbr_clean_ortho.h"
+#include "asterfort/dbrCleanOrtho.h"
 #include "asterfort/dbr_clean_pod.h"
 #include "asterfort/dbrCleanTrunc.h"
 #include "asterfort/romBaseClean.h"
@@ -55,7 +55,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
         call dbrCleanTrunc(cmdPara%paraTrunc)
     elseif (cmdPara%operation .eq. 'ORTHO') then
-        call dbr_clean_ortho(cmdPara%paraOrtho)
+        call dbrCleanOrtho(cmdPara%paraOrtho)
     else
         ASSERT(ASTER_FALSE)
     endif

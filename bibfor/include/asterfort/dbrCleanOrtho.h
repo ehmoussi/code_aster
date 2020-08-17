@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_init_algo_ortho()
+    subroutine dbrCleanOrtho(paraOrtho)
         use Rom_Datastructure_type
-    end subroutine dbr_init_algo_ortho
+        type(ROM_DS_ParaDBR_Ortho), intent(inout) :: paraOrtho
+    end subroutine dbrCleanOrtho
 end interface

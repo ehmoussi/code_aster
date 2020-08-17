@@ -25,7 +25,7 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/dbrInitAlgoGreedy.h"
-#include "asterfort/dbr_init_algo_ortho.h"
+#include "asterfort/dbrInitAlgoOrtho.h"
 #include "asterfort/dbr_init_algo_pod.h"
 #include "asterfort/dbrInitAlgoTrunc.h"
 #include "asterfort/infniv.h"
@@ -61,7 +61,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
         call dbrInitAlgoTrunc(cmdPara%paraTrunc)
     elseif (cmdPara%operation .eq. 'ORTHO') then
-        call dbr_init_algo_ortho()
+        call dbrInitAlgoOrtho()
     else
         ASSERT(ASTER_FALSE)
     endif

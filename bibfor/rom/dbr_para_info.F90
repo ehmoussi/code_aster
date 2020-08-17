@@ -26,7 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/dbrParaInfoGreedy.h"
-#include "asterfort/dbr_para_info_ortho.h"
+#include "asterfort/dbrParaInfoOrtho.h"
 #include "asterfort/dbr_para_info_pod.h"
 #include "asterfort/dbrParaInfoTrunc.h"
 #include "asterfort/infniv.h"
@@ -82,7 +82,7 @@ type(ROM_DS_ParaDBR), intent(in) :: cmdPara
         call dbrParaInfoTrunc()
 
     elseif (operation .eq. 'ORTHO') then
-        call dbr_para_info_ortho(cmdPara%paraOrtho)
+        call dbrParaInfoOrtho(cmdPara%paraOrtho)
 
     else
         ASSERT(ASTER_FALSE)

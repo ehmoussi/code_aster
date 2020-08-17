@@ -400,14 +400,17 @@ implicit none
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (ORTHO)
 !
-    type ROM_DS_ParaDBR_ORTHO
-! ----- Base to truncate
-        character(len=8)        :: base_init = ' '
-! ----- Datastructure for empiric modes
-        type(ROM_DS_Empi)       :: ds_empi_init
+    type ROM_DS_ParaDBR_Ortho
+! ----- Name of base to orthogonalize
+        character(len=8)        :: baseInitName = ' '
+
+! ----- Base to orthogonalize
+        type(ROM_DS_Empi)       :: baseinit
+
 ! ----- Parameter for KAHAN-PARLETT algorithm
-        real(kind=8)            :: alpha = 0.d0
-    end type ROM_DS_ParaDBR_ORTHO
+        real(kind=8)            :: alpha        = 0.d0
+
+    end type ROM_DS_ParaDBR_Ortho
 !
 ! - Parameters for DEFI_BASE_REDUITE operator
 !
@@ -428,7 +431,7 @@ implicit none
         type(ROM_DS_ParaDBR_Trunc)  :: paraTrunc
 
 ! ----- Parameters for orthogonalization method
-        type(ROM_DS_ParaDBR_ORTHO)  :: paraOrtho
+        type(ROM_DS_ParaDBR_Ortho)  :: paraOrtho
 
 ! ----- Datastructure for empiric modes
         type(ROM_DS_Empi)           :: base

@@ -27,7 +27,7 @@ implicit none
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
 #include "asterfort/dbrReadGreedy.h"
-#include "asterfort/dbr_read_ortho.h"
+#include "asterfort/dbrReadOrtho.h"
 #include "asterfort/dbr_read_pod.h"
 #include "asterfort/dbrReadTrunc.h"
 #include "asterfort/gcucon.h"
@@ -100,7 +100,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     elseif (operation .eq. 'TRONCATURE') then
         call dbrReadTrunc(cmdPara%paraTrunc)
     elseif (operation .eq. 'ORTHO') then
-        call dbr_read_ortho(cmdPara%paraOrtho)
+        call dbrReadOrtho(cmdPara%paraOrtho)
     else
         ASSERT(ASTER_FALSE)
     endif
