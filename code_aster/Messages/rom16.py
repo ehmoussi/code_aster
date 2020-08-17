@@ -48,6 +48,12 @@ Conseil: utilisez CALC_CHAMP pour calculer ce champ."""),
 
    25 : _("""Le résultat réduit n'est pas défini sur le même maillage que le résultat complet."""),
 
+   30 : _("""Liste des champs initialement présents dans les résultats réduits: """),
+
+   31 : _(""" Type du champ: %(k1)s. Ce champ sera reconstruit."""),
+
+   32 : _(""" Type du champ: %(k1)s. Ce champ ne sera pas reconstruit."""),
+
    50 : _("""Le résultat sur le modèle complet sera de type %(k1)s."""),
 
    51 : _("""Le résultat sur le modèle réduit contient %(i1)d numéros d'ordre."""),

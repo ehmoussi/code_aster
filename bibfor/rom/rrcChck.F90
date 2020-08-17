@@ -50,14 +50,14 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
     character(len=8) :: meshRefe, meshRom
     character(len=8) :: modelRom, modelDom, modelRefe
     character(len=8) :: resultRomName
-    character(len=24) :: fieldName
+    character(len=24) :: fieldName, fieldResultName
     type(ROM_DS_Field) :: mode
     integer :: nbMode, nbStore
     integer :: iFieldResult, iFieldBuild
     integer :: nbFieldResult, nbFieldBuild
     character(len=16), pointer :: resultField(:) => null()
     integer, pointer :: resultFieldNume(:) => null()
-    aster_logical :: lInResult, lLinearSolve, lTablFromResu
+    aster_logical :: lInResult, lLinearSolve, lTablFromResu, lBuild
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -107,7 +107,7 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
     do iFieldBuild = 1, nbFieldBuild
         lInResult = ASTER_FALSE
-        fieldName = cmdPara%fieldBuild(iFieldBuild)%fieldDom%fieldName
+        fieldName = cmdPara%fieldName(iFieldBuild)
         do iFieldResult = 1, nbFieldResult
             if (fieldName .eq. resultField(iFieldResult)) then
                 lInResult = ASTER_TRUE
@@ -116,6 +116,25 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
         end do
         if (.not. lInResult) then
             call utmess('F', 'ROM16_24', sk = fieldName)
+        endif
+    end do
+!
+! - Checks which fields should been reconstructed
+!
+    call utmess('I', 'ROM16_30')
+    do iFieldResult = 1, nbFieldResult
+        fieldResultName = resultField(iFieldResult)
+        lBuild          = ASTER_FALSE
+        do iFieldBuild = 1, nbFieldBuild
+            fieldName = cmdPara%fieldName(iFieldBuild)
+            if (fieldName .eq. fieldResultName) then
+                lBuild = ASTER_TRUE
+            endif
+        end do
+        if (lBuild) then
+            call utmess('I', 'ROM16_31', sk = fieldResultName)
+        else
+            call utmess('I', 'ROM16_32', sk = fieldResultName)
         endif
     end do
 !

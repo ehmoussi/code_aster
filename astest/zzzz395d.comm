@@ -323,9 +323,10 @@ IMPR_TABLE(TABLE=coorRedu, UNITE=6)
 # Gappy-POD (reconstruction tout le domaine)
 reduR = REST_REDUIT_COMPLET(
     MODELE           = model,
-    RESULTAT_REDUIT  = redu, 
-    BASE_PRIMAL      = base_p,
-    REST_DUAL        = 'NON',
+    RESULTAT_REDUIT  = redu,
+    CHAM_GD          = _F(NOM_CHAM  = 'TEMP',
+                          BASE      = base_p,
+                          OPERATION = 'COMB',),
     INFO             = 2,)
 
 # Test values computed by Gappy-POD

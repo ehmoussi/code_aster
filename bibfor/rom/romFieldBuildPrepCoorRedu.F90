@@ -54,7 +54,7 @@ type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
 !
 ! - Prepare reduced coordinates (or copy from results !)
 !
-    if (fieldBuild%lGappy) then
+    if (fieldBuild%operation .eq. 'GAPPY_POD') then
         if (niv .ge. 2) then
             call utmess('I', 'ROM17_4')
         endif

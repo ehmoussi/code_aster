@@ -53,6 +53,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
         call romFieldBuildClean(cmdPara%fieldBuild(iFieldBuild))
     end do
     deallocate(cmdPara%fieldBuild)
+    deallocate(cmdPara%fieldName)
     call romTableClean(cmdPara%tablReduCoor)
 !
 end subroutine

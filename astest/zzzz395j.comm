@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -271,12 +271,16 @@ SIEF=CREA_CHAMP( OPERATION='COMB',
 # Gappy-POD (reconstruction tout le domaine)
 reduR = REST_REDUIT_COMPLET(
     MODELE           = model,
-    RESULTAT_REDUIT  = redu, 
-    BASE_PRIMAL      = base_p,
-    REST_DUAL        = 'OUI',
-    BASE_DUAL        = base_d,
-    INFO             = 2,
-    GROUP_NO_INTERF  = 'INF',
-)
+    RESULTAT_REDUIT  = redu,
+    CHAM_GD          = (
+                        _F(NOM_CHAM         = 'DEPL',
+                           BASE             = base_p,
+                           OPERATION        = 'COMB',),
+                        _F(NOM_CHAM         = 'SIEF_NOEU',
+                           BASE             = base_d,
+                           OPERATION        = 'GAPPY_POD',
+                           GROUP_NO_INTERF  = 'INF',),
+                       ),
+    INFO             = 2,)
 
 FIN()

@@ -25,6 +25,7 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterc/getfac.h"
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
@@ -53,15 +54,16 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nbFieldBuild
+    character(len=16), parameter :: keywFact = 'CHAM_GD'
+    integer :: iFieldBuild, nbFieldBuild, nbret
     character(len=8)  :: modelDom, modelRom, mesh
-    character(len=16) :: k16bid , answer, resultType
-    character(len=24) :: grNodeInterf
-    aster_logical :: lPrevDual, lCorrEF
+    character(len=16) :: k16bid, resultType, operation
+    character(len=24) :: grNodeInterf, fieldName
+    aster_logical :: lLinearSolve, lRIDTrunc
     character(len=8)  :: resultDomName, resultRomName
     type(ROM_DS_Result) :: resultDom, resultRom
-    character(len=8)  :: basePrimName, baseDualName
-    type(ROM_DS_Empi) :: basePrim, baseDual
+    character(len=8)  :: baseName
+    type(ROM_DS_Empi) :: base
     type(ROM_DS_FieldBuild) :: fieldBuild
     type(ROM_DS_Field) :: fieldDom, fieldRom
 !
@@ -124,87 +126,60 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
     cmdPara%modelDom  = modelDom
     cmdPara%modelRom  = modelRom
 !
-! ==================================================================================================
+! - Get options to reconstruct fields
 !
-!  DEB - Provisoire en attendant RTA
+    call getfac(keywFact, nbFieldBuild)
+    ASSERT(nbFieldBuild .ge. 1)
+    cmdPara%nbFieldBuild = nbFieldBuild
 !
-! ==================================================================================================
+! - Allocate list of reconstructed fields
 !
-    basePrimName  = ' '
-    baseDualName  = ' '
-    lCorrEF       = ASTER_FALSE
-    lPrevDual     = ASTER_FALSE
-    grNodeInterf  = ' '
-!
-! - Get primal base
-!
-    call getvid(' ', 'BASE_PRIMAL', scal = basePrimName)
-    call romBaseGetInfo(basePrimName, basePrim)
-!
-! - Correction by finite element
-!
-    call getvtx(' ', 'CORR_COMPLET', scal = answer)
-    lCorrEF = answer .eq. 'OUI'
-!
-! - Compute dual quantities ?
-!
-    call getvtx(' ', 'REST_DUAL', scal = answer)
-    lPrevDual = answer .eq. 'OUI'
-    if (lPrevDual) then
-        call getvtx(' ', 'GROUP_NO_INTERF', scal = grNodeInterf)
-    endif
-!
-! - Get dual base
-!
-    if (lPrevDual) then
-        call getvid(' ', 'BASE_DUAL', scal = baseDualName)
-        call romBaseGetInfo(baseDualName, baseDual)
-    endif
-!
-! ==================================================================================================
-!
-!  FIN - Provisoire en attendant RTA
-!
-! ==================================================================================================
-!
-    nbFieldBuild  = 0
-    nbFieldBuild  = nbFieldBuild + 1
-    if (lPrevDual) then
-        nbFieldBuild  = nbFieldBuild + 1
-    endif
-!
-! - Construct list of reconstructed fields
-!
+    allocate(cmdPara%fieldName(nbFieldBuild))
     allocate(cmdPara%fieldBuild(nbFieldBuild))
 !
-! - For "primal"
+! - Read parameters
 !
-    fieldBuild%lLinearSolve = ASTER_FALSE
-    fieldBuild%lGappy       = ASTER_FALSE
-    if (lCorrEF) then
-        fieldBuild%lGappy    = ASTER_TRUE
-        fieldBuild%lRIDTrunc = ASTER_FALSE
-    endif
-    fieldBuild%lLinearSolve = ASTER_TRUE
-    fieldBuild%base         = basePrim
-    call romFieldDSCopy(fieldBuild%base%mode, fieldDom)
-    fieldBuild%fieldDom     = fieldDom
-    fieldBuild%fieldRom     = fieldRom
-    cmdPara%fieldBuild(1)   = fieldBuild
-!
-! - For "dual"
+    do iFieldBuild = 1, nbFieldBuild
+! ----- Get base
+        call getvid(keywFact, 'BASE', iocc = iFieldBuild, scal = baseName, nbret = nbret)
+        ASSERT(nbret .eq. 1)
+        call romBaseGetInfo(baseName, base)
 
-    if (lPrevDual) then
-        fieldBuild%lLinearSolve          = ASTER_FALSE
-        fieldBuild%lGappy                = ASTER_TRUE
-        fieldBuild%lRIDTrunc             = ASTER_TRUE
-        fieldBuild%grNodeRIDInterface    = grNodeInterf
-        fieldBuild%base                  = baseDual
-        call romFieldDSCopy(fieldBuild%base%mode, fieldDom)
-        fieldBuild%fieldDom              = fieldDom
-        fieldBuild%fieldRom              = fieldRom
-        cmdPara%fieldBuild(2)            = fieldBuild
-    endif
-    cmdPara%nbFieldBuild = nbFieldBuild
+! ----- Get field type
+        call getvtx(keywFact, 'NOM_CHAM', iocc = iFieldBuild, scal = fieldName, nbret = nbret)
+        ASSERT(nbret .eq. 1)
+
+! ----- Get operation
+        call getvtx(keywFact, 'OPERATION', iocc = iFieldBuild, scal = operation, nbret = nbret)
+        ASSERT(nbret .eq. 1)
+
+! ----- Get other parameters
+        lRIDTrunc    = ASTER_FALSE
+        grNodeInterf = ' '
+        call getvtx(keywFact, 'GROUP_NO_INTERF', iocc = iFieldBuild, scal = grNodeInterf,&
+                    nbret = nbret)
+        lRIDTrunc = nbret .ne. 0
+
+! ----- Get reference field for complete domain from base
+        call romFieldDSCopy(base%mode, fieldDom)
+
+! ----- Is come from linear solving ?
+        lLinearSolve = ASTER_FALSE
+        lLinearSolve = fieldName .eq. 'TEMP' .or. fieldName .eq. 'DEPL'
+
+! ----- Construct datastructure
+        fieldBuild%operation          = operation
+        fieldBuild%lLinearSolve       = lLinearSolve
+        fieldBuild%lRIDTrunc          = lRIDTrunc
+        fieldBuild%grNodeRIDInterface = grNodeInterf
+        fieldBuild%base               = base
+        fieldBuild%fieldDom           = fieldDom
+        fieldBuild%fieldRom           = fieldRom
+
+! ----- Save datastructure
+        cmdPara%fieldName(iFieldBuild)  = fieldName
+        cmdPara%fieldBuild(iFieldBuild) = fieldBuild
+
+    end do
 !
 end subroutine

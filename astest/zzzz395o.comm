@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -260,12 +260,14 @@ redu=THER_NON_LINE(MODELE=model_r,
 # Gappy-POD (reconstruction tout le domaine)
 reduR = REST_REDUIT_COMPLET(
     MODELE           = model,
-    RESULTAT_REDUIT  = redu, 
-    BASE_PRIMAL      = base_p,
-    REST_DUAL        = 'NON',
-    INFO             = 2,
-    CORR_COMPLET     = 'OUI',
-)
+    RESULTAT_REDUIT  = redu,
+    CHAM_GD          = (
+                        _F(NOM_CHAM         = 'TEMP',
+                           BASE             = base_p,
+                           OPERATION        = 'GAPPY_POD',),
+                       ),
+    INFO             = 2,)
+
 
 # Valeurs de référence (calcul complet) - Dans RID
 

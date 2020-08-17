@@ -50,7 +50,7 @@ type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
     AS_DEALLOCATE(vr = fieldBuild%matrPhi)
     AS_DEALLOCATE(vr = fieldBuild%matrPhiRID)
     AS_DEALLOCATE(vr = fieldBuild%fieldTransientVale)
-    if (fieldBuild%lGappy) then
+    if (fieldBuild%operation .eq. 'GAPPY_POD') then
         AS_DEALLOCATE(vr = fieldBuild%reduMatr)
     endif
 !

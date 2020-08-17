@@ -140,7 +140,7 @@ implicit none
         type(ROM_DS_Field)         :: fieldDom
 
 ! ----- Reduced field to read
-        type(ROM_DS_Field)         :: fieldROM
+        type(ROM_DS_Field)         :: fieldRom
 
 ! ----- Base to use
         type(ROM_DS_Empi)          :: base
@@ -148,8 +148,8 @@ implicit none
 ! ----- Flag when field is solution of a linear system (primal variable)
         aster_logical              :: lLinearSolve          = ASTER_FALSE
 
-! ----- Flag to apply Gappy-Pod
-        aster_logical              :: lGappy                = ASTER_FALSE
+! ----- Name of operation
+        character(len=24)          :: operation             = ' '
 
 ! ----- RID_Total = RID_Trunc + RID_Interface
 
@@ -207,6 +207,7 @@ implicit none
 
 ! ----- List of fields to reconstruct
         integer                          :: nbFieldBuild  = 0
+        character(len=24), pointer       :: fieldName(:)  => null()
         type(ROM_DS_FieldBuild), pointer :: fieldBuild(:) => null()
 
     end type ROM_DS_ParaRRC

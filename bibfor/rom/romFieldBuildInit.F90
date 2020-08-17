@@ -105,7 +105,7 @@ type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
 !
 ! - Truncation of [PHI] matrix
 !
-    if (fieldBuild%lGappy) then
+    if (fieldBuild%operation .eq. 'GAPPY_POD') then
         call romFieldBuildMatrPhiTruncate(fieldBuild)
     endif
 !
