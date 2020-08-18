@@ -49,7 +49,6 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
     character(len=8)  :: axe_line
     real(kind=8) :: tole_svd, tole_incr
     integer :: nb_mode_maxi
-    aster_logical :: l_tabl_user
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,7 +65,6 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
     axe_line     = ds_para_pod%axe_line
     surf_num     = ds_para_pod%surf_num
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
-    l_tabl_user  = ds_para_pod%l_tabl_user
 !
 ! - Print - General for POD
 !
@@ -77,7 +75,7 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
         call utmess('I', 'ROM7_3' , sr = tole_svd)
         if (operation .eq. 'POD_INCR') then
             call utmess('I', 'ROM7_13' , sr = tole_incr)
-            if (l_tabl_user) then
+            if (ds_para_pod%tablReduCoor%lTablUser) then
                 call utmess('I', 'ROM7_26')
             endif
         endif

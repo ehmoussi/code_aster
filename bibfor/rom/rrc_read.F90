@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_read(ds_para)
+subroutine rrc_read(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -30,9 +30,10 @@ implicit none
 #include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
+#include "asterfort/romTableParaRead.h"
 #include "asterfort/romBaseGetInfo.h"
 !
-type(ROM_DS_ParaRRC), intent(inout) :: ds_para
+type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,7 +43,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para          : datastructure for parameters
+! IO  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,9 +54,6 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     character(len=16) :: k16bid , answer
     character(len=24) :: grnode_int
     aster_logical :: l_prev_dual, l_corr_ef
-    aster_logical :: l_tabl_user
-    character(len=8)  :: tabl_user
-    integer :: nocc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,15 +62,14 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
         call utmess('I', 'ROM5_10')
     endif
 !
-    base_prim = ' '
-    base_dual = ' '
+! - Initializations
+!
+    base_prim  = ' '
+    base_dual  = ' '
     result_dom = ' '
     result_rom = ' '
-    model_dom = ' '
-    k16bid = ' '
-    tabl_user = ' '
-    l_tabl_user = ASTER_FALSE
-    nocc = 0
+    model_dom  = ' '
+    k16bid     = ' '
 !
 ! - Output datastructure
 !
@@ -117,20 +114,17 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! - Get parameters
 !
-    call getvid(' ', 'TABL_COOR_REDUIT', scal = tabl_user, nbret = nocc)
-    l_tabl_user = nocc .gt. 0
+    call romTableParaRead(cmdPara%tablReduCoor)
 !
 ! - Save parameters in datastructure
 !
-    ds_para%result_rom   = result_rom
-    ds_para%result_dom   = result_dom
-    ds_para%model_dom    = model_dom
-    ds_para%ds_empi_prim = empi_prim
-    ds_para%ds_empi_dual = empi_dual
-    ds_para%grnode_int   = grnode_int
-    ds_para%l_prev_dual  = l_prev_dual
-    ds_para%l_corr_ef    = l_corr_ef
-    ds_para%l_tabl_user  = l_tabl_user
-    ds_para%tabl_user    = tabl_user
+    cmdPara%result_rom   = result_rom
+    cmdPara%result_dom   = result_dom
+    cmdPara%model_dom    = model_dom
+    cmdPara%ds_empi_prim = empi_prim
+    cmdPara%ds_empi_dual = empi_dual
+    cmdPara%grnode_int   = grnode_int
+    cmdPara%l_prev_dual  = l_prev_dual
+    cmdPara%l_corr_ef    = l_corr_ef
 !
 end subroutine

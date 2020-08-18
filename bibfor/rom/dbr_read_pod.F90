@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_read_pod(operation, ds_para_pod)
+subroutine dbr_read_pod(operation, paraPod)
 !
 use Rom_Datastructure_type
 !
@@ -32,9 +32,10 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 #include "asterfort/romResultsGetInfo.h"
+#include "asterfort/romTableParaRead.h"
 !
 character(len=16), intent(in) :: operation
-type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
+type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,16 +46,15 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  operation        : type of POD method
-! IO  ds_para_pod      : datastructure for parameters (POD)
+! IO  paraPod          : datastructure for parameters (POD)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nocc, ifm, niv
-    aster_logical :: l_tabl_user
     real(kind=8) :: tole_svd, tole_incr
     character(len=16) :: field_name
     character(len=8)  :: axe_line, surf_num, base_type
-    character(len=8)  :: result_in, model_user, tabl_user
+    character(len=8)  :: result_in, model_user
     integer :: nb_mode_maxi
     type(ROM_DS_Snap) :: ds_snap
     type(ROM_DS_Result) :: ds_result
@@ -66,17 +66,17 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
         call utmess('I', 'ROM5_18')
     endif
 !
-    l_tabl_user = .false._1
-    tole_svd = 0.d0
-    tole_incr = 0.d0
+! - Initializations
+! 
+    tole_svd     = 0.d0
+    tole_incr    = 0.d0
     nb_mode_maxi = 0
-    field_name = ' '
-    axe_line = ' '
-    surf_num = ' '
-    base_type = ' '
-    result_in = ' '
-    model_user = ' '
-    tabl_user = ' '
+    field_name   = ' '
+    axe_line     = ' '
+    surf_num     = ' '
+    base_type    = ' '
+    result_in    = ' '
+    model_user   = ' '
 !
 ! - Get parameters - Results to process
 !
@@ -110,33 +110,30 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
     call getvr8(' ', 'TOLE_SVD', scal = tole_svd)
     if (operation .eq. 'POD_INCR') then
         call getvr8(' ', 'TOLE', scal = tole_incr)
-        call getvid(' ', 'TABL_COOR_REDUIT', scal = tabl_user, nbret = nocc)
-        l_tabl_user = nocc .gt. 0
+        call romTableParaRead(paraPod%tablReduCoor)
     endif
 !
 ! - Read parameters for snapshot selection
 !
-    ds_snap = ds_para_pod%ds_snap
+    ds_snap = paraPod%ds_snap
     call romSnapRead(result_in, ds_snap)
 !
 ! - Get parameters for result datastructure
 !
-    ds_result = ds_para_pod%ds_result_in
+    ds_result = paraPod%ds_result_in
     call romResultsGetInfo(result_in, field_name, model_user, ds_result)
 !
 ! - Save parameters in datastructure
 !
-    ds_para_pod%ds_result_in = ds_result
-    ds_para_pod%field_name   = field_name
-    ds_para_pod%base_type    = base_type
-    ds_para_pod%axe_line     = axe_line
-    ds_para_pod%surf_num     = surf_num
-    ds_para_pod%tole_svd     = tole_svd
-    ds_para_pod%tole_incr    = tole_incr
-    ds_para_pod%l_tabl_user  = l_tabl_user
-    ds_para_pod%tabl_user    = tabl_user
-    ds_para_pod%ds_snap      = ds_snap
-    ds_para_pod%nb_mode_maxi = nb_mode_maxi
-    ds_para_pod%model_user   = model_user
+    paraPod%ds_result_in = ds_result
+    paraPod%field_name   = field_name
+    paraPod%base_type    = base_type
+    paraPod%axe_line     = axe_line
+    paraPod%surf_num     = surf_num
+    paraPod%tole_svd     = tole_svd
+    paraPod%tole_incr    = tole_incr
+    paraPod%ds_snap      = ds_snap
+    paraPod%nb_mode_maxi = nb_mode_maxi
+    paraPod%model_user   = model_user
 !
 end subroutine

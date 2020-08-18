@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_clean(ds_para)
+subroutine rrc_clean(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -26,8 +26,9 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/romBaseClean.h"
+#include "asterfort/romTableClean.h"
 !
-type(ROM_DS_ParaRRC), intent(inout) :: ds_para
+type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -37,16 +38,17 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para          : datastructure for parameters
+! IO  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    AS_DEALLOCATE(vi = ds_para%v_equa_ridp)
-    if (ds_para%l_prev_dual) then
-        AS_DEALLOCATE(vi = ds_para%v_equa_ridd)
-        AS_DEALLOCATE(vi = ds_para%v_equa_ridi)
+    AS_DEALLOCATE(vi = cmdPara%v_equa_ridp)
+    if (cmdPara%l_prev_dual) then
+        AS_DEALLOCATE(vi = cmdPara%v_equa_ridd)
+        AS_DEALLOCATE(vi = cmdPara%v_equa_ridi)
     endif
-    call romBaseClean(ds_para%ds_empi_prim)
-    call romBaseClean(ds_para%ds_empi_dual)
+    call romBaseClean(cmdPara%ds_empi_prim)
+    call romBaseClean(cmdPara%ds_empi_dual)
+    call romTableClean(cmdPara%tablReduCoor)
 !
 end subroutine

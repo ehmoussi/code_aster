@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_comp_prim(ds_para)
+subroutine rrc_comp_prim(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -42,7 +42,7 @@ implicit none
 #include "asterfort/romResultSetZero.h"
 #include "asterfort/romEvalGappyPOD.h"
 !
-type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,7 +52,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para          : datastructure for parameters
+! In  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,20 +85,20 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Get parameters
 !
-    nb_store     = ds_para%nb_store
-    ds_mode      = ds_para%ds_empi_prim%ds_mode
-    nb_mode      = ds_para%ds_empi_prim%nb_mode
+    nb_store     = cmdPara%nb_store
+    ds_mode      = cmdPara%ds_empi_prim%ds_mode
+    nb_mode      = cmdPara%ds_empi_prim%nb_mode
     nbEqua       = ds_mode%nbEqua
-    nb_equa_ridp = ds_para%nb_equa_ridp
-    result_rom   = ds_para%result_rom
-    result_dom   = ds_para%result_dom
-    model_dom    = ds_para%model_dom
-    l_corr_ef    = ds_para%l_corr_ef
+    nb_equa_ridp = cmdPara%nb_equa_ridp
+    result_rom   = cmdPara%result_rom
+    result_dom   = cmdPara%result_dom
+    model_dom    = cmdPara%model_dom
+    l_corr_ef    = cmdPara%l_corr_ef
     ASSERT(ds_mode%fieldSupp .eq. 'NOEU')
 !
 ! - Create [PHI] matrix for primal base
 !
-    call romBaseCreateMatrix(ds_para%ds_empi_prim, v_prim)
+    call romBaseCreateMatrix(cmdPara%ds_empi_prim, v_prim)
 !
 ! - Reduce [PHI] matrix on RID
 !
@@ -106,8 +106,8 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
         AS_ALLOCATE(vr = v_prim_rom, size = nb_equa_ridp*nb_mode)
         do i_mode = 1, nb_mode
             do i_equa = 1, nbEqua
-                if (ds_para%v_equa_ridp(i_equa) .ne. 0) then
-                    v_prim_rom(ds_para%v_equa_ridp(i_equa)+nb_equa_ridp*(i_mode-1)) = &
+                if (cmdPara%v_equa_ridp(i_equa) .ne. 0) then
+                    v_prim_rom(cmdPara%v_equa_ridp(i_equa)+nb_equa_ridp*(i_mode-1)) = &
                                v_prim(i_equa+nbEqua*(i_mode-1))
                 endif
             enddo
@@ -122,10 +122,10 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Reduced coordinates: Gappy POD if necessary
 !
     if (l_corr_ef) then
-        call romEvalGappyPOD(ds_para, result_rom, nb_store, v_prim_rom,&
+        call romEvalGappyPOD(cmdPara, result_rom, nb_store, v_prim_rom,&
                              v_cohr , 0)
     else
-        call jeveuo(ds_para%coor_redu, 'L', vr = v_cohr)
+        call jeveuo(cmdPara%coorRedu, 'L', vr = v_cohr)
     endif
 !
 ! - Compute new fields
@@ -151,8 +151,8 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
         call jeveuo(disp_rid(1:19)//'.VALE', 'L', vr = v_disp_rid)
 ! ----- Set field
         do i_equa = 1, nbEqua
-            nume_equa = ds_para%v_equa_ridp(i_equa)
-            if (ds_para%v_equa_ridp(i_equa).eq. 0) then
+            nume_equa = cmdPara%v_equa_ridp(i_equa)
+            if (cmdPara%v_equa_ridp(i_equa).eq. 0) then
                 v_field_save(i_equa) = v_disp_dom(i_equa+nbEqua*(nume_store-1))
             else
                 v_field_save(i_equa) = v_disp_rid(nume_equa)

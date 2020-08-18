@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,17 +17,17 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romTableSave(tabl_name  , nb_mode   , v_gamma   ,&
+subroutine romTableSave(tablResu   , nb_mode   , v_gamma   ,&
                         nume_store_, time_curr_, nume_snap_)
 !
-use Rom_Datastructure_type
+use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/tbajli.h"
 !
-character(len=19), intent(in) :: tabl_name
+type(NL_DS_TableIO), intent(in) :: tablResu
 integer, intent(in) :: nb_mode
 real(kind=8), pointer :: v_gamma(:)
 integer, optional, intent(in) :: nume_store_
@@ -42,7 +42,7 @@ integer, optional, intent(in) :: nume_snap_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  tabl_name        : name of table in results datastructure
+! In  tablResu         : datastructure for table of reduced coordinates in result datastructure
 ! In  nb_mode          : number of empiric modes
 ! In  v_gamma          : pointer to reduced coordinates
 ! In  nume_store       : index to store in results
@@ -51,10 +51,6 @@ integer, optional, intent(in) :: nume_snap_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_para = 5
-    character(len=16), parameter :: para_name(nb_para) = (/'NUME_MODE  ','NUME_ORDRE ',&
-                                                           'INST       ','NUME_SNAP  ',&
-                                                           'COOR_REDUIT'/)
     integer :: i_mode, v_inte(3), nume_snap, nume_store
     real(kind=8) :: v_real(2), time_curr
 !
@@ -74,14 +70,15 @@ integer, optional, intent(in) :: nume_snap_
     endif
     v_inte(2)  = nume_store
     v_inte(3)  = nume_snap
-    v_real(1)  = time_curr
+    v_real(2)  = time_curr
 !
 ! - Save in table
 !
     do i_mode = 1, nb_mode
         v_inte(1) = i_mode
-        v_real(2) = v_gamma(i_mode+nb_mode*(nume_snap-1))
-        call tbajli(tabl_name, nb_para, para_name, v_inte, v_real, [(0.d0,0.d0)], [' '], 0)
+        v_real(1) = v_gamma(i_mode+nb_mode*(nume_snap-1))
+        call tbajli(tablResu%tablName, tablResu%nbPara, tablResu%paraName,&
+                     v_inte, v_real, [(0.d0,0.d0)], [' '], 0)
     enddo
 !
 end subroutine

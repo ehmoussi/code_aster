@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romAlgoNLInit(phenom        , model, mesh, nume_dof, result, ds_algorom,&
-                         l_line_search_)
+subroutine romAlgoNLInit(phenom, model, mesh, numeDof, resultName, paraAlgo, lLineSearch_)
 !
 use Rom_Datastructure_type
 !
@@ -28,17 +27,18 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/romCreateEquationFromNode.h"
 #include "asterfort/romAlgoNLCheck.h"
-#include "asterfort/romAlgoNLTableCreate.h"
+#include "asterfort/romTableCreate.h"
+#include "asterfort/nonlinDSTableIOCreate.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
 character(len=4), intent(in) :: phenom
 character(len=24), intent(in) :: model
 character(len=8), intent(in) :: mesh
-character(len=24), intent(in) :: nume_dof
-character(len=8), intent(in) :: result
-type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
-aster_logical, intent(in), optional :: l_line_search_
+character(len=24), intent(in) :: numeDof
+character(len=8), intent(in) :: resultName
+type(ROM_DS_AlgoPara), intent(inout) :: paraAlgo
+aster_logical, intent(in), optional :: lLineSearch_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,9 +51,9 @@ aster_logical, intent(in), optional :: l_line_search_
 ! In  phenom           : phenomenon (MECA/THER)
 ! In  model            : name of model
 ! In  mesh             : name of mesh
-! In  nume_dof         : name of numbering (NUME_DDL)
-! In  result           : name of datastructure for results
-! IO  ds_algorom       : datastructure for ROM parameters
+! In  numeDof          : name of numbering (NUME_DDL)
+! In  resultName       : name of datastructure for results
+! IO  paraAlgo         : datastructure for ROM parameters
 ! In  l_line_search    : .true. if line search
 !
 ! --------------------------------------------------------------------------------------------------
@@ -61,7 +61,6 @@ aster_logical, intent(in), optional :: l_line_search_
     integer :: ifm, niv
     aster_logical :: l_hrom, l_hrom_corref
     integer :: nb_mode
-    character(len=24) :: gamma
     real(kind=8), pointer :: v_gamma(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -73,40 +72,42 @@ aster_logical, intent(in), optional :: l_line_search_
 !
 ! - Get parameters
 !
-    l_hrom        = ds_algorom%l_hrom
-    l_hrom_corref = ds_algorom%l_hrom_corref
-    nb_mode       = ds_algorom%ds_empi%nb_mode
+    l_hrom        = paraAlgo%l_hrom
+    l_hrom_corref = paraAlgo%l_hrom_corref
+    nb_mode       = paraAlgo%ds_empi%nb_mode
 !
 ! - Check ROM algorithm datastructure
 !
-    call romAlgoNLCheck(phenom, model, mesh, ds_algorom, l_line_search_)
+    call romAlgoNLCheck(phenom, model, mesh, paraAlgo, lLineSearch_)
 !
 ! - Prepare the list of equations at interface
 !
     if (l_hrom) then
-        call romCreateEquationFromNode(ds_algorom%ds_empi%ds_mode, ds_algorom%v_equa_int, nume_dof,&
-                                       grnode_ = ds_algorom%grnode_int)
+        call romCreateEquationFromNode(paraAlgo%ds_empi%ds_mode, paraAlgo%v_equa_int, numeDof,&
+                                       grnode_ = paraAlgo%grnode_int)
     endif
 !
 ! - Prepare the list of equation of internal interface
 !
     if (l_hrom_corref) then
-        call romCreateEquationFromNode(ds_algorom%ds_empi%ds_mode, ds_algorom%v_equa_sub, nume_dof,&
-                                       grnode_ = ds_algorom%grnode_sub)
+        call romCreateEquationFromNode(paraAlgo%ds_empi%ds_mode, paraAlgo%v_equa_sub, numeDof,&
+                                       grnode_ = paraAlgo%grnode_sub)
     endif
 !
 ! - Initializations for EF correction
 !
-    ds_algorom%phase = 'HROM'
+    paraAlgo%phase = 'HROM'
 !
 ! - Create object for reduced coordinates
 !
-    gamma = '&&GAMMA'
-    call wkvect(gamma, 'V V R', nb_mode, vr = v_gamma)
-    ds_algorom%gamma = gamma
+    call wkvect(paraAlgo%gamma, 'V V R', nb_mode, vr = v_gamma)
 !
-! - Create table for the reduced coordinates
+! - Create datastructure of table in results datastructure for the reduced coordinates
 !
-    call romAlgoNLTableCreate(result, ds_algorom)
+    call romTableCreate(resultName, paraAlgo%tablResu)
+!
+! - Create table in results datastructure (if necessary)
+!
+    call nonlinDSTableIOCreate(paraAlgo%tablResu)
 !
 end subroutine

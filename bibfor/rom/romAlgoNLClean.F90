@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romAlgoNLClean(ds_algorom)
+subroutine romAlgoNLClean(paraAlgo)
 !
 use Rom_Datastructure_type
 !
@@ -27,8 +27,9 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/romBaseClean.h"
+#include "asterfort/nonlinDSTableIOClean.h"
 !
-type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+type(ROM_DS_AlgoPara), intent(inout) :: paraAlgo
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -38,14 +39,15 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_algorom       : datastructure for ROM parameters
+! IO  paraAlgo         : datastructure for ROM parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    AS_DEALLOCATE(vi = ds_algorom%v_equa_int)
-    if (ds_algorom%l_hrom_corref) then
-        AS_DEALLOCATE(vi = ds_algorom%v_equa_sub)
+    AS_DEALLOCATE(vi = paraAlgo%v_equa_int)
+    if (paraAlgo%l_hrom_corref) then
+        AS_DEALLOCATE(vi = paraAlgo%v_equa_sub)
     endif
-    call romBaseClean(ds_algorom%ds_empi)
+    call romBaseClean(paraAlgo%ds_empi)
+    call nonlinDSTableIOClean(paraAlgo%tablResu)
 !
 end subroutine

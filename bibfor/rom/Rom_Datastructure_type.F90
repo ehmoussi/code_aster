@@ -20,6 +20,8 @@
 !
 module Rom_Datastructure_type
 !
+use NonLin_Datastructure_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -31,6 +33,18 @@ implicit none
 ! Define types for datastructures
 !
 ! --------------------------------------------------------------------------------------------------
+
+!
+! - Datastructure to save reduced coordinates
+!
+    type ROM_DS_TablReduCoor
+! ----- Table in result datastructure
+        type(NL_DS_TableIO) :: tablResu
+! ----- Flag if table is given by user
+        aster_logical       :: lTablUser    = ASTER_FALSE
+! ----- Name of table when given by user
+        character(len=8)    :: tablUserName = ' '
+    end type ROM_DS_TablReduCoor
 !
 ! - Datastructure to select snapshots
 !
@@ -88,8 +102,6 @@ implicit none
     type ROM_DS_Empi
 ! ----- Name of empiric base to save
         character(len=8)        :: base = ' '
-! ----- Name of table to save reduced coordinates
-        character(len=24)       :: tabl_coor = ' '
 ! ----- Datastructure for mode
         type(ROM_DS_Field)      :: ds_mode
 ! ----- Type of reduced base
@@ -112,24 +124,25 @@ implicit none
 !
     type ROM_DS_ParaRRC
 ! ----- Phenomenon
-        character(len=16) :: type_resu = ' '
+        character(len=16)         :: type_resu = ' '
 ! ----- Number of time steps
-        integer           :: nb_store = 0
+        integer                   :: nb_store = 0
 ! ----- Reduced results datastructure to read
-        character(len=8)  :: result_rom = ' '
+        character(len=8)          :: result_rom = ' '
 ! ----- Model for reduced model
-        character(len=8)  :: model_rom = ' '
+        character(len=8)          :: model_rom = ' '
 ! ----- Complete results datastructure to create
-        character(len=8)  :: result_dom = ' '
+        character(len=8)          :: result_dom = ' '
 ! ----- Model for complete model
-        character(len=8)  :: model_dom = ' '
+        character(len=8)          :: model_dom = ' '
 ! ----- Datastructure for empiric modes (primal)
-        type(ROM_DS_Empi) :: ds_empi_prim
+        type(ROM_DS_Empi)         :: ds_empi_prim
 ! ----- Datastructure for empiric modes (dual)
-        type(ROM_DS_Empi) :: ds_empi_dual
-! ----- Table for reduced coordinates
-        character(len=24) :: tabl_name = ' '
-        character(len=24) :: coor_redu = '&&OP0054.COOR'
+        type(ROM_DS_Empi)         :: ds_empi_dual
+! ----- Table in result datastructure
+        type(ROM_DS_TablReduCoor) :: tablReduCoor
+! ----- Object to save reduced coordinates
+        character(len=24)         :: coorRedu = '&&OP0054.COOR'
 ! ----- Flag for dual prevision
         aster_logical     :: l_prev_dual = ASTER_FALSE
 ! ----- Name of GROUP_NO of interface
@@ -145,9 +158,6 @@ implicit none
         integer, pointer  :: v_equa_ridp(:) => null()
 ! ----- Flag for EF corrector?
         aster_logical     :: l_corr_ef = ASTER_FALSE
-! ----- Flag if table is given by user
-        aster_logical     :: l_tabl_user = ASTER_FALSE
-        character(len=19) :: tabl_user = ' '
     end type ROM_DS_ParaRRC
 !
 ! - Parameters for definition of multiparametric reduced problem - Evaluation
@@ -256,28 +266,27 @@ implicit none
 !
     type ROM_DS_ParaDBR_POD
 ! ----- Datastructure for result datastructures to read
-        type(ROM_DS_Result)     :: ds_result_in
+        type(ROM_DS_Result)       :: ds_result_in
 ! ----- Name of field for read (NOM_CHAM)
-        character(len=24)       :: field_name = ' '
+        character(len=24)         :: field_name = ' '
 ! ----- Model from user
-        character(len=8)        :: model_user = ' '
+        character(len=8)          :: model_user = ' '
 ! ----- Type of reduced base
-        character(len=8)        :: base_type = ' '
+        character(len=8)          :: base_type = ' '
 ! ----- Direction of the linear model
-        character(len=8)        :: axe_line = ' '
+        character(len=8)          :: axe_line = ' '
 ! ----- First section of the linear model
-        character(len=24)       :: surf_num = ' '
+        character(len=24)         :: surf_num = ' '
 ! ----- Tolerance for SVD
-        real(kind=8)            :: tole_svd = 0.d0
+        real(kind=8)              :: tole_svd = 0.d0
 ! ----- Tolerance for incremental POD
-        real(kind=8)            :: tole_incr = 0.d0
-! ----- Flag if table is given by user
-        aster_logical           :: l_tabl_user = ASTER_FALSE
-        character(len=19)       :: tabl_user = ' '
+        real(kind=8)              :: tole_incr = 0.d0
+! ----- Table for reduced coordinates
+        type(ROM_DS_TablReduCoor) :: tablReduCoor
 ! ----- Maximum number of modes
-        integer                 :: nb_mode_maxi = 0
+        integer                   :: nb_mode_maxi = 0
 ! ----- Datastructure for snapshot selection
-        type(ROM_DS_Snap)       :: ds_snap
+        type(ROM_DS_Snap)         :: ds_snap
 
     end type ROM_DS_ParaDBR_POD
 !
@@ -347,7 +356,6 @@ implicit none
         type(ROM_DS_Empi)       :: ds_empi_init
 ! ----- Parameter for KAHAN-PARLETT algorithm
         real(kind=8)            :: alpha = 0.d0
-
     end type ROM_DS_ParaDBR_ORTHO
 !
 ! - Parameters for DEFI_BASE_REDUITE operator
@@ -425,11 +433,11 @@ implicit none
 ! ----- Name of GROUP_NO of interface
         character(len=24) :: grnode_int = ' '
 ! ----- Name of GROUP_NO of internal interface
-        character(len=24) :: grnode_sub = ' '
-! ----- Table for reduced coordinates
-        character(len=24) :: tabl_name = ' '
+        character(len=24)   :: grnode_sub = ' '
+! ----- Table in result datastructure
+        type(NL_DS_TableIO) :: tablResu
 ! ----- Object to save reduced coordinates
-        character(len=24) :: gamma = ' '
+        character(len=24)   :: gamma = '&&ROM.COOR_REDU'
 ! ----- Identificator for field
         character(len=24) :: field_iden = ' '
 ! ----- Penalisation parameter for EF correction

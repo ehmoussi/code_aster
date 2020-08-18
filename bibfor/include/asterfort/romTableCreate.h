@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romTableCreate(resultName, tablName)
-        use Rom_Datastructure_type
+    subroutine romTableCreate(resultName, tablResu)
+        use NonLin_Datastructure_type
         character(len=8), intent(in) :: resultName
-        character(len=24), intent(out) :: tablName
+        type(NL_DS_TableIO), intent(inout) :: tablResu
     end subroutine romTableCreate
 end interface

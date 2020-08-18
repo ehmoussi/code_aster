@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dbr_read_pod(operation, ds_para_pod)
+    subroutine dbr_read_pod(operation, paraPod)
         use Rom_Datastructure_type
         character(len=16), intent(in) :: operation
-        type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
+        type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     end subroutine dbr_read_pod
 end interface

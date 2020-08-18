@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine tbexve(nomta, para, nomobj, basobj, nbval,&
-                      typval)
-        character(len=*) :: nomta
-        character(len=*) :: para
-        character(len=*) :: nomobj
-        character(len=*) :: basobj
-        integer :: nbval
-        character(len=*) :: typval
+    subroutine tbexve(nomta, para, nomobj, basobj_, nbval_,&
+                      typval_)
+        character(len=*) :: nomta, para, nomobj
+        character(len=*), optional, intent(in) :: basobj_
+        integer, optional, intent(out) :: nbval_
+        character(len=*), optional, intent(out) :: typval_
     end subroutine tbexve
 end interface

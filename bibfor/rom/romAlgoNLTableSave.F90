@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romAlgoNLTableSave(nume_store, time_curr, ds_algorom)
+subroutine romAlgoNLTableSave(nume_store, time_curr, paraAlgo)
 !
 use Rom_Datastructure_type
 !
@@ -31,7 +31,7 @@ implicit none
 !
 integer, intent(in) :: nume_store
 real(kind=8), intent(in) :: time_curr
-type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(ROM_DS_AlgoPara), intent(in) :: paraAlgo
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,20 +43,19 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! In  nume_store       : index to store in results
 ! In  time_curr        : current time
-! In  ds_algorom       : datastructure for ROM parameters
+! In  paraAlgo         : datastructure for ROM parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: tabl_name, gamma
+    character(len=24) :: gamma
     integer :: nb_mode
     real(kind=8), pointer :: v_gamma(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    tabl_name  = ds_algorom%tabl_name
-    gamma      = ds_algorom%gamma
-    nb_mode    = ds_algorom%ds_empi%nb_mode
+    gamma      = paraAlgo%gamma
+    nb_mode    = paraAlgo%ds_empi%nb_mode
 !
 ! - Print
 !
@@ -71,7 +70,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! - Save in table
 !
-    call romTableSave(tabl_name , nb_mode  , v_gamma  ,&
-                      nume_store, time_curr)
+    call romTableSave(paraAlgo%tablResu, nb_mode  , v_gamma,&
+                      nume_store       , time_curr)
 !
 end subroutine

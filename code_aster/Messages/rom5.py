@@ -94,7 +94,7 @@ cata_msg = {
 
    37 : _("""Initialisation pour réaliser le calcul non-linéaire avec réduction de modèle."""),
 
-   38 : _("""Création de la table pour sauver les coordonnées réduites."""),
+   38 : _("""Création de structure de données de la table contenant les coordonnées réduites."""),
 
    39 : _("""Sauvegarde des %(i1)d coordonnées réduites pour %(i2)d modes empiriques."""),
 

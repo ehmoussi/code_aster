@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine romAlgoNLInit(phenom        , model, mesh, nume_dof, result, ds_algorom,&
-                             l_line_search_)
+    subroutine romAlgoNLInit(phenom, model, mesh, numeDof, resultName, paraAlgo, lLineSearch_)
         use Rom_Datastructure_type
         character(len=4), intent(in) :: phenom
         character(len=24), intent(in) :: model
         character(len=8), intent(in) :: mesh
-        character(len=24), intent(in) :: nume_dof
-        character(len=8), intent(in) :: result
-        type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
-        aster_logical, intent(in), optional :: l_line_search_
+        character(len=24), intent(in) :: numeDof
+        character(len=8), intent(in) :: resultName
+        type(ROM_DS_AlgoPara), intent(inout) :: paraAlgo
+        aster_logical, intent(in), optional :: lLineSearch_
     end subroutine romAlgoNLInit
 end interface

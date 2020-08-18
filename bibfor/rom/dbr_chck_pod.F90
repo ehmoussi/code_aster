@@ -52,16 +52,15 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer, parameter :: nb_para = 4
-    character(len=16), parameter :: list_para(nb_para) = (/&
-        'MODELE  ',&
-        'CHAMPMAT',&
-        'CARAELEM',&
-        'EXCIT   '/)
-    character(len=19) :: tabl_user, tabl_coor
-    aster_logical :: l_tabl_user, lLagr
-    integer :: nb_mode, nb_snap, nb_line
-    integer, pointer :: v_tbnp(:) => null()
+    integer, parameter :: nbPara = 4
+    character(len=16), parameter :: paraName(nbPara) = (/&
+        'MODELE  ', 'CHAMPMAT',&
+        'CARAELEM', 'EXCIT   '/)
+    character(len=8) :: tablUserName
+    character(len=24) :: tablName
+    aster_logical :: lTablUser, lLagr
+    integer :: nb_mode, nb_snap, nbLine
+    integer, pointer :: tbnp(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,31 +84,31 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 !
 ! - Check if parameters are the same on all storing index
 !
-    call rs_paraonce(ds_para_pod%ds_result_in%name, nb_para, list_para)
+    call rs_paraonce(ds_para_pod%ds_result_in%name, nbPara, paraName)
 !
 ! - Check if COOR_REDUIT is OK
 !
-    tabl_user   = ds_para_pod%tabl_user
-    l_tabl_user = ds_para_pod%l_tabl_user
+    tablUserName = ds_para_pod%tablReduCoor%tablUserName
+    lTablUser    = ds_para_pod%tablReduCoor%lTablUser
+    tablName     = ds_para_pod%tablReduCoor%tablResu%tablName
     if (operation .eq. 'POD_INCR' .and. l_reuse) then
 ! ----- Check if table is OK
-        tabl_coor = ds_empi%tabl_coor
-        call jeveuo(tabl_coor//'.TBNP', 'L', vi=v_tbnp)
-        nb_line = v_tbnp(2)
-        if (nb_line .eq. 0) then
-            if (.not.l_tabl_user) then
+        call jeveuo(tablName(1:19)//'.TBNP', 'L', vi=tbnp)
+        nbLine = tbnp(2)
+        if (nbLine .eq. 0) then
+            if (.not. lTablUser) then
                 call utmess('F', 'ROM7_23')
             endif
         else
-            if (l_tabl_user) then
+            if (lTablUser) then
                 call utmess('F', 'ROM7_24')
             endif
         endif
 ! ----- Check conformity of user table
-        if (l_tabl_user) then
+        if (lTablUser) then
             nb_mode = ds_empi%nb_mode
             nb_snap = ds_para_pod%ds_snap%nb_snap
-            call dbr_chck_table(tabl_user, nb_mode, nb_snap)
+            call dbr_chck_table(tablUserName, nb_mode, nb_snap)
         endif
     endif
 !

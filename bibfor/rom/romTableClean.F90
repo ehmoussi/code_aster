@@ -15,44 +15,32 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romAlgoNLTableCreate(result, ds_algorom)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romTableClean(tablReduCoor)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
-#include "asterfort/infniv.h"
-#include "asterfort/romTableCreate.h"
+#include "asterfort/assert.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/nonlinDSTableIOClean.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: result
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+type(ROM_DS_TablReduCoor) :: tablReduCoor
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction - Solving non-linear problem
+! Model reduction
 !
-! Create table for the reduced coordinates
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  result           : name of datastructure for results
-! IO  ds_algorom       : datastructure for ROM parameters
+! Clean datastructure of table for the reduced coordinates in results datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: tablName
+! IO  tablReduCoor     : datastructure to save reduced coordinates in table
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    tablName = ' '
-    call romTableCreate(result, tablName)
-!
-! - Save name of table
-!
-    ds_algorom%tabl_name = tablName
+    call nonlinDSTableIOClean(tablReduCoor%tablResu)
 !
 end subroutine

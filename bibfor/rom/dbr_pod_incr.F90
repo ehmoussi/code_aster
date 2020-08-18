@@ -35,14 +35,13 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/norm_frobenius.h"
-#include "asterfort/romTableSave.h"
 #include "asterfort/romBaseCreate.h"
+#include "asterfort/romTableSave.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/tbexve.h"
 #include "asterfort/tbSuppressAllLines.h"
 #include "asterfort/utmess.h"
 #include "blas/dgemm.h"
-#include "blas/dgesvd.h"
 #include "blas/dgesv.h"
 !
 aster_logical, intent(in) :: lReuse
@@ -89,10 +88,7 @@ integer, intent(out) :: nbMode, nbSnap
     integer(kind=4), pointer :: IPIV(:) => null()
     real(kind=8), pointer :: b(:)    => null()
     real(kind=8), pointer :: v_gamma(:)    => null()
-    aster_logical :: l_tabl_user
-    character(len=19) :: tabl_user, tabl_coor
-    character(len=24) :: typval
-    integer :: nbval, iret
+    integer :: iret
     real(kind=8), pointer :: coorReduPrev(:) => null()
     character(len=24) :: mode, fieldName
     real(kind=8), pointer :: v_mode(:) => null()
@@ -109,8 +105,6 @@ integer, intent(out) :: nbMode, nbSnap
     nbSnapResult = paraPod%ds_snap%nb_snap
     tole_incr    = paraPod%tole_incr
     tole_svd     = paraPod%tole_svd
-    tabl_user    = paraPod%tabl_user
-    l_tabl_user  = paraPod%l_tabl_user
     ASSERT(paraPod%base_type .eq. '3D')
 !
 ! - Properties of previous base
@@ -118,8 +112,21 @@ integer, intent(out) :: nbMode, nbSnap
     baseName     = base%base
     nbModePrev   = base%nb_mode
     nbSnapPrev   = base%nb_snap
-    tabl_coor    = base%tabl_coor
     fieldName    = base%ds_mode%fieldName
+!
+! - Get previous reduced coordinates when reuse 
+!
+    if (lReuse) then
+        if (paraPod%tablReduCoor%lTablUser) then
+            call tbexve(paraPod%tablReduCoor%tablUserName     ,&
+                        paraPod%tablReduCoor%tablResu%tablSymbName, '&&COORHR')
+        else
+            call tbexve(paraPod%tablReduCoor%tablResu%tablName,&
+                        paraPod%tablReduCoor%tablResu%tablSymbName, '&&COORHR')
+        endif
+        call jeveuo('&&COORHR', 'E', vr = coorReduPrev)
+        call tbSuppressAllLines(paraPod%tablReduCoor%tablResu%tablName)
+    endif
 !
 ! - Allocate objects
 !
@@ -133,18 +140,6 @@ integer, intent(out) :: nbMode, nbSnap
     AS_ALLOCATE(vr = vt, size = nbEqua * (nbSnapResult + nbModePrev))
     AS_ALLOCATE(vr = gt, size = (nbSnapResult + nbModePrev) * (nbSnapResult + nbSnapPrev))
     AS_ALLOCATE(vr = g , size = (nbSnapResult + nbModePrev) * (nbSnapResult + nbSnapPrev))
-!
-! - Get previous reduced coordinates
-!
-    if (lReuse) then
-        if (l_tabl_user) then
-            call tbexve(tabl_user, 'COOR_REDUIT', '&&COORHR', 'V', nbval, typval)
-        else
-            call tbexve(tabl_coor, 'COOR_REDUIT', '&&COORHR', 'V', nbval, typval)
-        endif
-        call jeveuo('&&COORHR', 'E', vr = coorReduPrev)
-        call tbSuppressAllLines(tabl_coor)
-    endif
 !
 ! - Initialize algorithm
 !
@@ -335,7 +330,7 @@ integer, intent(out) :: nbMode, nbSnap
         call utmess('I', 'ROM5_39', ni = 2, vali = [nbSnap, nbMode])
     endif
     do iSnap = 1, nbSnap
-        call romTableSave(tabl_coor, nbMode, v_gamma,&
+        call romTableSave(paraPod%tablReduCoor%tablResu, nbMode, v_gamma   ,&
                           nume_snap_ = iSnap)
     end do
 !

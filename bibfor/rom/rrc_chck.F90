@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_chck(ds_para)
+subroutine rrc_chck(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -28,7 +28,7 @@ implicit none
 #include "asterfort/romModeChck.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaRRC), intent(inout) :: ds_para
+type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -38,7 +38,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para          : datastructure for parameters
+! IO  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,26 +49,28 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (ds_para%tabl_name .eq. ' ') then
-        if (ds_para%l_tabl_user) then
-            ds_para%tabl_name = ds_para%tabl_user
-        else
-            call utmess('F', 'ROM6_4')
-        endif
-    endif
+
 !
 ! - Get parameters
 !
-    l_corr_ef    = ds_para%l_corr_ef
-    l_prev_dual  = ds_para%l_prev_dual
-    ds_mode_prim = ds_para%ds_empi_prim%ds_mode
-    ds_mode_dual = ds_para%ds_empi_dual%ds_mode
+    l_corr_ef    = cmdPara%l_corr_ef
+    l_prev_dual  = cmdPara%l_prev_dual
+    ds_mode_prim = cmdPara%ds_empi_prim%ds_mode
+    ds_mode_dual = cmdPara%ds_empi_dual%ds_mode
     mesh_prim    = ds_mode_prim%mesh
     mesh_dual    = ds_mode_dual%mesh
     model_prim   = ds_mode_prim%model
     model_dual   = ds_mode_dual%model
-    model_rom    = ds_para%model_rom
-    model_dom    = ds_para%model_dom
+    model_rom    = cmdPara%model_rom
+    model_dom    = cmdPara%model_dom
+!
+! - Check existence of reduced coordinates
+!
+    if (cmdPara%tablReduCoor%tablResu%tablName .eq. ' ') then
+        if (.not. cmdPara%tablReduCoor%lTablUser) then
+            call utmess('F', 'ROM6_4')
+        endif
+    endif
 !
 ! - Check mesh
 !
@@ -87,7 +89,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
         call utmess('A', 'ROM6_8')
     endif
     if (model_prim .ne. model_dom) then
-        call utmess('F', 'ROM6_9', sk = ds_para%ds_empi_prim%base)
+        call utmess('F', 'ROM6_9', sk = cmdPara%ds_empi_prim%base)
     endif
 !
     if (l_prev_dual) then
@@ -98,7 +100,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
             call utmess('F', 'ROM6_2')
         endif
         if (model_dual .ne. model_dom) then
-            call utmess('F', 'ROM6_9', sk = ds_para%ds_empi_dual%base)
+            call utmess('F', 'ROM6_9', sk = cmdPara%ds_empi_dual%base)
         endif
     endif
 !

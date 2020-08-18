@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_base_pod(resultName, paraPod, lReuse, base)
+subroutine dbr_init_base_pod(baseName, paraPod, lReuse, base)
 !
 use Rom_Datastructure_type
 !
@@ -26,14 +26,14 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/dbr_rnum.h"
 #include "asterfort/infniv.h"
+#include "asterfort/nonlinDSTableIOCreate.h"
 #include "asterfort/romBaseCreate.h"
-#include "asterfort/romBaseGetInfoFromResult.h"
 #include "asterfort/romBaseGetInfo.h"
 #include "asterfort/romTableCreate.h"
 #include "asterfort/utmess.h"
 !
-character(len=8), intent(in) :: resultName
-type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
+character(len=8), intent(in) :: baseName
+type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 aster_logical, intent(in) :: lReuse
 type(ROM_DS_Empi), intent(inout) :: base
 !
@@ -45,8 +45,8 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  resultName       : name of results datastructure to save base
-! In  paraPod          : datastructure for POD parameters
+! In  baseName         : name of base
+! IO  paraPod          : datastructure for POD parameters
 ! In  lReuse           : .true. if reuse
 ! IO  base             : base
 !
@@ -64,20 +64,25 @@ type(ROM_DS_Empi), intent(inout) :: base
 ! - Create base
 !
     if (.not. lReuse) then
-        base%base = resultName
+        base%base = baseName
         call romBaseCreate(base, paraPod%nb_mode_maxi)     
     endif
 !
-! - Create table for the reduced coordinates in results datastructure
+! - Create datastructure of table in results datastructure for the reduced coordinates
 !
-    call romTableCreate(resultName, base%tabl_coor)
+    call romTableCreate(baseName, paraPod%tablReduCoor%tablResu)
+!
+! - Create table in results datastructure (if necessary)
+!
+    call nonlinDSTableIOCreate(paraPod%tablReduCoor%tablResu)
 !
 ! - Get informations about base
 !
     if (lReuse) then
-        call romBaseGetInfo(resultName, base)
+        call romBaseGetInfo(baseName, base)
     else
-        call romBaseGetInfoFromResult(paraPod%ds_result_in, resultName, base)
+        base%base      = baseName
+        base%ds_mode   = paraPod%ds_result_in%field
         base%base_type = paraPod%base_type
         base%axe_line  = paraPod%axe_line
         base%surf_num  = paraPod%surf_num

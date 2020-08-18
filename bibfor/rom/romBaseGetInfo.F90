@@ -31,8 +31,6 @@ implicit none
 #include "asterfort/rs_getfirst.h"
 #include "asterfort/rs_get_liststore.h"
 #include "asterfort/rsexch.h"
-#include "asterfort/ltnotb.h"
-#include "asterfort/jeexin.h"
 #include "asterfort/romFieldGetInfo.h"
 !
 character(len=8), intent(in)     :: base
@@ -55,7 +53,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     integer :: nb_mode
     character(len=8)  :: model, axe_line, base_type
     character(len=24) :: surf_num, field_refe, field_name
-    character(len=19) :: tabl_coor
     type(ROM_DS_Field) :: ds_field
 !
 ! --------------------------------------------------------------------------------------------------
@@ -67,15 +64,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     surf_num = ' '
     field_refe = ' '
     field_name = ' '
-    tabl_coor = ' '
-!
-! - Get name of COOR_REDUIT table
-!
-    call jeexin(base//'           .LTNT', iret)
-    if (iret .ne. 0) then
-        call ltnotb(base, 'COOR_REDUIT', tabl_coor, iret)
-        ASSERT(iret .ne. 1)
-    endif
 !
 ! - Number of modes
 !
@@ -108,7 +96,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Save informations about empiric modes
 !
     ds_empi%base      = base
-    ds_empi%tabl_coor = tabl_coor
     ds_empi%base_type = base_type
     ds_empi%axe_line  = axe_line
     ds_empi%surf_num  = surf_num

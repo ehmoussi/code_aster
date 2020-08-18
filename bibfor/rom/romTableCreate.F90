@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romTableCreate(resultName, tablName)
+subroutine romTableCreate(resultName, tablResu)
 !
 use Rom_Datastructure_type
 use NonLin_Datastructure_type
@@ -27,34 +27,32 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
 #include "asterfort/nonlinDSTableIOSetPara.h"
-#include "asterfort/nonlinDSTableIOCreate.h"
-#include "asterfort/nonlinDSTableIOClean.h"
 #include "asterfort/nonlinDSTableIOGetName.h"
 #include "asterfort/utmess.h"
 !
 character(len=8), intent(in) :: resultName
-character(len=24), intent(out) :: tablName
+type(NL_DS_TableIO), intent(inout) :: tablResu
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Create table for the reduced coordinates in results datatructure
+! Create datastructure of table in results datastructure for the reduced coordinates
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  resultName       : name of datastructure for results
-! Out tablName         : name of table in results datastructure
+! IO  tablResu         : datastructure for table in result datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    type(NL_DS_TableIO) :: tableio
     integer, parameter :: nbPara = 5
     character(len=8), parameter :: paraType(nbPara) = (/'R','R','I','I','I'/)
     character(len=24), parameter :: paraName(nbPara) = (/'COOR_REDUIT','INST       ',&
                                                          'NUME_MODE  ','NUME_ORDRE ',&
                                                          'NUME_SNAP  '/)
+    character(len=16), parameter :: tablSymbName = 'COOR_REDUIT'
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,31 +60,21 @@ character(len=24), intent(out) :: tablName
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_38')
     endif
-    tablName = ' '
 !
 ! - Create list of parameters
 !
-    call nonlinDSTableIOSetPara(tableio_  = tableio,&
+    call nonlinDSTableIOSetPara(tableio_  = tablResu,&
                                 nbPara_   = nbPara,&
                                 paraName_ = paraName,&
                                 paraType_ = paraType)
 !
 ! - Set other parameters
 !
-    tableio%resultName   = resultName
-    tableio%tablSymbName = 'COOR_REDUIT'
+    tablResu%resultName   = resultName
+    tablResu%tablSymbName = tablSymbName
 !
 ! - Get name of table in results datastructure
 !
-    call nonlinDSTableIOGetName(tableio)
-    tablName = tableio%tablName
-!
-! - Create table in results datastructure (if necessary)
-!
-    call nonlinDSTableIOCreate(tableio)
-!
-! - Clean tableio datastructure
-!
-    call nonlinDSTableIOClean(tableio)
+    call nonlinDSTableIOGetName(tablResu)
 !
 end subroutine

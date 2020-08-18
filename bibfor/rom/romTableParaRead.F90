@@ -17,61 +17,42 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseGetInfoFromResult(ds_result_in, base, ds_empi)
+subroutine romTableParaRead(tablReduCoor)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
+#include "asterfort/infniv.h"
+#include "asterfort/getvid.h"
 #include "asterfort/utmess.h"
-#include "asterfort/ltnotb.h"
 !
-type(ROM_DS_Result), intent(in)  :: ds_result_in
-character(len=8), intent(in)     :: base
-type(ROM_DS_Empi), intent(inout) :: ds_empi
+type(ROM_DS_TablReduCoor), intent(inout) :: tablReduCoor
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Get informations about empiric modes base from input results to reduce
+! Read parameters of table for the reduced coordinates in command file
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_result_in     : input results to reduce
-! In  base             : name of empiric base
-! IO  ds_empi          : datastructure for empiric modes
+! IO  tablReduCoor     : datastructure for table for the reduced coordinates in result
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret
-    character(len=8) :: model
-    character(len=19) :: tabl_coor
-    type(ROM_DS_Field) :: ds_field
+    integer :: nocc
+    aster_logical :: lTablUser
+    character(len=8) :: tablUserName
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!
-! - Get name of COOR_REDUIT table
-!
-    tabl_coor = ' '
-    call ltnotb(base, 'COOR_REDUIT', tabl_coor, iret)
-    ASSERT(iret .ne. 1)
-!
-! - Get model from input results datastructure
-!
-    model    = ds_result_in%model
-!
-! - Get field reference from input result datastructures
-!
-    ds_field = ds_result_in%field
-!
-! - Save informations about empiric modes
-!
-    ds_empi%base      = base
-    ds_empi%tabl_coor = tabl_coor
-    ds_empi%ds_mode   = ds_field
+    lTablUser    = ASTER_FALSE
+    tablUserName = ' '
+    call getvid(' ', 'TABL_COOR_REDUIT', scal = tablUserName, nbret = nocc)
+    lTablUser = nocc .gt. 0
+    tablReduCoor%lTablUser    = lTablUser
+    tablReduCoor%tablUserName = tablUserName
 !
 end subroutine
