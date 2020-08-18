@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseCreate(base, nbMode_)
+subroutine romResultCreate(result)
 !
 use Rom_Datastructure_type
 !
@@ -28,37 +28,28 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_Empi), intent(in) :: base
-integer, intent(in), optional :: nbMode_
+type(ROM_DS_Result), intent(in) :: result
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction
+! Model reduction - Result
 !
-! Create result datastructure for base
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  base             : base
-! In  nbMode           : number of modes to create in datatructure
+! Create result datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbMode, ifm, niv
+! In  result           : datastructure for result
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: ifm, niv
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
-    nbMode = 0
-    if (present(nbMode_)) then
-        nbMode = nbMode_
-    endif
-    if (nbMode .eq. 0) then
-        nbMode = 10
-    endif
-    call rscrsd('G', base%resultName, 'MODE_EMPI', nbMode)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM12_3', si = nbMode)
+        call utmess('I', 'ROM13_3', sk = result%resultType, si = result%nbStore)
     endif
+    call rscrsd('G', result%resultName, result%resultType, result%nbStore)
 !
 end subroutine

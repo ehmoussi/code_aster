@@ -29,6 +29,8 @@ cata_msg = {
 
     2 : _("""Le champ de type %(k1)s et de numéro d'ordre %(i1)d dans la structure de données des résultats est mis à zéro."""),
 
+    3 : _("""Création du résultat de type %(k1)s et avec %(i1)d numéros d'ordre."""),
+
    10 : _("""On ne trouve pas de champ de type %(k1)s dans la structure de données des résultats."""),
 
    11 : _("""Il y a des conditions limites dualisés (AFFE_CHAR_THER ou AFFE_CHAR_MECA) dans le champ de type %(k1)s. Ce n'est pas possible, utilisez AFFE_CHAR_CINE"""),

@@ -29,9 +29,9 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
 #include "asterfort/romFieldBuildInit.h"
+#include "asterfort/romResultCreate.h"
 #include "asterfort/romTableRead.h"
 #include "asterfort/rrcInfo.h"
-#include "asterfort/rscrsd.h"
 #include "asterfort/rsGetAllFieldType.h"
 #include "asterfort/utmess.h"
 !
@@ -79,7 +79,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! - Create output result datastructure
 !
-    call rscrsd('G', resultDom%resultName, resultDom%resultType, resultDom%nbStore)
+    call romResultCreate(resultDom)
 !
 ! - Get list of type of fields in a results datastructure (at least for ONE storing index)
 !

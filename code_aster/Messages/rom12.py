@@ -29,7 +29,7 @@ cata_msg = {
 
     2 : _("""Sauvegarde de la base avec %(i1)d modes."""),
 
-    3 : _("""Création de la base pour les modes réduits."""),
+    3 : _("""Création de la base pour les modes réduits avec %(i1)d numéros d'ordre."""),
 
    10 : _("""Paramètres de la base:"""),
 
