@@ -16,30 +16,30 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
 !
-subroutine romSnapInfo(snap)
+subroutine romSnapClean(snap)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/assert.h"
-#include "asterfort/utmess.h"
+#include "asterfort/as_deallocate.h"
 !
 type(ROM_DS_Snap), intent(in) :: snap
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction - Initializations
+! Model reduction
 !
-! Informations about snapshot selection
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  snap             : snapshot selection
+! Clean snapshot selection datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call utmess('I','ROM14_50', si = snap%nbSnap)
+! In  snap             : datastructure for snapshot selection
+!
+! --------------------------------------------------------------------------------------------------
+!
+    AS_DEALLOCATE(vi = snap%listSnap)
 !
 end subroutine

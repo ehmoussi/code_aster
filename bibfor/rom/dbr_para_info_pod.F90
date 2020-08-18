@@ -85,7 +85,7 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 ! - Print about snapshots selection
 !
     if (niv .ge. 2) then
-        call romSnapInfo(paraPod%ds_snap)
+        call romSnapInfo(paraPod%snap)
     endif
 !
 end subroutine

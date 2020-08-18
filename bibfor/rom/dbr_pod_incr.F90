@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine dbr_pod_incr(lReuse, base, paraPod,&
-                        q, s, v, nbMode, nbSnap)
+                        q, s, v, nbModeOut, nbSnapOut)
 !
 use Rom_Datastructure_type
 !
@@ -48,7 +48,7 @@ aster_logical, intent(in) :: lReuse
 type(ROM_DS_Empi), intent(inout) :: base
 type(ROM_DS_ParaDBR_POD) , intent(in) :: paraPod
 real(kind=8), pointer :: q(:), s(:), v(:)
-integer, intent(out) :: nbMode, nbSnap
+integer, intent(out) :: nbModeOut, nbSnapOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,8 +64,8 @@ integer, intent(out) :: nbMode, nbSnap
 ! Ptr q                : pointer to snapshots matrix (be modified after SVD)
 ! Ptr s                : pointer to singular values
 ! Ptr v                : pointer to singular vectors
-! Out nbMode           : number of modes selected
-! Out nbSnap           : number of snapshots used in incremental algorithm
+! Out nbModeOut        : number of modes selected
+! Out nbSnapOut        : number of snapshots used in incremental algorithm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -97,12 +97,17 @@ integer, intent(out) :: nbMode, nbSnap
 !
     call infniv(ifm, niv)
 !
+! - Initializations
+!
+    nbModeOut = 0
+    nbSnapOut = 0
+!
 ! - Get parameters
 !
     mode         = '&&IPOD_MODE'
     nbEqua       = base%mode%nbEqua
     nbModeMaxi   = paraPod%nb_mode_maxi
-    nbSnapResult = paraPod%ds_snap%nb_snap
+    nbSnapResult = paraPod%snap%nbSnap
     tole_incr    = paraPod%tole_incr
     tole_svd     = paraPod%tole_svd
     ASSERT(paraPod%base_type .eq. '3D')
@@ -291,51 +296,51 @@ integer, intent(out) :: nbMode, nbSnap
 !
 ! - Final number of snapshots in base
 !
-    nbSnap = iAlgoEnd
+    nbSnapOut = iAlgoEnd
 !
 ! - Prepare matrix of reduced coordinates
 !
-    do iSnap = 1, iAlgoSnap * nbSnap
+    do iSnap = 1, iAlgoSnap * nbSnapOut
         g(iSnap) = gt(iSnap)
     end do
 !
 ! - Compute SVD on matrix of reduced coordinates: Q = V S Wt
 !
-    call dbr_calcpod_svd(iAlgoSnap, nbSnap, g, s, b, nbSing)
+    call dbr_calcpod_svd(iAlgoSnap, nbSnapOut, g, s, b, nbSing)
 !
 ! - Select empiric modes
 !
-    call dbr_calcpod_sele(nbModeMaxi, tole_svd, s, nbSing, nbMode)
+    call dbr_calcpod_sele(nbModeMaxi, tole_svd, s, nbSing, nbModeOut)
 !
-! - Compute matrix of singular vector: V <= V * B (dim : [nbMode x nbEqua] )
+! - Compute matrix of singular vector: V <= V * B (dim : [nbModeOut x nbEqua] )
 !
-    AS_ALLOCATE(vr = v, size = nbEqua*nbMode)
-    call dgemm('N', 'N', nbEqua, nbMode, iAlgoSnap, 1.d0,&
+    AS_ALLOCATE(vr = v, size = nbEqua*nbModeOut)
+    call dgemm('N', 'N', nbEqua, nbModeOut, iAlgoSnap, 1.d0,&
                vt, nbEqua,&
                b, iAlgoSnap,&
                0.d0, v, nbEqua)
 !
-! - Compute reduced coordinates G <= B^T G (dim : [nbMode x nbSnap] )
+! - Compute reduced coordinates G <= B^T G (dim : [nbModeOut x nbSnapOut] )
 !
-    AS_ALLOCATE(vr = v_gamma, size = nbMode*nbSnap) 
-    call dgemm('T', 'N', nbMode, nbSnap, iAlgoSnap, 1.d0,&
+    AS_ALLOCATE(vr = v_gamma, size = nbModeOut*nbSnapOut) 
+    call dgemm('T', 'N', nbModeOut, nbSnapOut, iAlgoSnap, 1.d0,&
                b, iAlgoSnap,&
                gt, iAlgoSnap,&
-               0.d0, v_gamma, nbMode)
+               0.d0, v_gamma, nbModeOut)
 !
 ! - Save the reduced coordinates in a table
 !
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_39', ni = 2, vali = [nbSnap, nbMode])
+        call utmess('I', 'ROM5_39', ni = 2, vali = [nbSnapOut, nbModeOut])
     endif
-    do iSnap = 1, nbSnap
-        call romTableSave(paraPod%tablReduCoor%tablResu, nbMode, v_gamma,&
+    do iSnap = 1, nbSnapOut
+        call romTableSave(paraPod%tablReduCoor%tablResu, nbModeOut, v_gamma,&
                           nume_snap_ = iSnap)
     end do
 !
 ! - Debug print
 !
-    call utmess('I', 'ROM7_14', si = nbSnap)
+    call utmess('I', 'ROM7_14', si = nbSnapOut)
 !
 ! - Clean
 !

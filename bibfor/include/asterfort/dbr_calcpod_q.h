@@ -17,10 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_calcpod_q(base, ds_snap, m, n, q)
+    subroutine dbr_calcpod_q(base, resultName, snap, m, n, q)
         use Rom_Datastructure_type
         type(ROM_DS_Empi), intent(in) :: base
-        type(ROM_DS_Snap), intent(in) :: ds_snap
+        character(len=8), intent(in) :: resultName
+        type(ROM_DS_Snap), intent(in) :: snap
         integer, intent(in) :: m, n
         real(kind=8), pointer :: q(:)
     end subroutine dbr_calcpod_q

@@ -15,31 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
+#include "asterf_types.h"
 !
-subroutine romSnapInfo(snap)
-!
-use Rom_Datastructure_type
-!
-implicit none
-!
-#include "asterfort/assert.h"
-#include "asterfort/utmess.h"
-!
-type(ROM_DS_Snap), intent(in) :: snap
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Model reduction - Initializations
-!
-! Informations about snapshot selection
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  snap             : snapshot selection
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call utmess('I','ROM14_50', si = snap%nbSnap)
-!
-end subroutine
+interface
+    subroutine romSnapClean(snap)
+        use Rom_Datastructure_type
+        type(ROM_DS_Snap), intent(in) :: snap
+    end subroutine romSnapClean
+end interface

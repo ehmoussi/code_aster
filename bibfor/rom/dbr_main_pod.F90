@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_main_pod(paraPod, field_iden, base)
+subroutine dbr_main_pod(paraPod, fieldName, base)
 !
 use Rom_Datastructure_type
 !
@@ -34,8 +34,8 @@ implicit none
 #include "asterfort/dbr_calcpod_svd.h"
 #include "asterfort/romTableSave.h"
 !
-character(len=24), intent(in) :: field_iden
 type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
+character(len=24), intent(in) :: fieldName
 type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
@@ -46,58 +46,60 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  field_iden       : identificator of field (name in results datastructure)
 ! In  paraPod          : datastructure for parameters (POD)
+! In  fieldName        : identificator of field (name in results datastructure)
 ! IO  base             : base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_sing, nb_mode, nb_snap_redu, i_snap, nb_mode_maxi, m, n
+    integer :: nbSing, nbMode, nbSnap, iSnap, nbModeMaxi, m, n
     real(kind=8), pointer :: q(:) => null()
     real(kind=8), pointer :: v(:) => null()
     real(kind=8), pointer :: s(:) => null() 
     real(kind=8), pointer :: v_gamma(:) => null()
-    real(kind=8) :: tole_svd
+    real(kind=8) :: toleSVD
+    character(len=8) :: resultName
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    tole_svd     = paraPod%tole_svd
-    nb_snap_redu = paraPod%ds_snap%nb_snap
-    nb_mode_maxi = paraPod%nb_mode_maxi
+    toleSVD    = paraPod%tole_svd
+    nbSnap     = paraPod%snap%nbSnap
+    nbModeMaxi = paraPod%nb_mode_maxi
+    resultName = paraPod%resultDom%resultName
 !
 ! - Get size of snapshots matrix
 !
-    call dbr_calcpod_size(base, paraPod%ds_snap,&
+    call dbr_calcpod_size(base, paraPod%snap,&
                           m   , n )
 !
 ! - Create snapshots matrix Q
 !    
-    call dbr_calcpod_q(base, paraPod%ds_snap, m, n, q)
+    call dbr_calcpod_q(base, resultName, paraPod%snap, m, n, q)
 !
 ! - Compute empiric modes by SVD
 !
-    call dbr_calcpod_svd(m, n, q, s, v, nb_sing)
+    call dbr_calcpod_svd(m, n, q, s, v, nbSing)
 !
 ! - Select empiric modes
 !
-    call dbr_calcpod_sele(nb_mode_maxi, tole_svd, s, nb_sing, nb_mode)
+    call dbr_calcpod_sele(nbModeMaxi, toleSVD, s, nbSing, nbMode)
 !
 ! - Save empiric modes
 ! 
-    call dbr_calcpod_save(base, nb_mode, nb_snap_redu, field_iden, s, v)
+    call dbr_calcpod_save(base, nbMode, nbSnap, fieldName, s, v)
 !
 ! - Compute reduced coordinates
 !
-    call dbr_calcpod_redu(nb_snap_redu, m, q, v, nb_mode, v_gamma)
+    call dbr_calcpod_redu(nbSnap, m, q, v, nbMode, v_gamma)
 !
 ! - Save the reduced coordinates in a table
 !
-    do i_snap = 1, nb_snap_redu
-        call romTableSave(paraPod%tablReduCoor%tablResu, nb_mode, v_gamma   ,&
-                          nume_snap_ = i_snap)
+    do iSnap = 1, nbSnap
+        call romTableSave(paraPod%tablReduCoor%tablResu, nbMode, v_gamma,&
+                          nume_snap_ = iSnap)
     end do
 !
-! - Cleaning
+! - Clean
 !
     AS_DEALLOCATE(vr = q)
     AS_DEALLOCATE(vr = v)

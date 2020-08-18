@@ -18,11 +18,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine dbr_main_podincr(l_reuse, paraPod, field_iden, base)
+    subroutine dbr_main_podincr(l_reuse, paraPod, fieldName, base)
         use Rom_Datastructure_type
         aster_logical, intent(in) :: l_reuse
         type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
-        character(len=24), intent(in) :: field_iden
+        character(len=24), intent(in) :: fieldName
         type(ROM_DS_Empi), intent(inout) :: base
     end subroutine dbr_main_podincr
 end interface

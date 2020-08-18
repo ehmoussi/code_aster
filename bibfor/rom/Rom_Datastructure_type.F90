@@ -62,12 +62,10 @@ implicit none
 ! - Datastructure to select snapshots
 !
     type ROM_DS_Snap
-! ----- Results datastructure where snapshots are selected
-        character(len=8)  :: result    = ' '
 ! ----- Number of snapshots
-        integer           :: nb_snap   = 0
-! ----- Name of JEVEUX object for list of snapshots
-        character(len=24) :: list_snap = ' '
+        integer           :: nbSnap   = 0
+! ----- List of snapshots
+        integer, pointer  :: listSnap(:) => null()
     end type ROM_DS_Snap
 !
 ! - Parameters for lineic base numbering
@@ -285,7 +283,7 @@ implicit none
 ! ----- Maximum number of modes
         integer                   :: nb_mode_maxi = 0
 ! ----- Datastructure for snapshot selection
-        type(ROM_DS_Snap)         :: ds_snap
+        type(ROM_DS_Snap)         :: snap
     end type ROM_DS_ParaDBR_POD
 !
 ! - Algorithm Greedy

@@ -15,30 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romSnapRead(result, ds_snap)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romSnapRead(resultName, snap)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterc/getfac.h"
-#include "asterfort/assert.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/getvr8.h"
-#include "asterfort/getvtx.h"
-#include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/infniv.h"
-#include "asterfort/rsutnu.h"
 #include "asterfort/utmess.h"
 #include "asterfort/rs_get_liststore.h"
-#include "asterfort/wkvect.h"
+#include "asterfort/as_allocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in)  :: result
-    type(ROM_DS_Snap), intent(inout) :: ds_snap
+character(len=8), intent(in)  :: resultName
+type(ROM_DS_Snap), intent(inout) :: snap
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,47 +40,41 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  result           : results datastructure for selection (EVOL_*)
-! IO  ds_snap          : datastructure for snapshot selection
+! In  resultName       : name of results for selection
+! IO  snap             : snapshot selection
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: iret
-    integer :: nb_snap
-    character(len=24), parameter :: list_snap = '&&ROM.LIST_SNAP'
-    integer, pointer :: v_list_snap(:) => null()
+    integer :: iret, nbSnap
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_4')
+        call utmess('I', 'ROM14_1')
     endif
-!
-    nb_snap = 0
 !
 ! - Select list of snapshots (from LIST_SNAP keyword) or from result
 !
-    call getvis('','SNAPSHOT', nbret=iret)
-    iret=abs(iret)
+    call getvis(' ','SNAPSHOT', nbret=iret)
+    iret    = abs(iret)
+    nbSnap = 0
     if (iret .gt. 1) then
-        nb_snap = iret
-        call wkvect(list_snap, 'V V I', nb_snap, vi = v_list_snap)
-        call getvis('','SNAPSHOT', nbval=nb_snap, vect=v_list_snap)
+        nbSnap = iret
+        AS_ALLOCATE(vi = snap%listSnap, size = nbSnap)
+        call getvis(' ','SNAPSHOT', nbval=nbSnap, vect=snap%listSnap)
     else
-        call rs_get_liststore(result, nb_snap)
-        if (nb_snap .eq. 0) then
-            call utmess('F','ROM2_10')
+        call rs_get_liststore(resultName, nbSnap)
+        if (nbSnap .eq. 0) then
+            call utmess('F','ROM14_10')
         endif
-        call wkvect(list_snap, 'V V I', nb_snap, vi = v_list_snap)
-        call rs_get_liststore(result, nb_snap, v_list_snap)
+        AS_ALLOCATE(vi = snap%listSnap, size = nbSnap)
+        call rs_get_liststore(resultName, nbSnap, snap%listSnap)
     endif
 !
 ! - Save parameters in datastructure
 !
-    ds_snap%list_snap = list_snap
-    ds_snap%nb_snap   = nb_snap
-    ds_snap%result    = result
+    snap%nbSnap = nbSnap
 !
 end subroutine

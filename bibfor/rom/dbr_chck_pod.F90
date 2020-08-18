@@ -98,7 +98,7 @@ type(ROM_DS_Empi), intent(in) :: base
 ! ----- Check conformity of table
         if (lTablUser) then
             nbMode = base%nbMode
-            nbSnap = paraPod%ds_snap%nb_snap
+            nbSnap = paraPod%snap%nbSnap
             call dbr_chck_table(tablUserName, nbMode, nbSnap)
         endif
     endif

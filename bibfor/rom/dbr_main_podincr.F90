@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_main_podincr(l_reuse, paraPod, field_iden, base)
+subroutine dbr_main_podincr(l_reuse, paraPod, fieldName, base)
 !
 use Rom_Datastructure_type
 !
@@ -35,7 +35,7 @@ implicit none
 !
 aster_logical, intent(in) :: l_reuse
 type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
-character(len=24), intent(in) :: field_iden
+character(len=24), intent(in) :: fieldName
 type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
@@ -47,15 +47,13 @@ type(ROM_DS_Empi), intent(inout) :: base
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  l_reuse          : .true. if reuse
-! In  field_iden       : identificator of field (name in results datastructure)
+! In  fieldName        : identificator of field (name in results datastructure)
 ! In  paraPod          : datastructure for parameters (POD)
 ! IO  base             : base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8), pointer :: q(:) => null()
-    real(kind=8), pointer :: v(:) => null()
-    real(kind=8), pointer :: s(:) => null()
+    real(kind=8), pointer :: q(:) => null(), v(:) => null(), s(:) => null()
     integer :: nbMode, nbSnap, m, n
 !
 ! --------------------------------------------------------------------------------------------------
@@ -64,23 +62,23 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! - Get size of snapshots matrix
 !
-    call dbr_calcpod_size(base, paraPod%ds_snap,&
-                          m      , n )
+    call dbr_calcpod_size(base, paraPod%snap,&
+                          m   , n )
 !
 ! - Create snapshots matrix Q
 !    
-    call dbr_calcpod_q(base, paraPod%ds_snap, m, n, q)
+    call dbr_calcpod_q(base, paraPod%resultDom%resultName,paraPod%snap, m, n, q)
 !
 ! - Incremental POD method
 !
-    call dbr_pod_incr(l_reuse, base, paraPod,&
+    call dbr_pod_incr(l_reuse, base  , paraPod,&
                       q, s, v, nbMode, nbSnap)
 !
 ! - Save empiric base
 !
-    call dbr_calcpod_save(base, nbMode, nbSnap, field_iden, s, v)
+    call dbr_calcpod_save(base, nbMode, nbSnap, fieldName, s, v)
 !
-! - Cleaning
+! - Clean
 !
     AS_DEALLOCATE(vr = q)
     AS_DEALLOCATE(vr = v)

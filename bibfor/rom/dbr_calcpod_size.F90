@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_calcpod_size(base, ds_snap, m, n)
+subroutine dbr_calcpod_size(base, snap, m, n)
 !
 use Rom_Datastructure_type
 !
@@ -26,7 +26,7 @@ implicit none
 #include "asterfort/assert.h"
 !
 type(ROM_DS_Empi), intent(in) :: base
-type(ROM_DS_Snap), intent(in) :: ds_snap
+type(ROM_DS_Snap), intent(in) :: snap
 integer, intent(out) :: m, n
 !
 ! --------------------------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ integer, intent(out) :: m, n
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  base             : base
-! In  ds_snap          : datastructure for snapshot selection
+! In  snap             : snapshot selection
 ! Out m                : first dimension of snapshot matrix
 ! Out m                : second dimension of snapshot matrix
 !
@@ -49,7 +49,7 @@ integer, intent(out) :: m, n
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nbSnap   = ds_snap%nb_snap
+    nbSnap   = snap%nbSnap
     baseType = base%baseType
     nbSlice  = base%lineicNume%nbSlice
     nbEqua   = base%mode%nbEqua

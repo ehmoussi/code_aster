@@ -56,7 +56,6 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     character(len=8)  :: axe_line, surf_num, base_type
     character(len=8)  :: modelUser, resultName
     integer :: nb_mode_maxi
-    type(ROM_DS_Snap) :: ds_snap
     type(ROM_DS_Result) :: resultDom
 !
 ! --------------------------------------------------------------------------------------------------
@@ -115,8 +114,7 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
 ! - Read parameters for snapshot selection
 !
-    ds_snap = paraPod%ds_snap
-    call romSnapRead(resultName, ds_snap)
+    call romSnapRead(resultName, paraPod%snap)
 !
 ! - Get parameters for result datastructure
 !
@@ -130,7 +128,6 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     paraPod%surf_num     = surf_num
     paraPod%tole_svd     = tole_svd
     paraPod%tole_incr    = tole_incr
-    paraPod%ds_snap      = ds_snap
     paraPod%nb_mode_maxi = nb_mode_maxi
     paraPod%modelUser    = modelUser
     paraPod%resultDom    = resultDom

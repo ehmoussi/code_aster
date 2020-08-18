@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_calcpod_q(base, ds_snap, m, n, q)
+subroutine dbr_calcpod_q(base, resultName, snap, m, n, q)
 !
 use Rom_Datastructure_type
 !
@@ -33,7 +33,8 @@ implicit none
 #include "asterfort/dbr_calcpod_ql.h"
 !
 type(ROM_DS_Empi), intent(in) :: base
-type(ROM_DS_Snap), intent(in) :: ds_snap
+character(len=8), intent(in) :: resultName
+type(ROM_DS_Snap), intent(in) :: snap
 integer, intent(in) :: m, n
 real(kind=8), pointer :: q(:)
 !
@@ -46,20 +47,20 @@ real(kind=8), pointer :: q(:)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  base             : base
-! In  ds_snap          : datastructure for snapshot selection
+! In  snap             : snapshot selection
+! In  resultName       : name of results datastructure
 ! In  m                : first dimension of snapshot matrix
 ! In  m                : second dimension of snapshot matrix
-! Out q                : pointer to [Q] matrix
+! Ptr q                : pointer to [Q] matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     integer :: iSnap, iEqua
     integer :: nbSnap, nbEqua
-    integer :: numeInst, iret
-    character(len=8)  :: baseType, resultName
-    character(len=24) :: fieldName, list_snap
-    integer, pointer :: v_list_snap(:) => null()
+    integer :: numeSnap, iret
+    character(len=8)  :: baseType
+    character(len=24) :: fieldName
     real(kind=8), pointer :: v_resuFieldVale(:) => null()
     character(len=24) :: resuFieldVale
     character(len=4) :: fieldSupp
@@ -77,29 +78,20 @@ real(kind=8), pointer :: q(:)
 !
     resuFieldVale = '&&ROM_FIELDRESU'
 !
-! - Get parameters for snapshots
+! - Get parameters
 !
-    resultName = ds_snap%result
-    nbSnap     = ds_snap%nb_snap
-    list_snap  = ds_snap%list_snap
-    ASSERT(nbSnap .gt. 0)
-!
-! - Get parameters for base
-!
+    nbSnap     = snap%nbSnap
     baseType   = base%baseType
     lineicNume = base%lineicNume
+    ASSERT(nbSnap .gt. 0)
 !
-! - Get parameters for mode
+! - Get mode
 !
     mode      = base%mode
     nbEqua    = mode%nbEqua
     fieldName = mode%fieldName
     fieldSupp = mode%fieldSupp
     ASSERT(nbEqua .gt. 0)
-!
-! - Get list of snapshots to select
-!
-    call jeveuo(list_snap, 'L', vi = v_list_snap)
 !
 ! - Prepare snapshots matrix
 !
@@ -109,15 +101,15 @@ real(kind=8), pointer :: q(:)
 !
     if (baseType .eq. 'LINEIQUE') then
         call dbr_calcpod_ql(lineicNume, &
-                            resultName, fieldName  , nbEqua,&
-                            nbSnap    , v_list_snap,&
+                            resultName, fieldName, nbEqua,&
+                            nbSnap    , snap%listSnap,&
                             q)
     else
         do iSnap = 1, nbSnap
-            numeInst = v_list_snap(iSnap)
-            call rsexch(' '  , resultName, fieldName, numeInst, resuFieldVale, iret)
+            numeSnap = snap%listSnap(iSnap)
+            call rsexch(' '  , resultName, fieldName, numeSnap, resuFieldVale, iret)
             if (iret .ne. 0) then
-                call utmess('F','ROM2_11',sk = resultName)
+                call utmess('F','ROM2_11', sk = fieldName, si = numeSnap)
             endif
             if (fieldSupp == 'NOEU') then
                 call jeveuo(resuFieldVale(1:19)//'.VALE', 'L', vr = v_resuFieldVale)

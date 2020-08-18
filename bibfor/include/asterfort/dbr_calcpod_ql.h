@@ -26,7 +26,7 @@ interface
         character(len=8), intent(in) :: resultName
         character(len=24), intent(in) :: modeSymbName
         integer, intent(in) :: nbEqua, nbSnap
-        integer, intent(in) :: listSnap(:)
+        integer, pointer :: listSnap(:)
         real(kind=8), intent(inout) :: q(:)
     end subroutine dbr_calcpod_ql
 end interface

@@ -19,12 +19,12 @@
 !
 interface
     subroutine dbr_pod_incr(lReuse, base, paraPod,&
-                            q, s, v, nbMode, nbSnap)
+                            q, s, v, nbModeOut, nbSnapOut)
         use Rom_Datastructure_type
         aster_logical, intent(in) :: lReuse
         type(ROM_DS_Empi), intent(inout) :: base
         type(ROM_DS_ParaDBR_POD) , intent(in) :: paraPod
         real(kind=8), pointer :: q(:), s(:), v(:)
-        integer, intent(out) :: nbMode, nbSnap
+        integer, intent(out) :: nbModeOut, nbSnapOut
     end subroutine dbr_pod_incr
 end interface

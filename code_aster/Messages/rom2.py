@@ -25,18 +25,9 @@ cata_msg = {
 
     2 : _("""Seuls les champs nodaux sont utilisables avec cette opération."""),
 
-    4 : _("""Lecture des données pour sélectionner les clichés."""),
-
     6 : _("""Tolérance pour détecter les noeuds: %(r1)19.12e."""),
 
-    9 : _("""Base empirique créée à partir de %(i1)d clichés."""),
-
-   10 : _("""Vous n'avez sélectionné aucun cliché."""),
-
-   11 : _("""On n'a pas réussi à extraire les informations de la structure de données %(k1)s
-pour le numéro d'ordre %(i1)d.
-
-Conseil: Vérifier la liste renseignée dans SNAPSHOT"""),
+   11 : _("""On n'a pas réussi à extraire le champ de type %(k1)s pour le numéro d'ordre %(i1)d."""),
 
    12 : _("""Initialisation de la base empirique dans le cas d'une méthode POD."""),
 

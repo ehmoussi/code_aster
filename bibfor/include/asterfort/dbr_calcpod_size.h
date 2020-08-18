@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_calcpod_size(base, ds_snap, m, n)
+    subroutine dbr_calcpod_size(base, snap, m, n)
         use Rom_Datastructure_type
         type(ROM_DS_Empi), intent(in) :: base
-        type(ROM_DS_Snap), intent(in) :: ds_snap
+        type(ROM_DS_Snap), intent(in) :: snap
         integer, intent(out) :: m, n
     end subroutine dbr_calcpod_size
 end interface

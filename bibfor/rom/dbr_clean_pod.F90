@@ -27,6 +27,7 @@ implicit none
 #include "asterfort/romFieldClean.h"
 #include "asterfort/romTableClean.h"
 #include "asterfort/romResultClean.h"
+#include "asterfort/romSnapClean.h"
 !
 type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
@@ -45,5 +46,6 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     call romBaseClean(cmdPara%ds_empi)
     call romResultClean()
     call romTableClean(cmdPara%para_pod%tablReduCoor)
+    call romSnapClean(cmdPara%para_pod%snap)
 !
 end subroutine

@@ -35,7 +35,7 @@ type(ROM_DS_LineicNumb) , intent(in):: lineicNume
 character(len=8), intent(in) :: resultName
 character(len=24), intent(in) :: modeSymbName
 integer, intent(in) :: nbEqua, nbSnap
-integer, intent(in) :: listSnap(:)
+integer, pointer :: listSnap(:)
 real(kind=8), intent(inout) :: q(:)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ real(kind=8), intent(inout) :: q(:)
 !
     integer :: iSnap, iEqua, nodeNume, cmpNume, iSlice, i_2d
     integer :: nbSlice, n_2d, nbCmp
-    integer :: numeInst, iret
+    integer :: numeSnap, iret
     real(kind=8), pointer :: resuFieldVale(:) => null()
     character(len=24) :: resultField
 !
@@ -71,8 +71,8 @@ real(kind=8), intent(inout) :: q(:)
     ASSERT(nbCmp .gt. 0)
 !
     do iSnap = 1, nbSnap
-        numeInst = listSnap(iSnap)
-        call rsexch(' '  , resultName, modeSymbName, numeInst, resultField, iret)
+        numeSnap = listSnap(iSnap)
+        call rsexch(' '  , resultName, modeSymbName, numeSnap, resultField, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(resultField(1:19)//'.VALE', 'L', vr = resuFieldVale)
         do iEqua = 1, nbEqua
