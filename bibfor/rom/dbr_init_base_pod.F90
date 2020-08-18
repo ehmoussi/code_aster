@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/nonlinDSTableIOCreate.h"
 #include "asterfort/romBaseCreate.h"
 #include "asterfort/romBaseGetInfo.h"
+#include "asterfort/romResultCreateMode.h"
 #include "asterfort/romTableCreate.h"
 #include "asterfort/utmess.h"
 !
@@ -42,7 +43,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Prepare datastructure for modes - For POD methods
+! Prepare datastructure for base - For POD methods
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,6 +57,7 @@ type(ROM_DS_Empi), intent(inout) :: base
     integer :: ifm, niv
     integer :: nbNodeWithDof
     character(len=8) :: model
+    type(ROM_DS_Field) :: mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,13 +81,23 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     call nonlinDSTableIOCreate(paraPod%tablReduCoor%tablResu)
 !
-! - Get informations about base
+! - Get previous base
 !
     if (lReuse) then
         call romBaseGetInfo(baseName, base)
-    else
+    endif
+!
+! - Create mode datastructure from representative field in high-fidelity result
+!
+    if (.not. lReuse) then
+        call romResultCreateMode(paraPod%resultDom, paraPod%field_name, mode)
+    endif
+!
+! - Create datastructure for base
+!
+    if (.not. lReuse) then
         base%resultName = baseName
-        base%mode       = paraPod%resultDom%field
+        base%mode       = mode
         base%baseType   = paraPod%base_type
         base%lineicAxis = paraPod%axe_line
         base%lineicSect = paraPod%surf_num

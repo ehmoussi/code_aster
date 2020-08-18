@@ -58,9 +58,8 @@ type(ROM_DS_Empi), intent(in) :: base
         'CARAELEM', 'EXCIT   '/)
     character(len=8) :: tablUserName
     character(len=24) :: tablName
-    aster_logical :: lTablUser, lLagr
-    integer :: nbMode, nbSnap, nbLine
-    integer, pointer :: tbnp(:) => null()
+    aster_logical :: lTablUser, lTablFromResu
+    integer :: nbMode, nbSnap
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,39 +71,31 @@ type(ROM_DS_Empi), intent(in) :: base
 ! - General check
 !
     if (l_reuse .and. operation .eq. 'POD') then
-        call utmess('F','ROM2_13', sk = operation)
-    endif
-!
-! - Get components in fields
-!
-    lLagr = paraPod%resultDom%field%lLagr
-    if (lLagr) then
-        call utmess('F', 'ROM5_22')
+        call utmess('F', 'ROM2_13', sk = operation)
     endif
 !
 ! - Check if parameters are the same on all storing index
 !
-    call rs_paraonce(paraPod%resultDom%name, nbPara, paraName)
+    call rs_paraonce(paraPod%resultDom%resultName, nbPara, paraName)
 !
 ! - Check if COOR_REDUIT is OK
 !
-    tablUserName = paraPod%tablReduCoor%tablUserName
-    lTablUser    = paraPod%tablReduCoor%lTablUser
-    tablName     = paraPod%tablReduCoor%tablResu%tablName
+    lTablFromResu = paraPod%resultDom%lTablFromResu
+    tablUserName  = paraPod%tablReduCoor%tablUserName
+    lTablUser     = paraPod%tablReduCoor%lTablUser
+    tablName      = paraPod%tablReduCoor%tablResu%tablName
     if (operation .eq. 'POD_INCR' .and. l_reuse) then
 ! ----- Check if table is OK
-        call jeveuo(tablName(1:19)//'.TBNP', 'L', vi=tbnp)
-        nbLine = tbnp(2)
-        if (nbLine .eq. 0) then
-            if (.not. lTablUser) then
-                call utmess('F', 'ROM7_23')
-            endif
-        else
+        if (lTablFromResu) then
             if (lTablUser) then
                 call utmess('F', 'ROM7_24')
             endif
+        else
+            if (.not. lTablUser) then
+                call utmess('F', 'ROM7_23')
+            endif
         endif
-! ----- Check conformity of user table
+! ----- Check conformity of table
         if (lTablUser) then
             nbMode = base%nbMode
             nbSnap = paraPod%ds_snap%nb_snap

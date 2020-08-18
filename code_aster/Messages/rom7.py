@@ -73,4 +73,5 @@ Conseil: utilisez CALC_CHAMP pour calculer ce champ."""),
    31 : _("""Paramètres spécifiques à la méthode d'orthogonalisation."""),
 
    32 : _("""Paramètre pour l'algorithme: %(r1)13.6G."""),
+
 }

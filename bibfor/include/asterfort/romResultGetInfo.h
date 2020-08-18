@@ -17,11 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romResultsGetInfo(result, fieldNamez, model_user, ds_result)
+    subroutine romResultGetInfo(resultNameZ, result)
         use Rom_Datastructure_type
-        character(len=8), intent(in)  :: result
-        character(len=*), intent(in) :: fieldNamez
-        character(len=8), intent(in)  :: model_user
-        type(ROM_DS_Result), intent(inout) :: ds_result
-    end subroutine romResultsGetInfo
+        character(len=*), intent(in) :: resultNameZ
+        type(ROM_DS_Result), intent(inout) :: result
+    end subroutine romResultGetInfo
 end interface

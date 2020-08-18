@@ -16,34 +16,26 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
 !
-subroutine dbr_clean_pod(cmdPara)
+subroutine romResultClean()
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/romBaseClean.h"
-#include "asterfort/romFieldClean.h"
-#include "asterfort/romTableClean.h"
-#include "asterfort/romResultClean.h"
-!
-type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
+#include "asterfort/as_deallocate.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE
+! Model reduction
 !
-! Clean datastructures for POD
-!
-! --------------------------------------------------------------------------------------------------
-!
-! IO  cmdPara           : datastructure for parameters 
+! Clean result datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call romBaseClean(cmdPara%ds_empi)
-    call romResultClean()
-    call romTableClean(cmdPara%para_pod%tablReduCoor)
+! --------------------------------------------------------------------------------------------------
+!
+! Nothing to do
 !
 end subroutine

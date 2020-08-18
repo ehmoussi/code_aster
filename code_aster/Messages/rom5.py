@@ -39,8 +39,6 @@ cata_msg = {
 
    10 : _("""Lecture de tous les paramètres de la commande."""),
 
-   11 : _("""On ne trouve pas de champ de type %(k1)s dans la structure de données résultat."""),
-
    12 : _("""Préparation de la numérotation des modes linéiques."""),
 
    14 : _("""Échec dans l'orthogonalisation des modes empiriques."""),
@@ -56,9 +54,6 @@ cata_msg = {
    19 : _("""Vérifications de la conformité de la structure de données résultat utilisée."""),
 
    21 : _("""Tolérance pour l'algorithme glouton: %(r1)19.12e."""),
-
-   22 : _("""Un mode empirique contient des conditions limites dualisés (AFFE_CHAR_THER ou AFFE_CHAR_MECA).
-              Ce n'est pas possible, utilisez AFFE_CHAR_CINE"""),
 
    24 : _("""Paramètres généraux de DEFI_BASE_REDUITE."""),
 
@@ -84,14 +79,13 @@ cata_msg = {
 
    37 : _("""Initialisation pour réaliser le calcul non-linéaire avec réduction de modèle."""),
 
-   38 : _("""Création de structure de données de la table contenant les coordonnées réduites."""),
+   38 : _("""Création de la structure de données pour la table contenant les coordonnées réduites."""),
 
    39 : _("""Sauvegarde des %(i1)d coordonnées réduites pour %(i2)d modes empiriques."""),
 
    40 : _("""Résolution du problème réduit."""),
 
    41 : _("""Lecture des paramètres pour réaliser le calcul non-linéaire avec réduction de modèle."""),
-
 
    44 : _("""Évaluation des coefficients pour la valeur %(i1)d des paramètres."""),
 
@@ -110,8 +104,6 @@ cata_msg = {
    52 : _("""Le paramètre %(k1)s vaut %(r1)19.12e."""),
 
    53 : _("""Pour les modèles linéiques, le nombre de composantes par noeud doit être constant. Vérifiez que vous n'avez pas de chargements de Dirichlet appliqués avec AFFE_CHAR_MECA."""),
-
-   54 : _("""Il n'y a pas de modèle attaché à la structure de données résultat en entrée, il faut renseigner le modèle dans la commande avec le mot-clef MODELE."""),
 
    55 : _("""    Sauvegarde des coordonnées réduites pour %(i1)d modes empiriques dans la table."""),
 

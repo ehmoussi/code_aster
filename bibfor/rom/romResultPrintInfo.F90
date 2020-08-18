@@ -17,62 +17,36 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romResultSetZero(resultName, numeStore, ds_mode)
+subroutine romResultPrintInfo(result)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/copisd.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/rsexch.h"
-#include "asterfort/rsnoch.h"
 !
-character(len=8), intent(in) :: resultName
-integer, intent(in) :: numeStore
-type(ROM_DS_Field), intent(in) :: ds_mode
+type(ROM_DS_Result), intent(in) :: result
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Set zero value in result datastructure
+! Print informations about result
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  resultName       : name of results datastructure
-! In  numeStore        : index to set zero in results
-! In  ds_mode          : datastructure for empiric mode
+! In  result           : result
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-    integer :: iret
-    character(len=24) :: resultField
-    real(kind=8), pointer :: v_resultField(:) => null()
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM13_2', sk = ds_mode%fieldName, si = numeStore)
-    endif
-!
-! - Set zero
-!
-    call rsexch(' ', resultName, ds_mode%fieldName, numeStore, resultField, iret)
-    ASSERT(iret .eq. 100)
-    call copisd('CHAMP_GD', 'G', ds_mode%fieldRefe, resultField)
-    if (ds_mode%fieldSupp .eq. 'NOEU') then
-        call jeveuo(resultField(1:19)//'.VALE', 'E', vr = v_resultField)
-        v_resultField(:) = 0.d0
+    call utmess('I', 'ROM13_50')
+    call utmess('I', 'ROM13_51', sk = result%resultType)
+    call utmess('I', 'ROM13_52', si = result%nbStore)
+    if (result%lTablFromResu) then
+        call utmess('I', 'ROM13_53')
     else
-        ASSERT(ASTER_FALSE)
+        call utmess('I', 'ROM13_54')
     endif
-    call rsnoch(resultName, ds_mode%fieldName, numeStore)
 !
 end subroutine

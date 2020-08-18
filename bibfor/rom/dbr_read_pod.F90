@@ -24,15 +24,15 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/romSnapRead.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/romResultsGetInfo.h"
+#include "asterfort/romResultGetInfo.h"
+#include "asterfort/romSnapRead.h"
 #include "asterfort/romTableParaRead.h"
+#include "asterfort/utmess.h"
 !
 character(len=16), intent(in) :: operation
 type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
@@ -54,9 +54,10 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     real(kind=8) :: tole_svd, tole_incr
     character(len=16) :: fieldName
     character(len=8)  :: axe_line, surf_num, base_type
-    character(len=8)  :: resultDom, modelUser
+    character(len=8)  :: modelUser, resultName
     integer :: nb_mode_maxi
     type(ROM_DS_Snap) :: ds_snap
+    type(ROM_DS_Result) :: resultDom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,12 +75,12 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     axe_line     = ' '
     surf_num     = ' '
     base_type    = ' '
-    resultDom    = ' '
+    resultName   = ' '
     modelUser    = ' '
 !
 ! - Get parameters - Results to process
 !
-    call getvid(' ', 'RESULTAT', scal = resultDom)
+    call getvid(' ', 'RESULTAT', scal = resultName)
     call getvtx(' ', 'NOM_CHAM', scal = fieldName, nbret = nocc)
     ASSERT(nocc .eq. 1)
     call getvid(' ', 'MODELE'  , scal = modelUser, nbret = nocc)
@@ -115,11 +116,11 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 ! - Read parameters for snapshot selection
 !
     ds_snap = paraPod%ds_snap
-    call romSnapRead(resultDom, ds_snap)
+    call romSnapRead(resultName, ds_snap)
 !
 ! - Get parameters for result datastructure
 !
-    call romResultsGetInfo(resultDom, fieldName, modelUser, paraPod%resultDom)
+    call romResultGetInfo(resultName, resultDom)
 !
 ! - Save parameters in datastructure
 !
@@ -131,5 +132,7 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     paraPod%tole_incr    = tole_incr
     paraPod%ds_snap      = ds_snap
     paraPod%nb_mode_maxi = nb_mode_maxi
+    paraPod%modelUser    = modelUser
+    paraPod%resultDom    = resultDom
 !
 end subroutine

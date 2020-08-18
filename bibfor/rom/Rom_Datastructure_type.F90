@@ -35,6 +35,19 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 
 !
+! - Datastructure for results datastructure
+!
+    type ROM_DS_Result
+! ----- Type of result: evol_ther, evol_noli, etc .
+        character(len=16)       :: resultType    = ' '
+! ----- Name of datastructure
+        character(len=8)        :: resultName    = ' '
+! ----- Number of time steps saved in results
+        integer                 :: nbStore       = 0
+! ----- Flag for reduced coordinates table
+        aster_logical           :: lTablFromResu = ASTER_FALSE
+    end type ROM_DS_Result
+!
 ! - Datastructure to save reduced coordinates
 !
     type ROM_DS_TablReduCoor
@@ -248,43 +261,31 @@ implicit none
         integer                  :: syst_size      = 0
     end type ROM_DS_Solve
 !
-! - Parameters for DEFI_BASE_REDUITE operator - About (non-linear) results datastructure
-!
-    type ROM_DS_Result
-! ----- Name of datastructure
-        character(len=8)        :: name  = ' '
-! ----- Model
-        character(len=8)        :: model = ' '
-! ----- Mesh
-        character(len=8)        :: mesh  = ' '
-! ----- Field saved in
-        type(ROM_DS_Field)      :: field
-    end type ROM_DS_Result
-!
 ! - Parameters for DEFI_BASE_REDUITE operator (POD)
 !
     type ROM_DS_ParaDBR_POD
 ! ----- Datastructure for result datastructures to read (high fidelity)
         type(ROM_DS_Result)       :: resultDom
+! ----- Name of model from user
+        character(len=8)          :: modelUser    = ' '
 ! ----- Name of field for read (NOM_CHAM)
-        character(len=24)         :: field_name = ' '
+        character(len=24)         :: field_name   = ' '
 ! ----- Type of reduced base
-        character(len=8)          :: base_type = ' '
+        character(len=8)          :: base_type    = ' '
 ! ----- Direction of the linear model
-        character(len=8)          :: axe_line = ' '
+        character(len=8)          :: axe_line     = ' '
 ! ----- First section of the linear model
-        character(len=24)         :: surf_num = ' '
+        character(len=24)         :: surf_num     = ' '
 ! ----- Tolerance for SVD
-        real(kind=8)              :: tole_svd = 0.d0
+        real(kind=8)              :: tole_svd     = 0.d0
 ! ----- Tolerance for incremental POD
-        real(kind=8)              :: tole_incr = 0.d0
+        real(kind=8)              :: tole_incr    = 0.d0
 ! ----- Table for reduced coordinates
         type(ROM_DS_TablReduCoor) :: tablReduCoor
 ! ----- Maximum number of modes
         integer                   :: nb_mode_maxi = 0
 ! ----- Datastructure for snapshot selection
         type(ROM_DS_Snap)         :: ds_snap
-
     end type ROM_DS_ParaDBR_POD
 !
 ! - Algorithm Greedy

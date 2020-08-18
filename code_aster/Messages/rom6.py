@@ -57,8 +57,6 @@ cata_msg = {
 
    32 : _("""Échec lors du calcul des coordonnées réduites."""),
 
-   33 : _("""Le mode empirique de numéro d'ordre %(i1)d dans la base est mis à zéro."""),
-
    36 : _("""Le modèle est variable pendant le calcul, ce n'est pas possible en réduction de modèle."""),
 
    38 : _("""Initialisations pour le post-traitement du calcul réduit, quantités primales."""),
