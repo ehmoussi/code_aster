@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseDSCopy(ds_empi_in, base, ds_empi_out)
+subroutine romBaseDSCopy(baseIn, resultName, baseOut)
 !
 use Rom_Datastructure_type
 !
@@ -25,37 +25,39 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/romModeDSCopy.h"
+#include "asterfort/romLineicDSCopy.h"
 !
-type(ROM_DS_Empi), intent(in)  :: ds_empi_in
-character(len=8), intent(in)   :: base
-type(ROM_DS_Empi), intent(out) :: ds_empi_out
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Model reduction
-!
-! Copy datastructure of empiric base
+type(ROM_DS_Empi), intent(in)  :: baseIn
+character(len=8), intent(in)   :: resultName
+type(ROM_DS_Empi), intent(out) :: baseOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi_in       : datastructure for empiric base
-! In  base             : name of output empiric base
-! Out ds_empi_out      : datastructure for output empiric base
+! Model reduction - Base management
+!
+! Copy datastructure of base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_empi_out%base_type  = ds_empi_in%base_type
-    ds_empi_out%axe_line   = ds_empi_in%axe_line
-    ds_empi_out%surf_num   = ds_empi_in%surf_num
-    ds_empi_out%nb_mode    = ds_empi_in%nb_mode
-    ds_empi_out%lineicNume = ds_empi_in%lineicNume
+! In  baseIn                 : input base
+! In  resultName             : name of output base
+! Out baseOut                : output base
+!
+! --------------------------------------------------------------------------------------------------
+!
+    baseOut%resultName = resultName
+    baseOut%baseType   = baseIn%baseType
+    baseOut%lineicAxis = baseIn%lineicAxis
+    baseOut%lineicSect = baseIn%lineicSect
+    baseOut%nbMode     = baseIn%nbMode
+    baseOut%lineicNume = baseIn%lineicNume
+!
+! - Copy lineic numbering
+!
+    call romLineicDSCopy(baseIn%lineicNume, baseOut%lineicNume)
 !
 ! - Copy mode
 !
-    call romModeDSCopy(ds_empi_in%ds_mode, ds_empi_out%ds_mode)
-!
-! - Change base
-!
-    ds_empi_out%base = base
+    call romModeDSCopy(baseIn%mode, baseOut%mode)
 !
 end subroutine

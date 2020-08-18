@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romCalcMatrReduit(i_mode, ds_empi, nb_matr, prod_matr_mode, matr_redu,&
-                             mode_type)
+subroutine romCalcMatrReduit(modeNume, base, nbMatr, prod_matr_mode, matr_redu,&
+                             modeType)
 
 use Rom_Datastructure_type
 !
@@ -36,11 +36,11 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 !
-integer, intent(in) :: nb_matr, i_mode
-type(ROM_DS_Empi), intent(in) :: ds_empi
+integer, intent(in) :: nbMatr, modeNume
+type(ROM_DS_Empi), intent(in) :: base
 character(len=24), intent(in) :: matr_redu(:)
 character(len=24), intent(in) :: prod_matr_mode(:)
-character(len=1), intent(in) :: mode_type
+character(len=1), intent(in) :: modeType
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,17 +50,16 @@ character(len=1), intent(in) :: mode_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  i_mode           : mode nomber
-! In  nb_matr          : number of elementary matrix
-! In  mode_type        : type of mode  (R or C) 
+! In  modeNume         : mode number
+! In  nbMatr           : number of elementary matrix
+! In  modeType         : type of mode  (R or C) 
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_mode_curr
-    integer :: nb_mode_maxi, nbEqua, iEqua
-    integer :: i_matr, j_mode, iret
-    character(len=24) :: field_iden
-    character(len=8) :: base
+    integer :: nbModeMaxi, nbEqua, iEqua
+    integer :: iMatr, iMode, iret
+    character(len=24) :: fieldIden
+    character(len=8) :: resultName
     complex(kind=8) :: termc
     real(kind=8) :: termr
     character(len=19) :: mode
@@ -75,19 +74,18 @@ character(len=1), intent(in) :: mode_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    base         = ds_empi%base
-    nb_mode_maxi = ds_empi%nb_mode_maxi
-    nbEqua       = ds_empi%ds_mode%nbEqua
-    i_mode_curr  = i_mode
+    resultName = base%resultName
+    nbModeMaxi = base%nbModeMaxi
+    nbEqua     = base%mode%nbEqua
 !
 ! - Get acess to mode_current
 !
-    field_iden = 'DEPL'
-    call rsexch(' ', base, field_iden, i_mode_curr, mode, iret)
+    fieldIden = 'DEPL'
+    call rsexch(' ', resultName, fieldIden, modeNume, mode, iret)
     
-    if (mode_type .eq. 'R') then 
+    if (modeType .eq. 'R') then 
         call jeveuo(mode(1:19)//'.VALE', 'L', vr = vr_mode)
-    else if (mode_type .eq. 'C') then 
+    else if (modeType .eq. 'C') then 
         call jeveuo(mode(1:19)//'.VALE', 'L', vc = vc_mode)
     else 
         ASSERT(ASTER_FALSE)
@@ -95,33 +93,33 @@ character(len=1), intent(in) :: mode_type
 !
 ! - Get acess to product Matrix x Mode and Compute reduced matrix
 !
-    if (mode_type .eq. 'R') then
-        do i_matr = 1, nb_matr
-           call jeveuo(matr_redu(i_matr), 'E', vr = vr_matr_red)
-           call jeveuo(prod_matr_mode(i_matr), 'L', vr = vr_matr_mode)
-           do j_mode = 1, i_mode_curr
+    if (modeType .eq. 'R') then
+        do iMatr = 1, nbMatr
+           call jeveuo(matr_redu(iMatr), 'E', vr = vr_matr_red)
+           call jeveuo(prod_matr_mode(iMatr), 'L', vr = vr_matr_mode)
+           do iMode = 1, modeNume
               AS_ALLOCATE(vr = vr_matr_jmode, size=nbEqua)
               do iEqua = 1, nbEqua
-                 vr_matr_jmode(iEqua) = vr_matr_mode(iEqua+nbEqua*(j_mode-1))
+                 vr_matr_jmode(iEqua) = vr_matr_mode(iEqua+nbEqua*(iMode-1))
               end do
               termr = ddot(nbEqua, vr_mode, 1, vr_matr_jmode, 1)
-              vr_matr_red(nb_mode_maxi*(i_mode_curr-1)+j_mode) = termr
-              vr_matr_red(nb_mode_maxi*(j_mode-1)+i_mode_curr) = termr
+              vr_matr_red(nbModeMaxi*(modeNume-1)+iMode) = termr
+              vr_matr_red(nbModeMaxi*(iMode-1)+modeNume) = termr
               AS_DEALLOCATE(vr = vr_matr_jmode)
            end do
         end do 
-    else if (mode_type .eq. 'C') then
-        do i_matr = 1, nb_matr
-           call jeveuo(matr_redu(i_matr), 'E', vc = vc_matr_red)
-           call jeveuo(prod_matr_mode(i_matr), 'L', vc = vc_matr_mode)
-           do j_mode = 1, i_mode_curr
+    else if (modeType .eq. 'C') then
+        do iMatr = 1, nbMatr
+           call jeveuo(matr_redu(iMatr), 'E', vc = vc_matr_red)
+           call jeveuo(prod_matr_mode(iMatr), 'L', vc = vc_matr_mode)
+           do iMode = 1, modeNume
               AS_ALLOCATE(vc = vc_matr_jmode, size=nbEqua)
               do iEqua = 1, nbEqua
-                 vc_matr_jmode(iEqua) = vc_matr_mode(iEqua+nbEqua*(j_mode-1))
+                 vc_matr_jmode(iEqua) = vc_matr_mode(iEqua+nbEqua*(iMode-1))
               end do
               termc = zdotc(nbEqua, vc_mode, 1, vc_matr_jmode, 1)
-              vc_matr_red(nb_mode_maxi*(i_mode_curr-1)+j_mode) = termc
-              vc_matr_red(nb_mode_maxi*(j_mode-1)+i_mode_curr) = dconjg(termc)
+              vc_matr_red(nbModeMaxi*(modeNume-1)+iMode) = termc
+              vc_matr_red(nbModeMaxi*(iMode-1)+modeNume) = dconjg(termc)
               AS_DEALLOCATE(vc = vc_matr_jmode)
            end do
         end do 

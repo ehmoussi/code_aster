@@ -75,7 +75,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: k
+    integer :: iEqua, iMode
     real(kind=8) :: rbid
     real(kind=8) :: time_curr
     character(len=1) :: typres
@@ -156,16 +156,17 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
                     typres, cnvabu)
         call jeveuo(cnvabu(1:19)//'.VALE', 'L', vr=v_cnvabu)
 !
-        do k = 1, lonch
-            v_cn2mbr(k) = v_vec2nd(k) - v_cnresi(k) + v_cndirp(k) - v_cnvabt(k)- v_cnvabu(k)
+        do iEqua = 1, lonch
+            v_cn2mbr(iEqua) = v_vec2nd(iEqua) - v_cnresi(iEqua) +&
+                              v_cndirp(iEqua) - v_cnvabt(iEqua)- v_cnvabu(iEqua)
         end do
 !
 ! ----- Solve linear system
 !
         if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'HROM') then
             call jeveuo(ds_algorom%gamma, 'E', vr = v_gamma)
-            do k = 1, ds_algorom%ds_empi%nb_mode
-                v_gamma (k) = 0.d0
+            do iMode = 1, ds_algorom%ds_empi%nbMode
+                v_gamma (iMode) = 0.d0
             enddo
             call copisd('CHAMP_GD', 'V', temp_prev, chsol)
             call romAlgoNLSystemSolve(matass, cn2mbr, cnchci, ds_algorom, chsol)
@@ -189,16 +190,16 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !  INITIALISATION POUR LE PREMIER PAS, CALCUL TRANSITOIRE, PAS COURANT
 !=======================================================================
 !
-        do k = 1, lonch
-            v_cn2mbr(k) = v_vec2ni(k) + v_cndirp(k)
+        do iEqua = 1, lonch
+            v_cn2mbr(iEqua) = v_vec2ni(iEqua) + v_cndirp(iEqua)
         end do
 !
 ! ----- Solve linear system
 !
         if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'HROM') then
             call jeveuo(ds_algorom%gamma, 'E', vr = v_gamma)
-            do k = 1, ds_algorom%ds_empi%nb_mode
-                v_gamma (k) = 0.d0
+            do iMode = 1, ds_algorom%ds_empi%nbMode
+                v_gamma (iMode) = 0.d0
             enddo
             call copisd('CHAMP_GD', 'V', temp_prev, chsol)
             call romAlgoNLSystemSolve(matass, cn2mbr,cnchci, ds_algorom, chsol)

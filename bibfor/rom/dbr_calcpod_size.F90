@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_calcpod_size(ds_empi, ds_snap,&
-                            m      , n )
+subroutine dbr_calcpod_size(base, ds_snap, m, n)
 !
 use Rom_Datastructure_type
 !
@@ -26,7 +25,7 @@ implicit none
 !
 #include "asterfort/assert.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_Empi), intent(in) :: base
 type(ROM_DS_Snap), intent(in) :: ds_snap
 integer, intent(out) :: m, n
 !
@@ -38,31 +37,31 @@ integer, intent(out) :: m, n
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
+! In  base             : base
 ! In  ds_snap          : datastructure for snapshot selection
 ! Out m                : first dimension of snapshot matrix
 ! Out m                : second dimension of snapshot matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbEqua, nbSlice, nb_snap
-    character(len=8)  :: base_type
+    integer :: nbEqua, nbSlice, nbSnap
+    character(len=8)  :: baseType
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_snap   = ds_snap%nb_snap
-    base_type = ds_empi%base_type
-    nbSlice   = ds_empi%lineicNume%nbSlice
-    nbEqua    = ds_empi%ds_mode%nbEqua
+    nbSnap   = ds_snap%nb_snap
+    baseType = base%baseType
+    nbSlice  = base%lineicNume%nbSlice
+    nbEqua   = base%mode%nbEqua
 !
 ! - Prepare parameters for LAPACK
 !
-    if (base_type .eq. 'LINEIQUE') then
-        m      = nbEqua/nbSlice
-        n      = nbSlice*nb_snap
+    if (baseType .eq. 'LINEIQUE') then
+        m = nbEqua/nbSlice
+        n = nbSlice*nbSnap
     else
-        m      = nbEqua
-        n      = nb_snap
+        m = nbEqua
+        n = nbSnap
     endif
 !
 end subroutine

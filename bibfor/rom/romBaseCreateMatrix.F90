@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseCreateMatrix(ds_empi, v_matr_phi)
+subroutine romBaseCreateMatrix(base, matrPhi)
 !
 use Rom_Datastructure_type
 !
@@ -31,27 +31,28 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "asterfort/jeveuo.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
-real(kind=8), pointer :: v_matr_phi(:)
+type(ROM_DS_Empi), intent(in) :: base
+real(kind=8), pointer :: matrPhi(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction
+! Model reduction - Base management
 !
-! Create [PHI] matrix from empiric base
+! Create [PHI] matrix from base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
-! Out v_matr_phi       : pointer to [PHI] matrix
+! In  base             : base
+! Out matrPhi          : pointer to [PHI] matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_mode, iret, iEqua
-    integer :: nbEqua, nb_mode
-    character(len=24) :: mode
-    real(kind=8), pointer :: v_mode(:) => null()
+    integer :: iMode, iret, iEqua
+    integer :: nbEqua, nbMode, numeMode
+    character(len=24) :: resultField, fieldName
+    character(len=8) :: resultName
+    real(kind=8), pointer :: fieldVale(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,21 +60,25 @@ real(kind=8), pointer :: v_matr_phi(:)
 !
 ! - Get parameters
 !
-    nbEqua  = ds_empi%ds_mode%nbEqua
-    nb_mode = ds_empi%nb_mode
+    nbMode     = base%nbMode
+    resultName = base%resultName
+    nbEqua     = base%mode%nbEqua
+    fieldName  = base%mode%fieldName
     if (niv .ge. 2) then
-        call utmess('I', 'ROM6_30', ni = 2, vali = [nbEqua, nb_mode])
+        call utmess('I', 'ROM12_1', ni = 2, vali = [nbEqua, nbMode])
     endif
 !
 ! - Create [PHI] matrix
 !
-    AS_ALLOCATE(vr = v_matr_phi, size = nbEqua*nb_mode)
-    do i_mode = 1, nb_mode
-        call rsexch(' ', ds_empi%base, ds_empi%ds_mode%fieldName, i_mode, mode, iret)
+    AS_ALLOCATE(vr = matrPhi, size = nbEqua*nbMode)
+    do iMode = 1, nbMode
+        numeMode = iMode
+        call rsexch(' '     , resultName , fieldName,&
+                    numeMode, resultField, iret)
         ASSERT(iret .eq. 0)
-        call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
+        call jeveuo(resultField(1:19)//'.VALE', 'L', vr = fieldVale)
         do iEqua = 1, nbEqua
-            v_matr_phi(iEqua+nbEqua*(i_mode-1)) = v_mode(iEqua)
+            matrPhi(iEqua+nbEqua*(iMode-1)) = fieldVale(iEqua)
         end do
     end do
 !

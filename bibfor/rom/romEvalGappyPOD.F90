@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romEvalGappyPOD(ds_para    , result, nb_store, v_matr_phi,&
+subroutine romEvalGappyPOD(cmdPara    , resultName, nbStore, v_matr_phi,&
                            v_coor_redu, ind_dual)
 !
 use Rom_Datastructure_type
@@ -36,9 +36,9 @@ implicit none
 #include "blas/dgemm.h"
 #include "blas/dgesv.h"
 !
-type(ROM_DS_ParaRRC), intent(in) :: ds_para
-character(len=8), intent(in) :: result
-integer, intent(in) :: nb_store
+type(ROM_DS_ParaRRC), intent(in) :: cmdPara
+character(len=8), intent(in) :: resultName
+integer, intent(in) :: nbStore
 real(kind=8), pointer :: v_matr_phi(:)
 real(kind=8), pointer :: v_coor_redu(:)
 integer, intent(in) :: ind_dual
@@ -51,9 +51,8 @@ integer, intent(in) :: ind_dual
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes (on RID)
-! In  result           : name of results datastructur
-! In  nb_store         : number if times stored in results datastructures
+! In  resultName       : name of results datastructure
+! In  nbStore          : number if times stored in results datastructures
 ! In  v_matr_phi       : pointer to [PHI] matrix
 ! In  ind_dual         : index to distinguish the base primal or dual
 ! Out v_coor_redu      : pointer to reduced coordinates
@@ -80,18 +79,18 @@ integer, intent(in) :: ind_dual
 !
     nb_equa_ridi = 0
     if (ind_dual .eq. 0) then
-        ds_empi = ds_para%ds_empi_prim
+        ds_empi = cmdPara%ds_empi_prim
     else
-        ds_empi = ds_para%ds_empi_dual
+        ds_empi = cmdPara%ds_empi_dual
     endif
-    nb_mode = ds_empi%nb_mode
+    nb_mode = ds_empi%nbMode
     if (niv .ge. 2) then
         call utmess('I', 'ROM6_31')
     endif
 !
 ! - Allocate reduced coordinates matrix
 !
-    AS_ALLOCATE(vr = v_coor_redu, size = nb_mode*(nb_store-1))
+    AS_ALLOCATE(vr = v_coor_redu, size = nb_mode*(nbStore-1))
 !
 ! - Compute Gappy POD
 !
@@ -99,9 +98,9 @@ integer, intent(in) :: ind_dual
     AS_ALLOCATE(vr = v_vect, size = nb_mode)
     AS_ALLOCATE(vi4 = IPIV, size = nb_mode)
     if (ind_dual .eq. 0) then
-        do i_store = 1, nb_store-1
+        do i_store = 1, nbStore-1
             nume_store = i_store
-            call rsexch(' ', result, ds_empi%ds_mode%fieldName,&
+            call rsexch(' ', resultName, ds_empi%mode%fieldName,&
                         nume_store, field_rom, iret)
             ASSERT(iret .eq. 0)
             call jeveuo(field_rom(1:19)//'.VALE', 'L', vr = v_field_rom)
@@ -119,17 +118,17 @@ integer, intent(in) :: ind_dual
             enddo
         enddo
     else
-        nb_equa_ridi =  ds_para%nb_equa_ridi
-        do i_store = 1, nb_store-1
+        nb_equa_ridi =  cmdPara%nb_equa_ridi
+        do i_store = 1, nbStore-1
             nume_store = i_store
-            call rsexch(' ', result, ds_empi%ds_mode%fieldName,&
+            call rsexch(' ', resultName, ds_empi%mode%fieldName,&
                         nume_store, field_rom, iret)
             ASSERT(iret .eq. 0)
             call jeveuo(field_rom(1:19)//'.VALE', 'L', vr = v_field_rom)
             AS_ALLOCATE(vr = v_field_rid, size = nb_equa_ridi)
-            do i_ord = 1, ds_para%nb_equa_ridd
-                if (ds_para%v_equa_ridi(i_ord) .ne. 0) then
-                    v_field_rid(ds_para%v_equa_ridi(i_ord)) = v_field_rom(i_ord)
+            do i_ord = 1, cmdPara%nb_equa_ridd
+                if (cmdPara%v_equa_ridi(i_ord) .ne. 0) then
+                    v_field_rid(cmdPara%v_equa_ridi(i_ord)) = v_field_rom(i_ord)
                 endif
             enddo
             call dgemm('T', 'N', nb_mode, 1, nb_equa_ridi, 1.d0,&

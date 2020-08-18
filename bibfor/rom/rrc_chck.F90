@@ -42,8 +42,8 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: mesh_prim, mesh_dual, model_prim, model_dual
-    character(len=8) :: model_rom, model_dom
+    character(len=8) :: meshPrim, meshDual, modelPrim, modelDual
+    character(len=8) :: modelRom, modelDom
     aster_logical :: l_corr_ef, l_prev_dual
     type(ROM_DS_Field) :: modePrim, modeDual
 !
@@ -55,8 +55,14 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
     l_corr_ef   = cmdPara%l_corr_ef
     l_prev_dual = cmdPara%l_prev_dual
-    model_rom   = cmdPara%model_rom
-    model_dom   = cmdPara%model_dom
+    modePrim    = cmdPara%ds_empi_prim%mode
+    modeDual    = cmdPara%ds_empi_dual%mode
+    meshPrim    = modePrim%mesh
+    meshDual    = modeDual%mesh
+    modelPrim   = modePrim%model
+    modelDual   = modeDual%model
+    modelRom    = cmdPara%model_rom
+    modelDom    = cmdPara%model_dom
 !
 ! - Check existence of reduced coordinates
 !
@@ -66,43 +72,37 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
         endif
     endif
 !
-! - Check modes
+! - Check mesh
 !
-    modePrim = cmdPara%ds_empi_prim%ds_mode
-    modeDual = cmdPara%ds_empi_dual%ds_mode
-    call romModeChck(modePrim)
     if (l_prev_dual) then
-        call romModeChck(modeDual)
-    endif
-!
-! - Check meshes
-!
-    mesh_prim = modePrim%mesh
-    mesh_dual = modeDual%mesh
-    if (l_prev_dual) then
-        if (mesh_prim .ne. mesh_dual) then
+        if (meshPrim .ne. meshDual) then
             call utmess('F','ROM4_9')
         endif
     endif
 !
-! - Check models
+! - Check model
 !
-    model_prim = modePrim%model
-    model_dual = modeDual%model
-    if (model_rom .eq. model_dom) then
+    if (modelRom .eq. modelDom) then
         call utmess('A', 'ROM6_8')
     endif
-    if (model_prim .ne. model_dom) then
-        call utmess('F', 'ROM6_9', sk = cmdPara%ds_empi_prim%base)
+    if (modelPrim .ne. modelDom) then
+        call utmess('F', 'ROM6_9', sk = cmdPara%ds_empi_prim%resultName)
     endif
 !
     if (l_prev_dual) then
-        if (model_prim .ne. model_dual) then
+        if (modelPrim .ne. modelDual) then
             call utmess('F', 'ROM6_2')
         endif
-        if (model_dual .ne. model_dom) then
-            call utmess('F', 'ROM6_9', sk = cmdPara%ds_empi_dual%base)
+        if (modelDual .ne. modelDom) then
+            call utmess('F', 'ROM6_9', sk = cmdPara%ds_empi_dual%resultName)
         endif
+    endif
+!
+! - Check mode
+!
+    call romModeChck(modePrim)
+    if (l_prev_dual) then
+        call romModeChck(modeDual)
     endif
 !
 end subroutine

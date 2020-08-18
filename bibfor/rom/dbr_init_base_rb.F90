@@ -99,18 +99,18 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! - Save in base
 !
-    base%base                  = resultName
-    base%base_type             = ' '
-    base%axe_line              = ' '
-    base%surf_num              = ' '
-    base%nb_mode               = 0
-    base%nb_mode_maxi          = nb_mode_maxi
-    base%ds_mode%fieldName     = fieldName
-    base%ds_mode%fieldRefe     = fieldRefe
-    base%ds_mode%fieldSupp     = fieldSupp
-    base%ds_mode%mesh          = mesh
-    base%ds_mode%model         = model
-    base%ds_mode%nbEqua        = nbEqua
+    base%resultName     = resultName
+    base%baseType       = ' '
+    base%lineicAxis     = ' '
+    base%lineicSect     = ' '
+    base%nbMode         = 0
+    base%nbModeMaxi     = nb_mode_maxi
+    base%mode%fieldName = fieldName
+    base%mode%fieldRefe = fieldRefe
+    base%mode%fieldSupp = fieldSupp
+    base%mode%mesh      = mesh
+    base%mode%model     = model
+    base%mode%nbEqua    = nbEqua
 !
 ! - Create output datastructure
 !

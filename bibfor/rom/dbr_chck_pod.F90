@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_pod(operation, paraPod, l_reuse, ds_empi)
+subroutine dbr_chck_pod(operation, paraPod, l_reuse, base)
 !
 use Rom_Datastructure_type
 !
@@ -34,7 +34,7 @@ implicit none
 character(len=16), intent(in) :: operation
 type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 aster_logical, intent(in) :: l_reuse
-type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_Empi), intent(in) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,7 +47,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 ! In  operation        : type of method
 ! In  paraPod          : datastructure for parameters (POD)
 ! In  l_reuse          : .true. if reuse
-! In  ds_empi          : datastructure for empiric modes
+! In  base             : base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +59,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
     character(len=8) :: tablUserName
     character(len=24) :: tablName
     aster_logical :: lTablUser, lLagr
-    integer :: nb_mode, nb_snap, nbLine
+    integer :: nbMode, nbSnap, nbLine
     integer, pointer :: tbnp(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -106,9 +106,9 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
         endif
 ! ----- Check conformity of user table
         if (lTablUser) then
-            nb_mode = ds_empi%nb_mode
-            nb_snap = paraPod%ds_snap%nb_snap
-            call dbr_chck_table(tablUserName, nb_mode, nb_snap)
+            nbMode = base%nbMode
+            nbSnap = paraPod%ds_snap%nb_snap
+            call dbr_chck_table(tablUserName, nbMode, nbSnap)
         endif
     endif
 !

@@ -69,7 +69,7 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
 ! - Get parameters
 !
     l_hrom = ds_algorom%l_hrom
-    nbEqua = ds_algorom%ds_empi%ds_mode%nbEqua
+    nbEqua = ds_algorom%ds_empi%mode%nbEqua
 !
 ! - Access to vectors
 !

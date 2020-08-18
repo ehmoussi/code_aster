@@ -25,5 +25,25 @@ from ..Utilities import _
 
 cata_msg = {
 
+    1 : _("""Construction de la matrice des modes de dimension [%(i1)d, %(i2)d]."""),
+
+    2 : _("""Sauvegarde de la base avec %(i1)d modes."""),
+
     3 : _("""Création de la base pour les modes réduits."""),
+
+   10 : _("""Paramètres de la base:"""),
+
+   11 : _("""La base contient %(i1)d modes."""),
+
+   12 : _("""La base contient des modes linéiques."""),
+
+   13 : _("""Les modes linéiques ont pour axe: %(k1)s"""),
+
+   14 : _("""Les modes linéiques ont pour section de référence le GROUP_MA %(k1)s ."""),
+
+   15 : _("""La base contient des modes volumiques."""),
+
+   16 : _("""La base a été construite avec %(i1)d clichés."""),
+
+   17 : _("""La base contient les modes suivants:"""),
 }

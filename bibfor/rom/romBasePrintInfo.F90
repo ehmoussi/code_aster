@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBasePrintInfo(ds_empi)
+subroutine romBasePrintInfo(base)
 !
 use Rom_Datastructure_type
 !
@@ -27,34 +27,35 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/romModePrintInfo.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_Empi), intent(in) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction
+! Model reduction - Base management
 !
-! Print informations about empiric modes base
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  ds_empi          : datastructure for empiric modes
+! Print informations about base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call utmess('I', 'ROM7_8')
-    if (ds_empi%base_type .eq. 'LINEIQUE') then
-        call utmess('I', 'ROM3_10')
-        call utmess('I', 'ROM3_11', sk = ds_empi%axe_line)
-        call utmess('I', 'ROM3_12', sk = ds_empi%surf_num)
+! In  base             : base
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call utmess('I', 'ROM12_10')
+    if (base%nbMode .ne. 0) then
+        call utmess('I', 'ROM12_11', si = base%nbMode)
+    endif
+    if (base%baseType .eq. 'LINEIQUE') then
+        call utmess('I', 'ROM12_12')
+        call utmess('I', 'ROM12_13', sk = base%lineicAxis)
+        call utmess('I', 'ROM12_14', sk = base%lineicSect)
     else
-        call utmess('I', 'ROM3_20')
+        call utmess('I', 'ROM12_15')
     endif
-    if (ds_empi%nb_mode .ne. 0) then
-        call utmess('I', 'ROM3_5', si = ds_empi%nb_mode)
+    if (base%nbSnap .ne. 0) then
+        call utmess('I', 'ROM12_16', si = base%nbSnap)
     endif
-    if (ds_empi%nb_snap .ne. 0) then
-        call utmess('I', 'ROM3_9', si = ds_empi%nb_snap)
-    endif
-    call romModePrintInfo(ds_empi%ds_mode)
+    call utmess('I', 'ROM12_17')
+    call romModePrintInfo(base%mode)
 !
 end subroutine

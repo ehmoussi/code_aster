@@ -49,19 +49,19 @@ type(ROM_DS_AlgoPara), intent(in) :: paraAlgo
 !
     integer :: ifm, niv
     character(len=24) :: gamma
-    integer :: nb_mode
+    integer :: nbMode
     real(kind=8), pointer :: v_gamma(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    gamma      = paraAlgo%gamma
-    nb_mode    = paraAlgo%ds_empi%nb_mode
+    gamma  = paraAlgo%gamma
+    nbMode = paraAlgo%ds_empi%nbMode
 !
 ! - Print
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_55', si = nb_mode)
+        call utmess('I', 'ROM5_55', si = nbMode)
     endif
 !
 ! - Access to reduced coordinates
@@ -70,7 +70,7 @@ type(ROM_DS_AlgoPara), intent(in) :: paraAlgo
 !
 ! - Save in table
 !
-    call romTableSave(paraAlgo%tablResu, nb_mode  , v_gamma,&
+    call romTableSave(paraAlgo%tablResu, nbMode   , v_gamma,&
                       nume_store       , time_curr)
 !
 end subroutine

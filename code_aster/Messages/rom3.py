@@ -23,18 +23,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-    5 : _("""La base contient %(i1)d modes empiriques."""),
-
-    9 : _("""La base empirique a été construite avec %(i1)d clichés."""),
-
-   10 : _("""La base empirique contient des modes linéiques"""),
-
-   11 : _("""Les modes linéiques ont pour axe: %(k1)s"""),
-
-   12 : _("""Les modes linéiques ont pour section de référence le GROUP_MA %(k1)s"""),
-
-   20 : _("""La base empirique contient des modes volumiques"""),
-
    29 : _("""Le système global résultant utilise %(i1)d équations."""),
 
    30 : _("""Le système est une combinaison de %(i1)d matrices."""),

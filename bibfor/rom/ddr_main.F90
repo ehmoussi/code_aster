@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ddr_main(ds_para)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine ddr_main(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -32,9 +33,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/ddr_prep.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDDR), intent(in) :: ds_para
+type(ROM_DS_ParaDDR), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,12 +43,12 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para          : datastructure for parameters of EIM computation
+! In  cmdPara          : datastructure for parameters of EIM computation
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_node_rid, nb_mode_prim, nb_mode_dual
+    integer :: nb_node_rid, nbModePrim, nbModeDual
     integer, pointer :: v_equa_prim(:) => null()
     integer, pointer :: v_equa_dual(:) => null()
     integer, pointer :: v_list_rid(:) => null()
@@ -60,26 +59,26 @@ implicit none
 !
 ! - Get parameters
 !
-    nb_mode_prim = ds_para%ds_empi_prim%nb_mode
-    nb_mode_dual = ds_para%ds_empi_dual%nb_mode
+    nbModePrim = cmdPara%ds_empi_prim%nbMode
+    nbModeDual = cmdPara%ds_empi_dual%nbMode
 !
 ! - Prepare working objects
 !
-    AS_ALLOCATE(vi = v_equa_prim, size = nb_mode_prim)
-    AS_ALLOCATE(vi = v_equa_dual, size = nb_mode_dual)
+    AS_ALLOCATE(vi = v_equa_prim, size = nbModePrim)
+    AS_ALLOCATE(vi = v_equa_dual, size = nbModeDual)
 !
 ! - Application of DEIM
 !    
-    call ddr_comp(ds_para%ds_empi_prim, v_equa_prim)
-    call ddr_comp(ds_para%ds_empi_dual, v_equa_dual)
+    call ddr_comp(cmdPara%ds_empi_prim, v_equa_prim)
+    call ddr_comp(cmdPara%ds_empi_dual, v_equa_dual)
 !
 ! - Prepare list of nodes in RID
 !
-    call ddr_prep(ds_para, v_equa_prim, v_equa_dual, v_list_rid, nb_node_rid)
+    call ddr_prep(cmdPara, v_equa_prim, v_equa_dual, v_list_rid, nb_node_rid)
 !
 ! - Create RID on the mesh from list
 !
-    call ddr_crid(ds_para, nb_node_rid, v_list_rid)
+    call ddr_crid(cmdPara, nb_node_rid, v_list_rid)
 !
 ! - Clean
 !

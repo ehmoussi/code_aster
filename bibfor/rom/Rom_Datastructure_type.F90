@@ -97,23 +97,24 @@ implicit none
     end type ROM_DS_Field
 !
 ! - Datastructure for empiric base
+!
     type ROM_DS_Empi
 ! ----- Name of empiric base to save
-        character(len=8)        :: base = ' '
+        character(len=8)        :: resultName = ' '
 ! ----- Datastructure for mode
-        type(ROM_DS_Field)      :: ds_mode
+        type(ROM_DS_Field)      :: mode
 ! ----- Type of reduced base
-        character(len=8)        :: base_type = ' '
+        character(len=8)        :: baseType   = ' '
 ! ----- Direction of the linear model
-        character(len=8)        :: axe_line = ' '
+        character(len=8)        :: lineicAxis = ' '
 ! ----- First section of the linear model
-        character(len=24)       :: surf_num = ' '
+        character(len=24)       :: lineicSect = ' '
 ! ----- Number of modes in base
-        integer                 :: nb_mode = 0
+        integer                 :: nbMode     = 0
 ! ----- Number of modes max 
-        integer                 :: nb_mode_maxi = 0
+        integer                 :: nbModeMaxi = 0
 ! ----- Number of snapshots when created base
-        integer                 :: nb_snap = 0
+        integer                 :: nbSnap     = 0
 ! ----- Datastructure for lineic base numbering
         type(ROM_DS_LineicNumb) :: lineicNume
     end type ROM_DS_Empi

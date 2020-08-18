@@ -67,7 +67,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 ! - Create base
 !
     if (.not. lReuse) then
-        base%base = baseName
+        base%resultName = baseName
         call romBaseCreate(base, paraPod%nb_mode_maxi)
     endif
 !
@@ -84,22 +84,22 @@ type(ROM_DS_Empi), intent(inout) :: base
     if (lReuse) then
         call romBaseGetInfo(baseName, base)
     else
-        base%base      = baseName
-        base%ds_mode   = paraPod%resultDom%field
-        base%base_type = paraPod%base_type
-        base%axe_line  = paraPod%axe_line
-        base%surf_num  = paraPod%surf_num
-        base%nb_mode   = 0
-        base%nb_snap   = 0
+        base%resultName = baseName
+        base%mode       = paraPod%resultDom%field
+        base%baseType   = paraPod%base_type
+        base%lineicAxis = paraPod%axe_line
+        base%lineicSect = paraPod%surf_num
+        base%nbMode     = 0
+        base%nbSnap     = 0
     endif
 !
 ! - Create numbering of nodes for the lineic model
 !
-    if (base%base_type .eq. 'LINEIQUE') then
+    if (base%baseType .eq. 'LINEIQUE') then
         if (niv .ge. 2) then
             call utmess('I', 'ROM2_40')
         endif
-        model = base%ds_mode%model
+        model = base%mode%model
         call modelNodeEF(model, nbNodeWithDof)
         call dbr_rnum(base, nbNodeWithDof)
     endif

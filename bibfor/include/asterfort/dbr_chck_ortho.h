@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine dbr_chck_ortho(ds_para_ortho, l_reuse)
+    subroutine dbr_chck_ortho(paraOrtho, lReuse)
         use Rom_Datastructure_type
-            type(ROM_DS_ParaDBR_ORTHO), intent(in) :: ds_para_ortho
-            aster_logical, intent(in) :: l_reuse
+            type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
+            aster_logical, intent(in) :: lReuse
     end subroutine dbr_chck_ortho
 end interface

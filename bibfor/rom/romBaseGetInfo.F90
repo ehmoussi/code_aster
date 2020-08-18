@@ -38,30 +38,30 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction
+! Model reduction - Base management
 !
 ! Get informations about base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  resultName       : name of result datastructure
-! IO  base             : datastructure for base
+! In  resultName       : name of results datastructures for base
+! IO  base             : base
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: numeModeRefe = 1
     integer :: iret, numeModeFirst, numeSlice, nbSnap, nbMode
-    character(len=8)  :: model, axe_line, baseType
-    character(len=24) :: surf_num, fieldRefe, modeSymbName
+    character(len=8)  :: model, lineicAxis, baseType
+    character(len=24) :: lineicSect, fieldRefe, modeSymbName
     type(ROM_DS_Field) :: mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nbMode       = 0
     model        = ' '
-    axe_line     = ' '
+    lineicAxis   = ' '
     baseType     = ' '
-    surf_num     = ' '
+    lineicSect   = ' '
     fieldRefe    = ' '
     modeSymbName = ' '
 !
@@ -69,7 +69,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     call rs_get_liststore(resultName, nbMode)
 !
-! - Get main parameters in empiric resultName
+! - Get main parameters in empiric result
 !
     call romModeParaRead(resultName, numeModeRefe,&
                          model_        = model,&
@@ -92,12 +92,12 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! - Save informations about empiric modes
 !
-    base%base       = resultName
-    base%base_type  = baseType
-    base%axe_line   = axe_line
-    base%surf_num   = surf_num
-    base%nb_mode    = nbMode
-    base%nb_snap    = nbSnap
-    base%ds_mode    = mode
+    base%resultName = resultName
+    base%baseType   = baseType
+    base%lineicAxis = lineicAxis
+    base%lineicSect = lineicSect
+    base%nbMode     = nbMode
+    base%nbSnap     = nbSnap
+    base%mode       = mode
 !
 end subroutine

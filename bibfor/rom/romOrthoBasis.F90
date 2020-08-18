@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romOrthoBasis(ds_multipara, ds_empi, new_basis)
+subroutine romOrthoBasis(ds_multipara, base, new_basis)
 !
 use Rom_Datastructure_type
 !
@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/as_deallocate.h"
 !
 type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_Empi), intent(in) :: base
 character(len=19), intent(in) :: new_basis
 !
 ! --------------------------------------------------------------------------------------------------
@@ -48,12 +48,12 @@ character(len=19), intent(in) :: new_basis
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_multipara        : datastructure for multiparametric problems
-! In  ds_empi             : datastructure for empiric modes
+! In  base                : base
 ! In  new_basis           : new basis to be orthogonalized 
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_mode, nbEqua
+    integer :: nbMode, nbEqua
     complex(kind=8), pointer :: vc_new_mode(:) => null()
     real(kind=8), pointer :: vr_new_mode(:) => null()
     complex(kind=8), pointer :: vc_new_mode1(:) => null()
@@ -63,24 +63,24 @@ character(len=19), intent(in) :: new_basis
     character(len=1) :: syst_type
     complex(kind=8) :: normc_new_mode, normc_new_mode1, normc_new_mode2
     real(kind=8) :: normr_new_mode, normr_new_mode1, normr_new_mode2
-    character(len=8) :: base
-    character(len=24) :: field_iden
+    character(len=8) :: resultName
+    character(len=24) :: fieldIden
 !
 ! --------------------------------------------------------------------------------------------------
 !
     syst_type  = ds_multipara%syst_type
-    nb_mode    = ds_empi%nb_mode
-    field_iden = 'DEPL'
-    base       = ds_empi%base
-    nbEqua     = ds_empi%ds_mode%nbEqua
-    ASSERT(ds_empi%ds_mode%fieldSupp .eq. 'NOEU')
+    nbMode     = base%nbMode
+    fieldIden  = 'DEPL'
+    resultName = base%resultName
+    nbEqua     = base%mode%nbEqua
+    ASSERT(base%mode%fieldSupp .eq. 'NOEU')
 !
 ! - Orthogonalization the basis
 !
     if (syst_type .eq. 'R') then 
         call jeveuo(new_basis(1:19)//'.VALE', 'E', vr = vr_new_mode)
         AS_ALLOCATE(vr = vr_new_mode1, size=nbEqua)
-        call romAlgoMGS(nb_mode, nbEqua, 'R', field_iden, base,&
+        call romAlgoMGS(nbMode, nbEqua, 'R', fieldIden, resultName,&
                         vr_mode_in  = vr_new_mode,&
                         vr_mode_out = vr_new_mode1)
         normr_new_mode  = sqrt(ddot(nbEqua, vr_new_mode, 1, vr_new_mode, 1))
@@ -90,7 +90,7 @@ character(len=19), intent(in) :: new_basis
             AS_DEALLOCATE(vr = vr_new_mode1)
         else  
             AS_ALLOCATE(vr = vr_new_mode2, size=nbEqua)
-            call romAlgoMGS(nb_mode, nbEqua, 'R', field_iden, base,&
+            call romAlgoMGS(nbMode, nbEqua, 'R', fieldIden, resultName,&
                             vr_mode_in  = vr_new_mode1,&
                             vr_mode_out = vr_new_mode2)
             normr_new_mode2 = sqrt(ddot(nbEqua, vr_new_mode2, 1, vr_new_mode2, 1))
@@ -107,7 +107,7 @@ character(len=19), intent(in) :: new_basis
     else if (syst_type .eq. 'C') then  
         call jeveuo(new_basis(1:19)//'.VALE', 'E', vc = vc_new_mode)
         AS_ALLOCATE(vc = vc_new_mode1, size=nbEqua)
-        call romAlgoMGS(nb_mode, nbEqua, 'C', field_iden, base,&
+        call romAlgoMGS(nbMode, nbEqua, 'C', fieldIden, resultName,&
                         vc_mode_in  = vc_new_mode,&
                         vc_mode_out = vc_new_mode1)
         normc_new_mode  = sqrt(zdotc(nbEqua, vc_new_mode, 1,  vc_new_mode, 1))
@@ -117,7 +117,7 @@ character(len=19), intent(in) :: new_basis
             AS_DEALLOCATE(vc = vc_new_mode1)
         else  
             AS_ALLOCATE(vc = vc_new_mode2, size=nbEqua)
-            call romAlgoMGS(nb_mode, nbEqua, 'C', field_iden, base,&
+            call romAlgoMGS(nbMode, nbEqua, 'C', fieldIden, resultName,&
                             vc_mode_in = vc_new_mode1,&
                             vc_mode_out = vc_new_mode2)
             normc_new_mode2 = sqrt(zdotc(nbEqua, vc_new_mode2, 1, vc_new_mode2, 1))

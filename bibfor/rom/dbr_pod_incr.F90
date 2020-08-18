@@ -100,7 +100,7 @@ integer, intent(out) :: nbMode, nbSnap
 ! - Get parameters
 !
     mode         = '&&IPOD_MODE'
-    nbEqua       = base%ds_mode%nbEqua
+    nbEqua       = base%mode%nbEqua
     nbModeMaxi   = paraPod%nb_mode_maxi
     nbSnapResult = paraPod%ds_snap%nb_snap
     tole_incr    = paraPod%tole_incr
@@ -109,10 +109,10 @@ integer, intent(out) :: nbMode, nbSnap
 !
 ! - Properties of previous base
 !
-    baseName     = base%base
-    nbModePrev   = base%nb_mode
-    nbSnapPrev   = base%nb_snap
-    fieldName    = base%ds_mode%fieldName
+    baseName     = base%resultName
+    nbModePrev   = base%nbMode
+    nbSnapPrev   = base%nbSnap
+    fieldName    = base%mode%fieldName
 !
 ! - Get previous reduced coordinates when reuse 
 !
@@ -278,7 +278,6 @@ integer, intent(out) :: nbMode, nbSnap
                 gt(iSnap+iAlgoSnap*(iAlgo-1)) = kt(iSnap)
             enddo
         endif
-
         AS_DEALLOCATE(vr = kt)
         AS_DEALLOCATE(vr = kv)
         AS_DEALLOCATE(vi4 = IPIV)
@@ -330,7 +329,7 @@ integer, intent(out) :: nbMode, nbSnap
         call utmess('I', 'ROM5_39', ni = 2, vali = [nbSnap, nbMode])
     endif
     do iSnap = 1, nbSnap
-        call romTableSave(paraPod%tablReduCoor%tablResu, nbMode, v_gamma   ,&
+        call romTableSave(paraPod%tablReduCoor%tablResu, nbMode, v_gamma,&
                           nume_snap_ = iSnap)
     end do
 !

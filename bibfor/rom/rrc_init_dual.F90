@@ -71,8 +71,8 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 ! - Get parameters
 !
     resultRom = cmdPara%result_rom
-    fieldName = cmdPara%ds_empi_dual%ds_mode%fieldName
-    mesh      = cmdPara%ds_empi_dual%ds_mode%mesh
+    fieldName = cmdPara%ds_empi_dual%mode%fieldName
+    mesh      = cmdPara%ds_empi_dual%mode%mesh
     call dismoi('NB_NO_MAILLA', mesh, 'MAILLAGE', repi = nbNodeMesh)
 !
 ! - Get representative field on reduced domain
@@ -85,9 +85,9 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! - Get representative field on complete domain: the mode !
 !
-    fieldDom  = cmdPara%ds_empi_dual%ds_mode%fieldRefe
-    nbEquaDom = cmdPara%ds_empi_dual%ds_mode%nbEqua
-    nb_cmp_node = cmdPara%ds_empi_dual%ds_mode%nbCmpName
+    fieldDom  = cmdPara%ds_empi_dual%mode%fieldRefe
+    nbEquaDom = cmdPara%ds_empi_dual%mode%nbEqua
+    nb_cmp_node = cmdPara%ds_empi_dual%mode%nbCmpName
 !
 ! - Create list of nodes on all mesh
 !

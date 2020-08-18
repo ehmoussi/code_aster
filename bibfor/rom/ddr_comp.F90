@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine ddr_comp(ds_empi, v_equa)
+subroutine ddr_comp(base, v_equa)
 !
 use Rom_Datastructure_type
 !
@@ -36,7 +36,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "blas/dgesv.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_Empi), intent(in) :: base
 integer, pointer  :: v_equa(:)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -47,19 +47,19 @@ integer, pointer  :: v_equa(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
+! In  base             : base
 ! In  v_equa           : list of equations selected by DEIM method (magic points)
 !                        for each mode => the index of equation
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv, iret
-    integer :: i_equa, i_mode, i_vect, i_matr, k_mode
-    integer :: nbEqua, nb_mode, nb_vect, jv_para, nb_motr
+    integer :: iEqua, iMode, i_vect, i_matr, k_mode
+    integer :: nbEqua, nbMode, nb_vect, jvPara, nb_motr
     integer :: equa_maxi, lval, ntp, ntm
     integer(kind=4) :: info
     integer(kind=4), pointer :: IPIV(:) => null()
-    character(len=8)  :: base
+    character(len=8)  :: resultName
     character(len=24) :: fieldName
     character(len=24) :: mode
     real(kind=8) :: vale_maxi, term
@@ -81,66 +81,66 @@ integer, pointer  :: v_equa(:)
 !
 ! - Get parameters
 !
-    mode      = '&&CEIM_MODE'
-    nbEqua    = ds_empi%ds_mode%nbEqua
-    nb_mode   = ds_empi%nb_mode
-    base      = ds_empi%base
-    fieldName = ds_empi%ds_mode%fieldName
-    ASSERT(ds_empi%ds_mode%fieldSupp .eq. 'NOEU')
+    mode       = '&&CEIM_MODE'
+    nbEqua     = base%mode%nbEqua
+    nbMode     = base%nbMode
+    resultName = base%resultName
+    fieldName  = base%mode%fieldName
+    ASSERT(base%mode%fieldSupp .eq. 'NOEU')
 !
 ! - Prepare working objects
 !
     AS_ALLOCATE(vr = v_resi, size = nbEqua)
-    AS_ALLOCATE(vi = v_npl , size = nb_mode)
-    AS_ALLOCATE(vi = v_tuan, size = nb_mode)
+    AS_ALLOCATE(vi = v_npl , size = nbMode)
+    AS_ALLOCATE(vi = v_tuan, size = nbMode)
 !
 ! - Get index of slice in reduced basis
 !
-    do i_mode = 1, nb_mode
-        call rsadpa(base, 'L', 1, 'NUME_PLAN', i_mode, 0, sjv=jv_para)
-        v_npl(i_mode) = zi(jv_para)
+    do iMode = 1, nbMode
+        call rsadpa(resultName, 'L', 1, 'NUME_PLAN', iMode, 0, sjv=jvPara)
+        v_npl(iMode) = zi(jvPara)
     enddo
 !
     ntp = 1
-    do i_mode = 2, nb_mode
-        if (v_npl(i_mode) .ne. v_npl(i_mode-1)) then
+    do iMode = 2, nbMode
+        if (v_npl(iMode) .ne. v_npl(iMode-1)) then
             ntm = ntp
             ntp = 1
-            v_tuan(i_mode - ntm) = ntm
+            v_tuan(iMode - ntm) = ntm
         else
-            v_tuan(i_mode) = 0
+            v_tuan(iMode) = 0
             ntp = ntp +1
         endif
     enddo
-    v_tuan(nb_mode+1-ntp) = ntp
+    v_tuan(nbMode+1-ntp) = ntp
 !
 ! - Loop on modes
 !
-    do i_mode = 1, nb_mode
+    do iMode = 1, nbMode
 ! - Check the mode (linear or 3D, how many slices?)
-        if (v_tuan(i_mode) .ne. 0) then
-            nb_motr = v_tuan(i_mode)
+        if (v_tuan(iMode) .ne. 0) then
+            nb_motr = v_tuan(iMode)
             AS_ALLOCATE(vr=v_base, size=nbEqua*nb_motr)
             AS_ALLOCATE(vi=v_list_loca, size=nb_motr)
 ! - First mode of slice
             k_mode = 1
-            call rsexch(' ', base, fieldName, i_mode+k_mode-1, mode, iret)
+            call rsexch(' ', resultName, fieldName, iMode+k_mode-1, mode, iret)
             ASSERT(iret .eq. 0)
             call jeveuo(mode(1:19)//'.VALE', 'E', vr = v_mode)
             vale_maxi   = -r8gaem()
             equa_maxi   = 0
-            do i_equa = 1, nbEqua
-                v_base(i_equa) = v_mode(i_equa)
-                if (abs(v_mode(i_equa)) .ge. vale_maxi) then
-                    vale_maxi = abs(v_mode(i_equa))
-                    equa_maxi = i_equa
+            do iEqua = 1, nbEqua
+                v_base(iEqua) = v_mode(iEqua)
+                if (abs(v_mode(iEqua)) .ge. vale_maxi) then
+                    vale_maxi = abs(v_mode(iEqua))
+                    equa_maxi = iEqua
                 endif
             enddo
-            v_equa(i_mode) = equa_maxi
+            v_equa(iMode) = equa_maxi
             v_list_loca(k_mode) = equa_maxi
 ! - Loop on mode of slice
             do k_mode = 2, nb_motr
-                call rsexch(' ', base, fieldName, i_mode+k_mode-1, mode, iret)
+                call rsexch(' ', resultName, fieldName, iMode+k_mode-1, mode, iret)
                 ASSERT(iret .eq. 0)
                 call jeveuo(mode(1:19)//'.VALE', 'E', vr = v_mode)
                 nb_vect = k_mode-1
@@ -159,23 +159,23 @@ integer, pointer  :: v_equa(:)
                 if (info .ne. 0) then
                     call utmess('F', 'ROM4_7')
                 endif
-                do i_equa = 1, nbEqua
+                do iEqua = 1, nbEqua
                     term = 0
                     do i_vect = 1, nb_vect
-                        term = term+v_base(i_equa+nbEqua*(i_vect-1))*v_vect(i_vect)
+                        term = term+v_base(iEqua+nbEqua*(i_vect-1))*v_vect(i_vect)
                     enddo
-                    v_resi(i_equa)=v_mode(i_equa)-term
+                    v_resi(iEqua)=v_mode(iEqua)-term
                 enddo
                 vale_maxi   = -r8gaem()
                 equa_maxi   = 0
-                do i_equa = 1, nbEqua
-                    v_base(i_equa+nbEqua*(k_mode-1)) = v_mode(i_equa)
-                    if (abs(v_resi(i_equa)) .ge. vale_maxi) then
-                        vale_maxi = abs(v_resi(i_equa))
-                        equa_maxi = i_equa
+                do iEqua = 1, nbEqua
+                    v_base(iEqua+nbEqua*(k_mode-1)) = v_mode(iEqua)
+                    if (abs(v_resi(iEqua)) .ge. vale_maxi) then
+                        vale_maxi = abs(v_resi(iEqua))
+                        equa_maxi = iEqua
                     endif
                 enddo
-                v_equa(i_mode+k_mode-1) = equa_maxi
+                v_equa(iMode+k_mode-1) = equa_maxi
                 v_list_loca(k_mode) = equa_maxi
                 AS_DEALLOCATE(vi4=IPIV)
                 AS_DEALLOCATE(vr=v_vect)

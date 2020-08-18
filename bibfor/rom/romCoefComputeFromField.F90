@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romCoefComputeFromField(ds_empi, v_field, v_vect)
+subroutine romCoefComputeFromField(base, v_field, v_vect)
 !
 use Rom_Datastructure_type
 !
@@ -33,9 +33,8 @@ implicit none
 #include "blas/dgemm.h"
 #include "blas/dgesv.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
-real(kind=8), pointer :: v_field(:)
-real(kind=8), pointer :: v_vect(:)
+type(ROM_DS_Empi), intent(in) :: base
+real(kind=8), pointer :: v_field(:), v_vect(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,13 +44,13 @@ real(kind=8), pointer :: v_vect(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes (on RID)
-! In  v_field          : pointer to field to project on empiric base
-! Out v_vect           : pointer to reduced coordinates
+! In  base             : base (on RID)
+! Ptr v_field          : pointer to field to project on empiric base
+! Ptr v_vect           : pointer to reduced coordinates
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbEqua, nb_mode
+    integer :: nbEqua, nbMode
     integer(kind=4) :: info
     real(kind=8), pointer    :: v_matr_phi(:) => null()
     real(kind=8), pointer    :: v_matr(:) => null()
@@ -59,25 +58,25 @@ real(kind=8), pointer :: v_vect(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_mode = ds_empi%nb_mode
-    nbEqua  = ds_empi%ds_mode%nbEqua
+    nbMode = base%nbMode
+    nbEqua = base%mode%nbEqua
 !
 ! - Allocate objects
 !
-    AS_ALLOCATE(vr = v_matr, size = nb_mode*nb_mode)
-    AS_ALLOCATE(vi4 = IPIV, size = nb_mode)
+    AS_ALLOCATE(vr = v_matr, size = nbMode*nbMode)
+    AS_ALLOCATE(vi4 = IPIV, size = nbMode)
 !
 ! - Create [PHI] matrix for primal base
 !
-    call romBaseCreateMatrix(ds_empi, v_matr_phi)
+    call romBaseCreateMatrix(base, v_matr_phi)
 !
 ! - COmpute reduced coefficients
 !
-    call dgemm('T', 'N', nb_mode, 1, nbEqua, 1.d0,&
-               v_matr_phi, nbEqua, v_field, nbEqua, 0.d0, v_vect, nb_mode)
-    call dgemm('T', 'N', nb_mode, nb_mode, nbEqua, 1.d0,&
-               v_matr_phi, nbEqua, v_matr_phi, nbEqua, 0.d0, v_matr, nb_mode)
-    call dgesv(nb_mode, 1, v_matr, nb_mode, IPIV, v_vect, nb_mode, info)
+    call dgemm('T', 'N', nbMode, 1, nbEqua, 1.d0,&
+               v_matr_phi, nbEqua, v_field, nbEqua, 0.d0, v_vect, nbMode)
+    call dgemm('T', 'N', nbMode, nbMode, nbEqua, 1.d0,&
+               v_matr_phi, nbEqua, v_matr_phi, nbEqua, 0.d0, v_matr, nbMode)
+    call dgesv(nbMode, 1, v_matr, nbMode, IPIV, v_vect, nbMode, info)
     if (info .ne. 0) then
         call utmess('F', 'ROM6_32')
     endif

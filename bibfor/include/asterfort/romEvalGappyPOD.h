@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romEvalGappyPOD(ds_para    , result, nb_store, v_matr_phi,&
+    subroutine romEvalGappyPOD(cmdPara, resultName, nbStore, v_matr_phi,&
                                v_coor_redu, ind_dual)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaRRC), intent(in) :: ds_para
-        character(len=8), intent(in) :: result
-        integer, intent(in) :: nb_store
+        type(ROM_DS_ParaRRC), intent(in) :: cmdPara
+        character(len=8), intent(in) :: resultName
+        integer, intent(in) :: nbStore
         real(kind=8), pointer :: v_matr_phi(:)
         real(kind=8), pointer :: v_coor_redu(:)
         integer, intent(in) :: ind_dual

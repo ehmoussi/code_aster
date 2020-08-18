@@ -55,7 +55,7 @@ aster_logical, intent(in), optional :: l_line_search_
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: iret, nb_mode
+    integer :: iret, nbMode
     character(len=8) :: mesh_base, model_base
     character(len=8) :: mesh_algo, model_algo
     character(len=24) :: fieldName
@@ -81,21 +81,21 @@ aster_logical, intent(in), optional :: l_line_search_
 !
 ! - Check mesh
 !
-    mesh_base = ds_empi%ds_mode%mesh
+    mesh_base = ds_empi%mode%mesh
     if (mesh_base .ne. mesh_algo) then
         call utmess('F', 'ROM5_31')
     endif
 !
 ! - Check model
 !
-    model_base = ds_empi%ds_mode%model
+    model_base = ds_empi%mode%model
     if (model_base .ne. model_algo) then
         call utmess('F', 'ROM5_49')
     endif
 !
 ! - Check field in base
 !
-    fieldName = ds_empi%ds_mode%fieldName
+    fieldName = ds_empi%mode%fieldName
     if (phenom .eq. 'THER') then
         if (fieldName .ne. 'TEMP') then
             call utmess('F', 'ROM5_32')
@@ -107,7 +107,7 @@ aster_logical, intent(in), optional :: l_line_search_
     else
         ASSERT(ASTER_FALSE)
     endif
-    fieldSupp = ds_empi%ds_mode%fieldSupp
+    fieldSupp = ds_empi%mode%fieldSupp
     if (fieldSupp .ne. 'NOEU') then
         call utmess('F', 'ROM5_36')
     endif
@@ -128,8 +128,8 @@ aster_logical, intent(in), optional :: l_line_search_
 !
 ! - Check empiric base
 !
-    nb_mode = ds_empi%nb_mode
-    if (nb_mode .lt. 1) then
+    nbMode = ds_empi%nbMode
+    if (nbMode .lt. 1) then
         call utmess('F', 'ROM5_35')
     endif
 !

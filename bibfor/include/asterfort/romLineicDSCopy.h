@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romBasePrintInfo(base)
+    subroutine romLineicDSCopy(lineicNumeIn, lineicNumeOut)
         use Rom_Datastructure_type
-        type(ROM_DS_Empi), intent(in) :: base
-    end subroutine romBasePrintInfo
+        type(ROM_DS_LineicNumb), intent(in) :: lineicNumeIn
+        type(ROM_DS_LineicNumb), intent(out) :: lineicNumeOut
+    end subroutine romLineicDSCopy
 end interface

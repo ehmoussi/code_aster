@@ -23,7 +23,7 @@ use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
+#include "asterfort/as_allocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/gnomsd.h"
@@ -32,6 +32,7 @@ implicit none
 #include "asterfort/numero.h"
 #include "asterfort/romFieldNodesAreDefined.h"
 #include "asterfort/utmess.h"
+#include "asterf_types.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
@@ -39,7 +40,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Init algorithm for truncation of base
+! Init algorithm - For truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,9 +65,9 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 ! - Get parameters
 !
     noojb    = '12345678.00000.NUME.PRNO'
-    mode     = paraTrunc%ds_empi_init%ds_mode
+    mode     = paraTrunc%ds_empi_init%mode
     modelRom = paraTrunc%model_rom
-    modelDom = paraTrunc%ds_empi_init%ds_mode%model
+    modelDom = paraTrunc%ds_empi_init%mode%model
 !
 ! - Create numbering for ROM
 !

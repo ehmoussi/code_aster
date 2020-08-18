@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_comp_dual(ds_para)
+subroutine rrc_comp_dual(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -39,7 +39,7 @@ implicit none
 #include "asterfort/romResultSetZero.h"
 #include "asterfort/romEvalGappyPOD.h"
 !
-type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,7 +49,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para          : datastructure for parameters
+! In  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,26 +76,26 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Get parameters
 !
-    nbStore      = ds_para%nb_store
-    ds_mode      = ds_para%ds_empi_dual%ds_mode
-    nb_mode      = ds_para%ds_empi_dual%nb_mode
+    nbStore      = cmdPara%nb_store
+    ds_mode      = cmdPara%ds_empi_dual%mode
+    nb_mode      = cmdPara%ds_empi_dual%nbMode
     nbEqua       = ds_mode%nbEqua
-    result_rom   = ds_para%result_rom
-    result_dom   = ds_para%result_dom
-    nb_equa_ridi = ds_para%nb_equa_ridi
+    result_rom   = cmdPara%result_rom
+    result_dom   = cmdPara%result_dom
+    nb_equa_ridi = cmdPara%nb_equa_ridi
     ASSERT(ds_mode%fieldSupp .eq. 'NOEU')
 !
 ! - Create [PHI] matrix for dual base
 !
-    call romBaseCreateMatrix(ds_para%ds_empi_dual, v_dual)
+    call romBaseCreateMatrix(cmdPara%ds_empi_dual, v_dual)
 !
 ! - Reduce [PHI] matrix on RID
 !
     AS_ALLOCATE(vr = v_dual_rom, size = nb_equa_ridi*nb_mode)
     do i_mode = 1, nb_mode
         do i_equa = 1, nbEqua
-            if (ds_para%v_equa_ridd(i_equa) .ne. 0) then
-                v_dual_rom(ds_para%v_equa_ridd(i_equa)+nb_equa_ridi*(i_mode-1)) = &
+            if (cmdPara%v_equa_ridd(i_equa) .ne. 0) then
+                v_dual_rom(cmdPara%v_equa_ridd(i_equa)+nb_equa_ridi*(i_mode-1)) = &
                   v_dual(i_equa+nbEqua*(i_mode-1))
             endif 
         end do
@@ -103,7 +103,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Gappy POD 
 !
-    call romEvalGappyPOD(ds_para, result_rom, nbStore, v_dual_rom, v_cohr , 1)
+    call romEvalGappyPOD(cmdPara, result_rom, nbStore, v_dual_rom, v_cohr , 1)
 !
 ! - Initial state
 !
@@ -133,14 +133,14 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
         call jeveuo(sigm_rid(1:19)//'.VALE', 'L', vr = v_sigm_rid)
 ! ----- Truncate the field
         AS_ALLOCATE(vr = v_sigm_rom, size = nb_equa_ridi)
-        do i_ord = 1, ds_para%nb_equa_ridd
-            if (ds_para%v_equa_ridi(i_ord) .ne. 0) then
-                v_sigm_rom(ds_para%v_equa_ridi(i_ord)) = v_sigm_rid(i_ord)
+        do i_ord = 1, cmdPara%nb_equa_ridd
+            if (cmdPara%v_equa_ridi(i_ord) .ne. 0) then
+                v_sigm_rom(cmdPara%v_equa_ridi(i_ord)) = v_sigm_rid(i_ord)
             endif
         enddo
 ! ----- Set field
         do i_equa = 1, nbEqua
-            nume_equa = ds_para%v_equa_ridd(i_equa)
+            nume_equa = cmdPara%v_equa_ridd(i_equa)
             if (nume_equa .eq. 0) then
                 v_resultField(i_equa) = v_sigm_dom(i_equa+nbEqua*(numeStore-1))
             else

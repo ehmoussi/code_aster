@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine ddr_prep(ds_para, v_equa_prim, v_equa_dual, v_node_rid, nb_node_rid)
+    subroutine ddr_prep(cmdPara, v_equa_prim, v_equa_dual, v_node_rid, nbNodeRID)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDDR), intent(in) :: ds_para
+        type(ROM_DS_ParaDDR), intent(in) :: cmdPara
         integer, pointer :: v_equa_prim(:)
         integer, pointer :: v_equa_dual(:)
         integer, pointer :: v_node_rid(:)
-        integer, intent(out) :: nb_node_rid
+        integer, intent(out) :: nbNodeRID
     end subroutine ddr_prep
 end interface

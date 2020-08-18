@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseClean(ds_empi)
+subroutine romBaseClean(base)
 !
 use Rom_Datastructure_type
 !
@@ -27,24 +27,24 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/romFieldClean.h"
 !
-type(ROM_DS_Empi), intent(inout) :: ds_empi
+type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction
+! Model reduction - Base management
 !
-! Clean empiric modes base
-!
-! --------------------------------------------------------------------------------------------------
-!
-! IO  ds_empi          : datastructure for parameters
+! Clean base datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (ds_empi%base_type .eq. 'LINEIQUE') then
-        AS_DEALLOCATE(vi = ds_empi%lineicNume%numeSlice)
-        AS_DEALLOCATE(vi = ds_empi%lineicNume%numeSection)
+! In  base             : base
+!
+! --------------------------------------------------------------------------------------------------
+!
+    if (base%baseType .eq. 'LINEIQUE') then
+        AS_DEALLOCATE(vi = base%lineicNume%numeSlice)
+        AS_DEALLOCATE(vi = base%lineicNume%numeSection)
     endif
-    call romFieldClean(ds_empi%ds_mode)
+    call romFieldClean(base%mode)
 !
 end subroutine

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_calcpod_savel(base, nbMode, nbSnapRedu, fieldIden, modesSing, modesVale)
+subroutine dbr_calcpod_savel(base, nbMode, nbSnapRedu, fieldIden, baseSing, baseValeR)
 !
 use Rom_Datastructure_type
 !
@@ -31,7 +31,7 @@ implicit none
 type(ROM_DS_Empi), intent(in) :: base
 integer, intent(in) :: nbMode, nbSnapRedu
 character(len=24), intent(in) :: fieldIden
-real(kind=8), pointer :: modesVale(:), modesSing(:)
+real(kind=8), pointer :: baseValeR(:), baseSing(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,8 +45,8 @@ real(kind=8), pointer :: modesVale(:), modesSing(:)
 ! In  nbMode           : number of modes in base
 ! In  nbSnapRedu       : number of snapshots used to construct base
 ! In  fieldIden        : identificator of modes (name in results datastructure)
-! Ptr modesSing        : pointer to the singular values of modes
-! Ptr modesVale        : pointer to the values of modes
+! Ptr baseValeR        : pointer to the values of all modes in base
+! Ptr baseSing         : pointer to the singular values of all modes in base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,7 +60,7 @@ real(kind=8), pointer :: modesVale(:), modesSing(:)
 ! --------------------------------------------------------------------------------------------------
 !
     lineicNume = base%lineicNume
-    nbEqua     = base%ds_mode%nbEqua
+    nbEqua     = base%mode%nbEqua
     nbCmp      = lineicNume%nbCmp
     nbSlice    = lineicNume%nbSlice
     nbLineMode = nbMode*nbSlice
@@ -75,7 +75,7 @@ real(kind=8), pointer :: modesVale(:), modesSing(:)
 !
     do iSlice = 1, nbSlice
         do iMode = 1, nbMode
-            lineModesSing(iMode + nbMode*(iSlice - 1)) = modesSing(iMode)
+            lineModesSing(iMode + nbMode*(iSlice - 1)) = baseSing(iMode)
             numeSlice(iMode + nbMode*(iSlice - 1))     = iSlice
         enddo
     enddo
@@ -90,17 +90,15 @@ real(kind=8), pointer :: modesVale(:), modesSing(:)
         i_2d     = (n_2d - 1)*nbCmp + cmpNume
         do iMode = 1, nbMode
             lineModesVale(iEqua + nbEqua*(iMode - 1 + nbMode*(iSlice - 1))) =&
-                modesVale(i_2d + nbEqua/nbSlice*(iMode - 1))
+                baseValeR(i_2d + nbEqua/nbSlice*(iMode - 1))
         enddo
     enddo
 !
 ! - Save modes
 !
-    call romBaseSave(base, nbLineMode, nbSnapRedu,&
-                     'R' , fieldIden ,&
-                     mode_vectr_  = lineModesVale,&
-                     v_modeSing_  = lineModesSing,&
-                     v_numeSlice_ = numeSlice)
+    call romBaseSave(base         , nbLineMode   , nbSnapRedu,&
+                     fieldIden    , lineModesVale,&
+                     lineModesSing, numeSlice)
 !
 ! - Cleaning
 !

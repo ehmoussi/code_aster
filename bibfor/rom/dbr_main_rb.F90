@@ -17,42 +17,42 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_main_rb(ds_para_rb, ds_empi)
+subroutine dbr_main_rb(paraRb, base)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterc/r8gaem.h"
 #include "asterfort/assert.h"
-#include "asterfort/utmess.h"
 #include "asterfort/infniv.h"
 #include "asterfort/romEvalCoef.h"
-#include "asterfort/romMultiParaDOMMatrCreate.h"
-#include "asterfort/romMultiParaDOM2mbrCreate.h"
-#include "asterfort/romSolveDOMSystSolve.h"
-#include "asterfort/romNormalize.h"
-#include "asterfort/romMultiParaCoefCompute.h"
-#include "asterfort/romOrthoBasis.h"
 #include "asterfort/romGreedyModeSave.h"
 #include "asterfort/romGreedyResiCalc.h"
-#include "asterfort/romGreedyResiMaxi.h"
 #include "asterfort/romGreedyResi.h"
+#include "asterfort/romGreedyResiMaxi.h"
+#include "asterfort/romMultiParaCoefCompute.h"
+#include "asterfort/romMultiParaDOM2mbrCreate.h"
+#include "asterfort/romMultiParaDOMMatrCreate.h"
+#include "asterfort/romNormalize.h"
+#include "asterfort/romOrthoBasis.h"
 #include "asterfort/romSaveBaseStableIFS.h"
-#include "asterc/r8gaem.h"
+#include "asterfort/romSolveDOMSystSolve.h"
+#include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
-type(ROM_DS_Empi), intent(inout) :: ds_empi
+type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
+type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Compute
 !
-! Main subroutine to compute empiric modes - For RB methods
+! Main subroutine to compute base - For RB methods
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para_rb       : datastructure for parameters (RB)
-! IO  ds_empi          : datastructure for empiric modes
+! IO  paraRb           : datastructure for parameters (RB)
+! IO  base             : base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,14 +77,14 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
     i_mode        = 1
     i_coef        = 1
-    ds_algoGreedy = ds_para_rb%algoGreedy
-    ds_multipara  = ds_para_rb%multipara
+    ds_algoGreedy = paraRb%algoGreedy
+    ds_multipara  = paraRb%multipara
     ds_solveDOM   = ds_algoGreedy%solveDOM
     nbEqua        = ds_multipara%field%nbEqua
-    tole_greedy   = ds_para_rb%tole_greedy
-    l_stab_fsi    = ds_para_rb%l_stab_fsi
-    l_ortho_base  = ds_para_rb%l_ortho_base
-    nb_mode_maxi  = ds_para_rb%nb_mode_maxi
+    tole_greedy   = paraRb%tole_greedy
+    l_stab_fsi    = paraRb%l_stab_fsi
+    l_ortho_base  = paraRb%l_ortho_base
+    nb_mode_maxi  = paraRb%nb_mode_maxi
     syst_type     = ds_solveDOM%syst_type
     syst_solu     = ds_solveDOM%syst_solu
 !
@@ -96,7 +96,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Evaluation of initial coefficients
 !
-    call romEvalCoef(ds_para_rb%multipara, l_init = ASTER_TRUE)
+    call romEvalCoef(paraRb%multipara, l_init = ASTER_TRUE)
 !
 ! - Create initial second member
 !
@@ -108,15 +108,15 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Solve initial system (DOM)
 !
-    call romSolveDOMSystSolve(ds_para_rb%solver, ds_solveDOM)
+    call romSolveDOMSystSolve(paraRb%solver, ds_solveDOM)
 !
 ! - Normalization of basis and save it 
 !
     if (l_stab_fsi) then
-         call romSaveBaseStableIFS(l_ortho_base, ds_multipara, ds_algoGreedy, ds_empi, i_mode)
+         call romSaveBaseStableIFS(l_ortho_base, ds_multipara, ds_algoGreedy, base, i_mode)
     else 
          call romNormalize(syst_type, syst_solu, nbEqua)
-         call romGreedyModeSave(ds_multipara, ds_empi, i_mode, syst_solu)
+         call romGreedyModeSave(ds_multipara, base, i_mode, syst_solu)
     end if 
 !
 ! - Loop on modes
@@ -129,22 +129,22 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
             call utmess('I', 'ROM5_61', si = i_mode)
         endif
 ! ----- Compute reduced coefficients and residual
-        if (ds_para_rb%l_stab_fsi) then
-            call romMultiParaCoefCompute(ds_empi     , ds_para_rb%multipara, ds_algoGreedy,&
+        if (paraRb%l_stab_fsi) then
+            call romMultiParaCoefCompute(base     , paraRb%multipara, ds_algoGreedy,&
                                          3*(i_mode-1), i_mode-1)
-            call romGreedyResiCalc(ds_empi     , ds_para_rb%multipara, ds_para_rb%algoGreedy,&
+            call romGreedyResiCalc(paraRb%multipara, paraRb%algoGreedy,&
                                    3*(i_mode-1), i_mode-1)
         else
-            call romMultiParaCoefCompute(ds_empi , ds_para_rb%multipara, ds_algoGreedy,&
+            call romMultiParaCoefCompute(base , paraRb%multipara, ds_algoGreedy,&
                                          i_mode-1, i_mode-1)
-            call romGreedyResiCalc(ds_empi , ds_para_rb%multipara, ds_para_rb%algoGreedy,&
+            call romGreedyResiCalc(paraRb%multipara, paraRb%algoGreedy,&
                                    i_mode-1, i_mode-1)
         endif
 ! ----- Find maximum
         call romGreedyResiMaxi(ds_multipara, ds_algoGreedy, i_coef_maxi)
 ! ----- Stop if the residual maximal is less than the value of tolerance given by user
         tole = ds_algoGreedy%resi_norm(i_coef_maxi)
-        if (tole .le. ds_para_rb%tole_greedy) then
+        if (tole .le. paraRb%tole_greedy) then
            exit
         end if
 ! ----- Create second member (correspond to i_coef_maxi)
@@ -152,16 +152,16 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! ----- Create matrix (correspond to i_coef_maxi)
         call romMultiParaDOMMatrCreate(ds_multipara, i_coef_maxi, ds_solveDOM)
 ! ----- Solve system (DOM)
-        call romSolveDOMSystSolve(ds_para_rb%solver, ds_solveDOM)
+        call romSolveDOMSystSolve(paraRb%solver, ds_solveDOM)
 ! ----- Normalization of basis and save it
         if (l_stab_fsi) then 
-            call romSaveBaseStableIFS(l_ortho_base, ds_multipara, ds_algoGreedy, ds_empi, i_mode)
+            call romSaveBaseStableIFS(l_ortho_base, ds_multipara, ds_algoGreedy, base, i_mode)
         else
             call romNormalize(syst_type, syst_solu, nbEqua)
             if (l_ortho_base) then 
-                call romOrthoBasis(ds_multipara, ds_empi, syst_solu)
+                call romOrthoBasis(ds_multipara, base, syst_solu)
             endif 
-            call romGreedyModeSave(ds_multipara, ds_empi, i_mode, syst_solu)
+            call romGreedyModeSave(ds_multipara, base, i_mode, syst_solu)
         endif
 !
         i_mode = i_mode + 1

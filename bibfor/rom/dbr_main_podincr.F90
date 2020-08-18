@@ -17,39 +17,39 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_main_podincr(l_reuse, ds_para_pod, field_iden, ds_empi)
+subroutine dbr_main_podincr(l_reuse, paraPod, field_iden, base)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
-#include "asterfort/utmess.h"
-#include "asterfort/infniv.h"
 #include "asterfort/dbr_calcpod_q.h"
-#include "asterfort/dbr_pod_incr.h"
 #include "asterfort/dbr_calcpod_save.h"
 #include "asterfort/dbr_calcpod_size.h"
-#include "asterfort/as_deallocate.h"
+#include "asterfort/dbr_pod_incr.h"
+#include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
 !
 aster_logical, intent(in) :: l_reuse
-type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
+type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 character(len=24), intent(in) :: field_iden
-type(ROM_DS_Empi), intent(inout) :: ds_empi
+type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Compute
 !
-! Main subroutine to compute empiric modes - Incremental POD method
+! Main subroutine to compute base - Incremental POD method
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  l_reuse          : .true. if reuse
 ! In  field_iden       : identificator of field (name in results datastructure)
-! In  ds_para_pod      : datastructure for parameters (POD)
-! IO  ds_empi          : datastructure for empiric modes
+! In  paraPod          : datastructure for parameters (POD)
+! IO  base             : base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,21 +64,21 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get size of snapshots matrix
 !
-    call dbr_calcpod_size(ds_empi, ds_para_pod%ds_snap,&
+    call dbr_calcpod_size(base, paraPod%ds_snap,&
                           m      , n )
 !
 ! - Create snapshots matrix Q
 !    
-    call dbr_calcpod_q(ds_empi, ds_para_pod%ds_snap, m, n, q)
+    call dbr_calcpod_q(base, paraPod%ds_snap, m, n, q)
 !
 ! - Incremental POD method
 !
-    call dbr_pod_incr(l_reuse, ds_empi, ds_para_pod,&
+    call dbr_pod_incr(l_reuse, base, paraPod,&
                       q, s, v, nbMode, nbSnap)
 !
 ! - Save empiric base
 !
-    call dbr_calcpod_save(ds_empi, nbMode, nbSnap, field_iden, s, v)
+    call dbr_calcpod_save(base, nbMode, nbSnap, field_iden, s, v)
 !
 ! - Cleaning
 !

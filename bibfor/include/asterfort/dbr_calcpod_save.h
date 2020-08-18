@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_calcpod_save(base, nbMode, nbSnapRedu, fieldIden, modesSing, modesVale)
+    subroutine dbr_calcpod_save(base, nbMode, nbSnapRedu, fieldIden, baseSing, baseValeR)
         use Rom_Datastructure_type
         type(ROM_DS_Empi), intent(in) :: base
         integer, intent(in) :: nbMode, nbSnapRedu
         character(len=24), intent(in) :: fieldIden
-        real(kind=8), pointer :: modesVale(:), modesSing(:)
+        real(kind=8), pointer :: baseValeR(:), baseSing(:)
     end subroutine dbr_calcpod_save
 end interface

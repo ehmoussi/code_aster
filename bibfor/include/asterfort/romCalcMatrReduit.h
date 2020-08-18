@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,13 +18,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romCalcMatrReduit(i_mode, ds_empi, nb_matr, prod_matr_mode, matr_redu,&
-                             mode_type)
+    subroutine romCalcMatrReduit(modeNume, base, nbMatr, prod_matr_mode, matr_redu,&
+                                 modeType)
         use Rom_Datastructure_type
-        integer, intent(in) :: nb_matr, i_mode
-        type(ROM_DS_Empi), intent(in) :: ds_empi
+        integer, intent(in) :: nbMatr, modeNume
+        type(ROM_DS_Empi), intent(in) :: base
         character(len=24), intent(in) :: matr_redu(:)
         character(len=24), intent(in) :: prod_matr_mode(:)
-        character(len=1), intent(in) :: mode_type
+        character(len=1), intent(in) :: modeType
     end subroutine romCalcMatrReduit
 end interface

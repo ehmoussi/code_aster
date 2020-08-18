@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romGreedyResi(ds_empi     , ds_multipara, ds_algoGreedy,&
+subroutine romGreedyResi(ds_multipara, ds_algoGreedy,&
                          i_mode_until, i_mode_coef , i_coef)
 !
 use Rom_Datastructure_type
@@ -30,7 +30,6 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "asterfort/romEvalCoef.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
 type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
 integer, intent(in) :: i_mode_until, i_mode_coef, i_coef
@@ -43,7 +42,6 @@ integer, intent(in) :: i_mode_until, i_mode_coef, i_coef
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
 ! In  ds_multipara     : datastructure for multiparametric problems
 ! In  ds_algoGreedy    : datastructure for Greedy algorithm
 ! In  i_mode_until     : last mode until compute
@@ -57,7 +55,6 @@ integer, intent(in) :: i_mode_until, i_mode_coef, i_coef
     aster_logical :: l_coef_cplx, l_coef_real
     real(kind=8) :: coef_r
     complex(kind=8) :: coef_c, coef_cplx
-    character(len=8) :: base
     complex(kind=8), pointer :: vc_coef_redu(:) => null()
     complex(kind=8), pointer :: vc_resi_vect(:) => null()
     complex(kind=8), pointer :: vc_vect_2mbr(:) => null()
@@ -73,7 +70,6 @@ integer, intent(in) :: i_mode_until, i_mode_coef, i_coef
     nb_coef        = ds_multipara%nb_vari_coef
     nb_mode        = ds_algoGreedy%solveROM%syst_size
     nb_equa        = ds_algoGreedy%solveDOM%syst_size
-    base           = ds_empi%base
 !
 ! - Access to objects and copy seconde member contribution in residual
 !

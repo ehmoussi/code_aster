@@ -57,9 +57,9 @@ real(kind=8), intent(out) :: resi
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: l_hrom
-    character(len=8) :: base
+    character(len=8) :: resultName
     character(len=24) :: fieldName
-    integer :: i_equa, nbEqua, nb_mode
+    integer :: iEqua, nbEqua, nbMode
     real(kind=8), pointer :: v_resi(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -68,20 +68,20 @@ real(kind=8), intent(out) :: resi
 !
 ! - Get parameters
 !
-    l_hrom    = ds_algorom%l_hrom
-    base      = ds_algorom%ds_empi%base
-    nbEqua    = ds_algorom%ds_empi%ds_mode%nbEqua
-    nb_mode   = ds_algorom%ds_empi%nb_mode
-    fieldName = ds_algorom%ds_empi%ds_mode%fieldName
-    ASSERT(ds_algorom%ds_empi%ds_mode%fieldSupp .eq. 'NOEU')
+    l_hrom     = ds_algorom%l_hrom
+    resultName = ds_algorom%ds_empi%resultName
+    nbEqua     = ds_algorom%ds_empi%mode%nbEqua
+    nbMode     = ds_algorom%ds_empi%nbMode
+    fieldName  = ds_algorom%ds_empi%mode%fieldName
+    ASSERT(ds_algorom%ds_empi%mode%fieldSupp .eq. 'NOEU')
 !
 ! - Compute equilibrium residual
 !
     AS_ALLOCATE(vr=v_resi, size=nbEqua)
-    do i_equa = 1, nbEqua
+    do iEqua = 1, nbEqua
         if (l_cine) then
-            if (v_ccid(i_equa) .ne. 1) then
-                v_resi(i_equa) = v_fint(i_equa) - v_fext(i_equa)
+            if (v_ccid(iEqua) .ne. 1) then
+                v_resi(iEqua) = v_fint(iEqua) - v_fext(iEqua)
             endif
         endif
     enddo
@@ -89,17 +89,17 @@ real(kind=8), intent(out) :: resi
 ! - Truncation of residual
 !
     if (l_hrom) then
-        do i_equa = 1, nbEqua
-            if (ds_algorom%v_equa_sub(i_equa) .eq. 1) then
-                v_resi(i_equa) = 0.d0
+        do iEqua = 1, nbEqua
+            if (ds_algorom%v_equa_sub(iEqua) .eq. 1) then
+                v_resi(iEqua) = 0.d0
             endif
         enddo
     endif
 !
 ! - Find the residual
 !
-    do i_equa = 1, nbEqua
-        resi = max (resi, abs(v_resi(i_equa)))
+    do iEqua = 1, nbEqua
+        resi = max (resi, abs(v_resi(iEqua)))
     enddo
 !
 ! - Cleaning

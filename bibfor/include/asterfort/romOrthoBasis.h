@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,10 +18,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romOrthoBasis(ds_multipara, ds_empi, new_basis)
+    subroutine romOrthoBasis(ds_multipara, base, new_basis)
         use Rom_Datastructure_type
         type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-        type(ROM_DS_Empi), intent(in)   :: ds_empi
+        type(ROM_DS_Empi), intent(in)   :: base
         character(len=19), intent(in) :: new_basis
     end subroutine romOrthoBasis
 end interface

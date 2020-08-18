@@ -17,48 +17,50 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseCreate(base, nbMode_)
+subroutine romLineicDSCopy(lineicNumeIn, lineicNumeOut)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/rscrsd.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
+#include "asterfort/as_allocate.h"
 !
-type(ROM_DS_Empi), intent(in) :: base
-integer, intent(in), optional :: nbMode_
+type(ROM_DS_LineicNumb), intent(in) :: lineicNumeIn
+type(ROM_DS_LineicNumb), intent(out) :: lineicNumeOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Create result datastructure for base
+! Copy datastructure of lineic numbering
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  base             : base
-! In  nbMode           : number of modes to create in datatructure
+! In  lineicNumeIn          :  input lineic numbering
+! Out lineicNumeOut          : output lineic numbering
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbMode, ifm, niv
+    integer :: iSlice, nbSlice
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM12_3')
+
+    nbSlice                = lineicNumeIn%nbSlice
+    lineicNumeOut%nbSlice  = lineicNumeIn%nbSlice
+    lineicNumeOut%toleNode = lineicNumeIn%toleNode
+    lineicNumeOut%nbCmp    = lineicNumeIn%nbCmp
+!
+! - Copy pointers
+!
+    if (nbSlice .gt. 0) then
+        AS_ALLOCATE(vi = lineicNumeOut%numeSlice, size = nbSlice)
+        AS_ALLOCATE(vi = lineicNumeOut%numeSection, size = nbSlice)
+        do iSlice = 1, nbSlice
+            lineicNumeOut%numeSlice(iSlice) = lineicNumeIn%numeSlice(iSlice)
+            lineicNumeOut%numeSection(iSlice) = lineicNumeIn%numeSection(iSlice)
+        end do
     endif
-    nbMode = 0
-    if (present(nbMode_)) then
-        nbMode = nbMode_
-    endif
-    if (nbMode .eq. 0) then
-        nbMode = 10
-    endif
-    call rscrsd('G', base%resultName, 'MODE_EMPI', nbMode)
 !
 end subroutine

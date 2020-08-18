@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine ddr_chck(ds_para)
+subroutine ddr_chck(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -31,7 +31,7 @@ implicit none
 #include "asterfort/romModeChck.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDDR), intent(in) :: ds_para
+type(ROM_DS_ParaDDR), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,15 +41,15 @@ type(ROM_DS_ParaDDR), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para          : datastructure for parameters
+! In  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     integer :: iret
     character(len=24) :: grelem_rid, grnode_int
-    type(ROM_DS_Empi) :: empi_prim, empi_dual
-    character(len=8) :: mesh_prim, mesh_dual, mesh
+    type(ROM_DS_Empi) :: basePrim, baseDual
+    character(len=8) :: meshPrim, meshDual, mesh
     type(ROM_DS_Field) :: modePrim, modeDual
 !
 ! --------------------------------------------------------------------------------------------------
@@ -61,27 +61,27 @@ type(ROM_DS_ParaDDR), intent(in) :: ds_para
 !
 ! - Get parameters in datastructure
 !
-    mesh       = ds_para%mesh
-    empi_prim  = ds_para%ds_empi_prim
-    empi_dual  = ds_para%ds_empi_dual
-    grelem_rid = ds_para%grelem_rid
-    grnode_int = ds_para%grnode_int
+    mesh       = cmdPara%mesh
+    basePrim   = cmdPara%ds_empi_prim
+    baseDual   = cmdPara%ds_empi_dual
+    grelem_rid = cmdPara%grelem_rid
+    grnode_int = cmdPara%grnode_int
 !
 ! - Check modes
 !
-    modePrim = empi_prim%ds_mode
-    modeDual = empi_dual%ds_mode
+    modePrim = basePrim%mode
+    modeDual = baseDual%mode
     call romModeChck(modePrim)
     call romModeChck(modeDual)
 !
 ! - Check mesh
 !
-    mesh_prim = modePrim%mesh
-    mesh_dual = modeDual%mesh
-    if (mesh_prim .ne. mesh_dual) then
+    meshPrim = basePrim%mode%mesh
+    meshDual = baseDual%mode%mesh
+    if (meshPrim .ne. meshDual) then
         call utmess('F','ROM4_9')
     endif
-    if (mesh .ne. mesh_prim) then
+    if (mesh .ne. meshPrim) then
         call utmess('F','ROM4_10')
     endif
 !

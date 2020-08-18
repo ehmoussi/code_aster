@@ -79,8 +79,8 @@ real(kind=8), intent(inout) :: q(:)
             nodeNume = (iEqua - 1)/nbCmp + 1
             cmpNume  = iEqua - (nodeNume - 1)*nbCmp
             iSlice   = lineicNume%numeSlice(nodeNume)
-            n_2d     = lineicNume%numeSection(nodeNume)
-            i_2d     = (n_2d - 1)*nbCmp + cmpNume
+            n_2d   = lineicNume%numeSection(nodeNume)
+            i_2d   = (n_2d - 1)*nbCmp + cmpNume
             q(i_2d + nbEqua*(iSlice - 1)/nbSlice + nbEqua*(iSnap - 1)) = resuFieldVale(iEqua)
         enddo
         call jelibe(resultField(1:19)//'.VALE')

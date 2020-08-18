@@ -23,8 +23,6 @@ use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/as_allocate.h"
-#include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
@@ -52,8 +50,6 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nbStore
-    aster_logical :: l_prev_dual
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,10 +57,6 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
     if (niv .ge. 2) then
         call utmess('I', 'ROM6_3')
     endif
-!
-! - Get parameters
-!
-    l_prev_dual = cmdPara%l_prev_dual
 !
 ! - Create datastructure of table in results datastructure for the reduced coordinates
 !
@@ -78,9 +70,9 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! - Type of result
 !
-    if (cmdPara%ds_empi_prim%ds_mode%fieldName .eq. 'DEPL') then
+    if (cmdPara%ds_empi_prim%mode%fieldName .eq. 'DEPL') then
         cmdPara%type_resu = 'EVOL_NOLI'
-    elseif (cmdPara%ds_empi_prim%ds_mode%fieldName .eq. 'TEMP') then
+    elseif (cmdPara%ds_empi_prim%mode%fieldName .eq. 'TEMP') then
         cmdPara%type_resu = 'EVOL_THER'
     else
         ASSERT(ASTER_FALSE)
@@ -88,9 +80,8 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! - Create output result datastructure
 !
-    call rs_get_liststore(cmdPara%result_rom, nbStore)
-    cmdPara%nb_store  = nbStore
-    call rscrsd('G', cmdPara%result_dom, cmdPara%type_resu, nbStore)
+    call rs_get_liststore(cmdPara%result_rom, cmdPara%nb_store)
+    call rscrsd('G', cmdPara%result_dom, cmdPara%type_resu, cmdPara%nb_store)
 !
 ! - Get model
 !
@@ -105,7 +96,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! - Initializations for dual base
 !
-    if (l_prev_dual) then
+    if (cmdPara%l_prev_dual) then
         call rrc_init_dual(cmdPara)
     endif
 !

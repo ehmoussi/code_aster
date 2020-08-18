@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_base(ds_para)
+subroutine dbr_init_base(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -29,35 +29,35 @@ implicit none
 #include "asterfort/dbr_init_base_tr.h"
 #include "asterfort/dbr_init_base_ortho.h"
 !
-type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Prepare datastructure for empiric modes
+! Prepare datastructure for base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para          : datastructure for parameters
+! IO  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (ds_para%operation(1:3) .eq. 'POD') then
-        call dbr_init_base_pod(ds_para%result_out, ds_para%para_pod,&
-                               ds_para%l_reuse   , ds_para%ds_empi)
-        ds_para%field_iden = ds_para%para_pod%field_name
-    elseif (ds_para%operation .eq. 'GLOUTON') then
-        call dbr_init_base_rb(ds_para%result_out, ds_para%para_rb,&
-                              ds_para%ds_empi)
-    elseif (ds_para%operation .eq. 'TRONCATURE') then
-        call dbr_init_base_tr(ds_para%result_out, ds_para%para_tr,&
-                              ds_para%l_reuse   , ds_para%ds_empi)
-        ds_para%field_iden = ds_para%para_tr%ds_empi_init%ds_mode%fieldName
-    elseif (ds_para%operation .eq. 'ORTHO') then
-        call dbr_init_base_ortho(ds_para%result_out, ds_para%para_ortho,&
-                                 ds_para%l_reuse   , ds_para%ds_empi)
-        ds_para%field_iden = ds_para%para_ortho%ds_empi_init%ds_mode%fieldName
+    if (cmdPara%operation(1:3) .eq. 'POD') then
+        call dbr_init_base_pod(cmdPara%result_out, cmdPara%para_pod,&
+                               cmdPara%l_reuse   , cmdPara%ds_empi)
+        cmdPara%field_iden = cmdPara%para_pod%field_name
+    elseif (cmdPara%operation .eq. 'GLOUTON') then
+        call dbr_init_base_rb(cmdPara%result_out, cmdPara%para_rb,&
+                              cmdPara%ds_empi)
+    elseif (cmdPara%operation .eq. 'TRONCATURE') then
+        call dbr_init_base_tr(cmdPara%result_out, cmdPara%para_tr,&
+                              cmdPara%l_reuse   , cmdPara%ds_empi)
+        cmdPara%field_iden = cmdPara%para_tr%ds_empi_init%mode%fieldName
+    elseif (cmdPara%operation .eq. 'ORTHO') then
+        call dbr_init_base_ortho(cmdPara%result_out, cmdPara%para_ortho,&
+                                 cmdPara%l_reuse   , cmdPara%ds_empi)
+        cmdPara%field_iden = cmdPara%para_ortho%ds_empi_init%mode%fieldName
     else
         ASSERT(ASTER_FALSE)
     endif

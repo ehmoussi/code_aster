@@ -80,10 +80,10 @@ character(len=8), intent(in) :: resultNameOut
 !
 ! - Get parameters of input base
 !
-    nbMode       = baseIn%nb_mode
-    nbEquaDom    = baseIn%ds_mode%nbEqua
-    resultNameIn = baseIn%base
-    mesh         = baseIn%ds_mode%mesh
+    nbMode       = baseIn%nbMode
+    nbEquaDom    = baseIn%mode%nbEqua
+    resultNameIn = baseIn%resultName
+    mesh         = baseIn%mode%mesh
 !
 ! - Compute
 !

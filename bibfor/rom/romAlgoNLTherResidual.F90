@@ -56,10 +56,10 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: l_hrom
-    character(len=8) :: base
+    character(len=8) :: resultName
     character(len=19) :: mode
     character(len=24) :: fieldName
-    integer :: i_equa, nbEqua, nb_mode, i_mode, iret
+    integer :: iEqua, nbEqua, nbMode, iMode, iret
     real(kind=8) :: vnorm, resi
     real(kind=8), pointer :: v_mode(:)=> null()
     real(kind=8), pointer :: v_cn2mbr(:) => null()
@@ -80,12 +80,12 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
 !
 ! - Get parameters
 !
-    l_hrom    = ds_algorom%l_hrom
-    base      = ds_algorom%ds_empi%base
-    nbEqua    = ds_algorom%ds_empi%ds_mode%nbEqua
-    nb_mode   = ds_algorom%ds_empi%nb_mode
-    fieldName = ds_algorom%ds_empi%ds_mode%fieldName
-    ASSERT(ds_algorom%ds_empi%ds_mode%fieldSupp .eq. 'NOEU')
+    l_hrom     = ds_algorom%l_hrom
+    resultName = ds_algorom%ds_empi%resultName
+    nbEqua     = ds_algorom%ds_empi%mode%nbEqua
+    nbMode     = ds_algorom%ds_empi%nbMode
+    fieldName  = ds_algorom%ds_empi%mode%fieldName
+    ASSERT(ds_algorom%ds_empi%mode%fieldSupp .eq. 'NOEU')
 !
 ! - Access to vectors
 !
@@ -96,43 +96,43 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
 !
 ! - Create residual
 !
-    do i_equa = 1, nbEqua
-        v_cn2mbr(i_equa)  = v_vec2nd(i_equa) - v_cnresi(i_equa) - v_cnvabt(i_equa)
+    do iEqua = 1, nbEqua
+        v_cn2mbr(iEqua)  = v_vec2nd(iEqua) - v_cnresi(iEqua) - v_cnvabt(iEqua)
     enddo
 !
 ! - Truncation of residual
 !    
     if (l_hrom) then
-        do i_equa = 1, nbEqua
-            if (ds_algorom%v_equa_int(i_equa) .eq. 1) then
-                v_vec2nd(i_equa) = 0.d0
-                v_cnvabt(i_equa) = 0.d0
-                v_cnresi(i_equa) = 0.d0
+        do iEqua = 1, nbEqua
+            if (ds_algorom%v_equa_int(iEqua) .eq. 1) then
+                v_vec2nd(iEqua) = 0.d0
+                v_cnvabt(iEqua) = 0.d0
+                v_cnresi(iEqua) = 0.d0
             endif    
         enddo
     endif
 !
 ! - Product of modes by second member
 !
-    AS_ALLOCATE(vr=v_cn2mbrr, size=nb_mode)
-    AS_ALLOCATE(vr=v_vec2ndr, size=nb_mode)
-    AS_ALLOCATE(vr=v_cnresir, size=nb_mode)
-    AS_ALLOCATE(vr=v_cnvabtr, size=nb_mode)
-    do i_mode = 1, nb_mode
-        call rsexch(' ', base, fieldName, i_mode, mode, iret)
+    AS_ALLOCATE(vr=v_cn2mbrr, size=nbMode)
+    AS_ALLOCATE(vr=v_vec2ndr, size=nbMode)
+    AS_ALLOCATE(vr=v_cnresir, size=nbMode)
+    AS_ALLOCATE(vr=v_cnvabtr, size=nbMode)
+    do iMode = 1, nbMode
+        call rsexch(' ', resultName, fieldName, iMode, mode, iret)
         call jeveuo(mode(1:19)//'.VALE', 'E', vr = v_mode)
-        v_vec2ndr(i_mode)= ddot(nbEqua, v_mode, 1, v_vec2nd, 1)
-        v_cnvabtr(i_mode)= ddot(nbEqua, v_mode, 1, v_cnvabt, 1)
-        v_cnresir(i_mode)= ddot(nbEqua, v_mode, 1, v_cnresi, 1)
+        v_vec2ndr(iMode) = ddot(nbEqua, v_mode, 1, v_vec2nd, 1)
+        v_cnvabtr(iMode) = ddot(nbEqua, v_mode, 1, v_cnvabt, 1)
+        v_cnresir(iMode) = ddot(nbEqua, v_mode, 1, v_cnresi, 1)
     enddo
 !
 ! - Compute maximum
 !
-    do i_mode = 1, nb_mode
-        v_cn2mbrr(i_mode) = v_vec2ndr(i_mode) - v_cnresir(i_mode) - v_cnvabtr(i_mode)
-        resi              = resi + ( v_cn2mbrr(i_mode) )**2
-        vnorm             = vnorm + ( v_vec2ndr(i_mode) - v_cnvabtr(i_mode) )**2
-        resi_maxi         = max( resi_maxi,abs( v_cn2mbrr(i_mode) ) )
+    do iMode = 1, nbMode
+        v_cn2mbrr(iMode) = v_vec2ndr(iMode) - v_cnresir(iMode) - v_cnvabtr(iMode)
+        resi             = resi + ( v_cn2mbrr(iMode) )**2
+        vnorm            = vnorm + ( v_vec2ndr(iMode) - v_cnvabtr(iMode) )**2
+        resi_maxi        = max( resi_maxi,abs( v_cn2mbrr(iMode) ) )
     end do
 !
 ! - Compute relative

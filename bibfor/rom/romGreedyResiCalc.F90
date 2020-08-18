@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romGreedyResiCalc(ds_empi     , ds_multipara, ds_algoGreedy,&
+subroutine romGreedyResiCalc(ds_multipara, ds_algoGreedy,&
                              i_mode_until, i_mode_coef)
 !
 use Rom_Datastructure_type
@@ -34,7 +34,6 @@ implicit none
 #include "asterfort/romGreedyResiNormCalc.h"
 #include "asterfort/romMultiParaDOM2mbrCreate.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
 type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 type(ROM_DS_AlgoGreedy), intent(inout) :: ds_algoGreedy
 integer, intent(in) :: i_mode_until, i_mode_coef
@@ -47,7 +46,6 @@ integer, intent(in) :: i_mode_until, i_mode_coef
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
 ! IO  ds_multipara     : datastructure for multiparametric problems
 ! IO  ds_algoGreedy    : datastructure for Greedy algorithm
 ! In  i_mode_until     : last mode to compute
@@ -81,7 +79,7 @@ integer, intent(in) :: i_mode_until, i_mode_coef
 ! ----- Compute second member for one coefficient
         call romMultiParaDOM2mbrCreate(ds_multipara, i_coef, ds_algoGreedy%solveDOM)
 ! ----- Compute residual for one coefficient
-        call romGreedyResi(ds_empi     , ds_multipara, ds_algoGreedy,&
+        call romGreedyResi(ds_multipara, ds_algoGreedy,&
                            i_mode_until, i_mode_coef , i_coef)
 ! ----- Compute norm of residual/norm second membre
         call romGreedyResiNormCalc(i_coef, nb_equa, ds_algoGreedy)

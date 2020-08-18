@@ -53,8 +53,6 @@ cata_msg = {
 
    22 : _("""Reconstruction du champ dual."""),
 
-   30 : _("""Construction de la matrice des modes. Dimensions: [%(i1)d,%(i2)d]."""),
-
    31 : _("""Calcul des coordonnées réduites."""),
 
    32 : _("""Échec lors du calcul des coordonnées réduites."""),

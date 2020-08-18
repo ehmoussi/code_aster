@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_ortho(ds_para_ortho, l_reuse)
+subroutine dbr_chck_ortho(paraOrtho, lReuse)
 !
 use Rom_Datastructure_type
 !
@@ -28,8 +28,8 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/romModeChck.h"
 !
-type(ROM_DS_ParaDBR_ORTHO), intent(in) :: ds_para_ortho
-aster_logical, intent(in) :: l_reuse
+type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
+aster_logical, intent(in) :: lReuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -39,8 +39,8 @@ aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para_ortho    : datastructure for orthogonalization parameters
-! In  l_reuse          : .true. if reuse
+! In  paraOrtho        : datastructure for orthogonalization parameters
+! In  lReuse           : .true. if reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,11 +48,11 @@ aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    mode = ds_para_ortho%ds_empi_init%ds_mode
+    mode = paraOrtho%ds_empi_init%mode
 !
 ! - Check empiric mode
 !
-    if (.not. l_reuse) then
+    if (.not. lReuse) then
         call romModeChck(mode)
     endif
 !

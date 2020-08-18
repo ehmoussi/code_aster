@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romMultiParaROM2mbrCreate(ds_empi, ds_multipara, i_coef, syst_2mbrROM)
+subroutine romMultiParaROM2mbrCreate(base, ds_multipara, i_coef, syst_2mbrROM)
 !
 use Rom_Datastructure_type
 !
@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "blas/zdotc.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_Empi), intent(in) :: base
 type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 integer, intent(in) :: i_coef
 character(len=19), intent(in) :: syst_2mbrROM
@@ -45,16 +45,16 @@ character(len=19), intent(in) :: syst_2mbrROM
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi             : datastructure for empiric modes
+! In  base                : base
 ! IO  ds_multipara        : datastructure for multiparametric problems
 ! In  i_coef              : index of coefficient
-! Out  syst_2mbrROM       : second member on reduced model
+! Out syst_2mbrROM        : second member on reduced model
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode_curr, nbEqua, nb_vect
-    integer :: i_mode, i_vect
+    integer :: nbMode, nbEqua, nbVect
+    integer :: iMode, iVect
     aster_logical :: l_coef_cplx, l_coef_real
     real(kind=8) :: coef_r
     complex(kind=8) :: coef_c, coef_cplx
@@ -72,9 +72,9 @@ character(len=19), intent(in) :: syst_2mbrROM
 !
 ! - Initializations
 !
-    nb_mode_curr = ds_empi%nb_mode
-    nbEqua       = ds_empi%ds_mode%nbEqua
-    nb_vect      = ds_multipara%nb_vect
+    nbMode = base%nbMode
+    nbEqua = base%mode%nbEqua
+    nbVect = ds_multipara%nb_vect
 !
 ! - Get second member
 !
@@ -90,31 +90,31 @@ character(len=19), intent(in) :: syst_2mbrROM
 !
 ! - Compute second member
 !
-    if (ds_multipara%syst_type .eq.'R') then      
-        do i_vect = 1, nb_vect
-            l_coef_cplx = ds_multipara%vect_coef(i_vect)%l_cplx
-            l_coef_real = ds_multipara%vect_coef(i_vect)%l_real
+    if (ds_multipara%syst_type .eq.'R') then
+        do iVect = 1, nbVect
+            l_coef_cplx = ds_multipara%vect_coef(iVect)%l_cplx
+            l_coef_real = ds_multipara%vect_coef(iVect)%l_real
             ASSERT(l_coef_real)
-            coef_r = ds_multipara%vect_coef(i_vect)%coef_real(i_coef)
-            call jeveuo(ds_multipara%vect_redu(i_vect), 'L', vr = vr_vect_redu)
-            do i_mode = 1, nb_mode_curr
-                vr_syst_2mbp(i_mode)=vr_syst_2mbp(i_mode)+vr_vect_redu(i_mode)*coef_r
+            coef_r = ds_multipara%vect_coef(iVect)%coef_real(i_coef)
+            call jeveuo(ds_multipara%vect_redu(iVect), 'L', vr = vr_vect_redu)
+            do iMode = 1, nbMode
+                vr_syst_2mbp(iMode)=vr_syst_2mbp(iMode)+vr_vect_redu(iMode)*coef_r
             end do
         end do
     else if (ds_multipara%syst_type .eq.'C') then
-        do i_vect = 1, nb_vect
-            l_coef_cplx = ds_multipara%vect_coef(i_vect)%l_cplx
-            l_coef_real = ds_multipara%vect_coef(i_vect)%l_real
+        do iVect = 1, nbVect
+            l_coef_cplx = ds_multipara%vect_coef(iVect)%l_cplx
+            l_coef_real = ds_multipara%vect_coef(iVect)%l_real
             if (l_coef_cplx) then
-                coef_c    = ds_multipara%vect_coef(i_vect)%coef_cplx(i_coef)
+                coef_c    = ds_multipara%vect_coef(iVect)%coef_cplx(i_coef)
                 coef_cplx = coef_c
             else
-                coef_r    = ds_multipara%vect_coef(i_vect)%coef_real(i_coef)
+                coef_r    = ds_multipara%vect_coef(iVect)%coef_real(i_coef)
                 coef_cplx = dcmplx(coef_r)
             endif 
-            call jeveuo(ds_multipara%vect_redu(i_vect), 'L', vc = vc_vect_redu)
-            do i_mode = 1, nb_mode_curr
-                vc_syst_2mbp(i_mode)=vc_syst_2mbp(i_mode)+vc_vect_redu(i_mode)*coef_cplx
+            call jeveuo(ds_multipara%vect_redu(iVect), 'L', vc = vc_vect_redu)
+            do iMode = 1, nbMode
+                vc_syst_2mbp(iMode)=vc_syst_2mbp(iMode)+vc_vect_redu(iMode)*coef_cplx
             end do
         end do
     else 

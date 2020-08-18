@@ -72,11 +72,11 @@ aster_logical, optional, intent(in) :: l_update_redu_
     character(len=24) :: gamma, fieldName
     real(kind=8), pointer :: v_gamma(:) => null()
     real(kind=8), pointer :: v_vect_2mbr(:) => null()
-    integer :: nbEqua_2mbr, nbEqua_matr, nbEqua, nb_mode
-    integer :: i_mode, j_mode, i_equa
+    integer :: nbEqua_2mbr, nbEqua_matr, nbEqua, nbMode
+    integer :: iMode, jMode, iEqua
     integer :: jv_matr, iret
     aster_logical :: l_hrom, l_rom, l_update_redu
-    character(len=8) :: base
+    character(len=8) :: resultName
     complex(kind=8) :: cbid
     character(len=19) :: mode, vcine19
     real(kind=8) :: term1, term2, det, term
@@ -97,15 +97,15 @@ aster_logical, optional, intent(in) :: l_update_redu_
 !
 ! - Get parameters
 !
-    l_rom     = ds_algorom%l_rom
-    l_hrom    = ds_algorom%l_hrom
-    gamma     = ds_algorom%gamma
-    base      = ds_algorom%ds_empi%base
-    nb_mode   = ds_algorom%ds_empi%nb_mode
-    nbEqua    = ds_algorom%ds_empi%ds_mode%nbEqua
-    fieldName = ds_algorom%ds_empi%ds_mode%fieldName
-    vcine19   = vect_cine(1:19)
-    ASSERT(ds_algorom%ds_empi%ds_mode%fieldSupp .eq. 'NOEU')
+    l_rom      = ds_algorom%l_rom
+    l_hrom     = ds_algorom%l_hrom
+    gamma      = ds_algorom%gamma
+    resultName = ds_algorom%ds_empi%resultName
+    nbMode     = ds_algorom%ds_empi%nbMode
+    nbEqua     = ds_algorom%ds_empi%mode%nbEqua
+    fieldName  = ds_algorom%ds_empi%mode%fieldName
+    vcine19    = vect_cine(1:19)
+    ASSERT(ds_algorom%ds_empi%mode%fieldSupp .eq. 'NOEU')
     ASSERT(l_rom)
     l_update_redu = ASTER_TRUE
     if (present(l_update_redu_)) then
@@ -131,52 +131,52 @@ aster_logical, optional, intent(in) :: l_update_redu_
 !
 ! - Second member correction for AFFE_CHAR_CINE
 !
-    call jeveuo(vcine19//'.VALE', 'L', vr= v_vect_cine)
+    call jeveuo(vcine19//'.VALE', 'L', vr=v_vect_cine)
     call mrconl('MULT', jv_matr, 0, 'R', v_vect_2mbr, 1)
     call csmbgg(jv_matr, v_vect_2mbr, v_vect_cine, [cbid], [cbid], 'R')
 !
 ! - Truncation of second member
 !
     if (l_hrom) then
-        do i_equa = 1, nbEqua
-            if (ds_algorom%v_equa_int(i_equa) .eq. 1) then
-                v_vect_2mbr(i_equa) = 0.d0
+        do iEqua = 1, nbEqua
+            if (ds_algorom%v_equa_int(iEqua) .eq. 1) then
+                v_vect_2mbr(iEqua) = 0.d0
             endif
         enddo
     endif
 !
 ! - Allocate objects
 !
-    AS_ALLOCATE(vr = v_matr_rom, size = nb_mode*nb_mode)
-    AS_ALLOCATE(vr = v_vect_rom, size = nb_mode)
+    AS_ALLOCATE(vr = v_matr_rom, size = nbMode*nbMode)
+    AS_ALLOCATE(vr = v_vect_rom, size = nbMode)
     AS_ALLOCATE(vr = v_mrmult  , size = nbEqua)
 !
 ! - Compute reduced objects
 !
-    do i_mode = 1, nb_mode
-        call rsexch(' ', base, fieldName, i_mode, mode, iret)
+    do iMode = 1, nbMode
+        call rsexch(' ', resultName, fieldName, iMode, mode, iret)
         call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
         term1 = ddot(nbEqua, v_mode, 1, v_vect_2mbr, 1)
-        v_vect_rom(i_mode) = term1
+        v_vect_rom(iMode) = term1
         call mrmult('ZERO', jv_matr, v_mode, v_mrmult, 1, .false._1,l_rom)
         if (l_hrom) then
-            do i_equa = 1, nbEqua
-                if (ds_algorom%v_equa_int(i_equa) .eq. 1) then
-                    v_mrmult(i_equa) = 0.d0
+            do iEqua = 1, nbEqua
+                if (ds_algorom%v_equa_int(iEqua) .eq. 1) then
+                    v_mrmult(iEqua) = 0.d0
                 endif
             end do
         endif
-        do j_mode = 1, nb_mode
-            call rsexch(' ', base, fieldName, j_mode, mode, iret)
+        do jMode = 1, nbMode
+            call rsexch(' ', resultName, fieldName, jMode, mode, iret)
             call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
             term2 = ddot(nbEqua, v_mode, 1, v_mrmult, 1)
-            v_matr_rom(nb_mode*(i_mode-1)+j_mode) = term2
+            v_matr_rom(nbMode*(iMode-1)+jMode) = term2
         end do
     end do
 !
 ! - Solve system
 !
-    call mgauss('NFSP', v_matr_rom, v_vect_rom, nb_mode, nb_mode, 1, det, iret)
+    call mgauss('NFSP', v_matr_rom, v_vect_rom, nbMode, nbMode, 1, det, iret)
     if (l_update_redu) then
         v_gamma = v_gamma + v_vect_rom
     endif
@@ -184,12 +184,12 @@ aster_logical, optional, intent(in) :: l_update_redu_
 ! - Project in physical space
 !
     call vtzero(vect_solu)
-    do i_mode = 1 , nb_mode
-        term = v_vect_rom(i_mode)
-        call rsexch(' ', base, fieldName, i_mode, mode, iret)
+    do iMode = 1 , nbMode
+        term = v_vect_rom(iMode)
+        call rsexch(' ', resultName, fieldName, iMode, mode, iret)
         call vtaxpy(term, mode, vect_solu)
     enddo
-    call jeveuo(vect_solu(1:19)//'.VALE', 'E'     , vr = v_vect_solu)
+    call jeveuo(vect_solu(1:19)//'.VALE', 'E', vr = v_vect_solu)
     call mrconl('MULT', jv_matr, 0, 'R', v_vect_solu, 1)
 !
 ! - Clean

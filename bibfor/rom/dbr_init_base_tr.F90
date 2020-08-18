@@ -85,7 +85,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     if (.not. lReuse) then
         call romBaseDSCopy(paraTrunc%ds_empi_init, resultName, base)
-        call romBaseCreate(base, paraTrunc%ds_empi_init%nb_mode)
+        call romBaseCreate(base, paraTrunc%ds_empi_init%nbMode)
     endif
 !
 ! - If reuse: check that name is the name between output result end keyword BASE

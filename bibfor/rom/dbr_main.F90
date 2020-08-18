@@ -64,7 +64,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     elseif (cmdPara%operation .eq. 'GLOUTON') then
         call dbr_main_rb(cmdPara%para_rb, cmdPara%ds_empi)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
-        resultNameOut = cmdPara%ds_empi%base
+        resultNameOut = cmdPara%ds_empi%resultName
         call dbr_main_tr(cmdPara%para_tr, resultNameOut)
     elseif (cmdPara%operation .eq. 'ORTHO') then
         call dbr_main_ortho(cmdPara%para_ortho, cmdPara%field_iden, cmdPara%ds_empi)

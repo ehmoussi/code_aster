@@ -234,7 +234,7 @@ character(len=19) :: depest
 ! - For HROM: update reduced coordinates
 !
     if (l_rom) then
-        AS_ALLOCATE(vr = v_vect, size = ds_algorom%ds_empi%nb_mode)
+        AS_ALLOCATE(vr = v_vect, size = ds_algorom%ds_empi%nbMode)
         call jeveuo(ds_algorom%gamma, 'E', vr = v_gamma)
         call romCoefComputeFromField(ds_algorom%ds_empi, dep1, v_vect)
         v_gamma = v_gamma + v_vect

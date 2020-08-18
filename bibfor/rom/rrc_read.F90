@@ -48,8 +48,8 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    type(ROM_DS_Empi) :: empi_prim, empi_dual
-    character(len=8)  :: base_prim , base_dual
+    type(ROM_DS_Empi) :: modePrim, modeDual
+    character(len=8)  :: basePrim, baseDual
     character(len=8)  :: result_dom , result_rom , model_dom
     character(len=16) :: k16bid , answer
     character(len=24) :: grnode_int
@@ -64,8 +64,8 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! - Initializations
 !
-    base_prim  = ' '
-    base_dual  = ' '
+    basePrim   = ' '
+    baseDual   = ' '
     result_dom = ' '
     result_rom = ' '
     model_dom  = ' '
@@ -82,18 +82,18 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! - Get informations about bases - Primal
 !
-    call getvid(' ', 'BASE_PRIMAL', scal = base_prim)
-    call romBaseGetInfo(base_prim, empi_prim)
-    if (empi_prim%ds_mode%fieldSupp .ne. 'NOEU') then
+    call getvid(' ', 'BASE_PRIMAL', scal = basePrim)
+    call romBaseGetInfo(basePrim, modePrim)
+    if (modePrim%mode%fieldSupp .ne. 'NOEU') then
         call utmess('F', 'ROM6_5')
     endif
 !
 ! - Get informations about bases - Dual
 !
     if (l_prev_dual) then
-        call getvid(' ', 'BASE_DUAL', scal = base_dual)
-        call romBaseGetInfo(base_dual, empi_dual)
-        if (empi_dual%ds_mode%fieldSupp .ne. 'NOEU') then
+        call getvid(' ', 'BASE_DUAL', scal = baseDual)
+        call romBaseGetInfo(baseDual, modeDual)
+        if (modeDual%mode%fieldSupp .ne. 'NOEU') then
             call utmess('F', 'ROM6_5')
         endif
         call getvtx(' ', 'GROUP_NO_INTERF', scal = grnode_int)
@@ -121,8 +121,8 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
     cmdPara%result_rom   = result_rom
     cmdPara%result_dom   = result_dom
     cmdPara%model_dom    = model_dom
-    cmdPara%ds_empi_prim = empi_prim
-    cmdPara%ds_empi_dual = empi_dual
+    cmdPara%ds_empi_prim = modePrim
+    cmdPara%ds_empi_dual = modeDual
     cmdPara%grnode_int   = grnode_int
     cmdPara%l_prev_dual  = l_prev_dual
     cmdPara%l_corr_ef    = l_corr_ef

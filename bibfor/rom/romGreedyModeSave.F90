@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romGreedyModeSave(ds_multipara, ds_empi,&
-                             i_mode      , mode )
+subroutine romGreedyModeSave(ds_multipara, base,&
+                             iMode       , mode)
 !
 use Rom_Datastructure_type
 !
@@ -35,8 +35,8 @@ implicit none
 #include "asterfort/jeveuo.h"
 !
 type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-type(ROM_DS_Empi), intent(inout)   :: ds_empi
-integer, intent(in)                :: i_mode
+type(ROM_DS_Empi), intent(inout)   :: base
+integer, intent(in)                :: iMode
 character(len=19), intent(in)      :: mode
 !
 ! --------------------------------------------------------------------------------------------------
@@ -48,8 +48,8 @@ character(len=19), intent(in)      :: mode
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_multipara     : datastructure for multiparametric problems
-! IO  ds_empi          : datastructure for empiric modes
-! In  i_mode           : index of empiric mode
+! IO  base             : base
+! In  iMode            : index of mode
 ! In  mode             : empiric mode to save
 !
 ! --------------------------------------------------------------------------------------------------
@@ -68,8 +68,8 @@ character(len=19), intent(in)      :: mode
 !
 ! - Save mode
 !
-    call romMultiParaModeSave(ds_multipara, ds_empi,&
-                              i_mode      , mode)
+    call romMultiParaModeSave(ds_multipara, base,&
+                              iMode       , mode)
 !
 ! - Compute products
 !
@@ -83,19 +83,19 @@ character(len=19), intent(in)      :: mode
                               ds_multipara%matr_type,&
                               ds_multipara%matr_mode_curr,&
                               ds_multipara%prod_matr_mode,&
-                              i_mode,&
+                              iMode,&
                               'R' , vr_mode = vr_mode)
 ! ---- Compute reduced vector
-       call romCalcVectReduit(i_mode,&
-                              ds_empi%ds_mode%nbEqua,&
+       call romCalcVectReduit(iMode,&
+                              base%mode%nbEqua,&
                               ds_multipara%nb_vect   ,&
                               ds_multipara%vect_name ,&
                               ds_multipara%vect_type ,&
                               ds_multipara%vect_redu ,&
                               'R' , vr_mode = vr_mode)
 ! ---- Compute reduced matrix 
-       call romCalcMatrReduit(i_mode,  &
-                              ds_empi ,&
+       call romCalcMatrReduit(iMode,  &
+                              base ,&
                               ds_multipara%nb_matr   ,&
                               ds_multipara%prod_matr_mode,&
                               ds_multipara%matr_redu,&
@@ -109,19 +109,19 @@ character(len=19), intent(in)      :: mode
                               ds_multipara%matr_type,&
                               ds_multipara%matr_mode_curr,&
                               ds_multipara%prod_matr_mode,&
-                              i_mode,&
+                              iMode,&
                               'C' , vc_mode = vc_mode)
 ! ---- Compute reduced vector
-       call romCalcVectReduit(i_mode,&
-                              ds_empi%ds_mode%nbEqua,&
+       call romCalcVectReduit(iMode,&
+                              base%mode%nbEqua,&
                               ds_multipara%nb_vect   ,&
                               ds_multipara%vect_name ,&
                               ds_multipara%vect_type ,&
                               ds_multipara%vect_redu,&
                               'C' , vc_mode = vc_mode)
 ! ---- Compute reduced matrix
-       call romCalcMatrReduit(i_mode,  &
-                              ds_empi ,&
+       call romCalcMatrReduit(iMode,  &
+                              base ,&
                               ds_multipara%nb_matr   ,&
                               ds_multipara%prod_matr_mode,&
                               ds_multipara%matr_redu,&

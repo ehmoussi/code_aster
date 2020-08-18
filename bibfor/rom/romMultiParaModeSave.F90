@@ -68,8 +68,8 @@ character(len=19), intent(in) :: modeName
 ! - Get parameters
 !
     syst_type  = multPara%syst_type
-    resultName = base%base
-    mode       = base%ds_mode
+    resultName = base%resultName
+    mode       = base%mode
     nbEqua     = mode%nbEqua
     ASSERT(mode%fieldSupp .eq. 'NOEU')
 !
@@ -93,6 +93,6 @@ character(len=19), intent(in) :: modeName
         ASSERT(ASTER_FALSE)
     endif
 !
-    base%nb_mode = base%nb_mode + 1
+    base%nbMode = base%nbMode + 1
 !
 end subroutine

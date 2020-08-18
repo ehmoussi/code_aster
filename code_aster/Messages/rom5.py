@@ -25,8 +25,6 @@ cata_msg = {
 
     1 : _("""Création de la matrice des clichés."""),
 
-    2 : _("""Sauvegarde des %(i1)d modes empiriques dans la base empirique."""),
-
     4 : _("""Comptage du nombre de modes empiriques à sélectionner."""),
 
     5 : _("""On a %(i1)d valeurs singulières comprises entre %(r1)13.6G et %(r2)13.6G . Avec les paramètres, on a retenu %(i2)d modes empiriques."""),

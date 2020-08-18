@@ -50,6 +50,7 @@ aster_logical, intent(in), optional :: lLineSearch_
 ! In  phenom           : phenomenon (MECA/THER)
 ! In  model            : name of model
 ! In  mesh             : name of mesh
+! In  numeDof          : name of numbering (NUME_DDL)
 ! In  resultName       : name of datastructure for results
 ! IO  paraAlgo         : datastructure for ROM parameters
 ! In  l_line_search    : .true. if line search
@@ -58,7 +59,7 @@ aster_logical, intent(in), optional :: lLineSearch_
 !
     integer :: ifm, niv
     aster_logical :: l_hrom, l_hrom_corref
-    integer :: nb_mode
+    integer :: nbMode
     real(kind=8), pointer :: v_gamma(:) => null()
     type(ROM_DS_Field) :: mode
 !
@@ -73,8 +74,8 @@ aster_logical, intent(in), optional :: lLineSearch_
 !
     l_hrom        = paraAlgo%l_hrom
     l_hrom_corref = paraAlgo%l_hrom_corref
-    nb_mode       = paraAlgo%ds_empi%nb_mode
-    mode          = paraAlgo%ds_empi%ds_mode
+    nbMode        = paraAlgo%ds_empi%nbMode
+    mode          = paraAlgo%ds_empi%mode
 !
 ! - Check ROM algorithm datastructure
 !
@@ -98,7 +99,7 @@ aster_logical, intent(in), optional :: lLineSearch_
 !
 ! - Create object for reduced coordinates
 !
-    call wkvect(paraAlgo%gamma, 'V V R', nb_mode, vr = v_gamma)
+    call wkvect(paraAlgo%gamma, 'V V R', nbMode, vr = v_gamma)
 !
 ! - Create datastructure of table in results datastructure for the reduced coordinates
 !
