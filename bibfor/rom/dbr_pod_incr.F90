@@ -45,7 +45,7 @@ implicit none
 #include "blas/dgesv.h"
 !
 aster_logical, intent(in) :: lReuse
-type(ROM_DS_Empi), intent(inout) :: base
+type(ROM_DS_Empi), intent(in) :: base
 type(ROM_DS_ParaDBR_POD) , intent(in) :: paraPod
 real(kind=8), pointer :: q(:), s(:), v(:)
 integer, intent(out) :: nbModeOut, nbSnapOut
@@ -59,7 +59,7 @@ integer, intent(out) :: nbModeOut, nbSnapOut
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  lReuse           : .true. if reuse
-! IO  base             : base
+! In  base             : base
 ! In  paraPod          : datastructure for parameters (POD)
 ! Ptr q                : pointer to snapshots matrix (be modified after SVD)
 ! Ptr s                : pointer to singular values
@@ -212,7 +212,7 @@ integer, intent(out) :: nbModeOut, nbSnapOut
             cycle
         endif
 
-! ----- Compute {kt} = [v]^T {q} (projection of current snaphot on empiric base)
+! ----- Compute {kt} = [v]^T {q} (projection of current snaphot on base)
         AS_ALLOCATE(vr  = kt  , size = iAlgoSnap)
         call dgemm('T', 'N', iAlgoSnap, 1, nbEqua, 1.d0,&
                    vt, nbEqua,&

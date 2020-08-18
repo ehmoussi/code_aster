@@ -44,20 +44,17 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 ! --------------------------------------------------------------------------------------------------
 !
     if (cmdPara%operation(1:3) .eq. 'POD') then
-        call dbr_init_base_pod(cmdPara%result_out, cmdPara%para_pod,&
-                               cmdPara%l_reuse   , cmdPara%ds_empi)
-        cmdPara%field_iden = cmdPara%para_pod%field_name
+        call dbr_init_base_pod(cmdPara%resultOut%resultName, cmdPara%paraPod,&
+                               cmdPara%lReuse              , cmdPara%base)
     elseif (cmdPara%operation .eq. 'GLOUTON') then
-        call dbr_init_base_rb(cmdPara%result_out, cmdPara%para_rb,&
-                              cmdPara%ds_empi)
+        call dbr_init_base_rb(cmdPara%resultOut%resultName, cmdPara%paraRb,&
+                              cmdPara%base)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
-        call dbr_init_base_tr(cmdPara%result_out, cmdPara%para_tr,&
-                              cmdPara%l_reuse   , cmdPara%ds_empi)
-        cmdPara%field_iden = cmdPara%para_tr%ds_empi_init%mode%fieldName
+        call dbr_init_base_tr(cmdPara%resultOut%resultName, cmdPara%paraTrunc,&
+                              cmdPara%lReuse              , cmdPara%base)
     elseif (cmdPara%operation .eq. 'ORTHO') then
-        call dbr_init_base_ortho(cmdPara%result_out, cmdPara%para_ortho,&
-                                 cmdPara%l_reuse   , cmdPara%ds_empi)
-        cmdPara%field_iden = cmdPara%para_ortho%ds_empi_init%mode%fieldName
+        call dbr_init_base_ortho(cmdPara%resultOut%resultName, cmdPara%paraOrtho,&
+                                 cmdPara%lReuse              , cmdPara%base)
     else
         ASSERT(ASTER_FALSE)
     endif

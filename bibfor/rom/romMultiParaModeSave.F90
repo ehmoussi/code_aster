@@ -54,7 +54,7 @@ character(len=19), intent(in) :: modeName
     complex(kind=8) :: normc
     real(kind=8) :: normr
     integer :: nbEqua
-    character(len=24) :: fieldIden
+    character(len=24) :: fieldName
     character(len=1) :: syst_type
     character(len=8) :: resultName
     type(ROM_DS_Field) :: mode
@@ -63,11 +63,8 @@ character(len=19), intent(in) :: modeName
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    fieldIden = 'DEPL'
-!
-! - Get parameters
-!
     syst_type  = multPara%syst_type
+    fieldName  = 'DEPL'
     resultName = base%resultName
     mode       = base%mode
     nbEqua     = mode%nbEqua
@@ -80,14 +77,14 @@ character(len=19), intent(in) :: modeName
         normc = zdotc(nbEqua, modeValeC, 1, modeValeC, 1)
         modeValeC(:) = modeValeC(:)/sqrt(normc)
         call romModeSave(resultName, numeMode ,&
-                         fieldIden , mode     ,&
+                         fieldName , mode     ,&
                          modeValeC_ = modeValeC)
     elseif (syst_type .eq. 'R') then
         call jeveuo(modeName(1:19)//'.VALE', 'E', vr = modeValeR)
         normr = ddot(nbEqua, modeValeR, 1, modeValeR, 1)
         modeValeR(:) = modeValeR(:)/sqrt(normr) 
         call romModeSave(resultName, numeMode ,&
-                         fieldIden , mode     ,&
+                         fieldName , mode     ,&
                          modeValeR_ = modeValeR)
     else
         ASSERT(ASTER_FALSE)

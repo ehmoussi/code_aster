@@ -43,9 +43,9 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call romBaseClean(cmdPara%ds_empi)
+    call romBaseClean(cmdPara%base)
     call romResultClean()
-    call romTableClean(cmdPara%para_pod%tablReduCoor)
-    call romSnapClean(cmdPara%para_pod%snap)
+    call romTableClean(cmdPara%paraPod%tablReduCoor)
+    call romSnapClean(cmdPara%paraPod%snap)
 !
 end subroutine

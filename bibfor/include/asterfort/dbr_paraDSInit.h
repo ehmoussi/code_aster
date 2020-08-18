@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_paraDSInit(ds_para_pod, ds_para_rb, ds_para_tr, ds_para_ortho,&
-                              ds_para)
+    subroutine dbr_paraDSInit(paraPod, paraRb, paraTrunc, paraOrtho, cmdPara)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-        type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
-        type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
-        type(ROM_DS_ParaDBR_ORTHO), intent(in) :: ds_para_ortho
-        type(ROM_DS_ParaDBR), intent(out) :: ds_para
+        type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
+        type(ROM_DS_ParaDBR_RB), intent(in) :: paraRb
+        type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
+        type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
+        type(ROM_DS_ParaDBR), intent(out) :: cmdPara
     end subroutine dbr_paraDSInit
 end interface

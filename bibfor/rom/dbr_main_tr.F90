@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_main_tr(paraTrunc, resultNameOut)
+subroutine dbr_main_tr(paraTrunc, baseOut)
 !
 use Rom_Datastructure_type
 !
@@ -38,18 +38,18 @@ implicit none
 #include "asterfort/romModeParaRead.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
-character(len=8), intent(in) :: resultNameOut
+type(ROM_DS_Empi), intent(in) :: baseOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Compute
 !
-! Main subroutine to compute empiric modes - Truncation
+! Main subroutine to compute modes - Truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  paraTrunc       : datastructure for truncation parameters
-! In  resultNameOut   : name of output results
+! In  paraTrunc        : datastructure for truncation parameters
+! In  baseOut          : output base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,7 +57,7 @@ character(len=8), intent(in) :: resultNameOut
     integer :: nbMode, nbEquaDom, nbEquaRom
     integer :: iMode, iEqua, iret, numeEquaRom, numeMode
     character(len=24) :: modeDom, modeRom, modeSymbName, profChno
-    character(len=8) :: modelRom, resultNameIn, mesh
+    character(len=8) :: modelRom, resultNameIn, mesh, resultNameOut
     real(kind=8) :: modeSing
     integer :: nbSnap, numeSlice, physNume
     real(kind=8), pointer :: valeDom(:) => null(), valeRom(:) => null()
@@ -72,11 +72,12 @@ character(len=8), intent(in) :: resultNameOut
 !
 ! - Get parameters of operation
 !
-    nbEquaRom    = paraTrunc%nb_equa_rom
-    modelRom     = paraTrunc%model_rom
-    profChno     = paraTrunc%prof_chno_rom
-    physNume     = paraTrunc%idx_gd
-    baseIn       = paraTrunc%ds_empi_init
+    resultNameOut = baseOut%resultName
+    nbEquaRom     = paraTrunc%nb_equa_rom
+    modelRom      = paraTrunc%model_rom
+    profChno      = paraTrunc%prof_chno_rom
+    physNume      = paraTrunc%idx_gd
+    baseIn        = paraTrunc%ds_empi_init
 !
 ! - Get parameters of input base
 !

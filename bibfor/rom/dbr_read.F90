@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_read(ds_para)
+subroutine dbr_read(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -37,7 +37,7 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,15 +47,16 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para          : datastructure for parameters
+! IO  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=16) :: k16bid, operation
-    character(len=8) :: result_out, result_reuse
+    character(len=16) :: k16bid, operation, resultType
+    character(len=8) :: resultOutName, resultReuseName
     integer :: ireuse
-    aster_logical :: l_reuse
+    aster_logical :: lReuse
+    type(ROM_DS_Result) :: resultOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,21 +65,28 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
         call utmess('I', 'ROM5_10')
     endif
 !
-    operation = ' '
-    result_out = ' '
-    result_reuse = ' '
+! - Initializations
+!
+    operation       = ' '
+    resultOutName   = ' '
+    resultReuseName = ' '
 !
 ! - Output datastructure
 !
-    call getres(result_out, k16bid, k16bid)
+    call getres(resultOutName, resultType, k16bid)
+    ASSERT(resultType .eq. 'MODE_EMPI')
+    resultOut%resultType    = resultType
+    resultOut%resultName    = resultOutName
+    resultOut%nbStore       = 0
+    resultOut%lTablFromResu = ASTER_FALSE
 !
 ! - Is REUSE?
 !
-    call gcucon(result_out, 'MODE_EMPI', ireuse)
-    l_reuse = ireuse .ne. 0
-    if (l_reuse) then
-        call getvid(' ', 'BASE', scal = result_reuse)
-        if (result_out .ne. result_reuse) then
+    call gcucon(resultOutName, 'MODE_EMPI', ireuse)
+    lReuse = ireuse .ne. 0
+    if (lReuse) then
+        call getvid(' ', 'BASE', scal = resultReuseName)
+        if (resultOutName .ne. resultReuseName) then
             call utmess('F', 'SUPERVIS2_79', sk='BASE')
         endif
     endif
@@ -87,21 +95,21 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
     call getvtx(' ', 'OPERATION', scal = operation)
     if (operation(1:3) .eq. 'POD') then
-        call dbr_read_pod(operation, ds_para%para_pod)
+        call dbr_read_pod(operation, cmdPara%paraPod)
     elseif (operation .eq. 'GLOUTON') then
-        call dbr_read_rb(ds_para%para_rb)
+        call dbr_read_rb(cmdPara%paraRb)
     elseif (operation .eq. 'TRONCATURE') then
-        call dbr_read_tr(ds_para%para_tr)
+        call dbr_read_tr(cmdPara%paraTrunc)
     elseif (operation .eq. 'ORTHO') then
-        call dbr_read_ortho(ds_para%para_ortho)
+        call dbr_read_ortho(cmdPara%paraOrtho)
     else
         ASSERT(ASTER_FALSE)
     endif
 !
 ! - Save parameters in datastructure
 !
-    ds_para%operation  = operation
-    ds_para%result_out = result_out
-    ds_para%l_reuse    = l_reuse
+    cmdPara%operation = operation
+    cmdPara%resultOut = resultOut
+    cmdPara%lReuse    = lReuse
 !
 end subroutine

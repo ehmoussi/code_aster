@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseSave(base     , nbMode        , nbSnap,&
-                       fieldIden, baseValeR     , &
-                       baseSing_, baseNumeSlice_)
+subroutine romBaseSave(base     , nbMode   , nbSnap,&
+                       baseValeR, baseSing_, baseNumeSlice_)
 !
 use Rom_Datastructure_type
 !
@@ -34,7 +33,6 @@ implicit none
 !
 type(ROM_DS_Empi), intent(in) :: base
 integer, intent(in) :: nbMode, nbSnap
-character(len=24), intent(in) :: fieldIden
 real(kind=8), pointer :: baseValeR(:)
 real(kind=8), optional, pointer :: baseSing_(:)
 integer, optional, pointer      :: baseNumeSlice_(:)
@@ -50,7 +48,6 @@ integer, optional, pointer      :: baseNumeSlice_(:)
 ! In  base            : base
 ! In  nbMode          : number of modes in base
 ! In  nbSnap          : number of snapshots used to construct base
-! In  fieldIden       : identificator of modes (name in results datastructure)
 ! Ptr baseValeR       : pointer to the values of all modes in base
 ! Ptr baseSing        : pointer to the singular values of all modes in base
 ! Ptr baseNumeSlice   : pointer to the index of all slices in base
@@ -64,6 +61,7 @@ integer, optional, pointer      :: baseNumeSlice_(:)
     character(len=8)  :: resultName
     type(ROM_DS_Field) :: mode
     real(kind=8), pointer :: modeValeR(:) => null()
+    character(len=24) :: fieldName
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,6 +75,7 @@ integer, optional, pointer      :: baseNumeSlice_(:)
     resultName = base%resultName
     mode       = base%mode
     nbEqua     = mode%nbEqua
+    fieldName  = mode%fieldName
     AS_ALLOCATE(vr = modeValeR, size = nbEqua)
 !
 ! - Save modes
@@ -95,7 +94,7 @@ integer, optional, pointer      :: baseNumeSlice_(:)
             modeValeR(iEqua) = baseValeR(nbEqua*(iMode-1)+iEqua)
         end do
         call romModeSave(resultName, numeMode ,&
-                         fieldIden , mode     ,&
+                         fieldName , mode     ,&
                          modeValeR_ = modeValeR,&
                          modeSing_  = modeSing ,&
                          numeSlice_ = numeSlice,&

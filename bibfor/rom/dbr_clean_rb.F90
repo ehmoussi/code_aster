@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,19 +17,18 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_clean_rb(ds_para)
+subroutine dbr_clean_rb(cmdPara)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/romBaseClean.h"
 #include "asterfort/assert.h"
-#include "asterfort/as_deallocate.h"
+#include "asterfort/romBaseClean.h"
 #include "asterfort/romMultiParaClean.h"
 #include "asterfort/romGreedyAlgoClean.h"
 !
-type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -39,12 +38,12 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para           : datastructure for parameters 
+! IO  cmdPara           : datastructure for parameters 
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call romBaseClean(ds_para%ds_empi) 
-    call romMultiParaClean(ds_para%para_rb%multipara)
-    call romGreedyAlgoClean(ds_para%para_rb%algoGreedy)
+    call romBaseClean(cmdPara%base) 
+    call romMultiParaClean(cmdPara%paraRb%multipara)
+    call romGreedyAlgoClean(cmdPara%paraRb%algoGreedy)
 !
 end subroutine

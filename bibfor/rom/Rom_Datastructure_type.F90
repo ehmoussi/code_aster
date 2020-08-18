@@ -358,23 +358,21 @@ implicit none
 !
     type ROM_DS_ParaDBR
 ! ----- Type of operation (POD, POD_INCR, GREEDY, ...)
-        character(len=16)        :: operation = ' '
+        character(len=16)          :: operation = ' '
 ! ----- Name of empiric base to save
-        character(len=8)         :: result_out = ' '
-! ----- Identificator for field in result datastructure
-        character(len=24)        :: field_iden = ' '
+        type(ROM_DS_Result)        :: resultOut
 ! ----- Parameters for POD/POD_INCR method
-        type(ROM_DS_ParaDBR_POD)   :: para_pod
+        type(ROM_DS_ParaDBR_POD)   :: paraPod
 ! ----- Parameters for RB method
-        type(ROM_DS_ParaDBR_RB )   :: para_rb
+        type(ROM_DS_ParaDBR_RB )   :: paraRb
 ! ----- Parameters for truncation method
-        type(ROM_DS_ParaDBR_TR )   :: para_tr
+        type(ROM_DS_ParaDBR_TR )   :: paraTrunc
 ! ----- Parameters for orthogonalization method
-        type(ROM_DS_ParaDBR_ORTHO) :: para_ortho
+        type(ROM_DS_ParaDBR_ORTHO) :: paraOrtho
 ! ----- Datastructure for empiric modes
-        type(ROM_DS_Empi)        :: ds_empi
+        type(ROM_DS_Empi)          :: base
 ! ----- If operator is "reuse"
-        aster_logical            :: l_reuse = ASTER_FALSE
+        aster_logical              :: lReuse = ASTER_FALSE
     end type ROM_DS_ParaDBR
 !
 ! - Parameters for DEFI_DOMAINE_REDUIT operator

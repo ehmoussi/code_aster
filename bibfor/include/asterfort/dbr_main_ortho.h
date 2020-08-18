@@ -17,10 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_main_ortho(paraOrtho, fieldIden, base)
+    subroutine dbr_main_ortho(paraOrtho, baseOut)
         use Rom_Datastructure_type
         type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
-        character(len=24), intent(in) :: fieldIden
-        type(ROM_DS_Empi), intent(inout) :: base
+        type(ROM_DS_Empi), intent(in) :: baseOut
     end subroutine dbr_main_ortho
 end interface

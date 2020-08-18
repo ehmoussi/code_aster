@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_main_pod(paraPod, fieldName, base)
+subroutine dbr_main_pod(paraPod, baseOut)
 !
 use Rom_Datastructure_type
 !
@@ -35,20 +35,18 @@ implicit none
 #include "asterfort/romTableSave.h"
 !
 type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
-character(len=24), intent(in) :: fieldName
-type(ROM_DS_Empi), intent(inout) :: base
+type(ROM_DS_Empi), intent(inout) :: baseOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Compute
 !
-! Main subroutine to compute empiric modes - For POD methods
+! Main subroutine to compute modes - For POD methods
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  paraPod          : datastructure for parameters (POD)
-! In  fieldName        : identificator of field (name in results datastructure)
-! IO  base             : base
+! IO  baseOut          : output base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,35 +56,35 @@ type(ROM_DS_Empi), intent(inout) :: base
     real(kind=8), pointer :: s(:) => null() 
     real(kind=8), pointer :: v_gamma(:) => null()
     real(kind=8) :: toleSVD
-    character(len=8) :: resultName
+    character(len=8) :: resultDomName
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    toleSVD    = paraPod%tole_svd
-    nbSnap     = paraPod%snap%nbSnap
-    nbModeMaxi = paraPod%nb_mode_maxi
-    resultName = paraPod%resultDom%resultName
+    toleSVD       = paraPod%tole_svd
+    nbSnap        = paraPod%snap%nbSnap
+    nbModeMaxi    = paraPod%nb_mode_maxi
+    resultDomName = paraPod%resultDom%resultName
 !
 ! - Get size of snapshots matrix
 !
-    call dbr_calcpod_size(base, paraPod%snap,&
-                          m   , n )
+    call dbr_calcpod_size(baseOut, paraPod%snap,&
+                          m      , n)
 !
 ! - Create snapshots matrix Q
 !    
-    call dbr_calcpod_q(base, resultName, paraPod%snap, m, n, q)
+    call dbr_calcpod_q(baseOut, resultDomName, paraPod%snap, m, n, q)
 !
-! - Compute empiric modes by SVD
+! - Compute modes by SVD
 !
     call dbr_calcpod_svd(m, n, q, s, v, nbSing)
 !
-! - Select empiric modes
+! - Select modes
 !
     call dbr_calcpod_sele(nbModeMaxi, toleSVD, s, nbSing, nbMode)
 !
-! - Save empiric modes
+! - Save base
 ! 
-    call dbr_calcpod_save(base, nbMode, nbSnap, fieldName, s, v)
+    call dbr_calcpod_save(baseOut, nbMode, nbSnap, s, v)
 !
 ! - Compute reduced coordinates
 !

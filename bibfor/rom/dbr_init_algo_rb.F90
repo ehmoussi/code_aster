@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_algo_rb(ds_para_rb)
+subroutine dbr_init_algo_rb(paraRb)
 !
 use Rom_Datastructure_type
 !
@@ -33,7 +33,7 @@ implicit none
 #include "asterfort/romMultiParaInit.h"
 #include "asterfort/romFSINumberingInit.h"
 !
-type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
+type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,7 +43,7 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para_rb       : datastructure for parameters (RB)
+! IO  paraRb            : datastructure for parameters (RB)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,11 +63,11 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
 ! - Get parameters
 !
-    nb_mode_maxi = ds_para_rb%nb_mode_maxi
-    l_stab_fsi   = ds_para_rb%l_stab_fsi
-    vect_refe    = ds_para_rb%algoGreedy%solveDOM%vect_zero
-    matr_refe    = ds_para_rb%multipara%matr_name(1)
-    nb_vari_coef = ds_para_rb%multipara%nb_vari_coef
+    nb_mode_maxi = paraRb%nb_mode_maxi
+    l_stab_fsi   = paraRb%l_stab_fsi
+    vect_refe    = paraRb%algoGreedy%solveDOM%vect_zero
+    matr_refe    = paraRb%multipara%matr_name(1)
+    nb_vari_coef = paraRb%multipara%nb_vari_coef
 !
 ! - For FSI: three basis
 !
@@ -77,32 +77,32 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
 ! - Evaluate type of system
 !
-    call romMultiParaSystEvalType(ds_para_rb%multipara,&
+    call romMultiParaSystEvalType(paraRb%multipara,&
                                   syst_matr_type, syst_2mbr_type, syst_type)
-    ds_para_rb%algoGreedy%resi_type  = syst_type
+    paraRb%algoGreedy%resi_type  = syst_type
 !
 ! - Create objects to solve system (DOM)
 !
     call romSolveDOMSystCreate(syst_matr_type, syst_2mbr_type, syst_type, matr_refe,&
-                               ds_para_rb%algoGreedy%solveDOM)
+                               paraRb%algoGreedy%solveDOM)
 !
 ! - Create objects to solve system (ROM)
 !
     call romSolveROMSystCreate(syst_matr_type, syst_2mbr_type, syst_type, nb_mode_maxi,&
-                               ds_para_rb%algoGreedy%solveROM)
+                               paraRb%algoGreedy%solveROM)
 !
 ! - Initializations for multiparametric problems
 !
-    call romMultiParaInit(ds_para_rb%multipara, nb_mode_maxi)
+    call romMultiParaInit(paraRb%multipara, nb_mode_maxi)
 !
 ! - Create numbering of nodes for FSI
 !
     if (l_stab_fsi) then 
-        call romFSINumberingInit(ds_para_rb%multipara%field, ds_para_rb%algoGreedy)
+        call romFSINumberingInit(paraRb%multipara%field, paraRb%algoGreedy)
     endif
 !
 ! - Init algorithm
 !
-    call romGreedyAlgoInit(nb_mode_maxi, nb_vari_coef, vect_refe, ds_para_rb%algoGreedy)
+    call romGreedyAlgoInit(nb_mode_maxi, nb_vari_coef, vect_refe, paraRb%algoGreedy)
 !
 end subroutine

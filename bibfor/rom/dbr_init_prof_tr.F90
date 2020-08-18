@@ -42,7 +42,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  resultNameOut    : name of result datastructure
+! In  resultNameOut    : name of results datastructure to save base
 ! IO  paraTrunc        : datastructure for truncation parameters
 !
 ! --------------------------------------------------------------------------------------------------
@@ -51,19 +51,19 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
     integer :: iret, physNume
     character(len=24) :: profChnoNew, modeSymbName, modeRefe
     character(len=19) :: profChnoRefe
-    character(len=8) :: resultName
+    character(len=8) :: resultNameIn
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    resultName = paraTrunc%base_init
+    resultNameIn = paraTrunc%base_init
 !
 ! - Get symbolic name of mode
 !
-    call romModeParaRead(resultName, numeModeRefe, modeSymbName_ = modeSymbName)
+    call romModeParaRead(resultNameIn, numeModeRefe, modeSymbName_ = modeSymbName)
 !
 ! - Get mode (complete)
 !
-    call rsexch(' '     , resultName, modeSymbName, numeModeRefe,&
+    call rsexch(' '     , resultNameIn, modeSymbName, numeModeRefe,&
                 modeRefe, iret)
     ASSERT(iret .eq. 0)
 !

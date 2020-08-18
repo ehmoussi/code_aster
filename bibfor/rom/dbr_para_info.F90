@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_para_info(ds_para)
+subroutine dbr_para_info(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/dbr_para_info_tr.h"
 #include "asterfort/dbr_para_info_ortho.h"
 !
-type(ROM_DS_ParaDBR), intent(in) :: ds_para
+type(ROM_DS_ParaDBR), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,14 +42,13 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para          : datastructure for parameters
+! In  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     character(len=16) :: operation
-    character(len=8)  :: result_out
-    aster_logical :: l_reuse
+    aster_logical :: lReuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,16 +56,15 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
 !
 ! - Get parameters in datastructure - General for DBR
 !
-    operation  = ds_para%operation
-    result_out = ds_para%result_out
-    l_reuse    = ds_para%l_reuse
+    operation     = cmdPara%operation
+    lReuse        = cmdPara%lReuse
 !
 ! - Print - General for DBR
 !
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_24')
         call utmess('I', 'ROM5_16', sk = operation)
-        if (l_reuse) then
+        if (lReuse) then
             call utmess('I', 'ROM7_15')
         else
             call utmess('I', 'ROM7_16')
@@ -76,16 +74,16 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
 ! - Print / method
 !
     if (operation(1:3) .eq. 'POD') then
-        call dbr_para_info_pod(operation, ds_para%para_pod)
+        call dbr_para_info_pod(operation, cmdPara%paraPod)
 
     elseif (operation .eq. 'GLOUTON') then
-        call dbr_para_info_rb(ds_para%para_rb)
+        call dbr_para_info_rb(cmdPara%paraRb)
 
     elseif (operation .eq. 'TRONCATURE') then
-        call dbr_para_info_tr(ds_para%para_tr)
+        call dbr_para_info_tr(cmdPara%paraTrunc)
 
     elseif (operation .eq. 'ORTHO') then
-        call dbr_para_info_ortho(ds_para%para_ortho)
+        call dbr_para_info_ortho(cmdPara%paraOrtho)
 
     else
         ASSERT(ASTER_FALSE)

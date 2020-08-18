@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_calcpod_save(base, nbMode, nbSnapRedu, fieldIden, baseSing, baseValeR)
+subroutine dbr_calcpod_save(base, nbMode, nbSnapRedu, baseSing, baseValeR)
 !
 use Rom_Datastructure_type
 !
@@ -29,7 +29,6 @@ implicit none
 !
 type(ROM_DS_Empi), intent(in) :: base
 integer, intent(in) :: nbMode, nbSnapRedu
-character(len=24), intent(in) :: fieldIden
 real(kind=8), pointer :: baseValeR(:), baseSing(:)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -43,18 +42,17 @@ real(kind=8), pointer :: baseValeR(:), baseSing(:)
 ! In  base             : base
 ! In  nbMode           : number of modes in base
 ! In  nbSnapRedu       : number of snapshots used to construct base
-! In  fieldIden        : identificator of modes (name in results datastructure)
 ! Ptr baseValeR        : pointer to the values of all modes in base
 ! Ptr baseSing         : pointer to the singular values of all modes in base
 !
 ! --------------------------------------------------------------------------------------------------
 !
     if (base%baseType .eq. 'LINEIQUE') then
-        call dbr_calcpod_savel(base     , nbMode  , nbSnapRedu,&
-                               fieldIden, baseSing, baseValeR)
+        call dbr_calcpod_savel(base    , nbMode  , nbSnapRedu,&
+                               baseSing, baseValeR)
     else
         call romBaseSave(base     , nbMode   , nbSnapRedu,&
-                         fieldIden, baseValeR, baseSing)
+                         baseValeR, baseSing)
     endif
 !
 end subroutine

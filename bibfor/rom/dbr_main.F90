@@ -47,7 +47,6 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=8) :: resultNameOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,17 +56,15 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     endif
 !
     if (cmdPara%operation .eq. 'POD') then
-        call dbr_main_pod(cmdPara%para_pod, cmdPara%field_iden, cmdPara%ds_empi)
+        call dbr_main_pod(cmdPara%paraPod, cmdPara%base)
     elseif (cmdPara%operation .eq. 'POD_INCR') then
-        call dbr_main_podincr(cmdPara%l_reuse   , cmdPara%para_pod,&
-                              cmdPara%field_iden, cmdPara%ds_empi)
+        call dbr_main_podincr(cmdPara%lReuse, cmdPara%paraPod, cmdPara%base)
     elseif (cmdPara%operation .eq. 'GLOUTON') then
-        call dbr_main_rb(cmdPara%para_rb, cmdPara%ds_empi)
+        call dbr_main_rb(cmdPara%paraRb, cmdPara%base)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
-        resultNameOut = cmdPara%ds_empi%resultName
-        call dbr_main_tr(cmdPara%para_tr, resultNameOut)
+        call dbr_main_tr(cmdPara%paraTrunc, cmdPara%base)
     elseif (cmdPara%operation .eq. 'ORTHO') then
-        call dbr_main_ortho(cmdPara%para_ortho, cmdPara%field_iden, cmdPara%ds_empi)
+        call dbr_main_ortho(cmdPara%paraOrtho, cmdPara%base)
     else
         ASSERT(ASTER_FALSE)
     endif
