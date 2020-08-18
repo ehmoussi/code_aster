@@ -17,10 +17,20 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romFieldNodeFromEqua(field, nbNodeMesh, listNode)
+    subroutine romFieldBuildInit(mesh         , nbNodeMesh , listNode       ,&
+                                 nbFieldResult, resultField, resultFieldNume,&
+                                 resultRom    , modelRom   , tablReduCoor   ,&
+                                 fieldBuild)
         use Rom_Datastructure_type
-        type(ROM_DS_Field), intent(in) :: field
+        character(len=8), intent(in) :: mesh
         integer, intent(in) :: nbNodeMesh
-        integer, pointer :: listNode(:)
-    end subroutine romFieldNodeFromEqua
+        integer, pointer  :: listNode(:)
+        integer, intent(in)  :: nbFieldResult
+        character(len=16), pointer :: resultField(:)
+        integer, pointer :: resultFieldNume(:)
+        type(ROM_DS_Result), intent(in) :: resultRom
+        character(len=8), intent(in) :: modelRom
+        type(ROM_DS_TablReduCoor), intent(in) :: tablReduCoor
+        type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
+    end subroutine romFieldBuildInit
 end interface

@@ -17,14 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romEvalGappyPOD(cmdPara, resultName, nbStore, v_matr_phi,&
-                               v_coor_redu, ind_dual)
+    subroutine romFieldBuildGappy(resultRom, fieldBuild)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaRRC), intent(in) :: cmdPara
-        character(len=8), intent(in) :: resultName
-        integer, intent(in) :: nbStore
-        real(kind=8), pointer :: v_matr_phi(:)
-        real(kind=8), pointer :: v_coor_redu(:)
-        integer, intent(in) :: ind_dual
-    end subroutine romEvalGappyPOD
+        type(ROM_DS_Result), intent(in) :: resultRom
+        type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
+    end subroutine romFieldBuildGappy
 end interface

@@ -17,22 +17,21 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFieldEquaToEqua(fieldRefeA, fieldRefeB, listNode, equaAToB)
+subroutine romFieldEquaToEqua(fieldA, fieldB, listNode, equaAToB)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/infniv.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/nbec.h"
-#include "asterfort/jelira.h"
+#include "asterfort/utmess.h"
 !
-character(len=24), intent(in) :: fieldRefeA, fieldRefeB
+type(ROM_DS_Field), intent(in) :: fieldA, fieldB
 integer, pointer :: listNode(:), equaAToB(:)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -59,6 +58,8 @@ integer, pointer :: listNode(:), equaAToB(:)
     integer :: ifm, niv
     integer, parameter :: iLigrMesh = 1
     integer, parameter :: nbEcMax = 10
+    character(len=24) :: fieldRefeA, fieldRefeB
+    character(len=16) :: fieldSuppA, fieldSuppB
     integer :: nb_ec, nbEquaA, nbEquaB
     integer :: iEquaA, physNumeA, physNumeB, numeDofB
     integer :: numeNode, numeCmp, numeEquaA, numeEquaB
@@ -76,16 +77,14 @@ integer, pointer :: listNode(:), equaAToB(:)
 !
 ! - Parameters on fields
 !
-    !fieldRefeA = fieldA%fieldRefe
-    !fieldSuppA = fieldA%fieldSupp
-    !nbEquaA    = fieldA%nbEqua
-    !ASSERT(fieldSuppA .eq. 'NOEU')
-    !fieldRefeB = fieldB%fieldRefe
-    !fieldSuppB = fieldB%fieldSupp
-    !nbEquaB    = fieldB%nbEqua
-    !ASSERT(fieldSuppB .eq. 'NOEU')
-    call jelira(fieldRefeA(1:19)//'.VALE', 'LONMAX', nbEquaA)
-    call jelira(fieldRefeB(1:19)//'.VALE', 'LONMAX', nbEquaB)
+    fieldRefeA = fieldA%fieldRefe
+    fieldSuppA = fieldA%fieldSupp
+    nbEquaA    = fieldA%nbEqua
+    ASSERT(fieldSuppA .eq. 'NOEU')
+    fieldRefeB = fieldB%fieldRefe
+    fieldSuppB = fieldB%fieldSupp
+    nbEquaB    = fieldB%nbEqua
+    ASSERT(fieldSuppB .eq. 'NOEU')
 !
 ! - Access to numbering for domain A
 !

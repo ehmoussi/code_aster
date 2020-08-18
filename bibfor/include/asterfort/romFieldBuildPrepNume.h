@@ -17,8 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rrc_init_prim(cmdPara)
+    subroutine romFieldBuildPrepNume(mesh      , nbNodeMesh, listNode,&
+                                     fieldBuild)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
-    end subroutine rrc_init_prim
+        character(len=8), intent(in) :: mesh
+        integer, intent(in) :: nbNodeMesh
+        integer, pointer  :: listNode(:)
+        type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
+    end subroutine romFieldBuildPrepNume
 end interface

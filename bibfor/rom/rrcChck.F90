@@ -24,9 +24,13 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/romFieldGetInfo.h"
 #include "asterfort/romModeChck.h"
 #include "asterfort/romTableChck.h"
+#include "asterfort/rsGetAllFieldType.h"
 #include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaRRC), intent(in) :: cmdPara
@@ -43,67 +47,93 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: meshPrim, meshDual, modelPrim, modelDual
-    character(len=8) :: modelRom, modelDom
+    character(len=8) :: meshRefe, meshRom
+    character(len=8) :: modelRom, modelDom, modelRefe
+    character(len=8) :: resultRomName
+    character(len=24) :: fieldName
+    type(ROM_DS_Field) :: mode
     integer :: nbMode, nbStore
-    aster_logical :: l_prev_dual, lTablFromResu
-    type(ROM_DS_Field) :: modePrim, modeDual
-    type(ROM_DS_Result) :: resultDom, resultRom
+    integer :: iFieldResult, iFieldBuild
+    integer :: nbFieldResult, nbFieldBuild
+    character(len=16), pointer :: resultField(:) => null()
+    integer, pointer :: resultFieldNume(:) => null()
+    aster_logical :: lInResult, lLinearSolve, lTablFromResu
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    resultRom   = cmdPara%resultRom
-    resultDom   = cmdPara%resultDom
-    l_prev_dual = cmdPara%l_prev_dual
-    modePrim    = cmdPara%ds_empi_prim%mode
-    modeDual    = cmdPara%ds_empi_dual%mode
-    modelRom    = cmdPara%model_rom
-    modelDom    = cmdPara%model_dom
+    modelRom      = cmdPara%modelRom
+    modelDom      = cmdPara%modelDom
+    resultRomName = cmdPara%resultRom%resultName
+    nbFieldBuild  = cmdPara%nbFieldBuild
 !
-! - Check if COOR_REDUIT is OK (NB: no initial state => nbStore = nbStore - 1)
+! - Check mesh and model
 !
-    lTablFromResu = resultRom%lTablFromResu
-    nbMode        = cmdPara%ds_empi_prim%nbMode
-    nbStore       = resultRom%nbStore - 1
-    call romTableChck(cmdPara%tablReduCoor, lTablFromResu, nbMode, nbStoreIn_ = nbStore)
-!
-! - Check modes
-!
-    call romModeChck(modePrim)
-    if (l_prev_dual) then
-        call romModeChck(modeDual)
+    meshRefe = cmdPara%mesh
+    call dismoi('NOM_MAILLA', modelRom, 'MODELE', repk = meshRom)
+    if (meshRefe .ne. meshRom) then
+        call utmess('F', 'ROM16_25')
     endif
-!
-! - Check modes: mesh
-!
-    meshPrim    = modePrim%mesh
-    meshDual    = modeDual%mesh
-    if (l_prev_dual) then
-        if (meshPrim .ne. meshDual) then
-            call utmess('F','ROM16_20')
-        endif
-    endif
-!
-! - Check modes: model
-!
-    modelPrim   = modePrim%model
-    modelDual   = modeDual%model
-    if (l_prev_dual) then
-        if (modelPrim .ne. modelDual) then
-            call utmess('F', 'ROM16_21')
-        endif
-        if (modelDual .ne. modelDom) then
-            call utmess('F', 'ROM16_22')
-        endif
-    endif
-!
-! - Check results
-!
     if (modelRom .eq. modelDom) then
         call utmess('A', 'ROM16_23')
     endif
-    if (modelPrim .ne. modelDom) then
-        call utmess('F', 'ROM16_22')
+!
+! - Check bases
+!
+    mode = cmdPara%fieldBuild(1)%base%mode
+    call romModeChck(mode)
+    if (modelDom .ne. mode%model) then
+        call utmess('F', 'ROM16_22') 
     endif
+    modelRefe = mode%model
+    do iFieldBuild = 2, nbFieldBuild
+        mode = cmdPara%fieldBuild(iFieldBuild)%base%mode
+        call romModeChck(mode)
+        if (meshRefe .ne. mode%mesh) then
+            call utmess('F', 'ROM16_20')
+        endif
+        if (modelRefe .ne. mode%model) then
+            call utmess('F', 'ROM16_21')
+        endif
+        if (modelDom .ne. mode%model) then
+            call utmess('F', 'ROM16_22')
+        endif
+    end do
+!
+! - Get list of type of fields in a results datastructure (at least for ONE storing index)
+!
+    call rsGetAllFieldType(resultRomName, nbFieldResult, resultField, resultFieldNume)
+!
+! - Checks consistency between list of fields in result and list of fields to reconstruct
+!
+    do iFieldBuild = 1, nbFieldBuild
+        lInResult = ASTER_FALSE
+        fieldName = cmdPara%fieldBuild(iFieldBuild)%fieldDom%fieldName
+        do iFieldResult = 1, nbFieldResult
+            if (fieldName .eq. resultField(iFieldResult)) then
+                lInResult = ASTER_TRUE
+                exit
+            endif
+        end do
+        if (.not. lInResult) then
+            call utmess('F', 'ROM16_24', sk = fieldName)
+        endif
+    end do
+!
+! - Check if COOR_REDUIT is OK (NB: no initial state => nbStore = nbStore - 1)
+!
+    lTablFromResu = cmdPara%resultRom%lTablFromResu
+    nbStore       = cmdPara%resultRom%nbStore - 1
+    do iFieldBuild = 1, nbFieldBuild
+        lLinearSolve = cmdPara%fieldBuild(iFieldBuild)%lLinearSolve
+        if (lLinearSolve) then
+            nbMode        = cmdPara%fieldBuild(iFieldBuild)%base%nbMode
+            call romTableChck(cmdPara%tablReduCoor, lTablFromResu, nbMode, nbStoreIn_ = nbStore)
+        endif
+    end do
+!
+! - Clean
+!
+    AS_DEALLOCATE(vk16 = resultField)
+    AS_DEALLOCATE(vi = resultFieldNume)
 !
 end subroutine

@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romFieldEquaToEqua(fieldRefeA, fieldRefeB, listNode, equaAToB)
+    subroutine romFieldEquaToEqua(fieldA, fieldB, listNode, equaAToB)
         use Rom_Datastructure_type
-        character(len=24), intent(in) :: fieldRefeA, fieldRefeB
+        type(ROM_DS_Field), intent(in) :: fieldA, fieldB
         integer, pointer :: listNode(:), equaAToB(:)
     end subroutine romFieldEquaToEqua
 end interface

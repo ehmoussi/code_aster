@@ -17,18 +17,19 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrcComp(cmdPara)
+subroutine rrcResultCopyParameters(cmdPara)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
+#include "jeveux.h"
 #include "asterfort/infniv.h"
-#include "asterfort/romFieldBuildComp.h"
-#include "asterfort/rrcResultCopyParameters.h"
 #include "asterfort/utmess.h"
+#include "asterfort/rsadpa.h"
+#include "asterfort/rslesd.h"
+#include "asterfort/rssepa.h"
 !
 type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
@@ -36,7 +37,7 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
 ! REST_REDUIT_COMPLET - Compute
 !
-! Compute
+! Copy parameters from ROM results datastructure to DOM results datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,37 +46,42 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: iFieldBuild, nbFieldBuild, nbStore
-    character(len=8) :: resultDomName, resultRomName
-    type(ROM_DS_FieldBuild) :: fieldBuild
+    integer :: nbStore, iStore, numeStore
+    character(len=8) :: resultRomName, resultDomName, modelDom
+    character(len=19) :: listLoad
+    character(len=24) :: materi, caraElem
+    integer :: jvPara
+    real(kind=8) :: time
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM16_3')
+        call utmess('I', 'ROM16_5')
     endif
 !
 ! - Get parameters
 !
-    nbFieldBuild  = cmdPara%nbFieldBuild
+    nbStore       = cmdPara%resultDom%nbStore
     resultDomName = cmdPara%resultDom%resultName
     resultRomName = cmdPara%resultRom%resultName
-    nbStore       = cmdPara%resultDom%nbStore
+    modelDom      = cmdPara%modelDom
 !
-! - Compute for all fields
+! - Copy
 !
-    do iFieldBuild = 1, nbFieldBuild
-! ----- Current field
-        fieldBuild = cmdPara%fieldBuild(iFieldBuild)
-
-! ----- Computation for all storing index
-        call romFieldBuildComp(resultDomName, resultRomName,&
-                               nbStore      , fieldBuild)
+    do iStore = 1, nbStore - 1
+        numeStore = iStore
+! ----- Get parameters
+        call rslesd(resultRomName , numeStore-1,&
+                    materi_   = materi    ,&
+                    cara_elem_ = caraElem ,&
+                    list_load_ = listLoad )
+        call rsadpa(resultRomName, 'L', 1, 'INST', numeStore, 0, sjv=jvPara)
+        time = zr(jvPara)
+! ----- Save parameters
+        call rssepa(resultDomName, numeStore, modelDom, materi, caraElem, listLoad)
+        call rsadpa(resultDomName, 'E', 1, 'INST', numeStore, 0, sjv=jvPara)
+        zr(jvPara) = time
     end do
-!
-! - Copy parameters from ROM results datastructure to DOM results datastructure
-!
-    call rrcResultCopyParameters(cmdPara)
 !
 end subroutine

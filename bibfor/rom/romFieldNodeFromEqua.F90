@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFieldNodeFromEqua(fieldRefe, nbEqua, nbNodeMesh, listNode)
+subroutine romFieldNodeFromEqua(field, nbNodeMesh, listNode)
 !
 use Rom_Datastructure_type
 !
@@ -31,8 +31,8 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
 !
-character(len=24), intent(in) :: fieldRefe
-integer, intent(in) :: nbEqua, nbNodeMesh
+type(ROM_DS_Field), intent(in) :: field
+integer, intent(in) :: nbNodeMesh
 integer, pointer :: listNode(:)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -55,9 +55,11 @@ integer, pointer :: listNode(:)
     integer :: ifm, niv
     integer, pointer :: deeq(:) => null()
     character(len=19) :: profChno
+    character(len=16) :: fieldSupp
+    character(len=24) :: fieldRefe
     integer :: iEqua, iNodeMesh
     integer :: numeEqua, numeNode, numeCmp
-    integer :: nbEquaChck, nbCmpOnNode
+    integer :: nbEquaChck, nbCmpOnNode, nbEqua
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,7 +70,10 @@ integer, pointer :: listNode(:)
 !
 ! - Get parameters
 !
-    !ASSERT(fieldSupp .eq. 'NOEU')
+    fieldRefe = field%fieldRefe
+    nbEqua    = field%nbEqua
+    fieldSupp = field%fieldSupp
+    ASSERT(fieldSupp .eq. 'NOEU')
 !
 ! - Properties of field
 !

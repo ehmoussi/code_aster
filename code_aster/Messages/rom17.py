@@ -19,15 +19,29 @@
 
 # person_in_charge: mickael.abbas at edf.fr
 
+# Messages for FIELD BUILD management in ROM
+
 from ..Utilities import _
 
 cata_msg = {
 
-   12 : _("""La base empirique est construite sur un maillage différent du modèle. Ce n'est pas possible."""),
+    1 : _("""Initialisations pour le champ %(k1)s."""),
 
-   13 : _("""Les deux modèles sont identiques, on ne peut rien tronquer !"""),
+    2 : _("""Préparation des objets pour la numérotation."""),
 
-   32 : _("""Échec lors du calcul des coordonnées réduites."""),
+    3 : _("""Troncature de la matrice des modes.
+ Dimensions initiales: [%(i1)d,%(i2)d]
+ Dimensions finales  : [%(i3)d,%(i4)d]"""),
 
-   40 : _("""Vous avez donné le nom de la base à tronquer (BASE_INIT) alors que vous voulez tronquer une base déjà existante."""),
+    4 : _("""Préparation des coordonnées réduites par Gappy-POD."""),
+
+    5 : _("""Préparation des coordonnées réduites par récupération directe dans la table des coordonnées réduites."""),
+
+    6 : _("""Construction du champ complet sur tous les pas de temps."""),
+
+    7 : _("""Calcul pour le champ %(k1)s."""),
+
+    8 : _("""Calcul des coordonnées réduites."""),
+
+    9 : _("""Échec lors du calcul des coordonnées réduites. Les modes pourraient être colinéaires. Essayez de les orthogonaliser"""),
 }

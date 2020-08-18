@@ -15,6 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1003
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine rrcClean(cmdPara)
@@ -24,8 +25,8 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/romBaseClean.h"
+#include "asterfort/romFieldBuildClean.h"
+#include "asterfort/romResultClean.h"
 #include "asterfort/romTableClean.h"
 !
 type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
@@ -42,13 +43,16 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    AS_DEALLOCATE(vi = cmdPara%v_equa_ridp)
-    if (cmdPara%l_prev_dual) then
-        AS_DEALLOCATE(vi = cmdPara%v_equa_ridd)
-        AS_DEALLOCATE(vi = cmdPara%v_equa_ridi)
-    endif
-    call romBaseClean(cmdPara%ds_empi_prim)
-    call romBaseClean(cmdPara%ds_empi_dual)
+    integer :: iFieldBuild
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call romResultClean()
+    call romResultClean()
+    do iFieldBuild = 1, cmdPara%nbFieldBuild
+        call romFieldBuildClean(cmdPara%fieldBuild(iFieldBuild))
+    end do
+    deallocate(cmdPara%fieldBuild)
     call romTableClean(cmdPara%tablReduCoor)
 !
 end subroutine

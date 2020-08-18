@@ -17,31 +17,55 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrcInfo(cmdPara)
+subroutine romFieldBuildPrepCoorRedu(resultRom, tablReduCoor, fieldBuild)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/infniv.h"
+#include "asterfort/romFieldBuildGappy.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaRRC), intent(in) :: cmdPara
+type(ROM_DS_Result), intent(in) :: resultRom
+type(ROM_DS_TablReduCoor), intent(in) :: tablReduCoor
+type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! REST_REDUIT_COMPLET - Initializations
+! Model reduction - Field build
 !
-! Informations
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  cmdPara          : datastructure for parameters
+! Prepare reduced coordinates (or copy from results !)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call utmess('I', 'ROM16_50', sk = cmdPara%resultRom%resultType)
-    call utmess('I', 'ROM16_51', si = cmdPara%resultRom%nbStore)
+! In  resultRom        : reduced results
+! In  tablReduCoor     : table for reduced coordinates
+! IO  fieldBuild       : field to reconstruct
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: ifm, niv
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+!
+! - Prepare reduced coordinates (or copy from results !)
+!
+    if (fieldBuild%lGappy) then
+        if (niv .ge. 2) then
+            call utmess('I', 'ROM17_4')
+        endif
+! ----- Compute reduced coordinates with Gappy-POD
+        call romFieldBuildGappy(resultRom, fieldBuild)
+    else
+        if (niv .ge. 2) then
+            call utmess('I', 'ROM17_5')
+        endif
+! ----- Get from table
+        fieldBuild%reduMatr => tablReduCoor%coorRedu
+    endif
 !
 end subroutine

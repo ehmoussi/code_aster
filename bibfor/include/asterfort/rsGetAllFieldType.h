@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romFieldNodeFromEqua(field, nbNodeMesh, listNode)
-        use Rom_Datastructure_type
-        type(ROM_DS_Field), intent(in) :: field
-        integer, intent(in) :: nbNodeMesh
-        integer, pointer :: listNode(:)
-    end subroutine romFieldNodeFromEqua
+    subroutine rsGetAllFieldType(resultNameZ, nbField, listField, listStoreRefe)
+        character(len=*), intent(in) :: resultNameZ
+        integer, intent(out) :: nbField
+        character(len=16), pointer :: listField(:)
+        integer, pointer :: listStoreRefe(:)
+    end subroutine rsGetAllFieldType
 end interface

@@ -17,31 +17,61 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrcInfo(cmdPara)
+subroutine romFieldBuildOnDom(resultRom, fieldBuild)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
+#include "asterfort/as_allocate.h"
 #include "asterfort/assert.h"
+#include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
+#include "blas/dgemm.h"
 !
-type(ROM_DS_ParaRRC), intent(in) :: cmdPara
-!
-! --------------------------------------------------------------------------------------------------
-!
-! REST_REDUIT_COMPLET - Initializations
-!
-! Informations
+type(ROM_DS_Result), intent(in) :: resultRom
+type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  cmdPara          : datastructure for parameters
+! Model reduction - Field build
+!
+! Construct field on complete domain and all storing index
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call utmess('I', 'ROM16_50', sk = cmdPara%resultRom%resultType)
-    call utmess('I', 'ROM16_51', si = cmdPara%resultRom%nbStore)
+! In  base             : base
+! In  resultRom        : reduced results
+! IO  fieldBuild       : field to reconstruct
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: ifm, niv
+    type(ROM_DS_Empi) :: base
+    integer :: nbMode, nbEqua, nbStore
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM17_6')
+    endif
+!
+! - Get parameters
+!
+    base    = fieldBuild%base
+    nbMode  = base%nbMode
+    nbEqua  = base%mode%nbEqua
+    nbStore = resultRom%nbStore
+!
+! - Allocate object
+!
+    AS_ALLOCATE(vr = fieldBuild%fieldTransientVale, size = nbEqua*(nbStore-1))
+!
+! - Construct object
+!
+    call dgemm('N', 'N', nbEqua, nbStore-1, nbMode, 1.d0,&
+                fieldBuild%matrPhi, nbEqua, fieldBuild%reduMatr, &
+                nbMode, 0.d0, fieldBuild%fieldTransientVale, nbEqua)
 !
 end subroutine

@@ -17,31 +17,68 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrcInfo(cmdPara)
+subroutine romFieldBuildMatrPhiTruncate(fieldBuild)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
+#include "asterfort/as_allocate.h"
 #include "asterfort/assert.h"
+#include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaRRC), intent(in) :: cmdPara
+type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! REST_REDUIT_COMPLET - Initializations
+! Model reduction - Field build
 !
-! Informations
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  cmdPara          : datastructure for parameters
+! Truncate [PHI] matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call utmess('I', 'ROM16_50', sk = cmdPara%resultRom%resultType)
-    call utmess('I', 'ROM16_51', si = cmdPara%resultRom%nbStore)
+! IO  fieldBuild       : field to reconstruct
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: ifm, niv
+    type(ROM_DS_Empi) :: base
+    integer :: nbMode, nbEqua, nbEquaRID
+    integer :: iMode, iEqua, numeEqua
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+!
+! - Get parameters
+!
+    base      = fieldBuild%base
+    nbMode    = base%nbMode
+    nbEqua    = base%mode%nbEqua
+    nbEquaRID = fieldBuild%nbEquaRID
+!
+! - Debug
+!
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM17_3', ni = 4,&
+                                    vali = [nbMode, nbEqua, nbMode, nbEquaRID])
+    endif
+!
+! - Allocate object
+!
+    AS_ALLOCATE(vr = fieldBuild%matrPhiRID, size = nbEquaRID*nbMode)
+!
+! - Construct object
+!
+    do iMode = 1, nbMode
+        do iEqua = 1, nbEqua
+            numeEqua = fieldBuild%equaRIDTotal(iEqua)
+            if (numeEqua .ne. 0) then
+                fieldBuild%matrPhiRID(numeEqua+nbEquaRID*(iMode-1)) = &
+                  fieldBuild%matrPhi(iEqua+nbEqua*(iMode-1))
+            endif 
+        end do
+    end do
 !
 end subroutine

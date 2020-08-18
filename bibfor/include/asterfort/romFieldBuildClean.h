@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rrc_comp_dual(cmdPara)
+    subroutine romFieldBuildClean(fieldBuild)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaRRC), intent(in) :: cmdPara
-    end subroutine rrc_comp_dual
+        type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
+    end subroutine romFieldBuildClean
 end interface

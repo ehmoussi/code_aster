@@ -132,41 +132,83 @@ implicit none
         type(ROM_DS_LineicNumb) :: lineicNume
     end type ROM_DS_Empi
 !
+! - Datastructure to reconstruct field
+!
+    type ROM_DS_FieldBuild
+
+! ----- Complete field to write
+        type(ROM_DS_Field)         :: fieldDom
+
+! ----- Reduced field to read
+        type(ROM_DS_Field)         :: fieldROM
+
+! ----- Base to use
+        type(ROM_DS_Empi)          :: base
+
+! ----- Flag when field is solution of a linear system (primal variable)
+        aster_logical              :: lLinearSolve          = ASTER_FALSE
+
+! ----- Flag to apply Gappy-Pod
+        aster_logical              :: lGappy                = ASTER_FALSE
+
+! ----- RID_Total = RID_Trunc + RID_Interface
+
+! ----- Flag to truncate RID
+        aster_logical              :: lRIDTrunc             = ASTER_FALSE
+
+! ----- Name of GROUP_NO RID_Interface (when lRIDTrunc = .true.)
+        character(len=24)          :: grNodeRIDInterface    = ' '
+
+! ----- Number of equations in RID (final: complete or truncated)
+        integer                    :: nbEquaRID             = 0
+
+! ----- Access to equations in complete RID  (when lRIDTrunc = .true.)
+        integer                    :: nbEquaRIDTotal        = 0
+        integer, pointer           :: equaRIDTotal(:)       => null()
+
+! ----- Access to equation in truncated RID 
+        integer                    :: nbEquaRIDTrunc        = 0
+        integer, pointer           :: equaRIDTrunc(:)       => null()
+
+! ----- [PHI] matrix on RID (size: nbEqua*nbMode)
+        real(kind=8), pointer      :: matrPhi(:)            => null()
+
+! ----- [PHI] matrix on RID (size: nbEquaRID*nbMode)
+        real(kind=8), pointer      :: matrPhiRID(:)         => null()
+
+! ----- Matrix of reduced coordinates for all numbering store (size: nbStore * nbMode)
+        real(kind=8), pointer      :: reduMatr(:)           => null()
+
+! ----- Reconstructed field (on all domain) for all numbering store (size: nbStore * nbEqua)
+        real(kind=8), pointer      :: fieldTransientVale(:) => null()
+
+    end type ROM_DS_FieldBuild
+!
 ! - Parameters for REST_REDUIT_COMPLET operator
 !
     type ROM_DS_ParaRRC
+! ----- Mesh
+        character(len=8)                 :: mesh          = ' '
+
 ! ----- Input result datastructure (ROM)
         type(ROM_DS_Result)              :: resultRom
 
 ! ----- Output result datastructure (DOM)
         type(ROM_DS_Result)              :: resultDom
+
 ! ----- Model for reduced model
-        character(len=8)          :: model_rom = ' '
+        character(len=8)                 :: modelRom      = ' '
 
 ! ----- Model for complete model
-        character(len=8)          :: model_dom = ' '
+        character(len=8)                 :: modelDom      = ' '
 
-! ----- Datastructure for empiric modes (primal)
-        type(ROM_DS_Empi)         :: ds_empi_prim
-! ----- Datastructure for empiric modes (dual)
-        type(ROM_DS_Empi)         :: ds_empi_dual
 ! ----- Table in result datastructure
-        type(ROM_DS_TablReduCoor) :: tablReduCoor
-! ----- Flag for dual prevision
-        aster_logical     :: l_prev_dual = ASTER_FALSE
-! ----- Name of GROUP_NO of interface
-        character(len=24) :: grnode_int = ' '
-! ----- Access to equation in RID (dual) and out of interface
-        integer           :: nb_equa_ridi = 0
-        integer, pointer  :: v_equa_ridi(:) => null()
-! ----- Access to equation in RID (dual)
-        integer           :: nb_equa_ridd = 0
-        integer, pointer  :: v_equa_ridd(:) => null()
-! ----- Access to equation in RID (primal)
-        integer           :: nb_equa_ridp = 0
-        integer, pointer  :: v_equa_ridp(:) => null()
-! ----- Flag for EF corrector?
-        aster_logical     :: l_corr_ef = ASTER_FALSE
+        type(ROM_DS_TablReduCoor)        :: tablReduCoor
+
+! ----- List of fields to reconstruct
+        integer                          :: nbFieldBuild  = 0
+        type(ROM_DS_FieldBuild), pointer :: fieldBuild(:) => null()
+
     end type ROM_DS_ParaRRC
 !
 ! - Parameters for definition of multiparametric reduced problem - Evaluation

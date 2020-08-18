@@ -17,31 +17,41 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrcInfo(cmdPara)
+subroutine romFieldBuildClean(fieldBuild)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/utmess.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/romBaseClean.h"
+#include "asterfort/romFieldClean.h"
 !
-type(ROM_DS_ParaRRC), intent(in) :: cmdPara
-!
-! --------------------------------------------------------------------------------------------------
-!
-! REST_REDUIT_COMPLET - Initializations
-!
-! Informations
+type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  cmdPara          : datastructure for parameters
+! Model reduction - Field build
+!
+! Clean field build datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call utmess('I', 'ROM16_50', sk = cmdPara%resultRom%resultType)
-    call utmess('I', 'ROM16_51', si = cmdPara%resultRom%nbStore)
+! In  fieldBuild       : field build
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call romFieldClean(fieldBuild%fieldRom)
+    call romFieldClean(fieldBuild%fieldDom)
+    call romBaseClean(fieldBuild%base)
+    AS_DEALLOCATE(vi = fieldBuild%equaRIDTotal)
+    AS_DEALLOCATE(vi = fieldBuild%equaRIDTrunc)
+    AS_DEALLOCATE(vr = fieldBuild%matrPhi)
+    AS_DEALLOCATE(vr = fieldBuild%matrPhiRID)
+    AS_DEALLOCATE(vr = fieldBuild%fieldTransientVale)
+    if (fieldBuild%lGappy) then
+        AS_DEALLOCATE(vr = fieldBuild%reduMatr)
+    endif
 !
 end subroutine

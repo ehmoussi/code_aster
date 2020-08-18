@@ -17,10 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romFieldNodeFromEqua(field, nbNodeMesh, listNode)
+    subroutine rrcResultCopyParameters(cmdPara)
         use Rom_Datastructure_type
-        type(ROM_DS_Field), intent(in) :: field
-        integer, intent(in) :: nbNodeMesh
-        integer, pointer :: listNode(:)
-    end subroutine romFieldNodeFromEqua
+        type(ROM_DS_ParaRRC), intent(in) :: cmdPara
+    end subroutine rrcResultCopyParameters
 end interface

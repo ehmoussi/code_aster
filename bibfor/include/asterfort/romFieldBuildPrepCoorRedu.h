@@ -17,8 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rrc_init_dual(cmdPara)
+    subroutine romFieldBuildPrepCoorRedu(resultRom, tablReduCoor, fieldBuild)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
-    end subroutine rrc_init_dual
+        type(ROM_DS_Result), intent(in) :: resultRom
+        type(ROM_DS_TablReduCoor), intent(in) :: tablReduCoor
+        type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
+    end subroutine romFieldBuildPrepCoorRedu
 end interface

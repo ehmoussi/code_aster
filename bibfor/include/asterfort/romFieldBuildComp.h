@@ -17,10 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romFieldNodeFromEqua(field, nbNodeMesh, listNode)
+    subroutine romFieldBuildComp(resultDomNameZ, resultRomNameZ,&
+                                 nbStore       , fieldBuild)
         use Rom_Datastructure_type
-        type(ROM_DS_Field), intent(in) :: field
-        integer, intent(in) :: nbNodeMesh
-        integer, pointer :: listNode(:)
-    end subroutine romFieldNodeFromEqua
+        character(len=*), intent(in) :: resultDomNameZ, resultRomNameZ
+        integer, intent(in) :: nbStore
+        type(ROM_DS_FieldBuild), intent(in) :: fieldBuild
+    end subroutine romFieldBuildComp
 end interface

@@ -31,6 +31,10 @@ cata_msg = {
 
     3 : _("""Reconstruction des champs sur tout le domaine."""),
 
+    4 : _("""Initialisations pour la reconstruction des %(i1)d champs."""),
+
+    5 : _("""Copie des paramètres de la structure de données."""),
+
    20 : _("""Les bases ne sont pas définies sur le même maillage."""),
 
    21 : _("""Les bases ne sont pas définies sur le même modèle."""),
@@ -42,12 +46,10 @@ cata_msg = {
    24 : _("""Vous demandez à calculer un champ de type %(k1)s par REST_REDUIT_COMPLET alors que ce champ n'existe pas dans le résultat réduit.
 Conseil: utilisez CALC_CHAMP pour calculer ce champ."""),
 
+   25 : _("""Le résultat réduit n'est pas défini sur le même maillage que le résultat complet."""),
+
    50 : _("""Le résultat sur le modèle complet sera de type %(k1)s."""),
 
    51 : _("""Le résultat sur le modèle réduit contient %(i1)d numéros d'ordre."""),
-
-   52 : _("""On évalue le champ dual."""),
-
-   53 : _("""Correction par le calcul éléments finis."""),
 
 }

@@ -15,6 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1003
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine rrcRead(cmdPara)
@@ -31,6 +32,7 @@ implicit none
 #include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
 #include "asterfort/romBaseGetInfo.h"
+#include "asterfort/romFieldDSCopy.h"
 #include "asterfort/romResultGetInfo.h"
 #include "asterfort/romTableCreate.h"
 #include "asterfort/romTableParaRead.h"
@@ -51,14 +53,17 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    type(ROM_DS_Empi) :: modePrim, modeDual
-    character(len=8)  :: basePrim, baseDual
-    character(len=8)  :: model_dom, modelRom
+    integer :: nbFieldBuild
+    character(len=8)  :: modelDom, modelRom, mesh
     character(len=16) :: k16bid , answer, resultType
-    character(len=24) :: grnode_int
-    aster_logical :: l_prev_dual, l_corr_ef
+    character(len=24) :: grNodeInterf
+    aster_logical :: lPrevDual, lCorrEF
     character(len=8)  :: resultDomName, resultRomName
     type(ROM_DS_Result) :: resultDom, resultRom
+    character(len=8)  :: basePrimName, baseDualName
+    type(ROM_DS_Empi) :: basePrim, baseDual
+    type(ROM_DS_FieldBuild) :: fieldBuild
+    type(ROM_DS_Field) :: fieldDom, fieldRom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,9 +76,8 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
     resultDomName = ' '
     resultRomName = ' '
-    basePrim      = ' '
-    baseDual      = ' '
-    model_dom     = ' '
+    modelDom      = ' '
+    modelRom      = ' '
     k16bid        = ' '
 !
 ! - Get input results datastructures (reduced)
@@ -106,41 +110,101 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! - Get model for high fidelity model
 !
-    call getvid(' ', 'MODELE', scal = model_dom)
+    call getvid(' ', 'MODELE', scal = modelDom)
 !
-! - Compute dual quantities ?
+! - Select mesh
 !
-    call getvtx(' ', 'REST_DUAL', scal = answer)
-    l_prev_dual = answer .eq. 'OUI'
+    call dismoi('NOM_MAILLA', modelDom, 'MODELE', repk = mesh)
 !
-! - Get informations about bases - Primal
+! - Save parameters in datastructure
 !
-    call getvid(' ', 'BASE_PRIMAL', scal = basePrim)
-    call romBaseGetInfo(basePrim, modePrim)
+    cmdPara%mesh      = mesh
+    cmdPara%resultDom = resultDom
+    cmdPara%resultRom = resultRom
+    cmdPara%modelDom  = modelDom
+    cmdPara%modelRom  = modelRom
 !
-! - Get informations about bases - Dual
+! ==================================================================================================
 !
-    if (l_prev_dual) then
-        call getvid(' ', 'BASE_DUAL', scal = baseDual)
-        call romBaseGetInfo(baseDual, modeDual)
-        call getvtx(' ', 'GROUP_NO_INTERF', scal = grnode_int)
-    endif
+!  DEB - Provisoire en attendant RTA
+!
+! ==================================================================================================
+!
+    basePrimName  = ' '
+    baseDualName  = ' '
+    lCorrEF       = ASTER_FALSE
+    lPrevDual     = ASTER_FALSE
+    grNodeInterf  = ' '
+!
+! - Get primal base
+!
+    call getvid(' ', 'BASE_PRIMAL', scal = basePrimName)
+    call romBaseGetInfo(basePrimName, basePrim)
 !
 ! - Correction by finite element
 !
     call getvtx(' ', 'CORR_COMPLET', scal = answer)
-    l_corr_ef = answer .eq. 'OUI'
+    lCorrEF = answer .eq. 'OUI'
 !
-! - Save parameters in datastructure
+! - Compute dual quantities ?
 !
-    cmdPara%resultDom    = resultDom
-    cmdPara%resultRom    = resultRom
-    cmdPara%model_dom    = model_dom
-    cmdPara%model_rom    = modelRom
-    cmdPara%ds_empi_prim = modePrim
-    cmdPara%ds_empi_dual = modeDual
-    cmdPara%grnode_int   = grnode_int
-    cmdPara%l_prev_dual  = l_prev_dual
-    cmdPara%l_corr_ef    = l_corr_ef
+    call getvtx(' ', 'REST_DUAL', scal = answer)
+    lPrevDual = answer .eq. 'OUI'
+    if (lPrevDual) then
+        call getvtx(' ', 'GROUP_NO_INTERF', scal = grNodeInterf)
+    endif
+!
+! - Get dual base
+!
+    if (lPrevDual) then
+        call getvid(' ', 'BASE_DUAL', scal = baseDualName)
+        call romBaseGetInfo(baseDualName, baseDual)
+    endif
+!
+! ==================================================================================================
+!
+!  FIN - Provisoire en attendant RTA
+!
+! ==================================================================================================
+!
+    nbFieldBuild  = 0
+    nbFieldBuild  = nbFieldBuild + 1
+    if (lPrevDual) then
+        nbFieldBuild  = nbFieldBuild + 1
+    endif
+!
+! - Construct list of reconstructed fields
+!
+    allocate(cmdPara%fieldBuild(nbFieldBuild))
+!
+! - For "primal"
+!
+    fieldBuild%lLinearSolve = ASTER_FALSE
+    fieldBuild%lGappy       = ASTER_FALSE
+    if (lCorrEF) then
+        fieldBuild%lGappy    = ASTER_TRUE
+        fieldBuild%lRIDTrunc = ASTER_FALSE
+    endif
+    fieldBuild%lLinearSolve = ASTER_TRUE
+    fieldBuild%base         = basePrim
+    call romFieldDSCopy(fieldBuild%base%mode, fieldDom)
+    fieldBuild%fieldDom     = fieldDom
+    fieldBuild%fieldRom     = fieldRom
+    cmdPara%fieldBuild(1)   = fieldBuild
+!
+! - For "dual"
+
+    if (lPrevDual) then
+        fieldBuild%lLinearSolve          = ASTER_FALSE
+        fieldBuild%lGappy                = ASTER_TRUE
+        fieldBuild%lRIDTrunc             = ASTER_TRUE
+        fieldBuild%grNodeRIDInterface    = grNodeInterf
+        fieldBuild%base                  = baseDual
+        call romFieldDSCopy(fieldBuild%base%mode, fieldDom)
+        fieldBuild%fieldDom              = fieldDom
+        fieldBuild%fieldRom              = fieldRom
+        cmdPara%fieldBuild(2)            = fieldBuild
+    endif
+    cmdPara%nbFieldBuild = nbFieldBuild
 !
 end subroutine
