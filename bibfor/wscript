@@ -26,7 +26,6 @@ import sys
 
 def options(self):
     self.load('compiler_fc')
-    default_nblib = 0 if sys.platform != 'darwin' else 3
     group = self.get_option_group("code_aster options")
 
 def configure(self):

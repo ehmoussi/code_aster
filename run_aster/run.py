@@ -287,7 +287,7 @@ class RunAster:
             ]
         else:
             cmd.extend([">>", TMPMESS, "2>&1"])
-        cmd.insert(0, f"ulimit -c unlimited -t {timeout} ;")
+        cmd.insert(0, f"ulimit -c unlimited ; ulimit -t {timeout:.0f} ;")
         return cmd
 
     def _get_status(self, exitcode, last):
@@ -342,7 +342,7 @@ class RunOnlyEnv(RunAster):
         logger.info(f"    . {profile}")
         logger.info("    ulimit -c unlimited")
         timeout = self.export.get("time_limit", 0) * 1.25
-        logger.info(f"    ulimit -t {timeout}")
+        logger.info(f"    ulimit -t {timeout:.0f}")
         return super().execute_study()
 
     def _exec_one(self, comm, idx, last, timeout):
