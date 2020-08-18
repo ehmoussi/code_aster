@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_paraDSInit(paraPod, paraRb, paraTrunc, paraOrtho, cmdPara)
+    subroutine dbr_paraDSInit(paraPod, paraGreedy, paraTrunc, paraOrtho, cmdPara)
         use Rom_Datastructure_type
         type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
-        type(ROM_DS_ParaDBR_RB), intent(in) :: paraRb
+        type(ROM_DS_ParaDBR_Greedy), intent(in) :: paraGreedy
         type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
         type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
         type(ROM_DS_ParaDBR), intent(out) :: cmdPara

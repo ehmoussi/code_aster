@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1403
 !
-subroutine dbr_paraDSInit(paraPod, paraRb, paraTrunc, paraOrtho, cmdPara)
+subroutine dbr_paraDSInit(paraPod, paraGreedy, paraTrunc, paraOrtho, cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -27,7 +27,7 @@ implicit none
 #include "asterf_types.h"
 !
 type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
-type(ROM_DS_ParaDBR_RB), intent(in) :: paraRb
+type(ROM_DS_ParaDBR_Greedy), intent(in) :: paraGreedy
 type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
 type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
 type(ROM_DS_ParaDBR), intent(out) :: cmdPara
@@ -40,17 +40,17 @@ type(ROM_DS_ParaDBR), intent(out) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  paraPod          :    datastructure for POD parameters
-! In  paraRb           : datastructure for RB parameters
+! In  paraPod          : datastructure for POD parameters
+! In  paraGreedy       : datastructure for parameters (Greedy)
 ! In  paraTrunc        : datastructure for truncation parameters
 ! In  paraOrtho        : datastructure for orthogonalization parameters
 ! Out cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    cmdPara%paraPod   = paraPod
-    cmdPara%paraRb    = paraRb
-    cmdPara%paraTrunc = paraTrunc
-    cmdPara%paraOrtho = paraOrtho
+    cmdPara%paraPod    = paraPod
+    cmdPara%paraGreedy = paraGreedy
+    cmdPara%paraTrunc  = paraTrunc
+    cmdPara%paraOrtho  = paraOrtho
 !
 end subroutine

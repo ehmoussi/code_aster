@@ -17,16 +17,16 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_clean_ortho(cmdPara)
+subroutine dbr_clean_ortho(paraOrtho)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/romBaseClean.h"
 #include "asterfort/assert.h"
+#include "asterfort/romBaseClean.h"
 !
-type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
+type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: paraOrtho
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -36,11 +36,10 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  cmdPara           : datastructure for parameters 
+! IO  paraOrtho        : datastructure for parameters (orthogonalization)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call romBaseClean(cmdPara%base)
-    call romBaseClean(cmdPara%paraOrtho%ds_empi_init)
+    call romBaseClean(paraOrtho%ds_empi_init)
 !
 end subroutine

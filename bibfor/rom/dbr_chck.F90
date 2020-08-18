@@ -25,12 +25,12 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/dbrChckGreedy.h"
+#include "asterfort/dbr_chck_ortho.h"
+#include "asterfort/dbr_chck_pod.h"
+#include "asterfort/dbr_chck_tr.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dbr_chck_pod.h"
-#include "asterfort/dbr_chck_rb.h"
-#include "asterfort/dbr_chck_tr.h"
-#include "asterfort/dbr_chck_ortho.h"
 !
 type(ROM_DS_ParaDBR), intent(in) :: cmdPara
 !
@@ -58,7 +58,7 @@ type(ROM_DS_ParaDBR), intent(in) :: cmdPara
     if (cmdPara%operation(1:3) .eq. 'POD') then
         call dbr_chck_pod(cmdPara%operation, cmdPara%paraPod, cmdPara%lReuse, cmdPara%base)
     elseif (cmdPara%operation .eq. 'GLOUTON') then
-        call dbr_chck_rb(cmdPara%paraRb, cmdPara%lReuse)
+        call dbrChckGreedy(cmdPara%paraGreedy, cmdPara%lReuse)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
         call dbr_chck_tr(cmdPara%paraTrunc, cmdPara%lReuse)
     elseif (cmdPara%operation .eq. 'ORTHO') then

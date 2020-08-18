@@ -15,10 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+#include "asterf_types.h"
 !
 interface
-    subroutine dbr_init_algo_rb(paraRb)
+    subroutine dbrChckGreedy(paraGreedy, lReuse)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
-    end subroutine dbr_init_algo_rb
+        type(ROM_DS_ParaDBR_Greedy), intent(in) :: paraGreedy
+        aster_logical, intent(in) :: lReuse
+    end subroutine dbrChckGreedy
 end interface

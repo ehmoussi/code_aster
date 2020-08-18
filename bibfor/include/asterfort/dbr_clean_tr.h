@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_clean_tr(cmdPara)
+    subroutine dbr_clean_tr(paraTrunc)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
+        type(ROM_DS_ParaDBR_TR ), intent(inout) :: paraTrunc
     end subroutine dbr_clean_tr
 end interface

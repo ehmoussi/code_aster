@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_clean_rb(cmdPara)
+    subroutine dbrMainGreedy(paraGreedy, baseOut)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
-    end subroutine dbr_clean_rb
+        type(ROM_DS_ParaDBR_Greedy), intent(inout) :: paraGreedy
+        type(ROM_DS_Empi), intent(inout) :: baseOut
+    end subroutine dbrMainGreedy
 end interface

@@ -24,10 +24,10 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/dbr_init_base_pod.h"
-#include "asterfort/dbr_init_base_rb.h"
-#include "asterfort/dbr_init_base_tr.h"
+#include "asterfort/dbrInitBaseGreedy.h"
 #include "asterfort/dbr_init_base_ortho.h"
+#include "asterfort/dbr_init_base_pod.h"
+#include "asterfort/dbr_init_base_tr.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
@@ -53,12 +53,13 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     if (niv .ge. 2) then
         call utmess('I', 'ROM19_4')
     endif
+!
     if (cmdPara%operation(1:3) .eq. 'POD') then
         call dbr_init_base_pod(cmdPara%resultOut%resultName, cmdPara%paraPod,&
                                cmdPara%lReuse              , cmdPara%base)
     elseif (cmdPara%operation .eq. 'GLOUTON') then
-        call dbr_init_base_rb(cmdPara%resultOut%resultName, cmdPara%paraRb,&
-                              cmdPara%base)
+        call dbrInitBaseGreedy(cmdPara%resultOut%resultName, cmdPara%paraGreedy,&
+                               cmdPara%base)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
         call dbr_init_base_tr(cmdPara%resultOut%resultName, cmdPara%paraTrunc,&
                               cmdPara%lReuse              , cmdPara%base)

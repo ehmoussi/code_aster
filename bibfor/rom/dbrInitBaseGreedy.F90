@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_base_rb(resultName, paraRb, base)
+subroutine dbrInitBaseGreedy(resultName, paraGreedy, base)
 !
 use Rom_Datastructure_type
 !
@@ -29,26 +29,26 @@ implicit none
 #include "asterfort/romBaseCreate.h"
 !
 character(len=8), intent(in) :: resultName
-type(ROM_DS_ParaDBR_RB), intent(in) :: paraRb
+type(ROM_DS_ParaDBR_Greedy), intent(in) :: paraGreedy
 type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE
 !
-! Initializations for base - For GLOUTON method
+! Initializations for base - For greedy method
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  resultName       : name of results datastructure to save base
-! In  paraRb           : datastructure for RB parameters
+! In  paraGreedy       : datastructure for parameters (Greedy)
 ! IO  base             : base
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nbEqua, nb_mode_maxi
-    character(len=8)  :: model, mesh, matr_name
+    integer :: nbEqua, nbModeMaxi
+    character(len=8)  :: model, mesh, matrName
     character(len=24) :: fieldRefe, fieldName
     character(len=4) :: fieldSupp
 !
@@ -61,40 +61,40 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! - Initializations
 !
-    model         = ' '
-    mesh          = ' '
-    matr_name     = ' '
-    fieldName     = ' '
-    nbEqua        = 0
-    nb_mode_maxi  = 0
+    model      = ' '
+    mesh       = ' '
+    matrName   = ' '
+    fieldName  = ' '
+    nbEqua     = 0
+    nbModeMaxi = 0
 !
 ! - Get "representative" matrix
 !
-    matr_name    = paraRb%multipara%matr_name(1)
+    matrName   = paraGreedy%multiPara%matr_name(1)
 !
 ! - Get information about model
 !
-    call dismoi('NOM_MODELE', matr_name, 'MATR_ASSE', repk = model)
+    call dismoi('NOM_MODELE', matrName, 'MATR_ASSE', repk = model)
 !
 ! - Get informations about fields
 !
-    call dismoi('NB_EQUA'     , matr_name, 'MATR_ASSE', repi = nbEqua)
-    call dismoi('NOM_MAILLA'  , model    , 'MODELE'   , repk = mesh)
+    call dismoi('NB_EQUA'   , matrName, 'MATR_ASSE', repi = nbEqua)
+    call dismoi('NOM_MAILLA', model   , 'MODELE'   , repk = mesh)
 !
 ! - For greedy algorithm: only displacements
 !
     fieldName = 'DEPL'
     fieldSupp = 'NOEU'
-    fieldRefe = paraRb%algoGreedy%solveDOM%syst_solu
+    fieldRefe = paraGreedy%algoGreedy%solveDOM%syst_solu
 !
 ! - Nomber of mode maxi given by user
 !
-    nb_mode_maxi = paraRb%nb_mode_maxi
+    nbModeMaxi = paraGreedy%nbModeMaxi
 !
 ! - For FSI: three basis
 !
-    if (paraRb%l_stab_fsi) then
-        nb_mode_maxi = 3*nb_mode_maxi
+    if (paraGreedy%lStabFSI) then
+        nbModeMaxi = 3*nbModeMaxi
     end if
 !
 ! - Save in base
@@ -104,7 +104,7 @@ type(ROM_DS_Empi), intent(inout) :: base
     base%lineicAxis     = ' '
     base%lineicSect     = ' '
     base%nbMode         = 0
-    base%nbModeMaxi     = nb_mode_maxi
+    base%nbModeMaxi     = nbModeMaxi
     base%mode%fieldName = fieldName
     base%mode%fieldRefe = fieldRefe
     base%mode%fieldSupp = fieldSupp
@@ -114,6 +114,6 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! - Create output datastructure
 !
-    call romBaseCreate(base, nb_mode_maxi)
+    call romBaseCreate(base, nbModeMaxi)
 !
 end subroutine

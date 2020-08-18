@@ -15,11 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+#include "asterf_types.h"
 !
 interface
-    subroutine dbr_main_rb(paraRb, baseOut)
+    subroutine dbrInitBaseGreedy(resultName, paraGreedy, base)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
-        type(ROM_DS_Empi), intent(inout) :: baseOut
-    end subroutine dbr_main_rb
+        character(len=8), intent(in) :: resultName
+        type(ROM_DS_ParaDBR_Greedy), intent(in) :: paraGreedy
+        type(ROM_DS_Empi), intent(inout) :: base
+    end subroutine dbrInitBaseGreedy
 end interface

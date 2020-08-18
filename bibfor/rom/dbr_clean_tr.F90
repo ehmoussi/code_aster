@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_clean_tr(cmdPara)
+subroutine dbr_clean_tr(paraTrunc)
 !
 use Rom_Datastructure_type
 !
@@ -26,7 +26,7 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/romBaseClean.h"
 !
-type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
+type(ROM_DS_ParaDBR_TR ), intent(inout) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -36,12 +36,11 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  cmdPara           : datastructure for parameters 
+! IO  paraTrunc        : datastructure for parameters (truncation)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call romBaseClean(cmdPara%base)
-    AS_DEALLOCATE(vi = cmdPara%paraTrunc%v_equa_rom)
-    call romBaseClean(cmdPara%paraTrunc%ds_empi_init)
+    AS_DEALLOCATE(vi = paraTrunc%v_equa_rom)
+    call romBaseClean(paraTrunc%ds_empi_init)
 !
 end subroutine

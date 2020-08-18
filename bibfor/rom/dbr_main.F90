@@ -24,13 +24,13 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/utmess.h"
-#include "asterfort/infniv.h"
+#include "asterfort/dbrMainGreedy.h"
+#include "asterfort/dbr_main_ortho.h"
 #include "asterfort/dbr_main_pod.h"
 #include "asterfort/dbr_main_podincr.h"
-#include "asterfort/dbr_main_rb.h"
 #include "asterfort/dbr_main_tr.h"
-#include "asterfort/dbr_main_ortho.h"
+#include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
@@ -60,7 +60,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     elseif (cmdPara%operation .eq. 'POD_INCR') then
         call dbr_main_podincr(cmdPara%lReuse, cmdPara%paraPod, cmdPara%base)
     elseif (cmdPara%operation .eq. 'GLOUTON') then
-        call dbr_main_rb(cmdPara%paraRb, cmdPara%base)
+        call dbrMainGreedy(cmdPara%paraGreedy, cmdPara%base)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
         call dbr_main_tr(cmdPara%paraTrunc, cmdPara%base)
     elseif (cmdPara%operation .eq. 'ORTHO') then

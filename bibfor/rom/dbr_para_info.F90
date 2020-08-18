@@ -25,12 +25,12 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/dbrParaInfoGreedy.h"
+#include "asterfort/dbr_para_info_ortho.h"
+#include "asterfort/dbr_para_info_pod.h"
+#include "asterfort/dbr_para_info_tr.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dbr_para_info_pod.h"
-#include "asterfort/dbr_para_info_rb.h"
-#include "asterfort/dbr_para_info_tr.h"
-#include "asterfort/dbr_para_info_ortho.h"
 !
 type(ROM_DS_ParaDBR), intent(in) :: cmdPara
 !
@@ -76,7 +76,7 @@ type(ROM_DS_ParaDBR), intent(in) :: cmdPara
         call dbr_para_info_pod(operation, cmdPara%paraPod)
 
     elseif (operation .eq. 'GLOUTON') then
-        call dbr_para_info_rb(cmdPara%paraRb)
+        call dbrParaInfoGreedy(cmdPara%paraGreedy)
 
     elseif (operation .eq. 'TRONCATURE') then
         call dbr_para_info_tr(cmdPara%paraTrunc)

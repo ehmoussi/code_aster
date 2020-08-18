@@ -23,8 +23,8 @@ use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterfort/dbrDSInitGreedy.h"
 #include "asterfort/dbr_paraDSInit.h"
-#include "asterfort/dbr_paraRBDSInit.h"
 #include "asterfort/infniv.h"
 #include "asterfort/romGreedyAlgoDSInit.h"
 #include "asterfort/romSolveDSInit.h"
@@ -34,7 +34,7 @@ type(ROM_DS_ParaDBR), intent(out) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
 ! Initialization of datastructures
 !
@@ -45,13 +45,13 @@ type(ROM_DS_ParaDBR), intent(out) :: cmdPara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    type(ROM_DS_ParaDBR_POD)   :: paraPod
-    type(ROM_DS_ParaDBR_RB)    :: paraRb
-    type(ROM_DS_ParaDBR_TR)    :: paraTrunc
-    type(ROM_DS_ParaDBR_ORTHO) :: paraOrtho
-    type(ROM_DS_Solve)         :: ds_solveROM, ds_solveDOM
-    type(ROM_DS_MultiPara)     :: ds_multipara
-    type(ROM_DS_AlgoGreedy)    :: ds_algoGreedy
+    type(ROM_DS_ParaDBR_POD)    :: paraPod
+    type(ROM_DS_ParaDBR_Greedy) :: paraGreedy
+    type(ROM_DS_ParaDBR_TR)     :: paraTrunc
+    type(ROM_DS_ParaDBR_ORTHO)  :: paraOrtho
+    type(ROM_DS_Solve)          :: solveROM, solveDOM
+    type(ROM_DS_MultiPara)      :: multiPara
+    type(ROM_DS_AlgoGreedy)     :: algoGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,20 +62,20 @@ type(ROM_DS_ParaDBR), intent(out) :: cmdPara
 !
 ! - Initialisation of datastructure for solving problems
 !
-    call romSolveDSInit('ROM', ds_solveROM)
-    call romSolveDSInit('DOM', ds_solveDOM)
+    call romSolveDSInit('ROM', solveROM)
+    call romSolveDSInit('DOM', solveDOM)
 !
 ! - Initialisation of datastructure for greedy algorithm
 !
-    call romGreedyAlgoDSInit(ds_solveDOM, ds_solveROM, ds_algoGreedy)
+    call romGreedyAlgoDSInit(solveDOM, solveROM, algoGreedy)
 !
-! - Initialization of datastructures for RB parameters
+! - Initialization of datastructures for greedy parameters
 !
-    call dbr_paraRBDSInit(ds_multipara, ds_algoGreedy, paraRb)
+    call dbrDSInitGreedy(multiPara, algoGreedy, paraGreedy)
 !
 ! - Initialization of datastructures for parameters
 !
-    call dbr_paraDSInit(paraPod, paraRb, paraTrunc, paraOrtho,&
+    call dbr_paraDSInit(paraPod, paraGreedy, paraTrunc, paraOrtho,&
                         cmdPara)
 !
 end subroutine

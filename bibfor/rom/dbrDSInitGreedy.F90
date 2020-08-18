@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1403
 !
-subroutine dbr_paraRBDSInit(ds_multipara, ds_algoGreedy, ds_para_rb)
+subroutine dbrDSInitGreedy(multiPara, algoGreedy, paraGreedy)
 !
 use Rom_Datastructure_type
 !
@@ -27,26 +27,26 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
 !
-type(ROM_DS_MultiPara), intent(in)   :: ds_multipara
-type(ROM_DS_AlgoGreedy), intent(in)  :: ds_algoGreedy
-type(ROM_DS_ParaDBR_RB), intent(out) :: ds_para_rb
+type(ROM_DS_MultiPara), intent(in)   :: multiPara
+type(ROM_DS_AlgoGreedy), intent(in)  :: algoGreedy
+type(ROM_DS_ParaDBR_Greedy), intent(out) :: paraGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE 
 !
-! Initialization of datastructures for parameters - POD methods
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  ds_multipara     : datastructure for multiparametric problems
-! In  ds_algoGreedy    : datastructure for Greedy algorithm
-! Out ds_para_rb       : datastructure for RB parameters
+! Initialization of datastructures for parameters - For greedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_para_rb%solver     = '&&OP0053.SOLVER'
-    ds_para_rb%multipara  = ds_multipara
-    ds_para_rb%algoGreedy = ds_algoGreedy
+! In  multiPara        : datastructure for multiparametric problems
+! In  algoGreedy       : datastructure for Greedy algorithm
+! Out paraGreedy       : datastructure for parameters (Greedy)
+!
+! --------------------------------------------------------------------------------------------------
+!
+    paraGreedy%solver     = '&&OP0053.SOLVER'
+    paraGreedy%multipara  = multiPara
+    paraGreedy%algoGreedy = algoGreedy
 !
 end subroutine

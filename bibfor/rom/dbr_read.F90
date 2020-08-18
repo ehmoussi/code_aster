@@ -26,9 +26,9 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
+#include "asterfort/dbrReadGreedy.h"
 #include "asterfort/dbr_read_ortho.h"
 #include "asterfort/dbr_read_pod.h"
-#include "asterfort/dbr_read_rb.h"
 #include "asterfort/dbr_read_tr.h"
 #include "asterfort/gcucon.h"
 #include "asterfort/getvid.h"
@@ -40,7 +40,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
 ! Read parameters
 !
@@ -86,7 +86,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     if (lReuse) then
         call getvid(' ', 'BASE', scal = resultReuseName)
         if (resultOutName .ne. resultReuseName) then
-            call utmess('F', 'SUPERVIS2_79', sk='BASE')
+            call utmess('F', 'SUPERVIS2_79', sk = 'BASE')
         endif
     endif
 !
@@ -96,7 +96,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     if (operation(1:3) .eq. 'POD') then
         call dbr_read_pod(operation, cmdPara%paraPod)
     elseif (operation .eq. 'GLOUTON') then
-        call dbr_read_rb(cmdPara%paraRb)
+        call dbrReadGreedy(cmdPara%paraGreedy)
     elseif (operation .eq. 'TRONCATURE') then
         call dbr_read_tr(cmdPara%paraTrunc)
     elseif (operation .eq. 'ORTHO') then

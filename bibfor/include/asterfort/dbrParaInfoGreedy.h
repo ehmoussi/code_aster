@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_para_info_rb(paraRb)
+    subroutine dbrParaInfoGreedy(paraGreedy)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_RB), intent(in) :: paraRb
-    end subroutine dbr_para_info_rb
+        type(ROM_DS_ParaDBR_Greedy), intent(in) :: paraGreedy
+    end subroutine dbrParaInfoGreedy
 end interface

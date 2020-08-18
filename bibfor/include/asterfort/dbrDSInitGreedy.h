@@ -17,8 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_read_rb(paraRb)
+    subroutine dbrDSInitGreedy(multiPara, algoGreedy, paraGreedy)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
-    end subroutine dbr_read_rb
+        type(ROM_DS_MultiPara), intent(in)   :: multiPara
+        type(ROM_DS_AlgoGreedy), intent(in)  :: algoGreedy
+        type(ROM_DS_ParaDBR_Greedy), intent(out) :: paraGreedy
+    end subroutine dbrDSInitGreedy
 end interface

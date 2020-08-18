@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_algo_rb(paraRb)
+subroutine dbrInitAlgoGreedy(paraGreedy)
 !
 use Rom_Datastructure_type
 !
@@ -33,26 +33,26 @@ implicit none
 #include "asterfort/romSolveROMSystCreate.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
+type(ROM_DS_ParaDBR_Greedy), intent(inout) :: paraGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE
 !
-! Initializations for algorith - For GLOUTON method
+! Initializations for algorith - For greedy method
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  paraRb            : datastructure for parameters (RB)
+! IO  paraGreedy       : datastructure for parameters (Greedy)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_vari_coef, nb_mode_maxi
-    character(len=1) :: syst_matr_type, syst_2mbr_type, syst_type
-    aster_logical :: l_stab_fsi
-    character(len=19) :: vect_refe
-    character(len=8)  :: matr_refe
+    integer :: nbVariCoef, nbModeMaxi
+    character(len=1) :: systMatrType, syst2mbrType, systType
+    aster_logical :: lStabFSI
+    character(len=19) :: vectRefe
+    character(len=8)  :: matrRefe
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,46 +63,46 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
 !
 ! - Get parameters
 !
-    nb_mode_maxi = paraRb%nb_mode_maxi
-    l_stab_fsi   = paraRb%l_stab_fsi
-    vect_refe    = paraRb%algoGreedy%solveDOM%vect_zero
-    matr_refe    = paraRb%multipara%matr_name(1)
-    nb_vari_coef = paraRb%multipara%nb_vari_coef
+    nbModeMaxi = paraGreedy%nbModeMaxi
+    lStabFSI   = paraGreedy%lStabFSI
+    vectRefe   = paraGreedy%algoGreedy%solveDOM%vect_zero
+    matrRefe   = paraGreedy%multiPara%matr_name(1)
+    nbVariCoef = paraGreedy%multiPara%nb_vari_coef
 !
 ! - For FSI: three basis
 !
-    if (l_stab_fsi) then
-        nb_mode_maxi = 3*nb_mode_maxi
+    if (lStabFSI) then
+        nbModeMaxi = 3*nbModeMaxi
     end if 
 !
 ! - Evaluate type of system
 !
-    call romMultiParaSystEvalType(paraRb%multipara,&
-                                  syst_matr_type, syst_2mbr_type, syst_type)
-    paraRb%algoGreedy%resi_type = syst_type
+    call romMultiParaSystEvalType(paraGreedy%multiPara,&
+                                  systMatrType, syst2mbrType, systType)
+    paraGreedy%algoGreedy%resi_type = systType
 !
 ! - Create objects to solve system (DOM)
 !
-    call romSolveDOMSystCreate(syst_matr_type, syst_2mbr_type, syst_type, matr_refe,&
-                               paraRb%algoGreedy%solveDOM)
+    call romSolveDOMSystCreate(systMatrType, syst2mbrType, systType, matrRefe,&
+                               paraGreedy%algoGreedy%solveDOM)
 !
 ! - Create objects to solve system (ROM)
 !
-    call romSolveROMSystCreate(syst_matr_type, syst_2mbr_type, syst_type, nb_mode_maxi,&
-                               paraRb%algoGreedy%solveROM)
+    call romSolveROMSystCreate(systMatrType, syst2mbrType, systType, nbModeMaxi,&
+                               paraGreedy%algoGreedy%solveROM)
 !
 ! - Initializations for multiparametric problems
 !
-    call romMultiParaInit(paraRb%multipara, nb_mode_maxi)
+    call romMultiParaInit(paraGreedy%multiPara, nbModeMaxi)
 !
 ! - Create numbering of nodes for FSI
 !
-    if (l_stab_fsi) then 
-        call romFSINumberingInit(paraRb%multipara%field, paraRb%algoGreedy)
+    if (lStabFSI) then 
+        call romFSINumberingInit(paraGreedy%multiPara%field, paraGreedy%algoGreedy)
     endif
 !
 ! - Init algorithm
 !
-    call romGreedyAlgoInit(nb_mode_maxi, nb_vari_coef, vect_refe, paraRb%algoGreedy)
+    call romGreedyAlgoInit(nbModeMaxi, nbVariCoef, vectRefe, paraGreedy%algoGreedy)
 !
 end subroutine

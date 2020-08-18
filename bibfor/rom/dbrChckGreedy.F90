@@ -17,57 +17,63 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_para_info_rb(paraRb)
+subroutine dbrChckGreedy(paraGreedy, lReuse)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
 #include "asterfort/infniv.h"
+#include "asterfort/romMultiParaChck.h"
 #include "asterfort/utmess.h"
-#include "asterfort/romSolveInfo.h"
-#include "asterfort/romMultiParaInfo.h"
 !
-type(ROM_DS_ParaDBR_RB), intent(in) :: paraRb
+type(ROM_DS_ParaDBR_Greedy), intent(in) :: paraGreedy
+aster_logical, intent(in) :: lReuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE
 !
-! Print informations about parameters - For GLOUTON method
+! Some checks - For greedy method
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  paraRb       : datastructure for parameters (RB)
+! In  paraGreedy       : datastructure for parameters (Greedy)
+! In  lReuse           : .true. if reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nbModeMaxi
-    real(kind=8) :: tole_greedy
+    character(len=16), parameter :: operation = 'GLOUTON'
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM18_53')
+        call utmess('I','ROM18_39')
     endif
 !
-! - Get parameters
+! - General check
 !
-    nbModeMaxi  = paraRb%nb_mode_maxi
-    tole_greedy = paraRb%tole_greedy
+    if (lReuse) then
+        call utmess('F','ROM18_38', sk = operation)
+    endif
 !
-! - Print - General for RB
+! - Check data for multiparametric problems
 !
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM18_54', si = nbModeMaxi)
-        call utmess('I', 'ROM18_55', sr = tole_greedy)
-        call romMultiParaInfo(paraRb%multipara)
-        call romSolveInfo(paraRb%algoGreedy%solveDOM)
-        call romSolveInfo(paraRb%algoGreedy%solveROM)
+    call romMultiParaChck(paraGreedy%multiPara, paraGreedy%lStabFSI)
+!
+! - Specific checks for DEFI_BASE_REDUITE
+!
+    if (paraGreedy%multiPara%nb_vari_coef .eq. 0) then
+        call utmess('F', 'ROM18_40')
+    endif
+!
+! - Only on nodal fields
+!
+    if (paraGreedy%multiPara%field%fieldSupp .ne. 'NOEU') then
+        call utmess('F','ROM18_41', sk = paraGreedy%multiPara%field%fieldSupp)
     endif
 !
 end subroutine

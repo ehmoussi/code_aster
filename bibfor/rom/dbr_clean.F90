@@ -24,16 +24,18 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/dbr_clean_pod.h"
-#include "asterfort/dbr_clean_rb.h"
-#include "asterfort/dbr_clean_tr.h"
+#include "asterfort/dbrCleanGreedy.h"
 #include "asterfort/dbr_clean_ortho.h"
+#include "asterfort/dbr_clean_pod.h"
+#include "asterfort/dbr_clean_tr.h"
+#include "asterfort/romBaseClean.h"
+#include "asterfort/romResultClean.h"
 !
 type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Compute
+! DEFI_BASE_REDUITE
 !
 ! Clean datastructures
 !
@@ -43,14 +45,17 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    call romBaseClean(cmdPara%base)
+    call romResultClean()
+!
     if (cmdPara%operation(1:3) .eq. 'POD') then
-        call dbr_clean_pod(cmdPara)
+        call dbr_clean_pod(cmdPara%paraPod)
     elseif (cmdPara%operation .eq. 'GLOUTON') then
-        call dbr_clean_rb(cmdPara)
+        call dbrCleanGreedy(cmdPara%paraGreedy)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
-        call dbr_clean_tr(cmdPara)
+        call dbr_clean_tr(cmdPara%paraTrunc)
     elseif (cmdPara%operation .eq. 'ORTHO') then
-        call dbr_clean_ortho(cmdPara)
+        call dbr_clean_ortho(cmdPara%paraOrtho)
     else
         ASSERT(ASTER_FALSE)
     endif

@@ -17,63 +17,31 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_rb(paraRb, lReuse)
+subroutine dbrCleanGreedy(paraGreedy)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
-#include "asterfort/infniv.h"
-#include "asterfort/romMultiParaChck.h"
-#include "asterfort/utmess.h"
+#include "asterfort/assert.h"
+#include "asterfort/romMultiParaClean.h"
+#include "asterfort/romGreedyAlgoClean.h"
 !
-type(ROM_DS_ParaDBR_RB), intent(in) :: paraRb
-aster_logical, intent(in) :: lReuse
+type(ROM_DS_ParaDBR_Greedy), intent(inout) :: paraGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE
 !
-! Some checks - For GLOUTON methods
+! Clean datastructures for greedy method
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  paraRb           : datastructure for parameters (RB)
-! In  lReuse           : .true. if reuse
+! IO  cmdPara           : datastructure for parameters 
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-    character(len=16), parameter :: operation = 'GLOUTON'
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I','ROM18_39')
-    endif
-!
-! - General check
-!
-    if (lReuse) then
-        call utmess('F','ROM18_38', sk = operation)
-    endif
-!
-! - Check data for multiparametric problems
-!
-    call romMultiParaChck(paraRb%multipara, paraRb%l_stab_fsi)
-!
-! - Specific checks for DEFI_BASE_REDUITE
-!
-    if (paraRb%multipara%nb_vari_coef .eq. 0) then
-        call utmess('F', 'ROM18_40')
-    endif
-!
-! - Only on nodal fields
-!
-    if (paraRb%multipara%field%fieldSupp .ne. 'NOEU') then
-        call utmess('F','ROM18_41', sk = paraRb%multipara%field%fieldSupp)
-    endif
+    call romMultiParaClean(paraGreedy%multipara)
+    call romGreedyAlgoClean(paraGreedy%algoGreedy)
 !
 end subroutine

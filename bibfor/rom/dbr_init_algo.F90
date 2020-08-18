@@ -24,9 +24,9 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/assert.h"
+#include "asterfort/dbrInitAlgoGreedy.h"
 #include "asterfort/dbr_init_algo_ortho.h"
 #include "asterfort/dbr_init_algo_pod.h"
-#include "asterfort/dbr_init_algo_rb.h"
 #include "asterfort/dbr_init_algo_tr.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
@@ -57,7 +57,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     if (cmdPara%operation(1:3) .eq. 'POD') then
         call dbr_init_algo_pod()
     elseif (cmdPara%operation .eq. 'GLOUTON') then
-        call dbr_init_algo_rb(cmdPara%paraRb)
+        call dbrInitAlgoGreedy(cmdPara%paraGreedy)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
         call dbr_init_algo_tr(cmdPara%paraTrunc)
     elseif (cmdPara%operation .eq. 'ORTHO') then

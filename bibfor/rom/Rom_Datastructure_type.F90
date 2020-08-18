@@ -347,24 +347,31 @@ implicit none
         integer                 :: nume_phi  = 0
     end type ROM_DS_AlgoGreedy
 !
-! - Parameters for DEFI_BASE_REDUITE operator (RB)
+! - Parameters for DEFI_BASE_REDUITE operator (GREEDY)
 !
-    type ROM_DS_ParaDBR_RB
+    type ROM_DS_ParaDBR_Greedy
 ! ----- Datastructure for solver's parameters
         character(len=19)       :: solver       = ' '
+
 ! ----- Datastructure for multiparametric problem
-        type(ROM_DS_MultiPara)  :: multipara
+        type(ROM_DS_MultiPara)  :: multiPara
+
 ! ----- Maximum number of modes
-        integer                 :: nb_mode_maxi = 0
+        integer                 :: nbModeMaxi = 0
+
 ! ----- Flag to orthogonalize the basis 
-        aster_logical           :: l_ortho_base = ASTER_FALSE
+        aster_logical           :: lOrthoBase = ASTER_FALSE
+
 ! ----- Flag to stabilize the basis for FSI transient problem
-        aster_logical           :: l_stab_fsi   = ASTER_FALSE
+        aster_logical           :: lStabFSI   = ASTER_FALSE
+
 ! ----- Tolerance for greedy algorithm
-        real(kind=8)            :: tole_greedy  = 0.d0
+        real(kind=8)            :: toleGreedy = 0.d0
+
 ! ----- Datastructure for greedy algorithm
         type(ROM_DS_AlgoGreedy) :: algoGreedy
-    end type ROM_DS_ParaDBR_RB
+
+    end type ROM_DS_ParaDBR_Greedy
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (TRUNCATION)
 !
@@ -400,21 +407,28 @@ implicit none
 !
     type ROM_DS_ParaDBR
 ! ----- Type of operation (POD, POD_INCR, GREEDY, ...)
-        character(len=16)          :: operation = ' '
+        character(len=16)           :: operation = ' '
+
 ! ----- Name of empiric base to save
-        type(ROM_DS_Result)        :: resultOut
+        type(ROM_DS_Result)         :: resultOut
+
 ! ----- Parameters for POD/POD_INCR method
-        type(ROM_DS_ParaDBR_POD)   :: paraPod
+        type(ROM_DS_ParaDBR_POD)    :: paraPod
+
 ! ----- Parameters for RB method
-        type(ROM_DS_ParaDBR_RB )   :: paraRb
+        type(ROM_DS_ParaDBR_Greedy) :: paraGreedy
+
 ! ----- Parameters for truncation method
-        type(ROM_DS_ParaDBR_TR )   :: paraTrunc
+        type(ROM_DS_ParaDBR_TR )    :: paraTrunc
+
 ! ----- Parameters for orthogonalization method
-        type(ROM_DS_ParaDBR_ORTHO) :: paraOrtho
+        type(ROM_DS_ParaDBR_ORTHO)  :: paraOrtho
+
 ! ----- Datastructure for empiric modes
-        type(ROM_DS_Empi)          :: base
+        type(ROM_DS_Empi)           :: base
+
 ! ----- If operator is "reuse"
-        aster_logical              :: lReuse = ASTER_FALSE
+        aster_logical               :: lReuse = ASTER_FALSE
     end type ROM_DS_ParaDBR
 !
 ! - Parameters for DEFI_DOMAINE_REDUIT operator

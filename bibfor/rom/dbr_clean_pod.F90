@@ -17,19 +17,18 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_clean_pod(cmdPara)
+subroutine dbr_clean_pod(paraPod)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/romBaseClean.h"
-#include "asterfort/romFieldClean.h"
-#include "asterfort/romTableClean.h"
+#include "asterfort/assert.h"
 #include "asterfort/romResultClean.h"
 #include "asterfort/romSnapClean.h"
+#include "asterfort/romTableClean.h"
 !
-type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
+type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -39,13 +38,12 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  cmdPara           : datastructure for parameters 
+! IO  paraPod          : datastructure for parameters (POD)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call romBaseClean(cmdPara%base)
     call romResultClean()
-    call romTableClean(cmdPara%paraPod%tablReduCoor)
-    call romSnapClean(cmdPara%paraPod%snap)
+    call romTableClean(paraPod%tablReduCoor)
+    call romSnapClean(paraPod%snap)
 !
 end subroutine

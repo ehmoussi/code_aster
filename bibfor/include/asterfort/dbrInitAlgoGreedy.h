@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_paraRBDSInit(ds_multipara, ds_algoGreedy, ds_para_rb)
+    subroutine dbrInitAlgoGreedy(paraGreedy)
         use Rom_Datastructure_type
-        type(ROM_DS_MultiPara), intent(in)   :: ds_multipara
-        type(ROM_DS_AlgoGreedy), intent(in)  :: ds_algoGreedy
-        type(ROM_DS_ParaDBR_RB), intent(out) :: ds_para_rb
-    end subroutine dbr_paraRBDSInit
+        type(ROM_DS_ParaDBR_Greedy), intent(inout) :: paraGreedy
+    end subroutine dbrInitAlgoGreedy
 end interface

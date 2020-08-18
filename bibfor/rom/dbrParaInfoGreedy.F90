@@ -17,33 +17,57 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_clean_rb(cmdPara)
+subroutine dbrParaInfoGreedy(paraGreedy)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/romBaseClean.h"
-#include "asterfort/romMultiParaClean.h"
-#include "asterfort/romGreedyAlgoClean.h"
+#include "asterfort/infniv.h"
+#include "asterfort/romMultiParaInfo.h"
+#include "asterfort/romSolveInfo.h"
+#include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
+type(ROM_DS_ParaDBR_Greedy), intent(in) :: paraGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE
 !
-! Clean datastructures for GREEDY
+! Print informations about parameters - For greedy method
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  cmdPara           : datastructure for parameters 
+! In  paraGreedy       : datastructure for parameters (Greedy)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call romBaseClean(cmdPara%base) 
-    call romMultiParaClean(cmdPara%paraRb%multipara)
-    call romGreedyAlgoClean(cmdPara%paraRb%algoGreedy)
+    integer :: ifm, niv
+    integer :: nbModeMaxi
+    real(kind=8) :: toleGreedy
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM18_53')
+    endif
+!
+! - Get parameters
+!
+    nbModeMaxi = paraGreedy%nbModeMaxi
+    toleGreedy = paraGreedy%toleGreedy
+!
+! - Print - General for RB
+!
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM18_54', si = nbModeMaxi)
+        call utmess('I', 'ROM18_55', sr = toleGreedy)
+        call romMultiParaInfo(paraGreedy%multiPara)
+        call romSolveInfo(paraGreedy%algoGreedy%solveDOM)
+        call romSolveInfo(paraGreedy%algoGreedy%solveROM)
+    endif
 !
 end subroutine
