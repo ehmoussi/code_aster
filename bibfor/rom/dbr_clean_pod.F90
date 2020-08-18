@@ -43,7 +43,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
     call romBaseClean(cmdPara%ds_empi)
     if (cmdPara%l_reuse) then
-        call romFieldClean(cmdPara%para_pod%ds_result_in%field)
+        call romFieldClean(cmdPara%para_pod%resultDom%field)
     endif
     call romTableClean(cmdPara%para_pod%tablReduCoor)
 !

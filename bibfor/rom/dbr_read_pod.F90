@@ -52,12 +52,11 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
     integer :: nocc, ifm, niv
     real(kind=8) :: tole_svd, tole_incr
-    character(len=16) :: field_name
+    character(len=16) :: fieldName
     character(len=8)  :: axe_line, surf_num, base_type
-    character(len=8)  :: result_in, model_user
+    character(len=8)  :: resultDom, modelUser
     integer :: nb_mode_maxi
     type(ROM_DS_Snap) :: ds_snap
-    type(ROM_DS_Result) :: ds_result
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,21 +70,21 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     tole_svd     = 0.d0
     tole_incr    = 0.d0
     nb_mode_maxi = 0
-    field_name   = ' '
+    fieldName    = ' '
     axe_line     = ' '
     surf_num     = ' '
     base_type    = ' '
-    result_in    = ' '
-    model_user   = ' '
+    resultDom    = ' '
+    modelUser    = ' '
 !
 ! - Get parameters - Results to process
 !
-    call getvid(' ', 'RESULTAT', scal = result_in)
-    call getvtx(' ', 'NOM_CHAM', scal = field_name, nbret = nocc)
+    call getvid(' ', 'RESULTAT', scal = resultDom)
+    call getvtx(' ', 'NOM_CHAM', scal = fieldName, nbret = nocc)
     ASSERT(nocc .eq. 1)
-    call getvid(' ', 'MODELE'  , scal = model_user, nbret = nocc)
+    call getvid(' ', 'MODELE'  , scal = modelUser, nbret = nocc)
     if (nocc .ne. 1) then
-        model_user = ' '
+        modelUser = ' '
     endif
 !
 ! - Maximum number of modes
@@ -116,17 +115,15 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 ! - Read parameters for snapshot selection
 !
     ds_snap = paraPod%ds_snap
-    call romSnapRead(result_in, ds_snap)
+    call romSnapRead(resultDom, ds_snap)
 !
 ! - Get parameters for result datastructure
 !
-    ds_result = paraPod%ds_result_in
-    call romResultsGetInfo(result_in, field_name, model_user, ds_result)
+    call romResultsGetInfo(resultDom, fieldName, modelUser, paraPod%resultDom)
 !
 ! - Save parameters in datastructure
 !
-    paraPod%ds_result_in = ds_result
-    paraPod%field_name   = field_name
+    paraPod%field_name   = fieldName
     paraPod%base_type    = base_type
     paraPod%axe_line     = axe_line
     paraPod%surf_num     = surf_num
@@ -134,6 +131,5 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     paraPod%tole_incr    = tole_incr
     paraPod%ds_snap      = ds_snap
     paraPod%nb_mode_maxi = nb_mode_maxi
-    paraPod%model_user   = model_user
 !
 end subroutine

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_pod(operation, ds_para_pod, l_reuse, ds_empi)
+subroutine dbr_chck_pod(operation, paraPod, l_reuse, ds_empi)
 !
 use Rom_Datastructure_type
 !
@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/dbr_chck_table.h"
 !
 character(len=16), intent(in) :: operation
-type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
+type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 aster_logical, intent(in) :: l_reuse
 type(ROM_DS_Empi), intent(in) :: ds_empi
 !
@@ -45,7 +45,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  operation        : type of method
-! In  ds_para_pod      : datastructure for parameters (POD)
+! In  paraPod          : datastructure for parameters (POD)
 ! In  l_reuse          : .true. if reuse
 ! In  ds_empi          : datastructure for empiric modes
 !
@@ -77,20 +77,20 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 !
 ! - Get components in fields
 !
-    lLagr = ds_para_pod%ds_result_in%field%lLagr
+    lLagr = paraPod%resultDom%field%lLagr
     if (lLagr) then
         call utmess('F', 'ROM5_22')
     endif
 !
 ! - Check if parameters are the same on all storing index
 !
-    call rs_paraonce(ds_para_pod%ds_result_in%name, nbPara, paraName)
+    call rs_paraonce(paraPod%resultDom%name, nbPara, paraName)
 !
 ! - Check if COOR_REDUIT is OK
 !
-    tablUserName = ds_para_pod%tablReduCoor%tablUserName
-    lTablUser    = ds_para_pod%tablReduCoor%lTablUser
-    tablName     = ds_para_pod%tablReduCoor%tablResu%tablName
+    tablUserName = paraPod%tablReduCoor%tablUserName
+    lTablUser    = paraPod%tablReduCoor%lTablUser
+    tablName     = paraPod%tablReduCoor%tablResu%tablName
     if (operation .eq. 'POD_INCR' .and. l_reuse) then
 ! ----- Check if table is OK
         call jeveuo(tablName(1:19)//'.TBNP', 'L', vi=tbnp)
@@ -107,7 +107,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 ! ----- Check conformity of user table
         if (lTablUser) then
             nb_mode = ds_empi%nb_mode
-            nb_snap = ds_para_pod%ds_snap%nb_snap
+            nb_snap = paraPod%ds_snap%nb_snap
             call dbr_chck_table(tablUserName, nb_mode, nb_snap)
         endif
     endif

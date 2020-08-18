@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type(ROM_DS_ParaDBR) :: ds_para
+    type(ROM_DS_ParaDBR) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,34 +49,34 @@ implicit none
 !
 ! - Initialization of datastructures
 !
-    call dbr_DSInit(ds_para)
+    call dbr_DSInit(cmdPara)
 !
 ! - Read parameters
 !
-    call dbr_read(ds_para)
+    call dbr_read(cmdPara)
 !
 ! - Prepare datastructure for empiric modes
 !
-    call dbr_init_base(ds_para)
+    call dbr_init_base(cmdPara)
 !
 ! - Init algorithm
 !
-    call dbr_init_algo(ds_para)
+    call dbr_init_algo(cmdPara)
 !
 ! - Check parameters
 !
-    call dbr_chck(ds_para)
+    call dbr_chck(cmdPara)
 !
 ! - Print informations
 !
-    call dbr_para_info(ds_para)
+    call dbr_para_info(cmdPara)
 !
 ! - Compute the POD by the main function
 !
-    call dbr_main(ds_para)
+    call dbr_main(cmdPara)
 !
 ! - Clean datastructures
 !
-    call dbr_clean(ds_para)
+    call dbr_clean(cmdPara)
 !
 end subroutine

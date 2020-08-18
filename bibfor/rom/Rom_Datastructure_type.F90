@@ -265,12 +265,10 @@ implicit none
 ! - Parameters for DEFI_BASE_REDUITE operator (POD)
 !
     type ROM_DS_ParaDBR_POD
-! ----- Datastructure for result datastructures to read
-        type(ROM_DS_Result)       :: ds_result_in
+! ----- Datastructure for result datastructures to read (high fidelity)
+        type(ROM_DS_Result)       :: resultDom
 ! ----- Name of field for read (NOM_CHAM)
         character(len=24)         :: field_name = ' '
-! ----- Model from user
-        character(len=8)          :: model_user = ' '
 ! ----- Type of reduced base
         character(len=8)          :: base_type = ' '
 ! ----- Direction of the linear model

@@ -46,7 +46,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  baseName         : name of base
-! IO  paraPod          : datastructure for POD parameters
+! IO  paraPod          : datastructure for parameters (POD)
 ! In  lReuse           : .true. if reuse
 ! IO  base             : base
 !
@@ -65,7 +65,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     if (.not. lReuse) then
         base%base = baseName
-        call romBaseCreate(base, paraPod%nb_mode_maxi)     
+        call romBaseCreate(base, paraPod%nb_mode_maxi)
     endif
 !
 ! - Create datastructure of table in results datastructure for the reduced coordinates
@@ -82,13 +82,14 @@ type(ROM_DS_Empi), intent(inout) :: base
         call romBaseGetInfo(baseName, base)
     else
         base%base      = baseName
-        base%ds_mode   = paraPod%ds_result_in%field
+        base%ds_mode   = paraPod%resultDom%field
         base%base_type = paraPod%base_type
         base%axe_line  = paraPod%axe_line
         base%surf_num  = paraPod%surf_num
         base%nb_mode   = 0
         base%nb_snap   = 0
     endif
+!
 ! - Create numbering of nodes for the lineic model
 !
     if (base%base_type .eq. 'LINEIQUE') then
