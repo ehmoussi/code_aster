@@ -26,7 +26,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dbrInitAlgoGreedy.h"
 #include "asterfort/dbrInitAlgoOrtho.h"
-#include "asterfort/dbr_init_algo_pod.h"
+#include "asterfort/dbrInitAlgoPod.h"
 #include "asterfort/dbrInitAlgoTrunc.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
@@ -55,7 +55,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     endif
 !
     if (cmdPara%operation(1:3) .eq. 'POD') then
-        call dbr_init_algo_pod()
+        call dbrInitAlgoPod()
     elseif (cmdPara%operation .eq. 'GLOUTON') then
         call dbrInitAlgoGreedy(cmdPara%paraGreedy)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then

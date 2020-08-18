@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_pod(operation, paraPod, lReuse, base)
+subroutine dbrChckPod(operation, paraPod, lReuse, base)
 !
 use Rom_Datastructure_type
 !

@@ -27,7 +27,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dbrParaInfoGreedy.h"
 #include "asterfort/dbrParaInfoOrtho.h"
-#include "asterfort/dbr_para_info_pod.h"
+#include "asterfort/dbrParaInfoPod.h"
 #include "asterfort/dbrParaInfoTrunc.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
@@ -73,7 +73,7 @@ type(ROM_DS_ParaDBR), intent(in) :: cmdPara
 ! - Print / method
 !
     if (operation(1:3) .eq. 'POD') then
-        call dbr_para_info_pod(operation, cmdPara%paraPod)
+        call dbrParaInfoPod(operation, cmdPara%paraPod)
 
     elseif (operation .eq. 'GLOUTON') then
         call dbrParaInfoGreedy(cmdPara%paraGreedy)

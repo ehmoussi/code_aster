@@ -17,19 +17,19 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_base_pod(baseName, paraPod, lReuse, base)
+subroutine dbrInitBasePod(baseName, paraPod, lReuse, base)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/dbr_rnum.h"
 #include "asterfort/infniv.h"
 #include "asterfort/modelNodeEF.h"
 #include "asterfort/nonlinDSTableIOCreate.h"
 #include "asterfort/romBaseCreate.h"
 #include "asterfort/romBaseGetInfo.h"
+#include "asterfort/romLineicPrepNume.h"
 #include "asterfort/romResultCreateMode.h"
 #include "asterfort/romTableCreate.h"
 #include "asterfort/utmess.h"
@@ -70,7 +70,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     if (.not. lReuse) then
         base%resultName = baseName
-        call romBaseCreate(base, paraPod%nb_mode_maxi)
+        call romBaseCreate(base, paraPod%nbModeMaxi)
     endif
 !
 ! - Create datastructure of table in results datastructure for the reduced coordinates
@@ -90,7 +90,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 ! - Create mode datastructure from representative field in high-fidelity result
 !
     if (.not. lReuse) then
-        call romResultCreateMode(paraPod%resultDom, paraPod%field_name, mode)
+        call romResultCreateMode(paraPod%resultDom, paraPod%fieldName, mode)
     endif
 !
 ! - Create datastructure for base
@@ -98,9 +98,9 @@ type(ROM_DS_Empi), intent(inout) :: base
     if (.not. lReuse) then
         base%resultName = baseName
         base%mode       = mode
-        base%baseType   = paraPod%base_type
-        base%lineicAxis = paraPod%axe_line
-        base%lineicSect = paraPod%surf_num
+        base%baseType   = paraPod%baseType
+        base%lineicAxis = paraPod%lineicAxis
+        base%lineicSect = paraPod%lineicSect
         base%nbMode     = 0
         base%nbSnap     = 0
     endif
@@ -113,7 +113,7 @@ type(ROM_DS_Empi), intent(inout) :: base
         endif
         model = base%mode%model
         call modelNodeEF(model, nbNodeWithDof)
-        call dbr_rnum(base, nbNodeWithDof)
+        call romLineicPrepNume(base, nbNodeWithDof)
     endif
 !
 end subroutine

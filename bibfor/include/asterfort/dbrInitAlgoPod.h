@@ -15,14 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
 interface
-    subroutine dbr_init_base_pod(baseName, paraPod, lReuse, base)
+    subroutine dbrInitAlgoPod()
         use Rom_Datastructure_type
-        character(len=8), intent(in) :: baseName
-        type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
-        aster_logical, intent(in) :: lReuse
-        type(ROM_DS_Empi), intent(inout) :: base
-    end subroutine dbr_init_base_pod
+    end subroutine dbrInitAlgoPod
 end interface

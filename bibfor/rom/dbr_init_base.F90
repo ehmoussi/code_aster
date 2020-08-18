@@ -26,7 +26,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dbrInitBaseGreedy.h"
 #include "asterfort/dbrInitBaseOrtho.h"
-#include "asterfort/dbr_init_base_pod.h"
+#include "asterfort/dbrInitBasePod.h"
 #include "asterfort/dbrInitBaseTrunc.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
@@ -55,8 +55,8 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     endif
 !
     if (cmdPara%operation(1:3) .eq. 'POD') then
-        call dbr_init_base_pod(cmdPara%resultOut%resultName, cmdPara%paraPod,&
-                               cmdPara%lReuse              , cmdPara%base)
+        call dbrInitBasePod(cmdPara%resultOut%resultName, cmdPara%paraPod,&
+                            cmdPara%lReuse              , cmdPara%base)
     elseif (cmdPara%operation .eq. 'GLOUTON') then
         call dbrInitBaseGreedy(cmdPara%resultOut%resultName, cmdPara%paraGreedy,&
                                cmdPara%base)

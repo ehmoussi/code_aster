@@ -304,28 +304,39 @@ implicit none
 ! - Parameters for DEFI_BASE_REDUITE operator (POD)
 !
     type ROM_DS_ParaDBR_POD
-! ----- Datastructure for result datastructures to read (high fidelity)
+! ----- Name of result to read (high fidelity)
+        character(len=8)          :: resultDomName = ' '
+
+! ----- Result to read (high fidelity)
         type(ROM_DS_Result)       :: resultDom
-! ----- Name of model from user
-        character(len=8)          :: modelUser    = ' '
+
 ! ----- Name of field for read (NOM_CHAM)
-        character(len=24)         :: field_name   = ' '
+        character(len=24)         :: fieldName     = ' '
+
 ! ----- Type of reduced base
-        character(len=8)          :: base_type    = ' '
+        character(len=8)          :: baseType      = ' '
+
 ! ----- Direction of the linear model
-        character(len=8)          :: axe_line     = ' '
+        character(len=8)          :: lineicAxis    = ' '
+
 ! ----- First section of the linear model
-        character(len=24)         :: surf_num     = ' '
+        character(len=24)         :: lineicSect    = ' '
+
 ! ----- Tolerance for SVD
-        real(kind=8)              :: tole_svd     = 0.d0
+        real(kind=8)              :: toleSVD       = 0.d0
+
 ! ----- Tolerance for incremental POD
-        real(kind=8)              :: tole_incr    = 0.d0
+        real(kind=8)              :: toleIncr      = 0.d0
+
 ! ----- Table for reduced coordinates
         type(ROM_DS_TablReduCoor) :: tablReduCoor
+
 ! ----- Maximum number of modes
-        integer                   :: nb_mode_maxi = 0
+        integer                   :: nbModeMaxi    = 0
+
 ! ----- Datastructure for snapshot selection
         type(ROM_DS_Snap)         :: snap
+
     end type ROM_DS_ParaDBR_POD
 !
 ! - Algorithm Greedy

@@ -26,7 +26,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dbrCleanGreedy.h"
 #include "asterfort/dbrCleanOrtho.h"
-#include "asterfort/dbr_clean_pod.h"
+#include "asterfort/dbrCleanPod.h"
 #include "asterfort/dbrCleanTrunc.h"
 #include "asterfort/romBaseClean.h"
 #include "asterfort/romResultClean.h"
@@ -49,7 +49,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     call romResultClean()
 !
     if (cmdPara%operation(1:3) .eq. 'POD') then
-        call dbr_clean_pod(cmdPara%paraPod)
+        call dbrCleanPod(cmdPara%paraPod)
     elseif (cmdPara%operation .eq. 'GLOUTON') then
         call dbrCleanGreedy(cmdPara%paraGreedy)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then

@@ -73,7 +73,7 @@ integer, intent(out) :: nbModeOut, nbSnapOut
     integer :: iAlgoIni, iAlgoEnd, iEqua, iSnap, iAlgoSnap, iAlgo, k, iMode, iCoorRedu
     integer :: nbEqua, nbSing, nbModeMaxi, nbSnapResult
     integer :: nbSnapPrev, nbModePrev
-    real(kind=8) :: tole_incr, tole_svd
+    real(kind=8) :: toleIncr, toleSVD
     character(len=8) :: baseName
     real(kind=8) :: norm_q, norm_r
     integer(kind=4) :: info
@@ -106,11 +106,11 @@ integer, intent(out) :: nbModeOut, nbSnapOut
 !
     mode         = '&&IPOD_MODE'
     nbEqua       = base%mode%nbEqua
-    nbModeMaxi   = paraPod%nb_mode_maxi
+    nbModeMaxi   = paraPod%nbModeMaxi
     nbSnapResult = paraPod%snap%nbSnap
-    tole_incr    = paraPod%tole_incr
-    tole_svd     = paraPod%tole_svd
-    ASSERT(paraPod%base_type .eq. '3D')
+    toleIncr     = paraPod%toleIncr
+    toleSVD      = paraPod%toleSVD
+    ASSERT(paraPod%baseType .eq. '3D')
 !
 ! - Properties of previous base
 !
@@ -241,7 +241,7 @@ integer, intent(out) :: nbModeOut, nbSnapOut
         call norm_frobenius(nbEqua, ri, norm_r)
 
 ! ----- Select vector or not ?
-        if (norm_r/norm_q .ge. tole_incr) then
+        if (norm_r/norm_q .ge. toleIncr) then
 ! --------- Add mode (residu !) at current iAlgoSnap iteration
             do iEqua = 1, nbEqua
                 vt(iEqua + nbEqua*iAlgoSnap) = ri(iEqua)/norm_r
@@ -310,7 +310,7 @@ integer, intent(out) :: nbModeOut, nbSnapOut
 !
 ! - Select empiric modes
 !
-    call dbr_calcpod_sele(nbModeMaxi, tole_svd, s, nbSing, nbModeOut)
+    call dbr_calcpod_sele(nbModeMaxi, toleSVD, s, nbSing, nbModeOut)
 !
 ! - Compute matrix of singular vector: V <= V * B (dim : [nbModeOut x nbEqua] )
 !

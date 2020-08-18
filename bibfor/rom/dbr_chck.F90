@@ -27,7 +27,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dbrChckGreedy.h"
 #include "asterfort/dbrChckOrtho.h"
-#include "asterfort/dbr_chck_pod.h"
+#include "asterfort/dbrChckPod.h"
 #include "asterfort/dbrChckTrunc.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
@@ -56,7 +56,7 @@ type(ROM_DS_ParaDBR), intent(in) :: cmdPara
     endif
 !
     if (cmdPara%operation(1:3) .eq. 'POD') then
-        call dbr_chck_pod(cmdPara%operation, cmdPara%paraPod, cmdPara%lReuse, cmdPara%base)
+        call dbrChckPod(cmdPara%operation, cmdPara%paraPod, cmdPara%lReuse, cmdPara%base)
     elseif (cmdPara%operation .eq. 'GLOUTON') then
         call dbrChckGreedy(cmdPara%paraGreedy, cmdPara%lReuse)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then

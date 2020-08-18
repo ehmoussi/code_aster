@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_clean_pod(paraPod)
+    subroutine dbrParaInfoPod(operation, paraPod)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
-    end subroutine dbr_clean_pod
+        character(len=16), intent(in) :: operation
+        type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
+    end subroutine dbrParaInfoPod
 end interface

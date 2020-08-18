@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
 interface
-    subroutine dbr_main_podincr(lReuse, paraPod, baseOut)
+    subroutine romLineicPrepNume(base, nbNodeWithDof)
         use Rom_Datastructure_type
-        aster_logical, intent(in) :: lReuse
-        type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
-        type(ROM_DS_Empi), intent(in) :: baseOut
-    end subroutine dbr_main_podincr
+            type(ROM_DS_Empi), intent(inout) :: base
+            integer, intent(in) ::  nbNodeWithDof
+    end subroutine romLineicPrepNume
 end interface

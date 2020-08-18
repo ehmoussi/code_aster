@@ -17,33 +17,33 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_algo_pod()
+subroutine dbrCleanPod(paraPod)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
+#include "asterfort/romResultClean.h"
+#include "asterfort/romSnapClean.h"
+#include "asterfort/romTableClean.h"
+!
+type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE
 !
-! Initializations for algorith - For POD methods
+! Clean datastructures for POD
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
+! IO  paraPod          : datastructure for parameters (POD)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM18_30')
-    endif
-!
-    ! Nothing to do
+    call romResultClean()
+    call romTableClean(paraPod%tablReduCoor)
+    call romSnapClean(paraPod%snap)
 !
 end subroutine

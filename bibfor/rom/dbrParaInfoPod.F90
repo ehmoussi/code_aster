@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_para_info_pod(operation, paraPod)
+subroutine dbrParaInfoPod(operation, paraPod)
 !
 use Rom_Datastructure_type
 !
@@ -46,7 +46,7 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 !
     integer :: ifm, niv
     character(len=24) :: fieldName
-    real(kind=8) :: tole_svd, tole_incr
+    real(kind=8) :: toleSVD, toleIncr
     integer :: nbModeMaxi
 !
 ! --------------------------------------------------------------------------------------------------
@@ -58,10 +58,10 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 !
 ! - Get parameters
 !
-    tole_svd   = paraPod%tole_svd
-    tole_incr  = paraPod%tole_incr
-    fieldName  = paraPod%field_name
-    nbModeMaxi = paraPod%nb_mode_maxi
+    toleSVD    = paraPod%toleSVD
+    toleIncr   = paraPod%toleIncr
+    fieldName  = paraPod%fieldName
+    nbModeMaxi = paraPod%nbModeMaxi
 !
 ! - Print - General for POD
 !
@@ -69,9 +69,9 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
         if (nbModeMaxi .ne. 0) then
             call utmess('I', 'ROM18_49', si = nbModeMaxi)
         endif
-        call utmess('I', 'ROM18_51' , sr = tole_svd)
+        call utmess('I', 'ROM18_51' , sr = toleSVD)
         if (operation .eq. 'POD_INCR') then
-            call utmess('I', 'ROM18_52' , sr = tole_incr)
+            call utmess('I', 'ROM18_52' , sr = toleIncr)
         endif
         call utmess('I', 'ROM18_50' , sk = fieldName)
     endif

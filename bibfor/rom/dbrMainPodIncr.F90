@@ -17,62 +17,54 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_main_pod(paraPod, baseOut)
+subroutine dbrMainPodIncr(lReuse, paraPod, baseOut)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/as_allocate.h"
+#include "asterf_types.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/dbr_calcpod_q.h"
-#include "asterfort/dbr_calcpod_redu.h"
 #include "asterfort/dbr_calcpod_save.h"
-#include "asterfort/dbr_calcpod_sele.h"
 #include "asterfort/dbr_calcpod_size.h"
-#include "asterfort/dbr_calcpod_svd.h"
+#include "asterfort/dbr_pod_incr.h"
 #include "asterfort/infniv.h"
-#include "asterfort/romTableSave.h"
 #include "asterfort/utmess.h"
 !
+aster_logical, intent(in) :: lReuse
 type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 type(ROM_DS_Empi), intent(in) :: baseOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE
+! DEFI_BASE_REDUIT
 !
-! Main subroutine to compute base - For standard POD
+! Main subroutine to compute base - For incremental POD
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  lReuse          : .true. if reuse
 ! In  paraPod          : datastructure for parameters (POD)
 ! In  baseOut          : output base
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nbSing, nbMode, nbSnap, iSnap, nbModeMaxi, m, n
-    real(kind=8), pointer :: q(:) => null()
-    real(kind=8), pointer :: v(:) => null()
-    real(kind=8), pointer :: s(:) => null() 
-    real(kind=8), pointer :: v_gamma(:) => null()
-    real(kind=8) :: toleSVD
+    real(kind=8), pointer :: q(:) => null(), v(:) => null(), s(:) => null()
+    integer :: nbMode, nbSnap, m, n
     character(len=8) :: resultDomName
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM18_58')
+        call utmess('I', 'ROM18_59')
     endif
 !
 ! - Get parameters
 !
-    toleSVD       = paraPod%tole_svd
-    nbSnap        = paraPod%snap%nbSnap
-    nbModeMaxi    = paraPod%nb_mode_maxi
     resultDomName = paraPod%resultDom%resultName
 !
 ! - Get size of snapshots matrix
@@ -84,34 +76,19 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 !    
     call dbr_calcpod_q(baseOut, resultDomName, paraPod%snap, m, n, q)
 !
-! - Compute modes by SVD
+! - Incremental POD method
 !
-    call dbr_calcpod_svd(m, n, q, s, v, nbSing)
-!
-! - Select modes
-!
-    call dbr_calcpod_sele(nbModeMaxi, toleSVD, s, nbSing, nbMode)
+    call dbr_pod_incr(lReuse, baseOut, paraPod,&
+                      q, s, v, nbMode, nbSnap)
 !
 ! - Save base
-! 
+!
     call dbr_calcpod_save(baseOut, nbMode, nbSnap, s, v)
-!
-! - Compute reduced coordinates
-!
-    call dbr_calcpod_redu(nbSnap, m, q, v, nbMode, v_gamma)
-!
-! - Save the reduced coordinates in a table
-!
-    do iSnap = 1, nbSnap
-        call romTableSave(paraPod%tablReduCoor%tablResu, nbMode, v_gamma,&
-                          numeSnap_ = iSnap)
-    end do
 !
 ! - Clean
 !
     AS_DEALLOCATE(vr = q)
     AS_DEALLOCATE(vr = v)
     AS_DEALLOCATE(vr = s)
-    AS_DEALLOCATE(vr = v_gamma)
 !
 end subroutine

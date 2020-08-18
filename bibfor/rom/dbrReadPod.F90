@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_read_pod(operation, paraPod)
+subroutine dbrReadPod(operation, paraPod)
 !
 use Rom_Datastructure_type
 !
@@ -52,11 +52,11 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
     integer :: ifm, niv
     integer :: nocc
-    real(kind=8) :: tole_svd, tole_incr
+    real(kind=8) :: toleSVD, toleIncr
     character(len=16) :: fieldName
-    character(len=8)  :: axe_line, surf_num, base_type
-    character(len=8)  :: modelUser, resultName
-    integer :: nb_mode_maxi
+    character(len=8)  :: lineicAxis, lineicSect, baseType
+    character(len=8)  :: resultDomName
+    integer :: nbModeMaxi
     type(ROM_DS_Result) :: resultDom
 !
 ! --------------------------------------------------------------------------------------------------
@@ -68,69 +68,69 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
 ! - Initializations
 !
-    tole_svd     = 0.d0
-    tole_incr    = 0.d0
-    nb_mode_maxi = 0
-    fieldName    = ' '
-    axe_line     = ' '
-    surf_num     = ' '
-    base_type    = ' '
-    resultName   = ' '
-    modelUser    = ' '
+    toleSVD       = 0.d0
+    toleIncr      = 0.d0
+    nbModeMaxi    = 0
+    fieldName     = ' '
+    lineicAxis    = ' '
+    lineicSect    = ' '
+    baseType      = ' '
+    resultDomName = ' '
 !
 ! - Get parameters - Results to process
 !
-    call getvid(' ', 'RESULTAT', scal = resultName)
+    call getvid(' ', 'RESULTAT', scal = resultDomName)
     call getvtx(' ', 'NOM_CHAM', scal = fieldName, nbret = nocc)
     ASSERT(nocc .eq. 1)
-    call getvid(' ', 'MODELE'  , scal = modelUser, nbret = nocc)
-    if (nocc .ne. 1) then
-        modelUser = ' '
-    endif
 !
 ! - Maximum number of modes
 !
-    call getvis(' ', 'NB_MODE' , scal = nb_mode_maxi, nbret = nocc)
+    call getvis(' ', 'NB_MODE' , scal = nbModeMaxi, nbret = nocc)
     if (nocc .eq. 0) then
-        nb_mode_maxi = 0
+        nbModeMaxi = 0
     endif
 !
 ! - Get parameters - Base type to numbering
 !
-    call getvtx(' ', 'TYPE_BASE', scal = base_type)
-    if (base_type .eq. 'LINEIQUE') then
-        call getvtx(' ', 'AXE', scal = axe_line, nbret = nocc)
+    call getvtx(' ', 'TYPE_BASE', scal = baseType)
+    if (baseType .eq. 'LINEIQUE') then
+        call getvtx(' ', 'AXE', scal = lineicAxis, nbret = nocc)
         ASSERT(nocc .eq. 1)
-        call getvtx(' ', 'SECTION', scal = surf_num, nbret = nocc)
+        call getvtx(' ', 'SECTION', scal = lineicSect, nbret = nocc)
         ASSERT(nocc .eq. 1)
     endif
 !
 ! - Get parameters - For SVD selection
 !
-    call getvr8(' ', 'TOLE_SVD', scal = tole_svd)
+    call getvr8(' ', 'TOLE_SVD', scal = toleSVD)
     if (operation .eq. 'POD_INCR') then
-        call getvr8(' ', 'TOLE', scal = tole_incr)
-        call romTableParaRead(paraPod%tablReduCoor)
+        call getvr8(' ', 'TOLE', scal = toleIncr)
     endif
 !
 ! - Read parameters for snapshot selection
 !
-    call romSnapRead(resultName, paraPod%snap)
+    call romSnapRead(resultDomName, paraPod%snap)
+!
+! - Read parameters for reduced coordinate table
+!
+    if (operation .eq. 'POD_INCR') then
+        call romTableParaRead(paraPod%tablReduCoor)
+    endif
 !
 ! - Get parameters for result datastructure
 !
-    call romResultGetInfo(resultName, resultDom)
+    call romResultGetInfo(resultDomName, resultDom)
 !
 ! - Save parameters in datastructure
 !
-    paraPod%field_name   = fieldName
-    paraPod%base_type    = base_type
-    paraPod%axe_line     = axe_line
-    paraPod%surf_num     = surf_num
-    paraPod%tole_svd     = tole_svd
-    paraPod%tole_incr    = tole_incr
-    paraPod%nb_mode_maxi = nb_mode_maxi
-    paraPod%modelUser    = modelUser
-    paraPod%resultDom    = resultDom
+    paraPod%fieldName     = fieldName
+    paraPod%baseType      = baseType
+    paraPod%lineicAxis    = lineicAxis
+    paraPod%lineicSect    = lineicSect
+    paraPod%toleSVD       = toleSVD
+    paraPod%toleIncr      = toleIncr
+    paraPod%nbModeMaxi    = nbModeMaxi
+    paraPod%resultDomName = resultDomName
+    paraPod%resultDom     = resultDom
 !
 end subroutine

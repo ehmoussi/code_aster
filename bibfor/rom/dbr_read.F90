@@ -28,7 +28,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dbrReadGreedy.h"
 #include "asterfort/dbrReadOrtho.h"
-#include "asterfort/dbr_read_pod.h"
+#include "asterfort/dbrReadPod.h"
 #include "asterfort/dbrReadTrunc.h"
 #include "asterfort/gcucon.h"
 #include "asterfort/getvid.h"
@@ -94,7 +94,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
     call getvtx(' ', 'OPERATION', scal = operation)
     if (operation(1:3) .eq. 'POD') then
-        call dbr_read_pod(operation, cmdPara%paraPod)
+        call dbrReadPod(operation, cmdPara%paraPod)
     elseif (operation .eq. 'GLOUTON') then
         call dbrReadGreedy(cmdPara%paraGreedy)
     elseif (operation .eq. 'TRONCATURE') then

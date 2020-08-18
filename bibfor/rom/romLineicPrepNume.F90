@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_rnum(base, nbNodeWithDof)
+subroutine romLineicPrepNume(base, nbNodeWithDof)
 !
 use Rom_Datastructure_type
 !
@@ -47,7 +47,8 @@ integer, intent(in) ::  nbNodeWithDof
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO   base          : base
+! IO  base             : base
+! In  nbNodeWithDof    : number of nodes with dof (model on mesh)
 !
 ! --------------------------------------------------------------------------------------------------
 !

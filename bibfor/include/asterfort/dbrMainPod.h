@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_read_pod(operation, paraPod)
+    subroutine dbrMainPod(paraPod, baseOut)
         use Rom_Datastructure_type
-        character(len=16), intent(in) :: operation
-        type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
-    end subroutine dbr_read_pod
+        type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
+        type(ROM_DS_Empi), intent(in) :: baseOut
+    end subroutine dbrMainPod
 end interface
