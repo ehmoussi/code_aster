@@ -21,13 +21,26 @@
 
 from ..Utilities import _
 
+# Messages for all commands in ROM (generic)
+
 cata_msg = {
 
+    1 : _("""Initialisation des structures de données."""),
 
-   10 : _("""Consommation mémoire de la SVD: %(i1)d octets."""),
+    2 : _("""Lecture des paramètres de la commande."""),
 
-   12 : _("""Calcul des coordonnées réduites."""),
+    3 : _("""Vérification des paramètres de la commande."""),
+ 
+    4 : _("""Initialisation de la base à créer."""),
+ 
+    5 : _("""Initialisation de l'algorithme."""),
 
-   14 : _("""Nombre final de clichés retenus dans l'algorithme incrémental: %(i1)d."""),
+    6 : _("""Paramètres généraux de la commande pour la méthode %(k1)s."""),
+
+    7 : _("""On modifie une base déjà existante."""),
+
+    8 : _("""On crée une nouvelle base."""),
+
+    9 : _("""Calcul de la base."""),
 
 }

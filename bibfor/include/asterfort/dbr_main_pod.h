@@ -20,6 +20,6 @@ interface
     subroutine dbr_main_pod(paraPod, baseOut)
         use Rom_Datastructure_type
         type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
-        type(ROM_DS_Empi), intent(inout) :: baseOut
+        type(ROM_DS_Empi), intent(in) :: baseOut
     end subroutine dbr_main_pod
 end interface

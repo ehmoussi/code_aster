@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_read_rb(ds_para_rb)
+subroutine dbr_read_rb(paraRb)
 !
 use Rom_Datastructure_type
 !
@@ -33,17 +33,17 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/getvr8.h"
 !
-type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
+type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Read parameters - For RB methods
+! Read parameters - For GLOUTON method
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para_rb       : datastructure for parameters (RB)
+! IO  paraRb           : datastructure for parameters (RB)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,8 +57,10 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_27')
+        call utmess('I', 'ROM18_2')
     endif
+!
+! - Initializations
 !
     stab_fsi = ' '
     ortho_base = ' '
@@ -85,17 +87,17 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
 ! - Read data for multiparametric problems
 !
-    call romMultiParaRead(ds_para_rb%multipara)
+    call romMultiParaRead(paraRb%multipara)
 !
 ! - Read solver parameters
 !
-    call cresol(ds_para_rb%solver)
+    call cresol(paraRb%solver)
 !
 ! - Save parameters in datastructure
 !
-    ds_para_rb%nb_mode_maxi = nb_mode_maxi
-    ds_para_rb%l_ortho_base = l_ortho_base
-    ds_para_rb%l_stab_fsi   = l_stab_fsi
-    ds_para_rb%tole_greedy  = tole_greedy
+    paraRb%nb_mode_maxi = nb_mode_maxi
+    paraRb%l_ortho_base = l_ortho_base
+    paraRb%l_stab_fsi   = l_stab_fsi
+    paraRb%tole_greedy  = tole_greedy
 !
 end subroutine

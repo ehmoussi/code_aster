@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_para_info_rb(ds_para_rb)
+subroutine dbr_para_info_rb(paraRb)
 !
 use Rom_Datastructure_type
 !
@@ -30,47 +30,44 @@ implicit none
 #include "asterfort/romSolveInfo.h"
 #include "asterfort/romMultiParaInfo.h"
 !
-type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
+type(ROM_DS_ParaDBR_RB), intent(in) :: paraRb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Informations about DEFI_BASE_REDUITE parameters
+! Print informations about parameters - For GLOUTON method
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para_rb       : datastructure for parameters (RB)
+! In  paraRb       : datastructure for parameters (RB)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode_maxi
+    integer :: nbModeMaxi
     real(kind=8) :: tole_greedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM7_21')
+        call utmess('I', 'ROM18_53')
     endif
 !
-! - Get parameters in datastructure - General for POD
+! - Get parameters
 !
-    nb_mode_maxi = ds_para_rb%nb_mode_maxi
-    tole_greedy  = ds_para_rb%tole_greedy
+    nbModeMaxi  = paraRb%nb_mode_maxi
+    tole_greedy = paraRb%tole_greedy
 !
 ! - Print - General for RB
 !
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_17', si = nb_mode_maxi)
-        call utmess('I', 'ROM5_21', sr = tole_greedy)
-        call utmess('I', 'ROM3_39')
-        call romMultiParaInfo(ds_para_rb%multipara)
-        call utmess('I', 'ROM3_37')
-        call romSolveInfo(ds_para_rb%algoGreedy%solveDOM)
-        call utmess('I', 'ROM3_38')
-        call romSolveInfo(ds_para_rb%algoGreedy%solveROM)
+        call utmess('I', 'ROM18_54', si = nbModeMaxi)
+        call utmess('I', 'ROM18_55', sr = tole_greedy)
+        call romMultiParaInfo(paraRb%multipara)
+        call romSolveInfo(paraRb%algoGreedy%solveDOM)
+        call romSolveInfo(paraRb%algoGreedy%solveROM)
     endif
 !
 end subroutine

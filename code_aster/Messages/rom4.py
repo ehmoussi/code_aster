@@ -31,9 +31,13 @@ cata_msg = {
 
    10 : _("""Les bases ne sont pas définies sur le même maillage que le résultat."""),
 
+   11 : _("""On ne peut pas utiliser une base avec des modes définis sur un autre support que les noeuds."""),
+
    12 : _("""Le GROUP_NO %(k1)s fait déjà partie du maillage."""),
 
    13 : _("""Le GROUP_MA %(k1)s fait déjà partie du maillage."""),
+
+   15 : _("""Le nombre de couches du domaine est inférieur au nombre de couches de l'interface, on aura peut-être un problème de convergence"""),
 
    16 : _("""Les modes ne sont pas des champs du type attendu."""),
 

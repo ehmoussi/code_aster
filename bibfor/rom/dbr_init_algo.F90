@@ -24,6 +24,7 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/assert.h"
+#include "asterfort/dbr_init_algo_ortho.h"
 #include "asterfort/dbr_init_algo_pod.h"
 #include "asterfort/dbr_init_algo_rb.h"
 #include "asterfort/dbr_init_algo_tr.h"
@@ -34,9 +35,9 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Init algorithm
+! Initializations for algorithm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,7 +51,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM7_6')
+        call utmess('I', 'ROM19_5')
     endif
 !
     if (cmdPara%operation(1:3) .eq. 'POD') then
@@ -60,7 +61,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
         call dbr_init_algo_tr(cmdPara%paraTrunc)
     elseif (cmdPara%operation .eq. 'ORTHO') then
-! ------ Nothing to do
+        call dbr_init_algo_ortho()
     else
         ASSERT(ASTER_FALSE)
     endif

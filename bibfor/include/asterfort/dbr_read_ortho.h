@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_read_ortho(ds_para_ortho)
+    subroutine dbr_read_ortho(paraOrtho)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: ds_para_ortho
+        type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: paraOrtho
     end subroutine dbr_read_ortho
 end interface

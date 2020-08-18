@@ -26,7 +26,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
-#include "asterfort/jeveuo.h"
 #include "asterfort/romTableChck.h"
 #include "asterfort/rs_paraonce.h"
 #include "asterfort/utmess.h"
@@ -38,7 +37,7 @@ type(ROM_DS_Empi), intent(in) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
 ! Some checks - For POD methods
 !
@@ -63,13 +62,13 @@ type(ROM_DS_Empi), intent(in) :: base
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I','ROM5_19')
+        call utmess('I','ROM18_37')
     endif
 !
 ! - General check
 !
     if (lReuse .and. operation .eq. 'POD') then
-        call utmess('F', 'ROM2_13', sk = operation)
+        call utmess('F', 'ROM18_38', sk = operation)
     endif
 !
 ! - Check if parameters are the same on all storing index

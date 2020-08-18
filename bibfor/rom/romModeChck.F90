@@ -69,10 +69,4 @@ type(ROM_DS_Field), intent(in) :: mode
         call utmess('F','ROM10_12')
     endif
 !
-! - Check support
-!
-    if (mode%fieldSupp .ne. 'NOEU') then
-        call utmess('F','ROM10_13')
-    endif
-!
 end subroutine

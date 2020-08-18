@@ -39,9 +39,9 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Compute
+! DEFI_BASE_REDUIT
 !
-! Main subroutine to compute base - Incremental POD method
+! Main subroutine to compute base - For incremental POD
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,11 +51,19 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     real(kind=8), pointer :: q(:) => null(), v(:) => null(), s(:) => null()
     integer :: nbMode, nbSnap, m, n
     character(len=8) :: resultDomName
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM18_59')
+    endif
+!
+! - Get parameters
 !
     resultDomName = paraPod%resultDom%resultName
 !

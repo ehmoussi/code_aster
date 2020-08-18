@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_main_rb(paraRb, base)
+    subroutine dbr_main_rb(paraRb, baseOut)
         use Rom_Datastructure_type
         type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
-        type(ROM_DS_Empi), intent(inout) :: base
+        type(ROM_DS_Empi), intent(inout) :: baseOut
     end subroutine dbr_main_rb
 end interface

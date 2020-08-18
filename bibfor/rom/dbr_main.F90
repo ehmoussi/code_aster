@@ -36,9 +36,9 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Compute
+! DEFI_BASE_REDUITE
 !
-! Main subroutine to compute empiric modes
+! Main subroutine to compute base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,7 +52,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM7_9')
+        call utmess('I', 'ROM19_9')
     endif
 !
     if (cmdPara%operation .eq. 'POD') then

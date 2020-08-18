@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_para_info_tr(ds_para_tr)
+subroutine dbr_para_info_tr(paraTrunc)
 !
 use Rom_Datastructure_type
 !
@@ -28,17 +28,17 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
+type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Informations about DEFI_BASE_REDUITE parameters
+! Print informations about parameters - For truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para_tr       : datastructure for truncation parameters
+! In  paraTrunc       : datastructure for parameters (truncation)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,12 +49,12 @@ type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM7_22')
+        call utmess('I', 'ROM18_56')
     endif
 !
 ! - Get parameters in datastructure
 !
-    base_init = ds_para_tr%base_init
-    model_rom = ds_para_tr%model_rom
+    base_init = paraTrunc%base_init
+    model_rom = paraTrunc%model_rom
 !
 end subroutine

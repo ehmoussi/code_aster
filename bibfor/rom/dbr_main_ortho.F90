@@ -24,15 +24,15 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
-#include "asterfort/vpgskp.h"
-#include "asterfort/utmess.h"
+#include "asterfort/assert.h"
+#include "asterfort/dbr_calcpod_svd.h"
 #include "asterfort/infniv.h"
 #include "asterfort/romBaseCreateMatrix.h"
 #include "asterfort/romBaseSave.h"
-#include "asterfort/dbr_calcpod_svd.h"
+#include "asterfort/utmess.h"
+#include "asterfort/vpgskp.h"
 !
 type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
 type(ROM_DS_Empi), intent(in) :: baseOut
@@ -41,11 +41,11 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 !
 ! DEFI_BASE_REDUITE - Compute
 !
-! Main subroutine to compute modes - Orthogonalization
+! Main subroutine to compute base - For orthogonalization
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  paraOrtho        : datastructure for orthogonalization parameters
+! In  paraOrtho        : datastructure for parameters (orthogonalization)
 ! In  baseOut          : output base
 !
 ! --------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_72')
+        call utmess('I', 'ROM18_57')
     endif
 !
 ! - Get parameters
@@ -85,7 +85,7 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 !
     ddlexc(1:nbEqua) = 1
 !
-! - Get base
+! - Create [PHI] matrix from base
 !
     call romBaseCreateMatrix(paraOrtho%ds_empi_init, matrPhi)
 !
@@ -94,11 +94,11 @@ type(ROM_DS_Empi), intent(in) :: baseOut
     call vpgskp(nbEqua, nbMode, matrPhi, alpha, lmatb,&
                 0     , trav1 , ddlexc , trav3)
 !
-! - Compute modes by SVD
+! - Compute base by SVD
 !
     call dbr_calcpod_svd(nbMode, nbEqua, matrPhi, s, v, nbSing)
 !
-! - Save new base
+! - Save base
 !
     call romBaseSave(baseOut, nbMode, nbSnap, matrPhi)
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_para_info_ortho(ds_para_ortho)
+subroutine dbr_para_info_ortho(paraOrtho)
 !
 use Rom_Datastructure_type
 !
@@ -28,17 +28,17 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR_ORTHO), intent(in) :: ds_para_ortho
+type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Informations about DEFI_BASE_REDUITE parameters
+! Print informations about parameters - For orthogonalization
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para_ortho    : datastructure for orthogonalization parameters
+! In  paraOrtho        : datastructure for parameters (orthogonalization)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,8 +48,8 @@ type(ROM_DS_ParaDBR_ORTHO), intent(in) :: ds_para_ortho
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM7_31')
-        call utmess('I', 'ROM7_32', sr = ds_para_ortho%alpha)
+        call utmess('I', 'ROM18_46')
+        call utmess('I', 'ROM18_47', sr = paraOrtho%alpha)
     endif
 !
 end subroutine

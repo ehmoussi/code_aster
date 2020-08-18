@@ -34,49 +34,46 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Informations about DEFI_BASE_REDUITE parameters
+! Print informations about parameters - For POD methods
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para_pod      : datastructure for parameters (POD)
+! In  paraPod          : datastructure for parameters (POD)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: fieldName, surf_num
-    character(len=8)  :: axe_line
+    character(len=24) :: fieldName
     real(kind=8) :: tole_svd, tole_incr
-    integer :: nb_mode_maxi
+    integer :: nbModeMaxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM7_20')
+        call utmess('I', 'ROM18_48')
     endif
 !
-! - Get parameters in datastructure - General for POD
+! - Get parameters
 !
-    tole_svd     = paraPod%tole_svd
-    tole_incr    = paraPod%tole_incr
-    fieldName    = paraPod%field_name
-    axe_line     = paraPod%axe_line
-    surf_num     = paraPod%surf_num
-    nb_mode_maxi = paraPod%nb_mode_maxi
+    tole_svd   = paraPod%tole_svd
+    tole_incr  = paraPod%tole_incr
+    fieldName  = paraPod%field_name
+    nbModeMaxi = paraPod%nb_mode_maxi
 !
 ! - Print - General for POD
 !
     if (niv .ge. 2) then
-        if (nb_mode_maxi .ne. 0) then
-            call utmess('I', 'ROM5_17', si = nb_mode_maxi)
+        if (nbModeMaxi .ne. 0) then
+            call utmess('I', 'ROM18_49', si = nbModeMaxi)
         endif
-        call utmess('I', 'ROM7_3' , sr = tole_svd)
+        call utmess('I', 'ROM18_51' , sr = tole_svd)
         if (operation .eq. 'POD_INCR') then
-            call utmess('I', 'ROM7_13' , sr = tole_incr)
+            call utmess('I', 'ROM18_52' , sr = tole_incr)
         endif
-        call utmess('I', 'ROM7_2' , sk = fieldName)
+        call utmess('I', 'ROM18_50' , sk = fieldName)
     endif
 !
 ! - Print about snapshots selection

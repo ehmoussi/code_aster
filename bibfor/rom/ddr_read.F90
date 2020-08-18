@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine ddr_read(ds_para)
+subroutine ddr_read(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -27,18 +27,18 @@ implicit none
 #include "asterc/getres.h"
 #include "asterc/getfac.h"
 #include "asterfort/assert.h"
-#include "asterfort/getvid.h"
-#include "asterfort/getvtx.h"
-#include "asterfort/getvis.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/romBaseGetInfo.h"
-#include "asterfort/romBasePrintInfo.h"
 #include "asterfort/getelem.h"
 #include "asterfort/getnode.h"
+#include "asterfort/getvid.h"
+#include "asterfort/getvis.h"
+#include "asterfort/getvtx.h"
+#include "asterfort/infniv.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/romBaseGetInfo.h"
+#include "asterfort/romBasePrintInfo.h"
+#include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDDR), intent(inout) :: ds_para
+type(ROM_DS_ParaDDR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,7 +48,7 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para          : datastructure for parameters
+! IO  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,23 +66,25 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_10')
+        call utmess('I', 'ROM19_2')
     endif
 !
-    base_prim = ' '
-    base_dual = ' '
-    mesh = ' '
-    mesh_reuse = ' '
-     k16bid = ' '
-    grelem_rid  = ' '
-    grnode_int  = ' '
-    grnode_sub = ' '
-    list_mail = ' '
+! - Initializations
+!
+    base_prim    = ' '
+    base_dual    = ' '
+    mesh         = ' '
+    mesh_reuse   = ' '
+    k16bid       = ' '
+    grelem_rid   = ' '
+    grnode_int   = ' '
+    grnode_sub   = ' '
+    list_mail    = ' '
     nb_layer_rid = 0
     nb_layer_sub = 0
-    nb_node = 0
-    nb_mail = 0
-    l_corr_ef = .false._1
+    nb_node      = 0
+    nb_mail      = 0
+    l_corr_ef    = ASTER_FALSE
 !
 ! - Output datastructure
 !
@@ -103,7 +105,7 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
         call getvtx(' ', 'GROUP_NO_ENCASTRE'  , scal = grnode_sub)
         call getvis(' ', 'NB_COUCHE_ENCASTRE' , scal = nb_layer_sub, nbret = nocc)
         if (nb_layer_sub .gt. nb_layer_rid) then
-            call utmess('A', 'ROM5_15')
+            call utmess('A', 'ROM4_15')
         endif
     endif
 !
@@ -115,8 +117,8 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
     if (nocc .eq. 1) then
         list_node = '&&OP0050.LIST_NODE'
         call getnode(mesh   , keywf, 1, ' ', list_node, nb_node)
-        call jeveuo(list_node, 'L', vi = ds_para%v_rid_mini)
-        ds_para%nb_rid_mini = nb_node
+        call jeveuo(list_node, 'L', vi = cmdPara%v_rid_mini)
+        cmdPara%nb_rid_mini = nb_node
     endif
 !
 ! - Maximum RID
@@ -125,11 +127,11 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
     call getfac(keywf, nocc)
     ASSERT(nocc .le. 1)
     if (nocc .eq. 1) then
-        ds_para%l_rid_maxi = .true._1
+        cmdPara%l_rid_maxi = .true._1
         list_mail = '&&OP0050.LIST_MAIL'
         call getelem(mesh, keywf, 1, ' ', list_mail, nb_mail)
-        call jeveuo(list_mail, 'L', vi = ds_para%v_rid_maxi)
-        ds_para%nb_rid_maxi = nb_mail
+        call jeveuo(list_mail, 'L', vi = cmdPara%v_rid_maxi)
+        cmdPara%nb_rid_maxi = nb_mail
     endif
 !
 ! - Get informations about bases - Primal
@@ -146,14 +148,14 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
 !
 ! - Save parameters in datastructure
 !
-    ds_para%mesh          = mesh
-    ds_para%grelem_rid    = grelem_rid
-    ds_para%nb_layer_rid  = nb_layer_rid
-    ds_para%grnode_int    = grnode_int
-    ds_para%l_corr_ef     = l_corr_ef
-    ds_para%grnode_sub    = grnode_sub
-    ds_para%nb_layer_sub  = nb_layer_sub
-    ds_para%ds_empi_prim  = empi_prim
-    ds_para%ds_empi_dual  = empi_dual
+    cmdPara%mesh         = mesh
+    cmdPara%grelem_rid   = grelem_rid
+    cmdPara%nb_layer_rid = nb_layer_rid
+    cmdPara%grnode_int   = grnode_int
+    cmdPara%l_corr_ef    = l_corr_ef
+    cmdPara%grnode_sub   = grnode_sub
+    cmdPara%nb_layer_sub = nb_layer_sub
+    cmdPara%ds_empi_prim = empi_prim
+    cmdPara%ds_empi_dual = empi_dual
 !
 end subroutine

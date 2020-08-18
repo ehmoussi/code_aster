@@ -56,7 +56,7 @@ type(ROM_DS_ParaDDR), intent(in) :: cmdPara
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_10')
+        call utmess('I', 'ROM19_3')
     endif
 !
 ! - Get parameters in datastructure
@@ -73,6 +73,9 @@ type(ROM_DS_ParaDDR), intent(in) :: cmdPara
     modeDual = baseDual%mode
     call romModeChck(modePrim)
     call romModeChck(modeDual)
+    if (modePrim%fieldSupp .ne. 'NOEU' .or. modeDual%fieldSupp .ne. 'NOEU') then
+        call utmess('F','ROM4_11')
+    endif
 !
 ! - Check mesh
 !

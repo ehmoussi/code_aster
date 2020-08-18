@@ -39,9 +39,7 @@ cata_msg = {
 
    36 : _("""Le système global résultant est de type complexe."""),
 
-   37 : _("""Paramètres du système complet."""),
-
-   38 : _("""Paramètres du système réduit."""),
+   37 : _("""Paramètres du système."""),
 
    39 : _("""Paramètres du problème multi-paramétrique."""),
 

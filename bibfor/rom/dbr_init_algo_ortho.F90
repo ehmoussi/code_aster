@@ -15,10 +15,35 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! person_in_charge: mickael.abbas at edf.fr
 !
-interface
-    subroutine dbr_read_rb(paraRb)
-        use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
-    end subroutine dbr_read_rb
-end interface
+subroutine dbr_init_algo_ortho()
+!
+use Rom_Datastructure_type
+!
+implicit none
+!
+#include "asterfort/assert.h"
+#include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
+!
+! --------------------------------------------------------------------------------------------------
+!
+! DEFI_BASE_REDUITE
+!
+! Initializations for algorith - For orthogonalization
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: ifm, niv
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM18_29')
+    endif
+!
+    ! Nothing to do
+!
+end subroutine

@@ -39,7 +39,7 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
 ! Read parameters - For POD methods
 !
@@ -50,7 +50,8 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nocc, ifm, niv
+    integer :: ifm, niv
+    integer :: nocc
     real(kind=8) :: tole_svd, tole_incr
     character(len=16) :: fieldName
     character(len=8)  :: axe_line, surf_num, base_type
@@ -62,11 +63,11 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_18')
+        call utmess('I', 'ROM18_1')
     endif
 !
 ! - Initializations
-! 
+!
     tole_svd     = 0.d0
     tole_incr    = 0.d0
     nb_mode_maxi = 0

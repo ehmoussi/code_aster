@@ -32,24 +32,27 @@ implicit none
 #include "asterfort/dbr_calcpod_sele.h"
 #include "asterfort/dbr_calcpod_size.h"
 #include "asterfort/dbr_calcpod_svd.h"
+#include "asterfort/infniv.h"
 #include "asterfort/romTableSave.h"
+#include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
-type(ROM_DS_Empi), intent(inout) :: baseOut
+type(ROM_DS_Empi), intent(in) :: baseOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Compute
+! DEFI_BASE_REDUITE
 !
-! Main subroutine to compute modes - For POD methods
+! Main subroutine to compute base - For standard POD
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  paraPod          : datastructure for parameters (POD)
-! IO  baseOut          : output base
+! In  baseOut          : output base
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     integer :: nbSing, nbMode, nbSnap, iSnap, nbModeMaxi, m, n
     real(kind=8), pointer :: q(:) => null()
     real(kind=8), pointer :: v(:) => null()
@@ -59,6 +62,13 @@ type(ROM_DS_Empi), intent(inout) :: baseOut
     character(len=8) :: resultDomName
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM18_58')
+    endif
+!
+! - Get parameters
 !
     toleSVD       = paraPod%tole_svd
     nbSnap        = paraPod%snap%nbSnap

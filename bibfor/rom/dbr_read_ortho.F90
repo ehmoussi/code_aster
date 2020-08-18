@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_read_ortho(ds_para_ortho)
+subroutine dbr_read_ortho(paraOrtho)
 !
 use Rom_Datastructure_type
 !
@@ -25,26 +25,27 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvr8.h"
+#include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: ds_para_ortho
-!
-! --------------------------------------------------------------------------------------------------
-!
-! DEFI_BASE_REDUITE - Initializations
-!
-! Read parameters - For truncation
+type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: paraOrtho
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para_ortho    : datastructure for orthogonalization parameters
+! DEFI_BASE_REDUITE
+!
+! Read parameters - For orthogonalization
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nocc, ifm, niv
+! IO  paraOrtho        : datastructure for parameters (orthogonalization)
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: ifm, niv
+    integer :: nocc
     character(len=8) :: base_init
     real(kind=8) :: alpha
 !
@@ -52,11 +53,13 @@ type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: ds_para_ortho
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_28')
+        call utmess('I', 'ROM18_4')
     endif
 !
+! - Initializations
+!
     base_init = ' '
-    alpha = 0.d0
+    alpha     = 0.d0
 !
 ! - Get parameters
 !
@@ -69,7 +72,7 @@ type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: ds_para_ortho
 !
 ! - Save parameters in datastructure
 !
-    ds_para_ortho%alpha     = alpha
-    ds_para_ortho%base_init = base_init
+    paraOrtho%alpha     = alpha
+    paraOrtho%base_init = base_init
 !
 end subroutine

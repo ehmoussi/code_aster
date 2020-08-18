@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,20 +17,20 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_DSInit(ds_para)
+subroutine dbr_DSInit(cmdPara)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/infniv.h"
-#include "asterfort/dbr_paraRBDSInit.h"
 #include "asterfort/dbr_paraDSInit.h"
-#include "asterfort/romSolveDSInit.h"
+#include "asterfort/dbr_paraRBDSInit.h"
+#include "asterfort/infniv.h"
 #include "asterfort/romGreedyAlgoDSInit.h"
+#include "asterfort/romSolveDSInit.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR), intent(out) :: ds_para
+type(ROM_DS_ParaDBR), intent(out) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -40,15 +40,15 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Out ds_para          : datastructure for parameters
+! Out cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    type(ROM_DS_ParaDBR_POD)   :: ds_para_pod
-    type(ROM_DS_ParaDBR_RB)    :: ds_para_rb
-    type(ROM_DS_ParaDBR_TR)    :: ds_para_tr
-    type(ROM_DS_ParaDBR_ORTHO) :: ds_para_ortho
+    type(ROM_DS_ParaDBR_POD)   :: paraPod
+    type(ROM_DS_ParaDBR_RB)    :: paraRb
+    type(ROM_DS_ParaDBR_TR)    :: paraTrunc
+    type(ROM_DS_ParaDBR_ORTHO) :: paraOrtho
     type(ROM_DS_Solve)         :: ds_solveROM, ds_solveDOM
     type(ROM_DS_MultiPara)     :: ds_multipara
     type(ROM_DS_AlgoGreedy)    :: ds_algoGreedy
@@ -57,7 +57,7 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_9')
+        call utmess('I', 'ROM19_1')
     endif
 !
 ! - Initialisation of datastructure for solving problems
@@ -71,11 +71,11 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
 ! - Initialization of datastructures for RB parameters
 !
-    call dbr_paraRBDSInit(ds_multipara, ds_algoGreedy, ds_para_rb)
+    call dbr_paraRBDSInit(ds_multipara, ds_algoGreedy, paraRb)
 !
 ! - Initialization of datastructures for parameters
 !
-    call dbr_paraDSInit(ds_para_pod, ds_para_rb, ds_para_tr, ds_para_ortho,&
-                        ds_para)
+    call dbr_paraDSInit(paraPod, paraRb, paraTrunc, paraOrtho,&
+                        cmdPara)
 !
 end subroutine

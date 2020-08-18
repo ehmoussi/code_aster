@@ -23,11 +23,8 @@ from ..Utilities import _
 
 cata_msg = {
 
-   12 : _("""La base empirique est construite sur un maillage différent du modèle. Ce n'est pas possible."""),
 
-   13 : _("""Les deux modèles sont identiques, on ne peut rien tronquer !"""),
 
    32 : _("""Échec lors du calcul des coordonnées réduites."""),
 
-   40 : _("""Vous avez donné le nom de la base à tronquer (BASE_INIT) alors que vous voulez tronquer une base déjà existante."""),
 }

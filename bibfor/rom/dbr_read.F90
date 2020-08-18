@@ -26,14 +26,13 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
-#include "asterfort/getvid.h"
+#include "asterfort/dbr_read_ortho.h"
 #include "asterfort/dbr_read_pod.h"
 #include "asterfort/dbr_read_rb.h"
 #include "asterfort/dbr_read_tr.h"
 #include "asterfort/gcucon.h"
-#include "asterfort/dbr_read_ortho.h"
+#include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/getvr8.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
@@ -62,7 +61,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_10')
+        call utmess('I', 'ROM19_2')
     endif
 !
 ! - Initializations

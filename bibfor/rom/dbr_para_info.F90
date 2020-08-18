@@ -36,9 +36,9 @@ type(ROM_DS_ParaDBR), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Informations about DEFI_BASE_REDUITE parameters
+! Print informations about parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,20 +54,19 @@ type(ROM_DS_ParaDBR), intent(in) :: cmdPara
 !
     call infniv(ifm, niv)
 !
-! - Get parameters in datastructure - General for DBR
+! - Get parameters
 !
-    operation     = cmdPara%operation
-    lReuse        = cmdPara%lReuse
+    operation = cmdPara%operation
+    lReuse    = cmdPara%lReuse
 !
-! - Print - General for DBR
+! - Print - General
 !
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_24')
-        call utmess('I', 'ROM5_16', sk = operation)
+        call utmess('I', 'ROM19_6', sk = operation)
         if (lReuse) then
-            call utmess('I', 'ROM7_15')
+            call utmess('I', 'ROM19_7')
         else
-            call utmess('I', 'ROM7_16')
+            call utmess('I', 'ROM19_8')
         endif
     endif
 !

@@ -25,21 +25,21 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
+#include "asterfort/romFSINumberingInit.h"
 #include "asterfort/romGreedyAlgoInit.h"
+#include "asterfort/romMultiParaInit.h"
+#include "asterfort/romMultiParaSystEvalType.h"
 #include "asterfort/romSolveDOMSystCreate.h"
 #include "asterfort/romSolveROMSystCreate.h"
-#include "asterfort/romMultiParaSystEvalType.h"
-#include "asterfort/romMultiParaInit.h"
-#include "asterfort/romFSINumberingInit.h"
+#include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Init algorithm - For RB methods
+! Initializations for algorith - For GLOUTON method
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,7 +58,7 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_41')
+        call utmess('I', 'ROM18_31')
     endif
 !
 ! - Get parameters
@@ -79,7 +79,7 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
 !
     call romMultiParaSystEvalType(paraRb%multipara,&
                                   syst_matr_type, syst_2mbr_type, syst_type)
-    paraRb%algoGreedy%resi_type  = syst_type
+    paraRb%algoGreedy%resi_type = syst_type
 !
 ! - Create objects to solve system (DOM)
 !

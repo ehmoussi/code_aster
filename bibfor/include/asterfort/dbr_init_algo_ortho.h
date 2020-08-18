@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_read_rb(paraRb)
+    subroutine dbr_init_algo_ortho()
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_RB), intent(inout) :: paraRb
-    end subroutine dbr_read_rb
+    end subroutine dbr_init_algo_ortho
 end interface

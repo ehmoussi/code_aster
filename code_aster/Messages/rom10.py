@@ -25,7 +25,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-
     1 : _("""La base contient des champs de type %(k1)s."""),
 
     2 : _("""Un mode contient %(i1)d équations."""),
@@ -35,6 +34,4 @@ cata_msg = {
    11 : _("""Le modèle doit être le même sur tous les modes."""),
 
    12 : _("""On ne peut définir des modes que sur des modèles tridimensionnels."""),
-
-   13 : _("""On ne peut définir des modes que sur des supports nodaux."""),
 }

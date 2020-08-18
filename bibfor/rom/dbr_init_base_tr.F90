@@ -38,9 +38,9 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Prepare datastructure for modes - Truncation
+! Initializations for base - For truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,19 +57,19 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_39')
+        call utmess('I', 'ROM18_16')
     endif
 !
 ! - Get informations about base to truncate
 !
     if (lReuse) then
         if (niv .ge. 2) then
-            call utmess('I', 'ROM2_56')
+            call utmess('I', 'ROM18_17')
         endif
         call romBaseGetInfo(resultName, base)
     else
         if (niv .ge. 2) then
-            call utmess('I', 'ROM2_57')
+            call utmess('I', 'ROM18_18')
         endif
         call romBaseGetInfo(paraTrunc%base_init, paraTrunc%ds_empi_init)
     endif
@@ -77,13 +77,16 @@ type(ROM_DS_Empi), intent(inout) :: base
 ! - Create PROF_CHNO for truncation
 !
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_55')
+        call utmess('I', 'ROM18_19')
     endif
     call dbr_init_prof_tr(resultName, paraTrunc)
 !
 ! - Create base (if necessary)
 !
     if (.not. lReuse) then
+        if (niv .ge. 2) then
+            call utmess('I', 'ROM18_20')
+        endif
         call romBaseDSCopy(paraTrunc%ds_empi_init, resultName, base)
         call romBaseCreate(base, paraTrunc%ds_empi_init%nbMode)
     endif
@@ -92,7 +95,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     if (lReuse) then
         if (paraTrunc%base_init .ne. resultName) then
-            call utmess('F', 'ROM6_40')
+            call utmess('F', 'ROM18_21')
         endif
     endif
 !

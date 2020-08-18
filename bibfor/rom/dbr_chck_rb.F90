@@ -17,52 +17,63 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_rb(operation, ds_para_rb, l_reuse)
+subroutine dbr_chck_rb(paraRb, lReuse)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/utmess.h"
+#include "asterfort/infniv.h"
 #include "asterfort/romMultiParaChck.h"
+#include "asterfort/utmess.h"
 !
-character(len=16), intent(in) :: operation
-type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
-aster_logical, intent(in) :: l_reuse
-!
-! --------------------------------------------------------------------------------------------------
-!
-! DEFI_BASE_REDUITE - Initializations
-!
-! Some checks - For RB methods
+type(ROM_DS_ParaDBR_RB), intent(in) :: paraRb
+aster_logical, intent(in) :: lReuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  operation        : type of method
-! In  ds_para_rb       : datastructure for parameters (RB)
-! In  l_reuse          : .true. if reuse
+! DEFI_BASE_REDUITE
+!
+! Some checks - For GLOUTON methods
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (l_reuse) then
-        call utmess('F','ROM2_13', sk = operation)
+! In  paraRb           : datastructure for parameters (RB)
+! In  lReuse           : .true. if reuse
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: ifm, niv
+    character(len=16), parameter :: operation = 'GLOUTON'
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I','ROM18_39')
+    endif
+!
+! - General check
+!
+    if (lReuse) then
+        call utmess('F','ROM18_38', sk = operation)
     endif
 !
 ! - Check data for multiparametric problems
 !
-    call romMultiParaChck(ds_para_rb%multipara, ds_para_rb%l_stab_fsi)
+    call romMultiParaChck(paraRb%multipara, paraRb%l_stab_fsi)
 !
 ! - Specific checks for DEFI_BASE_REDUITE
 !
-    if (ds_para_rb%multipara%nb_vari_coef .eq. 0) then
-        call utmess('F', 'ROM2_43')
+    if (paraRb%multipara%nb_vari_coef .eq. 0) then
+        call utmess('F', 'ROM18_40')
     endif
 !
 ! - Only on nodal fields
 !
-    if (ds_para_rb%multipara%field%fieldSupp .ne. 'NOEU') then
-        call utmess('F','ROM2_2')
+    if (paraRb%multipara%field%fieldSupp .ne. 'NOEU') then
+        call utmess('F','ROM18_41', sk = paraRb%multipara%field%fieldSupp)
     endif
 !
 end subroutine

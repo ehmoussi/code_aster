@@ -23,15 +23,7 @@ from ..Utilities import _
 
 cata_msg = {
 
-    2 : _("""Seuls les champs nodaux sont utilisables avec cette opération."""),
-
-    6 : _("""Tolérance pour détecter les noeuds: %(r1)19.12e."""),
-
    11 : _("""On n'a pas réussi à extraire le champ de type %(k1)s pour le numéro d'ordre %(i1)d."""),
-
-   12 : _("""Initialisation de la base empirique dans le cas d'une méthode POD."""),
-
-   13 : _("""On ne peut pas enrichir une base empirique avec la méthode %(k1)s."""),
 
    14 : _("""La matrice du système sera complexe."""),
 
@@ -62,8 +54,6 @@ cata_msg = {
 
    27 : _("""Création des objets pour le système complet."""),
 
-   28 : _("""Initialisation de la base empirique dans le cas d'une méthode GLOUTON."""),
-
    29 : _("""Le nombre de coefficients pour faire varier les fonctions n'est pas le même pour tous les paramètres."""),
 
    31 : _("""Le coefficient devant le second membre est une fonction et il n'y a aucune donnée sur la variation de cette fonction."""),
@@ -82,25 +72,13 @@ cata_msg = {
 
    38 : _("""Pas de lecture des données pour la variation des coefficients."""),
 
-   39 : _("""Initialisation de la base empirique dans le cas d'une méthode de troncature."""),
-
-   40 : _("""Initialisation de l'algorithme pour les méthodes POD."""),
-
-   41 : _("""Initialisation de l'algorithme pour la méthode GLOUTON."""),
-
    42 : _("""Initialisation pour l'algorithme GLOUTON."""),
-
-   43 : _("""Le calcul d'une base réduite pour le calcul multi-paramétrique avec réduction de modèle nécessite de faire varier les coefficients."""),
 
    44 : _("""Résolution du système réduit."""),
 
    45 : _("""Calcul des coefficients réduits."""),
 
    46 : _("""Pour le coefficient %(i1)d."""),
-
-   47 : _("""Initialisation pour la troncature de la base empirique."""),
-
-   48 : _("""Création de la nouvelle numérotation sur le domaine tronqué."""),
 
    49 : _("""Norme du résidu pour le coefficient %(i1)d: %(r1)19.12e."""),
 
@@ -111,17 +89,5 @@ cata_msg = {
    52 : _("""Coefficient réduit pour le mode %(i1)d et le paramètre %(i2)d: (%(r1)19.12e,%(r2)19.12e)."""),
 
    53 : _("""Initialisation de la numérotation pour STAB_IFS."""),
-
-   55 : _("""Création du nouveau profil de numérotation du champ tronqué."""),
-
-   56 : _("""Lecture de la base à tronquer. La base tronquée aura le même nom que la base à tronquer."""),
-
-   57 : _("""Lecture de la base à tronquer. La base tronquée sera nouvelle."""),
-
-   60 : _("""Initialisation de la base empirique dans le cas d'une orthogonalisation."""),
-
-   61 : _("""Lecture de la base à orthonormaliser. La base orthonormalisée aura le même nom que la base initiale."""),
-
-   62 : _("""Lecture de la base à orthonormaliser. La base orthonormalisée sera nouvelle."""),
 
 }

@@ -41,9 +41,9 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Prepare datastructure for base - For POD methods
+! Initializations for base - For POD methods
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,7 +63,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_12')
+        call utmess('I', 'ROM18_10')
     endif
 !
 ! - Create base
@@ -109,7 +109,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     if (base%baseType .eq. 'LINEIQUE') then
         if (niv .ge. 2) then
-            call utmess('I', 'ROM2_40')
+            call utmess('I', 'ROM18_11')
         endif
         model = base%mode%model
         call modelNodeEF(model, nbNodeWithDof)

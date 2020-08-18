@@ -35,33 +35,7 @@ cata_msg = {
 
     8 : _("""Échec lors du calcul des modes empiriques."""),
 
-    9 : _("""Initialisation de toutes les structures de données."""),
-
-   10 : _("""Lecture de tous les paramètres de la commande."""),
-
-   12 : _("""Préparation de la numérotation des modes linéiques."""),
-
    14 : _("""Échec dans l'orthogonalisation des modes empiriques."""),
-
-   15 : _("""Le nombre de couches du domaine est inférieur au nombre de couches de l'interface, on aura peut-être un problème de convergence"""),
-
-   16 : _("""Méthode de construction de la base empirique: %(k1)s """),
-
-   17 : _("""Nombre de modes maximum de la base empirique: %(i1)d """),
-
-   18 : _("""Lecture des paramètres pour la méthode POD ou POD_INCR."""),
-
-   19 : _("""Vérifications de la conformité de la structure de données résultat utilisée."""),
-
-   21 : _("""Tolérance pour l'algorithme glouton: %(r1)19.12e."""),
-
-   24 : _("""Paramètres généraux de DEFI_BASE_REDUITE."""),
-
-   27 : _("""Lecture des paramètres pour la méthode GLOUTON."""),
-
-   28 : _("""Lecture des paramètres pour la méthode d'orthogonalisation."""),
-
-   29 : _("""Lecture des paramètres pour la méthode de troncature."""),
 
    30 : _("""Vérification des paramètres pour le calcul non-linéaire avec réduction de modèle."""),
 
@@ -101,12 +75,6 @@ cata_msg = {
 
    52 : _("""Le paramètre %(k1)s vaut %(r1)19.12e."""),
 
-   53 : _("""Pour les modèles linéiques, le nombre de composantes par noeud doit être constant. Vérifiez que vous n'avez pas de chargements de Dirichlet appliqués avec AFFE_CHAR_MECA."""),
-
-   60 : _("""Calcul par la méthode GLOUTON."""),
-
-   61 : _("""Calcul du mode empirique %(i1)d."""),
-
    62 : _("""Calcul du second membre du système complet."""),
 
    63 : _("""Calcul de la matrice du système complet."""),
@@ -119,15 +87,11 @@ cata_msg = {
 
    67 : _("""Calcul de la matrice du système réduit."""),
 
-   68 : _("""Troncature de la base empirique."""),
-
    69 : _("""Le pilotage est interdit avec la réduction de modèle."""),
 
    70 : _("""La dynamique est interdite avec la réduction de modèle."""),
 
    71 : _("""Le contact est interdit avec la réduction de modèle."""),
-
-   72 : _("""Orthogonalisation de la base empirique."""),
 
    81 : _("""Paramètres de la base primale utilisée."""),
 
@@ -138,8 +102,6 @@ cata_msg = {
    84 : _("""Calcul avec correction par un calcul élément fini complet."""),
 
    85 : _("""Le raccord sur l'interface utilise un coefficeint de pénalisation de %(r1)19.12e."""),
-
-   92 : _("""Calcul du mode empirique initial."""),
 
    93 : _("""Évaluation des coefficients pour la valeur initiale des paramètres."""),
 

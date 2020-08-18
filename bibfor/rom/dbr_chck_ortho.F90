@@ -25,17 +25,18 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/utmess.h"
+#include "asterfort/infniv.h"
 #include "asterfort/romModeChck.h"
+#include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaDBR_ORTHO), intent(in) :: paraOrtho
 aster_logical, intent(in) :: lReuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Some checks - Truncation
+! Some checks - For orthogonalization
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,9 +45,18 @@ aster_logical, intent(in) :: lReuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     type(ROM_DS_Field) :: mode
+    character(len=8) :: baseInit
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM18_35')
+    endif
+!
+! - Initialisations
 !
     mode = paraOrtho%ds_empi_init%mode
 !
@@ -56,8 +66,19 @@ aster_logical, intent(in) :: lReuse
         call romModeChck(mode)
     endif
 !
+! - No reuse:
+!
+    baseInit = paraOrtho%base_init
+    if (lReuse) then
+        if (baseInit .ne. ' ') then
+            call utmess('F', 'ROM18_21')
+        endif
+    endif
+!
 ! - Only on nodal fields 
 !
-    ASSERT(mode%fieldSupp .eq. 'NOEU')
+    if (mode%fieldSupp .ne. 'NOEU') then
+        call utmess('F','ROM18_36')
+    endif
 !
 end subroutine

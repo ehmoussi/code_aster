@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_read_tr(ds_para_tr)
+subroutine dbr_read_tr(paraTrunc)
 !
 use Rom_Datastructure_type
 !
@@ -25,33 +25,36 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/getvid.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/getvid.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
+type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
 ! Read parameters - For truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para_tr       : datastructure for truncation parameters
+! IO  paraTrunc        : datastructure for parameters (truncation)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nocc, ifm, niv
+    integer :: ifm, niv
+    integer :: nocc
     character(len=8) :: model_rom, base_init
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_29')
+        call utmess('I', 'ROM18_3')
     endif
+!
+! - Initializations
 !
     model_rom = ' '
     base_init = ' '
@@ -67,7 +70,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
 !
 ! - Save parameters in datastructure
 !
-    ds_para_tr%model_rom = model_rom
-    ds_para_tr%base_init = base_init
+    paraTrunc%model_rom = model_rom
+    paraTrunc%base_init = base_init
 !
 end subroutine

@@ -34,9 +34,9 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Prepare datastructure for modes - For RB
+! Initializations for base - For GLOUTON method
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,7 +56,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_28')
+        call utmess('I', 'ROM18_15')
     endif
 !
 ! - Initializations

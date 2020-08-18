@@ -23,21 +23,18 @@ use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/assert.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jenuno.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/jexnom.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
+#include "asterfort/assert.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jelira.h"
-#include "asterfort/uttrir.h"
-#include "asterfort/romLineicNumberComponents.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexnom.h"
 #include "asterfort/romLineicIndexList.h"
 #include "asterfort/romLineicIndexSurf.h"
+#include "asterfort/romLineicNumberComponents.h"
 #include "asterfort/utmess.h"
+#include "asterfort/uttrir.h"
 !
 type(ROM_DS_Empi), intent(inout) :: base
 integer, intent(in) ::  nbNodeWithDof
@@ -74,7 +71,7 @@ integer, intent(in) ::  nbNodeWithDof
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-       call utmess('I', 'ROM5_12')
+       call utmess('I', 'ROM18_12')
     endif
 !
 ! - Get parameters
@@ -87,7 +84,7 @@ integer, intent(in) ::  nbNodeWithDof
     nbEqua     = base%mode%nbEqua
     toleNode   = lineicNume%toleNode
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_6', sr = toleNode)
+        call utmess('I', 'ROM18_13', sr = toleNode)
     endif
 !
 ! - Count number of components by node for lineic model

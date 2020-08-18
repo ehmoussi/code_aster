@@ -37,14 +37,14 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Prepare datastructure for modes - For Orthogonalization
+! Initializations for base - For orthogonalization
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  resultName       : name of results datastructure to save base
-! In  paraOrtho        : datastructure for rrthogonalization parameters
+! IO  paraOrtho        : datastructure for orthogonalization parameters
 ! In  lReuse           : .true. if reuse
 ! IO  base             : base
 !
@@ -56,19 +56,19 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_60')
+        call utmess('I', 'ROM18_22')
     endif
 !
 ! - Get informations about base to orthogonalize
 !
     if (lReuse) then
         if (niv .ge. 2) then
-            call utmess('I', 'ROM2_61')
+            call utmess('I', 'ROM18_23')
         endif
         call romBaseGetInfo(resultName, base)
     else
         if (niv .ge. 2) then
-            call utmess('I', 'ROM2_62')
+            call utmess('I', 'ROM18_24')
         endif
         call romBaseGetInfo(paraOrtho%base_init, paraOrtho%ds_empi_init)
     endif
@@ -76,6 +76,9 @@ type(ROM_DS_Empi), intent(inout) :: base
 ! - Create base (if necessary)
 !
     if (.not. lReuse) then
+        if (niv .ge. 2) then
+            call utmess('I', 'ROM18_25')
+        endif
         call romBaseDSCopy(paraOrtho%ds_empi_init, resultName, base)
         call romBaseCreate(base, paraOrtho%ds_empi_init%nbMode)
     endif
@@ -84,7 +87,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     if (lReuse) then
         if (paraOrtho%base_init .ne. resultName) then
-            call utmess('F', 'ROM6_40')
+            call utmess('F', 'ROM18_21')
         endif
     endif
 !

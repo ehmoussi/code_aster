@@ -25,26 +25,23 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/utmess.h"
 #include "asterfort/infniv.h"
-#include "asterfort/rsexch.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/rsnoch.h"
-#include "asterfort/copisd.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/vtcreb.h"
-#include "asterfort/gnomsd.h"
-#include "asterfort/romModeParaSave.h"
 #include "asterfort/romModeParaRead.h"
+#include "asterfort/romModeParaSave.h"
+#include "asterfort/rsexch.h"
+#include "asterfort/rsnoch.h"
+#include "asterfort/utmess.h"
+#include "asterfort/vtcreb.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(in) :: paraTrunc
 type(ROM_DS_Empi), intent(in) :: baseOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Compute
+! DEFI_BASE_REDUITE 
 !
-! Main subroutine to compute modes - Truncation
+! Main subroutine to compute base - For truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,7 +64,7 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_68')
+        call utmess('I', 'ROM18_63')
     endif
 !
 ! - Get parameters of operation
@@ -96,11 +93,13 @@ type(ROM_DS_Empi), intent(in) :: baseOut
                              modeSing_     = modeSing,&
                              numeSlice_    = numeSlice,&
                              nbSnap_       = nbSnap)
+
 ! ----- Access to complete mode
         call rsexch(' '    , resultNameIn, modeSymbName, numeMode,&
                     modeDom, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(modeDom(1:19)//'.VALE', 'L', vr = valeDom)
+
 ! ----- Create new mode (reduced)
         call rsexch(' '    , resultNameOut, modeSymbName, numeMode,&
                     modeRom, iret)
@@ -111,6 +110,7 @@ type(ROM_DS_Empi), intent(in) :: baseOut
                     idx_gdz     = physNume,&
                     nb_equa_inz = nbEquaRom)
         call jeveuo(modeRom(1:19)//'.VALE', 'E', vr = valeRom)
+
 ! ----- Truncation
         numeEquaRom = 0
         do iEqua = 1, nbEquaDom
@@ -120,8 +120,10 @@ type(ROM_DS_Empi), intent(in) :: baseOut
                 valeRom(numeEquaRom) = valeDom(iEqua)
             endif
         enddo
+
 ! ----- Save mode
         call rsnoch(resultNameOut, modeSymbName, numeMode)
+
 ! ----- Save parameters
         call romModeParaSave(resultNameOut, numeMode    ,&
                              modelRom     , modeSymbName,&

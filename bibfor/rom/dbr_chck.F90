@@ -36,7 +36,7 @@ type(ROM_DS_ParaDBR), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
 ! Some checks
 !
@@ -52,19 +52,19 @@ type(ROM_DS_ParaDBR), intent(in) :: cmdPara
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM7_7')
+        call utmess('I', 'ROM19_3')
     endif
 !
     if (cmdPara%operation(1:3) .eq. 'POD') then
         call dbr_chck_pod(cmdPara%operation, cmdPara%paraPod, cmdPara%lReuse, cmdPara%base)
     elseif (cmdPara%operation .eq. 'GLOUTON') then
-        call dbr_chck_rb(cmdPara%operation, cmdPara%paraRb, cmdPara%lReuse)
+        call dbr_chck_rb(cmdPara%paraRb, cmdPara%lReuse)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then
         call dbr_chck_tr(cmdPara%paraTrunc, cmdPara%lReuse)
     elseif (cmdPara%operation .eq. 'ORTHO') then
         call dbr_chck_ortho(cmdPara%paraOrtho, cmdPara%lReuse)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

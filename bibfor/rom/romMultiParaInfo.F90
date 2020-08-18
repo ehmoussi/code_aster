@@ -52,6 +52,8 @@ type(ROM_DS_MultiPara), intent(in) :: ds_multipara
     nb_vect      = ds_multipara%nb_vect
     nb_vari_para = ds_multipara%nb_vari_para
 !
+    call utmess('I', 'ROM3_39')
+!
 ! - For matrix
 !
     call utmess('I', 'ROM3_30', si = nb_matr)

@@ -23,6 +23,7 @@ use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
@@ -32,15 +33,14 @@ implicit none
 #include "asterfort/numero.h"
 #include "asterfort/romFieldNodesAreDefined.h"
 #include "asterfort/utmess.h"
-#include "asterf_types.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Init algorithm - For truncation
+! Initializations for algorith - For truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +59,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_47')
+        call utmess('I', 'ROM18_32')
     endif
 !
 ! - Get parameters
@@ -72,7 +72,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 ! - Create numbering for ROM
 !
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_48')
+        call utmess('I', 'ROM18_33')
     endif
     numeRom = '12345678.NUMED'
     call gnomsd(' ', noojb, 10, 14)
@@ -81,6 +81,9 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! - Create numbering for DOM
 !
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM18_34')
+    endif
     numeDom = '12345678.NUMED'
     call gnomsd(' ', noojb, 10, 14)
     numeDom = noojb(1:14)

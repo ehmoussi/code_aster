@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ integer, intent(out) :: nb_cmp
 ! --------------------------------------------------------------------------------------------------
 !
     if (mod(nb_equa, nb_node) .ne. 0) then
-        call utmess('F', 'ROM5_53')
+        call utmess('F', 'ROM18_14')
     endif
     nb_cmp = nb_equa/nb_node
 !

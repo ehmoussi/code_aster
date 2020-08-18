@@ -28,14 +28,16 @@ implicit none
 #include "asterfort/dbr_init_base_rb.h"
 #include "asterfort/dbr_init_base_tr.h"
 #include "asterfort/dbr_init_base_ortho.h"
+#include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! DEFI_BASE_REDUITE
 !
-! Prepare datastructure for base
+! Initializations for base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,6 +45,14 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM19_4')
+    endif
     if (cmdPara%operation(1:3) .eq. 'POD') then
         call dbr_init_base_pod(cmdPara%resultOut%resultName, cmdPara%paraPod,&
                                cmdPara%lReuse              , cmdPara%base)

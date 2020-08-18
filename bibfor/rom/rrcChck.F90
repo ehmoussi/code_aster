@@ -81,6 +81,7 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
     mode = cmdPara%fieldBuild(1)%base%mode
     call romModeChck(mode)
+    ASSERT(mode%fieldSupp .eq. 'NOEU')
     if (modelDom .ne. mode%model) then
         call utmess('F', 'ROM16_22') 
     endif
@@ -88,6 +89,7 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
     do iFieldBuild = 2, nbFieldBuild
         mode = cmdPara%fieldBuild(iFieldBuild)%base%mode
         call romModeChck(mode)
+        ASSERT(mode%fieldSupp .eq. 'NOEU')
         if (meshRefe .ne. mode%mesh) then
             call utmess('F', 'ROM16_20')
         endif
