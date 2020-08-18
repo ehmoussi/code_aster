@@ -54,7 +54,6 @@ type(ROM_DS_Empi), intent(in) :: baseOut
     integer :: ifm, niv
     real(kind=8), pointer :: q(:) => null(), v(:) => null(), s(:) => null()
     integer :: nbMode, nbSnap, m, n
-    character(len=8) :: resultDomName
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,18 +62,14 @@ type(ROM_DS_Empi), intent(in) :: baseOut
         call utmess('I', 'ROM18_59')
     endif
 !
-! - Get parameters
-!
-    resultDomName = paraPod%resultDom%resultName
-!
 ! - Get size of snapshots matrix
 !
     call dbr_calcpod_size(baseOut, paraPod%snap,&
                           m      , n)
 !
 ! - Create snapshots matrix Q
-!    
-    call dbr_calcpod_q(baseOut, resultDomName, paraPod%snap, m, n, q)
+!
+    call dbr_calcpod_q(paraPod, baseOut, m, n, q)
 !
 ! - Incremental POD method
 !

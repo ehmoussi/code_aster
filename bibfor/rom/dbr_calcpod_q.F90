@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_calcpod_q(base, resultName, snap, m, n, q)
+subroutine dbr_calcpod_q(paraPod, base, m, n, q)
 !
 use Rom_Datastructure_type
 !
@@ -26,15 +26,11 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
-#include "asterfort/rsexch.h"
-#include "asterfort/jelibe.h"
-#include "asterfort/jeveuo.h"
+#include "asterfort/romFieldRead.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dbr_calcpod_ql.h"
 !
+type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 type(ROM_DS_Empi), intent(in) :: base
-character(len=8), intent(in) :: resultName
-type(ROM_DS_Snap), intent(in) :: snap
 integer, intent(in) :: m, n
 real(kind=8), pointer :: q(:)
 !
@@ -46,9 +42,8 @@ real(kind=8), pointer :: q(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  paraPod          : datastructure for parameters (POD)
 ! In  base             : base
-! In  snap             : snapshot selection
-! In  resultName       : name of results datastructure
 ! In  m                : first dimension of snapshot matrix
 ! In  m                : second dimension of snapshot matrix
 ! Ptr q                : pointer to [Q] matrix
@@ -57,14 +52,14 @@ real(kind=8), pointer :: q(:)
 !
     integer :: ifm, niv
     integer :: iSnap, iEqua
-    integer :: nbSnap, nbEqua
-    integer :: numeSnap, iret
-    character(len=8)  :: baseType
-    character(len=24) :: fieldName
-    real(kind=8), pointer :: v_resuFieldVale(:) => null()
-    character(len=24) :: resuFieldVale
-    character(len=4) :: fieldSupp
-    type(ROM_DS_Field) :: mode
+    integer :: nbSnap, nbEqua, nbSlice, nbCmp
+    integer :: numeSnap
+    integer :: nodeNume, cmpNume, iSlice, i_2d, n_2d
+    character(len=8)  :: baseType, resultName
+    real(kind=8), pointer :: fieldVale(:) => null()
+    character(len=24) :: fieldObject
+    character(len=16) :: resultType
+    type(ROM_DS_Field) :: field
     type(ROM_DS_LineicNumb) :: lineicNume
 !
 ! --------------------------------------------------------------------------------------------------
@@ -74,61 +69,61 @@ real(kind=8), pointer :: q(:)
         call utmess('I', 'ROM5_1')
     endif
 !
-! - Initializations
+! - Get parameters for results datastructure
 !
-    resuFieldVale = '&&ROM_FIELDRESU'
-!
-! - Get parameters
-!
-    nbSnap     = snap%nbSnap
-    baseType   = base%baseType
-    lineicNume = base%lineicNume
+    resultName = paraPod%resultDom%resultName
+    resultType = paraPod%resultDom%resultType
+    ASSERT(resultType .eq. 'EVOL_THER' .or. resultType .eq. 'EVOL_NOLI')
+    nbSnap     = paraPod%snap%nbSnap
     ASSERT(nbSnap .gt. 0)
 !
-! - Get mode
+! - Get properties of base
 !
-    mode      = base%mode
-    nbEqua    = mode%nbEqua
-    fieldName = mode%fieldName
-    fieldSupp = mode%fieldSupp
+    baseType    = base%baseType
+    lineicNume  = base%lineicNume
+    nbSlice     = lineicNume%nbSlice
+    nbCmp       = lineicNume%nbCmp
+!
+! - Get properties of field to read
+!
+    field       = paraPod%field
+    nbEqua      = field%nbEqua
     ASSERT(nbEqua .gt. 0)
 !
 ! - Prepare snapshots matrix
 !
     AS_ALLOCATE(vr = q, size = m * n)
 !
-! - Save the [Q] matrix depend on which type of reduced base
+! - Cosntruct the [Q] matrix from high-fidelity results
 !
-    if (baseType .eq. 'LINEIQUE') then
-        call dbr_calcpod_ql(lineicNume, &
-                            resultName, fieldName, nbEqua,&
-                            nbSnap    , snap%listSnap,&
-                            q)
-    else
-        do iSnap = 1, nbSnap
-            numeSnap = snap%listSnap(iSnap)
-            call rsexch(' '  , resultName, fieldName, numeSnap, resuFieldVale, iret)
-            if (iret .ne. 0) then
-                call utmess('F','ROM2_11', sk = fieldName, si = numeSnap)
-            endif
-            if (fieldSupp == 'NOEU') then
-                call jeveuo(resuFieldVale(1:19)//'.VALE', 'L', vr = v_resuFieldVale)
-            else if (fieldSupp == 'ELGA') then
-                call jeveuo(resuFieldVale(1:19)//'.CELV', 'L', vr = v_resuFieldVale)
-            else
-                ASSERT(ASTER_FALSE)
-            endif
+    do iSnap = 1, nbSnap
+        numeSnap = paraPod%snap%listSnap(iSnap)
+
+! ----- Read field from results datastructure
+        call romFieldRead('Read'   , field     , fieldObject,&
+                          fieldVale, resultName, numeSnap)
+
+! ----- Construct snapshots matrix [Q]
+        if (baseType .eq. 'LINEIQUE') then
+            ASSERT(nbCmp .gt. 0)
             do iEqua = 1, nbEqua
-                q(iEqua + nbEqua*(iSnap - 1)) = v_resuFieldVale(iEqua)
+                nodeNume = (iEqua - 1)/nbCmp + 1
+                cmpNume  = iEqua - (nodeNume - 1)*nbCmp
+                iSlice   = lineicNume%numeSlice(nodeNume)
+                n_2d     = lineicNume%numeSection(nodeNume)
+                i_2d     = (n_2d - 1)*nbCmp + cmpNume
+                q(i_2d + nbEqua*(iSlice - 1)/nbSlice + nbEqua*(iSnap - 1)) = fieldVale(iEqua)
+            enddo
+        elseif (baseType .eq. '3D') then
+            do iEqua = 1, nbEqua
+                q(iEqua + nbEqua*(iSnap - 1)) = fieldVale(iEqua)
             end do
-            if (fieldSupp == 'NOEU') then
-                call jelibe(resuFieldVale(1:19)//'.VALE')
-            elseif (fieldSupp == 'ELGA') then
-                call jelibe(resuFieldVale(1:19)//'.CELV')
-            else
-                ASSERT(ASTER_FALSE)
-            endif
-        enddo
-    endif
+        else
+            ASSERT(ASTER_FALSE)
+        endif
+
+! ----- Free memory from field
+        call romFieldRead('Free', field, fieldObject)
+    enddo
 !
 end subroutine

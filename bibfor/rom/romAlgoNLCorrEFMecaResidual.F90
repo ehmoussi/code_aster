@@ -26,9 +26,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jelira.h"
-#include "asterfort/rsexch.h"
 #include "asterfort/assert.h"
 #include "blas/ddot.h"
 !

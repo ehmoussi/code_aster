@@ -310,8 +310,11 @@ implicit none
 ! ----- Result to read (high fidelity)
         type(ROM_DS_Result)       :: resultDom
 
-! ----- Name of field for read (NOM_CHAM)
+! ----- Name of field to read (NOM_CHAM)
         character(len=24)         :: fieldName     = ' '
+
+! ----- Field to read (high fidelity)
+        type(ROM_DS_Field)        :: field
 
 ! ----- Type of reduced base
         character(len=8)          :: baseType      = ' '
@@ -444,7 +447,7 @@ implicit none
 ! ----- Parameters for orthogonalization method
         type(ROM_DS_ParaDBR_Ortho)  :: paraOrtho
 
-! ----- Datastructure for empiric modes
+! ----- Datastructure for modes
         type(ROM_DS_Empi)           :: base
 
 ! ----- If operator is "reuse"

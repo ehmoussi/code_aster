@@ -27,7 +27,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/rsexch.h"
 #include "asterfort/romEvalCoef.h"
 !
 type(ROM_DS_MultiPara), intent(inout) :: ds_multipara

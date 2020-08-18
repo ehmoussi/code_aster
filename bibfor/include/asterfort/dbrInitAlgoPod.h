@@ -17,7 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbrInitAlgoPod()
+    subroutine dbrInitAlgoPod(base, paraPod)
         use Rom_Datastructure_type
+        type(ROM_DS_Empi), intent(in) :: base
+        type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     end subroutine dbrInitAlgoPod
 end interface

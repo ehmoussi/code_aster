@@ -25,10 +25,8 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/rsexch.h"
 #include "asterfort/utmess.h"
 #include "blas/zdotc.h"
 !

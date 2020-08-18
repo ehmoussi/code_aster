@@ -31,6 +31,8 @@ cata_msg = {
 
     8 : _("""Détection des équations définies pour les noeuds donnés."""),
 
+   11 : _("""On n'a pas réussi à extraire le champ de type %(k1)s pour le numéro d'ordre %(i1)d dans la structure de données résultat."""),
+
    23 : _("""Le champ contient la composante %(k1)s qui n'est pas autorisée. Vous utilisez un modèle qui n'est pas compatible avec la réduction de modèle."""),
 
    25 : _("""Le champ ne contient pas la composante %(k1)s. Vous utilisez un modèle qui n'est pas compatible avec la réduction de modèle."""),

@@ -59,7 +59,6 @@ type(ROM_DS_Empi), intent(in) :: baseOut
     real(kind=8), pointer :: s(:) => null() 
     real(kind=8), pointer :: v_gamma(:) => null()
     real(kind=8) :: toleSVD
-    character(len=8) :: resultDomName
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,7 +72,6 @@ type(ROM_DS_Empi), intent(in) :: baseOut
     toleSVD       = paraPod%toleSVD
     nbSnap        = paraPod%snap%nbSnap
     nbModeMaxi    = paraPod%nbModeMaxi
-    resultDomName = paraPod%resultDom%resultName
 !
 ! - Get size of snapshots matrix
 !
@@ -81,8 +79,8 @@ type(ROM_DS_Empi), intent(in) :: baseOut
                           m      , n)
 !
 ! - Create snapshots matrix Q
-!    
-    call dbr_calcpod_q(baseOut, resultDomName, paraPod%snap, m, n, q)
+!
+    call dbr_calcpod_q(paraPod, baseOut, m, n, q)
 !
 ! - Compute modes by SVD
 !

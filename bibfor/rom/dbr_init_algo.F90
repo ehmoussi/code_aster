@@ -55,7 +55,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: cmdPara
     endif
 !
     if (cmdPara%operation(1:3) .eq. 'POD') then
-        call dbrInitAlgoPod()
+        call dbrInitAlgoPod(cmdPara%base, cmdPara%paraPod)
     elseif (cmdPara%operation .eq. 'GLOUTON') then
         call dbrInitAlgoGreedy(cmdPara%paraGreedy)
     elseif (cmdPara%operation .eq. 'TRONCATURE') then

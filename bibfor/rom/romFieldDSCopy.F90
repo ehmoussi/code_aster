@@ -28,7 +28,7 @@ implicit none
 #include "asterfort/as_allocate.h"
 !
 type(ROM_DS_Field), intent(in)  :: fieldIn
-type(ROM_DS_Field), intent(Out) :: fieldOut
+type(ROM_DS_Field), intent(inout) :: fieldOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -39,7 +39,7 @@ type(ROM_DS_Field), intent(Out) :: fieldOut
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  fieldIn          : input field
-! Out fieldOut         : output field
+! IO  fieldOut         : output field
 !
 ! --------------------------------------------------------------------------------------------------
 !

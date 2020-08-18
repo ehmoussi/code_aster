@@ -76,7 +76,9 @@ type(ROM_DS_Empi), intent(inout) :: base
                          modeSymbName_ = modeSymbName,&
                          numeSlice_    = numeSlice,&
                          nbSnap_       = nbSnap)
-    if (numeSlice .ne. 0) then
+    if (numeSlice .eq. 0) then
+        baseType = '3D'
+    else
         baseType = 'LINEIQUE'
     endif
 !

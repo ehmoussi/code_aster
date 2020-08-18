@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbrInitAlgoPod()
+subroutine dbrInitAlgoPod(base, paraPod)
 !
 use Rom_Datastructure_type
 !
@@ -26,12 +26,21 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
+#include "asterfort/romFieldDSCopy.h"
+!
+type(ROM_DS_Empi), intent(in) :: base
+type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE
 !
 ! Initializations for algorith - For POD methods
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  base             : base
+! IO  paraPod          : datastructure for parameters (POD)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,6 +53,8 @@ implicit none
         call utmess('I', 'ROM18_30')
     endif
 !
-    ! Nothing to do
+! - Prepare reference to read (high fidelity)
+!
+    call romFieldDSCopy(base%mode, paraPod%field)
 !
 end subroutine

@@ -23,8 +23,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-   11 : _("""On n'a pas réussi à extraire le champ de type %(k1)s pour le numéro d'ordre %(i1)d."""),
-
    14 : _("""La matrice du système sera complexe."""),
 
    15 : _("""La matrice du système sera réelle."""),

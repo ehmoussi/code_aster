@@ -17,16 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_calcpod_ql(lineicNume, &
-                              resultName, modeSymbName, nbEqua,&
-                              nbSnap    , listSnap    ,&
-                              q)
+    subroutine romFieldRead(operation , field      , fieldObject,&
+                            fieldVale_, resultName_, numeStore_)
         use Rom_Datastructure_type
-        type(ROM_DS_LineicNumb) , intent(in):: lineicNume
-        character(len=8), intent(in) :: resultName
-        character(len=24), intent(in) :: modeSymbName
-        integer, intent(in) :: nbEqua, nbSnap
-        integer, pointer :: listSnap(:)
-        real(kind=8), intent(inout) :: q(:)
-    end subroutine dbr_calcpod_ql
+        character(len=*), intent(in) :: operation
+        type(ROM_DS_Field), intent(in) :: field
+        character(len=24), intent(inout) :: fieldObject
+        character(len=8), optional, intent(in) :: resultName_
+        integer, optional, intent(in) :: numeStore_
+        real(kind=8), optional, pointer :: fieldVale_(:)
+    end subroutine romFieldRead
 end interface

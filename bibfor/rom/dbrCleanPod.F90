@@ -24,6 +24,7 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/assert.h"
+#include "asterfort/romFieldClean.h"
 #include "asterfort/romResultClean.h"
 #include "asterfort/romSnapClean.h"
 #include "asterfort/romTableClean.h"
@@ -45,5 +46,6 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     call romResultClean()
     call romTableClean(paraPod%tablReduCoor)
     call romSnapClean(paraPod%snap)
+    call romFieldClean(paraPod%field)
 !
 end subroutine

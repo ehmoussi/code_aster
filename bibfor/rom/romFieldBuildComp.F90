@@ -29,8 +29,8 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/romFieldRead.h"
 #include "asterfort/romFieldSave.h"
-#include "asterfort/rsexch.h"
 #include "asterfort/utmess.h"
 !
 character(len=*), intent(in) :: resultDomNameZ, resultRomNameZ
@@ -55,14 +55,13 @@ type(ROM_DS_FieldBuild), intent(in) :: fieldBuild
     integer :: ifm, niv
     integer, parameter :: numeStoreInit = 0
     aster_logical :: lRIDTrunc
-    character(len=24) :: fieldName, resultField
+    character(len=24) :: fieldRomObject
     integer :: iStore, iEqua
-    integer :: numeStore, iret, numeEqua
+    integer :: numeStore, numeEqua
     integer :: nbEquaDom, nbEquaRID, nbEquaRIDTotal
     real(kind=8), pointer :: valeRom(:) => null(), valeDom(:) => null()
-    real(kind=8), pointer :: valeField(:) => null()
-    type(ROM_DS_Field) :: fieldDom
-    character(len=4) :: fieldSupp
+    real(kind=8), pointer :: fieldVale(:) => null()
+    type(ROM_DS_Field) :: fieldDom, fieldRom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,8 +70,7 @@ type(ROM_DS_FieldBuild), intent(in) :: fieldBuild
 ! - Get parameters
 !
     fieldDom       = fieldBuild%fieldDom
-    fieldName      = fieldDom%fieldName
-    fieldSupp      = fieldDom%fieldSupp
+    fieldRom       = fieldBuild%fieldRom
     nbEquaDom      = fieldDom%nbEqua
     lRIDTrunc      = fieldBuild%lRIDTrunc
     nbEquaRID      = fieldBuild%nbEquaRID
@@ -81,12 +79,12 @@ type(ROM_DS_FieldBuild), intent(in) :: fieldBuild
 ! - Debug print
 !
     if (niv .ge. 2) then
-        call utmess('I', 'ROM17_7', sk = fieldName)
+        call utmess('I', 'ROM17_7', sk = fieldDom%fieldName)
     endif
 !
 ! - Save zero vector for initial state
 !
-    call romFieldSave('SetToZero', resultDomNameZ, numeStoreInit, fieldBuild%fieldDom)
+    call romFieldSave('SetToZero', resultDomNameZ, numeStoreInit, fieldDom)
 !
 ! - Preallocate
 !
@@ -98,17 +96,9 @@ type(ROM_DS_FieldBuild), intent(in) :: fieldBuild
     do iStore = 1, nbStore-1
         numeStore = iStore
 
-! ----- Get field from reduced model
-        call rsexch(' '      , resultRomNameZ, fieldName,&
-                    numeStore, resultField   , iret)
-        ASSERT(iret .eq. 0)
-        if (fieldSupp .eq. 'NOEU') then
-            call jeveuo(resultField(1:19)//'.VALE', 'L', vr = valeField)
-        elseif (fieldSupp .eq. 'ELGA') then
-            call jeveuo(resultField(1:19)//'.CELV', 'L', vr = valeField)
-        else
-            ASSERT(ASTER_FALSE)
-        endif
+! ----- Read field from reduced results datastructure
+        call romFieldRead('Read'   , fieldRom      , fieldRomObject,&
+                          fieldVale, resultRomNameZ, numeStore)
 
 ! ----- Truncate if required
         if (lRIDTrunc) then
@@ -116,12 +106,12 @@ type(ROM_DS_FieldBuild), intent(in) :: fieldBuild
             do iEqua = 1, nbEquaRIDTotal
                 numeEqua = fieldBuild%equaRIDTrunc(iEqua)
                 if (numeEqua .ne. 0) then
-                    valeRom(numeEqua) = valeField(iEqua)
+                    valeRom(numeEqua) = fieldVale(iEqua)
                 endif
             end do
         else
             do iEqua = 1, nbEquaRID
-                valeRom(iEqua) = valeField(iEqua)
+                valeRom(iEqua) = fieldVale(iEqua)
             end do
         endif
 
@@ -130,10 +120,13 @@ type(ROM_DS_FieldBuild), intent(in) :: fieldBuild
             valeDom(iEqua) = fieldBuild%fieldTransientVale(iEqua+nbEquaDom*(numeStore-1))
         enddo
 
-! ----- Save field in results datastructure
-        call romFieldSave('Partial'           , resultDomNameZ, numeStore,&
-                          fieldDom, valeDom,&
+! ----- Save field in complete results datastructure
+        call romFieldSave('Partial'           , resultDomNameZ         , numeStore,&
+                          fieldDom            , valeDom                ,&
                           fieldBuild%nbEquaRID, fieldBuild%equaRIDTotal, valeRom)
+
+! ----- Free memory from field
+        call romFieldRead('Free', fieldRom, fieldRomObject)
 
     end do
 !

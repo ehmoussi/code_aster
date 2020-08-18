@@ -20,6 +20,6 @@ interface
     subroutine romFieldDSCopy(fieldIn, fieldOut)
         use Rom_Datastructure_type
             type(ROM_DS_Field), intent(in)  :: fieldIn
-            type(ROM_DS_Field), intent(Out) :: fieldOut
+            type(ROM_DS_Field), intent(inout) :: fieldOut
     end subroutine romFieldDSCopy
 end interface
