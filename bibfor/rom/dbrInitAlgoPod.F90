@@ -27,6 +27,7 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 #include "asterfort/romFieldDSCopy.h"
+#include "asterfort/romFieldPrepFilter.h"
 !
 type(ROM_DS_Empi), intent(in) :: base
 type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
@@ -56,5 +57,9 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 ! - Prepare reference to read (high fidelity)
 !
     call romFieldDSCopy(base%mode, paraPod%field)
+!
+! - Prepare filter for components
+!
+    call romFieldPrepFilter(paraPod%nbCmpToFilter, paraPod%cmpToFilter, paraPod%field)
 !
 end subroutine

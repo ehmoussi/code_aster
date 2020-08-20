@@ -51,6 +51,7 @@ DEFI_BASE_REDUITE=OPER(
         SNAPSHOT         =SIMP(statut='f',typ='I',min=1,max='**',
                                fr =tr("Numéros d'ordre dans RESULTAT à converser comme snapshot")),
         MODELE           =SIMP(statut='f',typ=modele_sdaster),
+        NOM_CMP          =SIMP(statut='f',typ='TXM',max='**' ),
     ),
 
     b_incr = BLOC(condition ="""(equal_to("OPERATION", 'POD_INCR'))""",
@@ -72,6 +73,7 @@ DEFI_BASE_REDUITE=OPER(
         TABL_COOR_REDUIT =SIMP(statut='f',typ=table_sdaster),
         SNAPSHOT         =SIMP(statut='f',typ='I',validators=NoRepeat(),min=1,max='**',
                                fr =tr("Numéros d'ordre dans RESULTAT à converser comme snapshot")),
+        NOM_CMP          =SIMP(statut='f',typ='TXM',max='**' ),
     ),
 
     b_type_rb       =BLOC(condition ="""(equal_to("OPERATION", 'GLOUTON'))""",

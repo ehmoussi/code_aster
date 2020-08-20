@@ -15,33 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1403
 !
-subroutine romFieldClean(field)
-!
-use Rom_Datastructure_type
-!
-implicit none
-!
-#include "asterfort/as_deallocate.h"
-!
-type(ROM_DS_Field), intent(in) :: field
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Model reduction - Field management
-!
-! Clean field datastructure
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  field            : field
-!
-! --------------------------------------------------------------------------------------------------
-!
-    AS_DEALLOCATE(vi  = field%equaCmpName)
-    AS_DEALLOCATE(vk8 = field%listCmpName)
-    AS_DEALLOCATE(vi  = field%equaFilter)
-!
-end subroutine
+interface
+    subroutine romFieldPrepFilter(nbCmpToFilter, cmpToFilter, field)
+        use Rom_Datastructure_type
+        integer, intent(in) :: nbCmpToFilter
+        character(len=8), pointer :: cmpToFilter(:)
+        type(ROM_DS_Field), intent(inout) :: field
+    end subroutine romFieldPrepFilter
+end interface

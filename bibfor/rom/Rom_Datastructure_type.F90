@@ -88,25 +88,41 @@ implicit none
 ! - Parameters for field
 !
     type ROM_DS_Field
-! ----- Name of field for read (NOM_CHAM)
+
+! ----- Name of field (NOM_CHAM)
         character(len=24)         :: fieldName      = ' '
-! ----- A field for reference (to manipulate)
+
+! ----- A real field for reference (to manipulate)
         character(len=24)         :: fieldRefe      = ' '
-! ----- Type of field (NOEU/ELGA
+
+! ----- Type of field (NOEU/ELGA)
         character(len=4)          :: fieldSupp      = ' '
+
 ! ----- Model
         character(len=8)          :: model          = ' '
+
 ! ----- Mesh
         character(len=8)          :: mesh           = ' '
+
+! ----- Number of equations
+        integer                   :: nbEqua         = 0
+
 ! ----- Components in the field: number and name
         character(len=8), pointer :: listCmpName(:) => null()
         integer                   :: nbCmpName      = 0
+
 ! ----- For each dof: index of name of components (from listCmpName)
         integer, pointer          :: equaCmpName(:) => null()
+
 ! ----- Flag if has Lagrange multipliers
         aster_logical             :: lLagr          = ASTER_FALSE
-! ----- Number of equations
-        integer                   :: nbEqua         = 0
+
+! ----- Filter to apply on field
+        aster_logical             :: lFilter        = ASTER_FALSE
+
+! ----- For each equation: 1 to keep this component
+        integer, pointer          :: equaFilter(:)  => null()
+
     end type ROM_DS_Field
 !
 ! - Datastructure for empiric base
@@ -305,37 +321,39 @@ implicit none
 !
     type ROM_DS_ParaDBR_POD
 ! ----- Name of result to read (high fidelity)
-        character(len=8)          :: resultDomName = ' '
+        character(len=8)          :: resultDomName  = ' '
 
 ! ----- Result to read (high fidelity)
         type(ROM_DS_Result)       :: resultDom
 
 ! ----- Name of field to read (NOM_CHAM)
-        character(len=24)         :: fieldName     = ' '
+        character(len=24)         :: fieldName      = ' '
 
 ! ----- Field to read (high fidelity)
         type(ROM_DS_Field)        :: field
+        integer                   :: nbCmpToFilter  = 0
+        character(len=8), pointer :: cmpToFilter(:) => null()
 
 ! ----- Type of reduced base
-        character(len=8)          :: baseType      = ' '
+        character(len=8)          :: baseType       = ' '
 
 ! ----- Direction of the linear model
-        character(len=8)          :: lineicAxis    = ' '
+        character(len=8)          :: lineicAxis     = ' '
 
 ! ----- First section of the linear model
-        character(len=24)         :: lineicSect    = ' '
+        character(len=24)         :: lineicSect     = ' '
 
 ! ----- Tolerance for SVD
-        real(kind=8)              :: toleSVD       = 0.d0
+        real(kind=8)              :: toleSVD        = 0.d0
 
 ! ----- Tolerance for incremental POD
-        real(kind=8)              :: toleIncr      = 0.d0
+        real(kind=8)              :: toleIncr       = 0.d0
 
 ! ----- Table for reduced coordinates
         type(ROM_DS_TablReduCoor) :: tablReduCoor
 
 ! ----- Maximum number of modes
-        integer                   :: nbModeMaxi    = 0
+        integer                   :: nbModeMaxi     = 0
 
 ! ----- Datastructure for snapshot selection
         type(ROM_DS_Snap)         :: snap

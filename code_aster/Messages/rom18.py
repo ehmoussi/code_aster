@@ -134,4 +134,12 @@ cata_msg = {
    62 : _("""Calcul du mode %(i1)d."""),
 
    63 : _("""Calcul de la base tronquée."""),
+
+   64 : _("""Ce champ a les caractéristiques suivantes."""),
+
+   65 : _("""On sélectionnera toutes les composantes du champ."""),
+
+   66 : _("""On ne sélectionnera qu'une partie des composantes du champ dont voici la liste."""),
+
+   67 : _("""Composante %(i1)d: %(k1)s."""),
 }

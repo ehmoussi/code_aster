@@ -24,6 +24,7 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/assert.h"
+#include "asterfort/as_allocate.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
@@ -56,7 +57,7 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     character(len=16) :: fieldName
     character(len=8)  :: lineicAxis, lineicSect, baseType
     character(len=8)  :: resultDomName
-    integer :: nbModeMaxi
+    integer :: nbModeMaxi, nbCmpToFilter
     type(ROM_DS_Result) :: resultDom
 !
 ! --------------------------------------------------------------------------------------------------
@@ -76,12 +77,22 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     lineicSect    = ' '
     baseType      = ' '
     resultDomName = ' '
+    nbCmpToFilter = 0
 !
-! - Get parameters - Results to process
+! - Get parameters - Result
 !
     call getvid(' ', 'RESULTAT', scal = resultDomName)
+!
+! - Get parameters - Field
+!
     call getvtx(' ', 'NOM_CHAM', scal = fieldName, nbret = nocc)
     ASSERT(nocc .eq. 1)
+    call getvtx(' ', 'NOM_CMP', iocc = 1, nbval=0, nbret = nbCmpToFilter)
+    if (nbCmpToFilter .ne. 0) then
+        nbCmpToFilter = abs(nbCmpToFilter)
+        AS_ALLOCATE(vk8 = paraPod%cmpToFilter, size = nbCmpToFilter)
+        call getvtx(' ', 'NOM_CMP', iocc = 1, nbval = nbCmpToFilter, vect = paraPod%cmpToFilter)
+    endif
 !
 ! - Maximum number of modes
 !
@@ -123,6 +134,7 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
 ! - Save parameters in datastructure
 !
+    paraPod%nbCmpToFilter = nbCmpToFilter
     paraPod%fieldName     = fieldName
     paraPod%baseType      = baseType
     paraPod%lineicAxis    = lineicAxis

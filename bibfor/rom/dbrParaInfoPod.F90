@@ -26,8 +26,9 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
+#include "asterfort/romFieldPrintInfo.h"
 #include "asterfort/romSnapInfo.h"
+#include "asterfort/utmess.h"
 !
 character(len=16), intent(in) :: operation
 type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
@@ -45,9 +46,11 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    character(len=8) :: cmpFilterName
     character(len=24) :: fieldName
     real(kind=8) :: toleSVD, toleIncr
-    integer :: nbModeMaxi
+    integer :: nbModeMaxi, nbCmpToFilter, iCmpToFilter
+    type(ROM_DS_Field) :: field
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,10 +61,12 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 !
 ! - Get parameters
 !
-    toleSVD    = paraPod%toleSVD
-    toleIncr   = paraPod%toleIncr
-    fieldName  = paraPod%fieldName
-    nbModeMaxi = paraPod%nbModeMaxi
+    toleSVD       = paraPod%toleSVD
+    toleIncr      = paraPod%toleIncr
+    field         = paraPod%field
+    fieldName     = paraPod%fieldName
+    nbModeMaxi    = paraPod%nbModeMaxi
+    nbCmpToFilter = paraPod%nbCmpToFilter
 !
 ! - Print - General for POD
 !
@@ -74,6 +79,17 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
             call utmess('I', 'ROM18_52' , sr = toleIncr)
         endif
         call utmess('I', 'ROM18_50' , sk = fieldName)
+        call utmess('I', 'ROM18_64')
+        call romFieldPrintInfo(field)
+        if (nbCmpToFilter .eq. 0) then
+            call utmess('I', 'ROM18_65')
+        else
+            call utmess('I', 'ROM18_66')
+            do iCmpToFilter = 1, nbCmpToFilter
+                cmpFilterName = paraPod%cmpToFilter(iCmpToFilter)
+                call utmess('I', 'ROM18_67', si = iCmpToFilter, sk = cmpFilterName)
+            end do
+        endif
     endif
 !
 ! - Print about snapshots selection

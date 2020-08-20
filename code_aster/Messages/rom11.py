@@ -27,6 +27,10 @@ cata_msg = {
 
     1 : _("""Le champ a pour support %(k1)s, ce qui n'est pas autorisé."""),
 
+    2 : _("""Le champ n'a aucune composante de nom %(k1)s."""),
+
+    3 : _("""La composante %(k1)s concerne %(i1)d équations dans le champ."""),
+
     7 : _("""Création de la liste des noeuds à partir de la liste des équations."""),
 
     8 : _("""Détection des équations définies pour les noeuds donnés."""),

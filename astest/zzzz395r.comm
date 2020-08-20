@@ -169,7 +169,60 @@ reduR = REST_REDUIT_COMPLET(
                        ),
     INFO             = 2,)
 
-IMPR_RESU(FORMAT='MED',UNITE=83,RESU=_F(RESULTAT=reduR))
+
+####################################################################################################
+#
+# Test de la sélection de composantes
+#
+####################################################################################################
+
+stnl=STAT_NON_LINE(MODELE=model,
+                   CHAM_MATER=chmat,
+                   EXCIT=(_F(CHARGE=chg_b,),
+                          _F(CHARGE=chg_p,FONC_MULT=rampe),
+                         ),
+                   INCREMENT=_F(LIST_INST=list_i,),
+                   COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',),)
+
+# Cosntruction sur SIXX uniquement
+baseSIEF_SIXX = DEFI_BASE_REDUITE(INFO      = 2,
+                            MODELE    = model,
+                            OPERATION = 'POD',
+                            RESULTAT  = stnl,
+                            NOM_CHAM  = 'SIEF_ELGA',
+                            NOM_CMP   = 'SIXX',
+                            TOLE_SVD  = 0.001,
+                            )
+
+# Reconstruction tout le domaine par Gappy-POD
+resuSIEF_SIXX = REST_REDUIT_COMPLET(
+    MODELE           = model,
+    RESULTAT_REDUIT  = redu,
+    CHAM_GD          = (
+                        _F(NOM_CHAM         = 'SIEF_ELGA',
+                           BASE             = baseSIEF_SIXX,
+                           OPERATION        = 'GAPPY_POD',),
+                       ),
+    INFO             = 2,)
+
+# Reconstruction tout le domaine par combinaison linéaire
+MODE1s = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULTAT=baseSIEF_SIXX, NOM_CHAM='SIEF_ELGA',NUME_ORDRE=1);
+MODE2s = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULTAT=baseSIEF_SIXX, NOM_CHAM='SIEF_ELGA',NUME_ORDRE=2);
+MODE3s = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULTAT=baseSIEF_SIXX, NOM_CHAM='SIEF_ELGA',NUME_ORDRE=3);
+
+# Valeurs extraites de la table COOR_REDUIT
+comb1 = -108950.59263472102  
+comb2 = -15280.860912969722  
+comb3 =   20485.486855804837
+
+combSIEF_SIXX=CREA_CHAMP( OPERATION = 'ASSE',
+                   MODELE    =  model,
+                   TYPE_CHAM = 'ELGA_SIEF_R',
+                   
+                   ASSE=(_F(TOUT      = 'OUI',CHAM_GD=MODE1s,COEF_R=comb1),
+                         _F(TOUT      = 'OUI',CHAM_GD=MODE2s,COEF_R=comb2),
+                         _F(TOUT      = 'OUI',CHAM_GD=MODE3s,COEF_R=comb3),
+),)
 
 
 FIN()

@@ -57,14 +57,17 @@ real(kind=8), optional, pointer :: fieldVale_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret
+    integer :: iret, iEqua, nbEqua
     character(len=24) :: fieldName
     character(len=4) :: fieldSupp
+    aster_logical :: lFilter
 !
 ! --------------------------------------------------------------------------------------------------
 !
     fieldName = field%fieldName
     fieldSupp = field%fieldSupp
+    lFilter   = field%lFilter
+    nbEqua    = field%nbEqua
 !
     if (operation .eq. 'Read') then
         call rsexch(' '       , resultName_, fieldName,&
@@ -78,6 +81,11 @@ real(kind=8), optional, pointer :: fieldVale_(:)
             call jeveuo(fieldObject(1:19)//'.CELV', 'L', vr = fieldVale_)
         else
             ASSERT(ASTER_FALSE)
+        endif
+        if (lFilter) then
+            do iEqua = 1, nbEqua
+                fieldVale_(iEqua) = fieldVale_(iEqua) * field%equaFilter(iEqua)
+            end do
         endif
 
     elseif (operation .eq. 'Free') then
