@@ -17,8 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_chck_table(tablNameZ, nb_mode_in, nb_snap_in)
-        character(len=*), intent(in) :: tablNameZ
-        integer, intent(in) :: nb_mode_in, nb_snap_in
-    end subroutine dbr_chck_table
+    subroutine romTableChck(tablReduCoor, lTablFromResu, nbModeIn, nbSnapIn_, nbStoreIn_)
+        use Rom_Datastructure_type
+        type(ROM_DS_TablReduCoor), intent(in) :: tablReduCoor
+        aster_logical, intent(in) :: lTablFromResu
+        integer, intent(in) :: nbModeIn
+        integer, optional, intent(in) :: nbSnapIn_, nbStoreIn_
+    end subroutine romTableChck
 end interface

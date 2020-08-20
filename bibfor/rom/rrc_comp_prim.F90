@@ -125,7 +125,7 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
         call romEvalGappyPOD(cmdPara, resultRom, nbStore, v_prim_rom,&
                              v_cohr , 0)
     else
-        call jeveuo(cmdPara%coorRedu, 'L', vr = v_cohr)
+        v_cohr => cmdPara%tablReduCoor%coorRedu
     endif
 !
 ! - Compute new fields

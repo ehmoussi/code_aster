@@ -75,9 +75,6 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
         call utmess('I', 'ROM7_3' , sr = tole_svd)
         if (operation .eq. 'POD_INCR') then
             call utmess('I', 'ROM7_13' , sr = tole_incr)
-            if (paraPod%tablReduCoor%lTablUser) then
-                call utmess('I', 'ROM7_26')
-            endif
         endif
         call utmess('I', 'ROM7_2' , sk = fieldName)
     endif

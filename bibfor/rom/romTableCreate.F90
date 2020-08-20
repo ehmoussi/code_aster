@@ -58,7 +58,7 @@ type(NL_DS_TableIO), intent(inout) :: tablResu
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_38')
+        call utmess('I', 'ROM15_2')
     endif
 !
 ! - Create list of parameters

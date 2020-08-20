@@ -79,8 +79,6 @@ cata_msg = {
 
    37 : _("""Initialisation pour réaliser le calcul non-linéaire avec réduction de modèle."""),
 
-   38 : _("""Création de la structure de données pour la table contenant les coordonnées réduites."""),
-
    39 : _("""Sauvegarde des %(i1)d coordonnées réduites pour %(i2)d modes empiriques."""),
 
    40 : _("""Résolution du problème réduit."""),
@@ -104,8 +102,6 @@ cata_msg = {
    52 : _("""Le paramètre %(k1)s vaut %(r1)19.12e."""),
 
    53 : _("""Pour les modèles linéiques, le nombre de composantes par noeud doit être constant. Vérifiez que vous n'avez pas de chargements de Dirichlet appliqués avec AFFE_CHAR_MECA."""),
-
-   55 : _("""    Sauvegarde des coordonnées réduites pour %(i1)d modes empiriques dans la table."""),
 
    60 : _("""Calcul par la méthode GLOUTON."""),
 
@@ -132,8 +128,6 @@ cata_msg = {
    71 : _("""Le contact est interdit avec la réduction de modèle."""),
 
    72 : _("""Orthogonalisation de la base empirique."""),
-
-   80 : _("""Vérification de la conformité de la table des coordonnées réduites fournies par l'utilisateur."""),
 
    81 : _("""Paramètres de la base primale utilisée."""),
 

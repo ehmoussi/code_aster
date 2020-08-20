@@ -43,16 +43,16 @@ type(ROM_DS_TablReduCoor), intent(inout) :: tablReduCoor
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nocc
-    aster_logical :: lTablUser
+    aster_logical :: lTablFromUser
     character(len=8) :: tablUserName
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    lTablUser    = ASTER_FALSE
-    tablUserName = ' '
+    lTablFromUser = ASTER_FALSE
+    tablUserName  = ' '
     call getvid(' ', 'TABL_COOR_REDUIT', scal = tablUserName, nbret = nocc)
-    lTablUser = nocc .gt. 0
-    tablReduCoor%lTablUser    = lTablUser
-    tablReduCoor%tablUserName = tablUserName
+    lTablFromUser = nocc .gt. 0
+    tablReduCoor%lTablFromUser = lTablFromUser
+    tablReduCoor%tablUserName  = tablUserName
 !
 end subroutine

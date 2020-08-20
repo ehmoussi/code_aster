@@ -64,14 +64,6 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
     modelRom    = cmdPara%model_rom
     modelDom    = cmdPara%model_dom
 !
-! - Check existence of reduced coordinates
-!
-    if (cmdPara%tablReduCoor%tablResu%tablName .eq. ' ') then
-        if (.not. cmdPara%tablReduCoor%lTablUser) then
-            call utmess('F', 'ROM6_4')
-        endif
-    endif
-!
 ! - Check mesh
 !
     if (l_prev_dual) then

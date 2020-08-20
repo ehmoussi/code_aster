@@ -36,9 +36,9 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/norm_frobenius.h"
 #include "asterfort/romBaseCreate.h"
+#include "asterfort/romTableRead.h"
 #include "asterfort/romTableSave.h"
 #include "asterfort/rsexch.h"
-#include "asterfort/tbexve.h"
 #include "asterfort/tbSuppressAllLines.h"
 #include "asterfort/utmess.h"
 #include "blas/dgemm.h"
@@ -88,9 +88,8 @@ integer, intent(out) :: nbModeOut, nbSnapOut
     integer(kind=4), pointer :: IPIV(:) => null()
     real(kind=8), pointer :: b(:)    => null()
     real(kind=8), pointer :: v_gamma(:)    => null()
-    integer :: iret
-    real(kind=8), pointer :: coorReduPrev(:) => null()
     character(len=24) :: mode, fieldName
+    integer :: iret
     real(kind=8), pointer :: v_mode(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -122,14 +121,7 @@ integer, intent(out) :: nbModeOut, nbSnapOut
 ! - Get previous reduced coordinates when reuse 
 !
     if (lReuse) then
-        if (paraPod%tablReduCoor%lTablUser) then
-            call tbexve(paraPod%tablReduCoor%tablUserName     ,&
-                        paraPod%tablReduCoor%tablResu%tablSymbName, '&&COORHR')
-        else
-            call tbexve(paraPod%tablReduCoor%tablResu%tablName,&
-                        paraPod%tablReduCoor%tablResu%tablSymbName, '&&COORHR')
-        endif
-        call jeveuo('&&COORHR', 'E', vr = coorReduPrev)
+        call romTableRead(paraPod%tablReduCoor)
         call tbSuppressAllLines(paraPod%tablReduCoor%tablResu%tablName)
     endif
 !
@@ -159,7 +151,7 @@ integer, intent(out) :: nbModeOut, nbSnapOut
         enddo
 ! ----- Add previous reduced coordinates in gT
         do iCoorRedu = 1, nbModePrev  * nbSnapPrev
-            gt(iCoorRedu) = coorReduPrev(iCoorRedu)
+            gt(iCoorRedu) = paraPod%tablReduCoor%coorRedu(iCoorRedu)
         enddo
     else
 ! ----- Add first snap in v
@@ -335,7 +327,7 @@ integer, intent(out) :: nbModeOut, nbSnapOut
     endif
     do iSnap = 1, nbSnapOut
         call romTableSave(paraPod%tablReduCoor%tablResu, nbModeOut, v_gamma,&
-                          nume_snap_ = iSnap)
+                          numeSnap_ = iSnap)
     end do
 !
 ! - Debug print

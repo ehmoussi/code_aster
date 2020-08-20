@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romTableSave(tablResu   , nb_mode   , v_gamma   ,&
-                        nume_store_, time_curr_, nume_snap_)
+subroutine romTableSave(tablResu   , nbMode   , v_gamma   ,&
+                        numeStore_, timeCurr_, numeSnap_)
 !
 use NonLin_Datastructure_type
 !
@@ -26,13 +26,15 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/tbajli.h"
+#include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
 !
 type(NL_DS_TableIO), intent(in) :: tablResu
-integer, intent(in) :: nb_mode
+integer, intent(in) :: nbMode
 real(kind=8), pointer :: v_gamma(:)
-integer, optional, intent(in) :: nume_store_
-real(kind=8), optional, intent(in) :: time_curr_
-integer, optional, intent(in) :: nume_snap_
+integer, optional, intent(in) :: numeStore_
+real(kind=8), optional, intent(in) :: timeCurr_
+integer, optional, intent(in) :: numeSnap_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,42 +45,57 @@ integer, optional, intent(in) :: nume_snap_
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  tablResu         : datastructure for table of reduced coordinates in result datastructure
-! In  nb_mode          : number of empiric modes
+! In  nbMode          : number of empiric modes
 ! In  v_gamma          : pointer to reduced coordinates
-! In  nume_store       : index to store in results
-! In  time_curr        : current time
-! In  nume_snap        : index of snapshot
+! In  numeStore       : index to store in results
+! In  timeCurr        : current time
+! In  numeSnap        : index of snapshot
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_mode, v_inte(3), nume_snap, nume_store
-    real(kind=8) :: v_real(2), time_curr
+    integer :: ifm, niv
+    integer :: iMode, valInte(3), numeSnap, numeStore
+    real(kind=8) :: valReal(2), timeCurr
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nume_snap   = 1
-    if (present(nume_snap_)) then
-        nume_snap = nume_snap_
+    call infniv(ifm, niv)
+!
+! - Initializations
+!
+    numeSnap  = 1
+    if (present(numeSnap_)) then
+        numeSnap = numeSnap_
     endif
-    nume_store  = 0
-    if (present(nume_store_)) then
-        nume_store = nume_store_
+    numeStore = 0
+    if (present(numeStore_)) then
+        numeStore = numeStore_
     endif
-    time_curr  = 0
-    if (present(time_curr_)) then
-        time_curr = time_curr_
+    timeCurr  = 0.d0
+    if (present(timeCurr_)) then
+        timeCurr = timeCurr_
     endif
-    v_inte(2)  = nume_store
-    v_inte(3)  = nume_snap
-    v_real(2)  = time_curr
+    valInte(2) = numeStore
+    valInte(3) = numeSnap
+    valReal(2) = timeCurr
+!
+! - Debug
+!
+    if (niv .ge. 2) then
+        if (present(timeCurr_)) then
+            call utmess('I', 'ROM15_4', ni = 2, vali = [numeStore, nbMode], sr = timeCurr)
+        else
+            call utmess('I', 'ROM15_3', ni = 2, vali = [numeSnap, nbMode])
+        endif
+    endif
 !
 ! - Save in table
 !
-    do i_mode = 1, nb_mode
-        v_inte(1) = i_mode
-        v_real(1) = v_gamma(i_mode+nb_mode*(nume_snap-1))
+    do iMode = 1, nbMode
+        valInte(1) = iMode
+        valReal(1) = v_gamma(iMode+nbMode*(numeSnap-1))
         call tbajli(tablResu%tablName, tablResu%nbPara, tablResu%paraName,&
-                     v_inte, v_real, [(0.d0,0.d0)], [' '], 0)
+                     valInte, valReal, [(0.d0,0.d0)], [' '], 0)
     enddo
 !
 end subroutine

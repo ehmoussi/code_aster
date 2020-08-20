@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_pod(operation, paraPod, l_reuse, base)
+subroutine dbr_chck_pod(operation, paraPod, lReuse, base)
 !
 use Rom_Datastructure_type
 !
@@ -26,14 +26,14 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/romTableChck.h"
 #include "asterfort/rs_paraonce.h"
-#include "asterfort/dbr_chck_table.h"
+#include "asterfort/utmess.h"
 !
 character(len=16), intent(in) :: operation
 type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
-aster_logical, intent(in) :: l_reuse
+aster_logical, intent(in) :: lReuse
 type(ROM_DS_Empi), intent(in) :: base
 !
 ! --------------------------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ type(ROM_DS_Empi), intent(in) :: base
 !
 ! In  operation        : type of method
 ! In  paraPod          : datastructure for parameters (POD)
-! In  l_reuse          : .true. if reuse
+! In  lReuse           : .true. if reuse
 ! In  base             : base
 !
 ! --------------------------------------------------------------------------------------------------
@@ -56,9 +56,7 @@ type(ROM_DS_Empi), intent(in) :: base
     character(len=16), parameter :: paraName(nbPara) = (/&
         'MODELE  ', 'CHAMPMAT',&
         'CARAELEM', 'EXCIT   '/)
-    character(len=8) :: tablUserName
-    character(len=24) :: tablName
-    aster_logical :: lTablUser, lTablFromResu
+    aster_logical :: lTablFromResu, lTablRequired
     integer :: nbMode, nbSnap
 !
 ! --------------------------------------------------------------------------------------------------
@@ -70,7 +68,7 @@ type(ROM_DS_Empi), intent(in) :: base
 !
 ! - General check
 !
-    if (l_reuse .and. operation .eq. 'POD') then
+    if (lReuse .and. operation .eq. 'POD') then
         call utmess('F', 'ROM2_13', sk = operation)
     endif
 !
@@ -81,26 +79,11 @@ type(ROM_DS_Empi), intent(in) :: base
 ! - Check if COOR_REDUIT is OK
 !
     lTablFromResu = paraPod%resultDom%lTablFromResu
-    tablUserName  = paraPod%tablReduCoor%tablUserName
-    lTablUser     = paraPod%tablReduCoor%lTablUser
-    tablName      = paraPod%tablReduCoor%tablResu%tablName
-    if (operation .eq. 'POD_INCR' .and. l_reuse) then
-! ----- Check if table is OK
-        if (lTablFromResu) then
-            if (lTablUser) then
-                call utmess('F', 'ROM7_24')
-            endif
-        else
-            if (.not. lTablUser) then
-                call utmess('F', 'ROM7_23')
-            endif
-        endif
-! ----- Check conformity of table
-        if (lTablUser) then
-            nbMode = base%nbMode
-            nbSnap = paraPod%snap%nbSnap
-            call dbr_chck_table(tablUserName, nbMode, nbSnap)
-        endif
+    lTablRequired = operation .eq. 'POD_INCR' .and. lReuse
+    if (lTablRequired) then
+        nbMode = base%nbMode
+        nbSnap = paraPod%snap%nbSnap
+        call romTableChck(paraPod%tablReduCoor, lTablFromResu, nbMode, nbSnap)
     endif
 !
 end subroutine

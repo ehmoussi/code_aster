@@ -15,32 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romTableClean(tablReduCoor)
-!
-use Rom_Datastructure_type
-!
-implicit none
-!
-#include "asterfort/assert.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/nonlinDSTableIOClean.h"
-!
-type(ROM_DS_TablReduCoor), intent(inout) :: tablReduCoor
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Model reduction
-!
-! Clean datastructure of table for the reduced coordinates in results datastructure
-!
-! --------------------------------------------------------------------------------------------------
-!
-! IO  tablReduCoor     : datastructure to save reduced coordinates in table
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call nonlinDSTableIOClean(tablReduCoor%tablResu)
-!
-end subroutine
+interface
+    subroutine romTableRead(tablReduCoor)
+        use Rom_Datastructure_type
+        type(ROM_DS_TablReduCoor), intent(in) :: tablReduCoor
+    end subroutine romTableRead
+end interface

@@ -17,14 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romTableSave(tablResu   , nb_mode   , v_gamma   ,&
-                            nume_store_, time_curr_, nume_snap_)
+    subroutine romTableSave(tablResu  , nbMode   , v_gamma  ,&
+                            numeStore_, timeCurr_, numeSnap_)
         use NonLin_Datastructure_type
         type(NL_DS_TableIO), intent(in) :: tablResu
-        integer, intent(in) :: nb_mode
+        integer, intent(in) :: nbMode
         real(kind=8), pointer :: v_gamma(:)
-        integer, optional, intent(in) :: nume_store_
-        real(kind=8), optional, intent(in) :: time_curr_
-        integer, optional, intent(in) :: nume_snap_
+        integer, optional, intent(in) :: numeStore_
+        real(kind=8), optional, intent(in) :: timeCurr_
+        integer, optional, intent(in) :: numeSnap_
     end subroutine romTableSave
 end interface

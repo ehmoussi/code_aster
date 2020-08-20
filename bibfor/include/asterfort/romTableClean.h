@@ -19,6 +19,6 @@
 interface
     subroutine romTableClean(tablReduCoor)
         use Rom_Datastructure_type
-        type(ROM_DS_TablReduCoor) :: tablReduCoor
+        type(ROM_DS_TablReduCoor), intent(inout) :: tablReduCoor
     end subroutine romTableClean
 end interface

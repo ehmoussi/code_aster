@@ -52,11 +52,13 @@ implicit none
 !
     type ROM_DS_TablReduCoor
 ! ----- Table in result datastructure
-        type(NL_DS_TableIO) :: tablResu
+        type(NL_DS_TableIO)    :: tablResu
 ! ----- Flag if table is given by user
-        aster_logical       :: lTablUser    = ASTER_FALSE
+        aster_logical          :: lTablFromUser = ASTER_FALSE
 ! ----- Name of table when given by user
-        character(len=8)    :: tablUserName = ' '
+        character(len=8)       :: tablUserName  = ' '
+! ----- Values of reduced coordinates
+        real(kind=8), pointer  :: coorRedu(:)   => null()
     end type ROM_DS_TablReduCoor
 !
 ! - Datastructure to select snapshots
@@ -151,8 +153,6 @@ implicit none
         type(ROM_DS_Empi)         :: ds_empi_dual
 ! ----- Table in result datastructure
         type(ROM_DS_TablReduCoor) :: tablReduCoor
-! ----- Object to save reduced coordinates
-        character(len=24)         :: coorRedu = '&&OP0054.COOR'
 ! ----- Flag for dual prevision
         aster_logical     :: l_prev_dual = ASTER_FALSE
 ! ----- Name of GROUP_NO of interface

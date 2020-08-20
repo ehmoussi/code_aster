@@ -17,30 +17,41 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romTableClean(tablReduCoor)
+subroutine romTableRead(tablReduCoor)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/nonlinDSTableIOClean.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/tbexve.h"
 !
-type(ROM_DS_TablReduCoor), intent(inout) :: tablReduCoor
+type(ROM_DS_TablReduCoor), intent(in) :: tablReduCoor
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Clean datastructure of table for the reduced coordinates in results datastructure
+! Read reduced coordinates
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  tablReduCoor     : datastructure to save reduced coordinates in table
+! In  tablReduCoor     : table for reduced coordinates
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call nonlinDSTableIOClean(tablReduCoor%tablResu)
+    character(len=24), parameter :: coorReduObj = '&&COORHR'
+!
+! --------------------------------------------------------------------------------------------------
+!
+    if (tablReduCoor%lTablFromUser) then
+        call tbexve(tablReduCoor%tablUserName     ,&
+                    tablReduCoor%tablResu%tablSymbName, coorReduObj)
+    else
+        call tbexve(tablReduCoor%tablResu%tablName,&
+                    tablReduCoor%tablResu%tablSymbName, coorReduObj)
+    endif
+    call jeveuo(coorReduObj, 'L', vr = tablReduCoor%coorRedu)
 !
 end subroutine

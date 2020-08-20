@@ -94,7 +94,7 @@ type(ROM_DS_Empi), intent(inout) :: baseOut
 !
     do iSnap = 1, nbSnap
         call romTableSave(paraPod%tablReduCoor%tablResu, nbMode, v_gamma,&
-                          nume_snap_ = iSnap)
+                          numeSnap_ = iSnap)
     end do
 !
 ! - Clean

@@ -18,11 +18,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine dbr_chck_pod(operation, paraPod, l_reuse, base)
+    subroutine dbr_chck_pod(operation, paraPod, lReuse, base)
         use Rom_Datastructure_type
         character(len=16), intent(in) :: operation
         type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
-        aster_logical, intent(in) :: l_reuse
+        aster_logical, intent(in) :: lReuse
         type(ROM_DS_Empi), intent(in) :: base
     end subroutine dbr_chck_pod
 end interface

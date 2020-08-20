@@ -26,8 +26,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/romTableSave.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 !
 integer, intent(in) :: nume_store
 real(kind=8), intent(in) :: time_curr
@@ -47,7 +45,6 @@ type(ROM_DS_AlgoPara), intent(in) :: paraAlgo
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     character(len=24) :: gamma
     integer :: nbMode
     real(kind=8), pointer :: v_gamma(:) => null()
@@ -56,13 +53,6 @@ type(ROM_DS_AlgoPara), intent(in) :: paraAlgo
 !
     gamma  = paraAlgo%gamma
     nbMode = paraAlgo%ds_empi%nbMode
-!
-! - Print
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_55', si = nbMode)
-    endif
 !
 ! - Access to reduced coordinates
 !

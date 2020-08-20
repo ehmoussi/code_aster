@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/rrc_init_prim.h"
 #include "asterfort/rscrsd.h"
 #include "asterfort/rs_get_liststore.h"
-#include "asterfort/tbexve.h"
+#include "asterfort/romTableRead.h"
 #include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
@@ -64,9 +64,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! - Get reduced coordinates
 !
-    call tbexve(cmdPara%tablReduCoor%tablResu%tablName,&
-                cmdPara%tablReduCoor%tablResu%tablSymbName,&
-                cmdPara%coorRedu)
+    call romTableRead(cmdPara%tablReduCoor)
 !
 ! - Type of result
 !
