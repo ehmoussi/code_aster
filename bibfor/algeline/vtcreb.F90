@@ -141,7 +141,7 @@ implicit none
       lchange=(type_scal.eq.'R'.or.type_scal.eq.'C'.or.type_scal.eq.'F')
       call jeveuo(vchamz,'L',jvcham)
       do i=ideb,ifin
-        chamno=zk24(jvcham+i-1)
+        chamno=zk24(jvcham+i-1)(1:19)
         obj_refe = chamno(1:19)//'.REFE'
         obj_vale = chamno(1:19)//'.VALE'
         obj_desc = chamno(1:19)//'.DESC'
