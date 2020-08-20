@@ -440,7 +440,7 @@ MSLIN=MECA_STATIQUE(MODELE=MO,
                              FONC_MULT=FO11,),
                     LIST_INST=LR1,);
 
-MSLIN=CALC_CHAMP(reuse=MSLIN,
+MSLIN=CALC_CHAMP(reuse=MSLIN,PARALLELISME_TEMPS='OUI',
                  RESULTAT=MSLIN,
                  LIST_INST=LR1,
                  CONTRAINTE=(             'SIEF_ELNO','SIEF_NOEU',
@@ -768,7 +768,7 @@ MSLI2=MECA_STATIQUE(MODELE=MO,
 # ----------------------------------------------------------------------
 #   POST_TRAITEMENT DU CALCUL
 # ----------------------------------------------------------------------
-MSLI2=CALC_CHAMP(reuse=MSLI2,
+MSLI2=CALC_CHAMP(reuse=MSLI2,PARALLELISME_TEMPS='OUI',
                  RESULTAT=MSLI2,
                  NUME_ORDRE=(1,2,3),
                  CONTRAINTE=(             'SIEF_ELNO','SIEF_NOEU',
@@ -784,7 +784,7 @@ MSLI2=CALC_CHAMP(reuse=MSLI2,
                               'EPMQ_ELGA','EPMQ_ELNO','EPMQ_NOEU',
                               'SIEQ_ELGA','SIEQ_ELNO',),);
 
-MSLI2=CALC_CHAMP(reuse =MSLI2,
+MSLI2=CALC_CHAMP(reuse =MSLI2,PARALLELISME_TEMPS='OUI',
                  RESULTAT=MSLI2,
                  INST=11.5,
                  CRITERE='ABSOLU',

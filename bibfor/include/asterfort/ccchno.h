@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,8 @@
 interface
     subroutine ccchno(option, numord, resuin, resuou, lichou,&
                       mesmai, nomail, modele, carael, basopt,&
-                      ligrel, ligmod, codret)
+                      ligrel, ligmod, codret,&
+                      nochou, ideb, ifin, vcham)
         character(len=16) :: option
         integer :: numord
         character(len=8) :: resuin
@@ -37,5 +38,9 @@ interface
         character(len=24) :: ligrel
         aster_logical :: ligmod
         integer :: codret
+        character(len=19), optional :: nochou
+        integer,           optional :: ideb
+        integer,           optional :: ifin
+        character(len=24), optional :: vcham
     end subroutine ccchno
 end interface

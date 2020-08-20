@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine calcop(option, lisopt, resuin, resuou, lisord,&
-                      nbordr, chtype, typesd, codret, base)
+                      nbordr, chtype, typesd, codret, base, tldist)
         character(len=16) :: option
         character(len=*) :: lisopt
         character(len=8) :: resuin
@@ -31,5 +31,6 @@ interface
         character(len=16) :: typesd
         integer :: codret
         character(len=1), optional, intent(in) :: base
+        aster_logical, optional :: tldist
     end subroutine calcop
 end interface

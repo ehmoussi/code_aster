@@ -188,7 +188,7 @@ subroutine ccbcop(resuin, resuou, lisord, nbordr, lisopt,&
             endif
         else
             call calcop(option, lisopt, resuin, resuou, lisord,&
-                        nbordr, typcha, typesd, iret)
+                        nbordr, typcha, typesd, iret, tldist=.True._1)
 !
             if (iret .ne. 0) then
                 ASSERT(.false.)

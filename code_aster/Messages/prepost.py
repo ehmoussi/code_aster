@@ -20,7 +20,16 @@
 from ..Utilities import _
 
 cata_msg = {
+    1 : _("""
+Opérateur CALC_CHAMP et parallélisme en temps.
+Le modèle du calcul semble changer au cours du transitoire. Dans ce cas de
+figure le parallélisme en temps n'est pas encore disponible.
 
+Conseil
+=======
+Relancer le calcul en désactivant ce type de parallélisme avec
+PARALLELISME_TEMPS='NON'.
+"""),
     3 : _("""
  Dans le cas d'un défaut SEMI_ELLIPSE, les mots-clés suivants doivent être présents :
 
@@ -72,12 +81,79 @@ cata_msg = {
  Les valeurs non existantes du champ %(k1)s lues sur le maillage donné
  sont considérées nulles.
 """),
+    15 : _("""
+Opérateur CALC_CHAMP et parallélisme en temps:
+Le calcul n'a pas pu bénéficier de ce type de parallélisme. Sans doute n'a-t-il
+été lancé que sur 1 processus MPI ou avec un nombre d'instants inférieur à
+celui des processus MPI.
 
+Le calcul continue en ne bénéficiant, éventuellement, que du parallélisme en
+espace (comme si le mot-clé PARALLELISME_TEMPS était renseigné à 'NON'). Cela
+pourrait le ralentir sur ce calcul d'option.
+
+Conseil
+=======
+Vérifier votre nombre de processus MPI ou votre liste d'instants. Sinon
+relancer en posant PARALLELISME_TEMPS='NON' afin d'éteindre cette alarme.
+"""),
+    16 : _("""
+Opérateur CALC_CHAMP et parallélisme en temps.
+Le NUME_DDL du calcul semble changer au cours du transitoire. Dans ce cas
+de figure le parallélisme en temps n'est pas encore disponible.
+
+Conseil
+=======
+Relancer le calcul en désactivant ce parallélisme (PARALLELISME_TEMPS='NON').
+"""),
+    17 : _("""
+Opérateur CALC_CHAMP et parallélisme en temps.
+Le champ calculé semble changer de taille au cours du transitoire. Dans ce cas
+de figure le parallélisme en temps n'est pas encore disponible.
+
+Conseil
+=======
+Relancer le calcul en désactivant ce parallélisme (PARALLELISME_TEMPS='NON').
+"""),
+    18 : _("""
+Opérateur CALC_CHAMP et parallélisme en temps.
+La configuration du calcul a conduit à une alarme non encore gérée avec ce
+type de parallélisme. Le comportement du calcul risque d'être différent du
+mode séquentiel. On arrête donc le calcul au cas où.
+
+Conseil
+=======
+Relancer le calcul en désactivant ce parallélisme (PARALLELISME_TEMPS='NON')
+ou en remédiant à cette alarme.
+"""),
+    19 : _("""
+Opérateur CALC_CHAMP et parallélisme en temps:
+Le calcul n'a pas pu bénéficier de ce type de parallélisme car il n'est pas
+encore disponible pour les options de calcul du mot-clé facteur CHAMP_UTIL.
+
+Le calcul continue en ne bénéficiant, éventuellement, que du parallélisme en
+espace (comme si le mot-clé PARALLELISME_TEMPS était renseigné à 'NON').
+
+Conseil
+=======
+Relancer en posant PARALLELISME_TEMPS='NON' afin d'éteindre cette alarme.
+"""),
     21 : _("""
  Intersection Droite / Cercle
  pas d'intersection trouvée
 """),
-
+    22 : _("""
+Nombre de pas de temps=%(i1)d
+Calcul option=%(k1)s --> parallélisme en temps activé
+"""),
+    23 : _("""
+Calcul option=%(k1)s --> parallélisme en espace activé
+"""),
+    24 : _("""
+Calcul option=%(k1)s --> parallélisme en espace désactivé
+"""),
+    25 : _("""
+Calcul option=%(k1)s --> calcul sur 1 processus, aucun parallélisme MPI activé
+"""),
     28 : _("""
  volume supérieur à 1.d6
 """),

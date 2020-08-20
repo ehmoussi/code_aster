@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ subroutine ccchut(sdresu_in, sdresu_out, list_ordr, nb_ordr)
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
 ! person_in_charge: mathieu.courtois at edf.fr
@@ -61,7 +62,7 @@ subroutine ccchut(sdresu_in, sdresu_out, list_ordr, nb_ordr)
     integer :: ioc, nuti, ibid
     integer :: nb_form, nb_crit, nb_norm
     integer :: jform, nume_field_out
-    character(len=16) :: field_type, crit, norm, type_comp
+    character(len=16) :: field_type, crit, norm, type_comp, kmpi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,7 +73,21 @@ subroutine ccchut(sdresu_in, sdresu_out, list_ordr, nb_ordr)
     keywordfact = 'CHAM_UTIL'
     lform = '&&CCCHUT.FORMULE'
     call getfac(keywordfact, nuti)
+
 !
+! Time parallelism not available here
+    if (nuti.ge.1) then
+      call getvtx(' ', 'PARALLELISME_TEMPS', scal=kmpi, nbret=ibid)
+      ASSERT(ibid.ge.0)
+      if (kmpi(1:3).eq.'OUI') then
+        call utmess('A', 'PREPOST_19')
+      else if (kmpi(1:3).eq.'NON') then
+! Nothing to do
+      else
+! Bad option
+         ASSERT(.false.)
+      endif
+    endif
 ! - Loop on occurrences
 !
     do ioc = 1, nuti

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ MAIL=DEFI_GROUP(reuse =MAIL,
                                   CRIT_NOEUD='SOMMET',
                                   GROUP_MA='BO',),
                                ),);
-MODELE=AFFE_MODELE(MAILLAGE=MAIL,
+MODELE=AFFE_MODELE(MAILLAGE=MAIL,DISTRIBUTION=_F(METHODE='GROUP_ELEM',),
                    AFFE=_F(TOUT='OUI',
                            PHENOMENE='MECANIQUE',
                            MODELISATION='AXIS_THHD',),);
@@ -313,14 +313,14 @@ U0=CALC_CHAMP(reuse =U0,
 
 DPVP=CALC_CHAMP(RESULTAT=U0,VARI_INTERNE=('VAEX_ELNO'),NOM_VARI='DPVP')
 
-DPVP=CALC_CHAMP(reuse=DPVP,
+DPVP=CALC_CHAMP(reuse=DPVP,PARALLELISME_TEMPS='OUI',
              RESULTAT=DPVP,
              VARI_INTERNE='VAEX_NOEU', NOM_VARI='DPVP',
              )
 
 SATLIQ=CALC_CHAMP(RESULTAT=U0,VARI_INTERNE=('VAEX_ELNO'),NOM_VARI='SATLIQ')
 
-SATLIQ=CALC_CHAMP(reuse=SATLIQ,RESULTAT=SATLIQ,VARI_INTERNE='VAEX_NOEU',NOM_VARI='SATLIQ')
+SATLIQ=CALC_CHAMP(reuse=SATLIQ,RESULTAT=SATLIQ,VARI_INTERNE='VAEX_NOEU',NOM_VARI='SATLIQ',PARALLELISME_TEMPS='NON',)
 SATEAU=CALC_CHAMP(RESULTAT=U0,VARI_INTERNE=('VAEX_ELGA'),NOM_VARI='SATLIQ')
 
 
@@ -411,7 +411,7 @@ TEST_RESU(RESU=(_F(INST=1000.0,
 #
 # *******************************************************************
 
-MODELE2=AFFE_MODELE(MAILLAGE=MAIL,
+MODELE2=AFFE_MODELE(MAILLAGE=MAIL,DISTRIBUTION=_F(METHODE='GROUP_ELEM',),
                    AFFE=_F(GROUP_MA=('BO1','HAUT'),
                            PHENOMENE='MECANIQUE',
                            MODELISATION='AXIS_THHD',),);

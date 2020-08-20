@@ -51,7 +51,7 @@ l_isnt=DEFI_LIST_REEL(
 # cas 1 : discrets non alignés => résultats faux
 #-----------------------------------------------
 
-model1=AFFE_MODELE(
+model1=AFFE_MODELE(DISTRIBUTION=_F(METHODE='CENTRALISE',),
     MAILLAGE=mail,
     AFFE=_F(GROUP_MA=('GM1','GM2'), PHENOMENE='MECANIQUE', MODELISATION='DIS_T',),
 )
@@ -80,18 +80,20 @@ lin1=STAT_NON_LINE(
     INCREMENT=_F(LIST_INST=l_isnt),
 )
 
-lin1=CALC_CHAMP(reuse=lin1,
+lin1=CALC_CHAMP(reuse=lin1,PARALLELISME_TEMPS='OUI',
     MODELE=model1, CHAM_MATER=chmat, RESULTAT=lin1,
     LIST_INST=l_isnt,
     GROUP_MA=('GM1','GM2'),
-    CONTRAINTE=('EFGE_ELNO','SIEF_ELNO','EFGE_NOEU','SIEF_NOEU',)
+    CONTRAINTE=('EFGE_ELNO','SIEF_ELNO','EFGE_NOEU','SIEF_NOEU',),
 )
-lin1=CALC_CHAMP(reuse=lin1,
+
+lin1=CALC_CHAMP(reuse=lin1,PARALLELISME_TEMPS='OUI',
     MODELE=model1, CHAM_MATER=chmat, RESULTAT=lin1,
     LIST_INST=l_isnt,
     GROUP_MA=('GM1','GM2'),
     FORCE=('FORC_NODA','REAC_NODA',)
 )
+
 IMPR_RESU(FORMAT='RESULTAT',RESU=_F(RESULTAT=lin1,INST=(1,2,3)))
 
 test11=POST_RELEVE_T(
@@ -125,7 +127,7 @@ IMPR_TABLE(TABLE=test13,NOM_PARA=('INST','N','VY','VZ'))
 # cas 2 : discrets alignés => résultats bons
 #-----------------------------------------------
 
-model2=AFFE_MODELE(
+model2=AFFE_MODELE(DISTRIBUTION=_F(METHODE='GROUP_ELEM',),
     MAILLAGE=mail,
     AFFE=_F(GROUP_MA=('GM1','GM3'), PHENOMENE='MECANIQUE', MODELISATION='DIS_T',),
 )
@@ -282,7 +284,7 @@ TEST_TABLE(TABLE=TAB1,
     FILTRE=_F(NOM_PARA='TEST', VALE_K='VAL70',), )
 
 TEST_TABLE(TABLE=TAB1,
-    VALE_CALC_I=8, NOM_PARA='NB_EMISS',
+    VALE_CALC_I=4, NOM_PARA='NB_EMISS',
     FILTRE=_F(NOM_PARA='TEST', VALE_K='VAL4',), )
 
 FIN()

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
-                  kstop, iret)
+                  kstop, iret, nbz, vchamz)
 ! person_in_charge: jacques.pellet at edf.fr
 !
 ! aslint: disable=
@@ -55,6 +55,8 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
 !
     character(len=*) :: cnsz, cnoz, basez, prchnz, prol0
     character(len=1) :: kstop
+    integer,           optional :: nbz
+    character(len=24), optional :: vchamz
 ! ------------------------------------------------------------------
 ! BUT : TRANSFORMER UN CHAM_NO_S (CNSZ) EN CHAM_NO (CNOZ)
 ! ------------------------------------------------------------------
@@ -93,19 +95,20 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
     character(len=24) :: noojb
     character(len=24) :: valk(3)
 !     -----------------------------------------------------------------
-    integer :: icmp, nec,   jcnsv, jcnsl, gd, iexi, ncmp
-    integer :: reste, iec, code, nbno
+    integer :: icmp, nec,   jcnsv, jcnsl, gd, iexi, ncmp, jvcham, jrefk
+    integer :: reste, iec, code, nbno, nb
     integer :: ncmpmx, jrefe, ncmp1, nb_equa, jcmpgd, icmp1, k, ieq2, iexi2, nbec
     integer :: jprn2, ino, idg2, ico, jvale, iret, prno_length
     integer :: lshift, nuprf
     character(len=1) :: base
     character(len=8) :: ma, nomgd, nomno, nomcmp
-    aster_logical :: l_crea_prchno, l_chck_prchno
+    aster_logical :: l_crea_prchno, l_chck_prchno, ldist
     character(len=3) :: tsca
     character(len=19) :: cns, cno, prchno, messag, prnoav, nume_equa
     integer, pointer :: deeq(:) => null()
     integer, pointer :: cnsd(:) => null()
     character(len=8), pointer :: cnsc(:) => null()
+    character(len=24) :: vcham
     character(len=24), pointer :: refn(:) => null()
     character(len=8), pointer :: cnsk(:) => null()
     integer, pointer :: tmp_nucm1(:) => null()
@@ -116,6 +119,17 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
     integer, pointer :: v_nequ(:) => null()
 !     -----------------------------------------------------------------
     call jemarq()
+! EVENTUEL PARALLELISME EN TEMPS
+    if (present(nbz).and.present(vchamz)) then
+      ldist=.True.
+      ASSERT(nbz.ge.2)
+      nb=nbz
+      vcham=vchamz
+    else
+      ldist=.False.
+      nb=0
+      vcham=' '
+    endif
 !
 !
     base=basez
@@ -292,8 +306,15 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
 !
 ! - Create node field
 !
-    call vtcreb(cno, base, tsca,&
-                meshz = ma, prof_chnoz = prchno, idx_gdz = gd, nb_equa_inz = nb_equa)
+! CREATION DES SDS CHAM_NOS SIMPLE OU SIMULTANES
+    if (ldist.and.(nb.ge.2)) then
+      call vtcreb(cno, base, tsca,&
+                  meshz = ma, prof_chnoz = prchno, idx_gdz = gd, nb_equa_inz = nb_equa,&
+                  nbz=nb, vchamz=vcham)
+    else
+      call vtcreb(cno, base, tsca,&
+                  meshz = ma, prof_chnoz = prchno, idx_gdz = gd, nb_equa_inz = nb_equa)
+    endif
     call jeveuo(cno//'.REFE','E',jrefe)
     call jeveuo(cno//'.VALE','E',jvale)
 !
@@ -475,6 +496,15 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
             if (idensd('PROF_CHNO',prchno,prnoav)) then
                 call detrsd('PROF_CHNO', prchno)
                 zk24(jrefe-1+2)=prnoav
+! SI PARALLELISME EN TEMPS: ON PREND LA MEME DECISION POUR TOUS LES CHAM_NOS
+! CALCULES AU MEME PAS PARALLELE (COHERENCE AVEC LE VTCREB PLUS HAUT)
+                if (ldist) then
+                  call jeveuo(vcham,'L',jvcham)
+                  do k=1,nb
+                    call jeveuo(zk24(jvcham+k-1)(1:19)//'.REFE','E',jrefk)
+                    zk24(jrefk-1+2)=prnoav
+                  enddo
+               endif
             endif
         endif
     endif

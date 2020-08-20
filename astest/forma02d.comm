@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -207,7 +207,7 @@ DYNATRAN=REST_GENE_PHYS(RESU_GENE=TRANGEN1,
 #
 # CALCUL DES CONTRAINTES DUES AUX EFFORTS GENERALISES
 
-DYNATRA=CALC_CHAMP(MODELE=MODELE,
+DYNATRA=CALC_CHAMP(MODELE=MODELE,PARALLELISME_TEMPS='OUI',
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CARA_POU,
                    RESULTAT=DYNATRAN,

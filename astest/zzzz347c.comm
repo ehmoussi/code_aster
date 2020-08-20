@@ -31,7 +31,6 @@ MAILLAGE=DEFI_GROUP(reuse=MAILLAGE,
                  CREA_GROUP_NO=_F(GROUP_MA=('BETON','CABLE')))
 
 MODELE=AFFE_MODELE(
-#                       DISTRIBUTION=_F(METHODE='CENTRALISE',),
                  MAILLAGE=MAILLAGE,AFFE=(
                      _F(  GROUP_MA = 'BETON',
                             PHENOMENE = 'MECANIQUE',
@@ -95,9 +94,8 @@ CHARMECA=AFFE_CHAR_MECA(
 
 #
 
-#LINST=DEFI_LIST_REEL(    VALE=( 0.0,  1.0, ) )
-LINST=DEFI_LIST_REEL(    VALE=( 0.0,  0.1, 0.2, 0.3, 0.4,0.5,0.6,0.7,0.8,0.9,1.0, ) )
-#IMPR_CO(CONCEPT=_F(NOM=MODELE,),UNITE=6);
+LINST=DEFI_LIST_REEL(    VALE=( 0.0,  1.0, ) )
+
 EVOLNOLI=STAT_NON_LINE(
                             MODELE=MODELE,
                         CHAM_MATER=CHMATER,
@@ -116,7 +114,7 @@ EVOLNOLI=STAT_NON_LINE(
                 LIST_INST = LINST),
                           NEWTON=_F(REAC_ITER=1),
                            SOLVEUR=_F(
-                METHODE = 'MULT_FRONT',
+                METHODE = 'MUMPS',
                                       ),
                        CONVERGENCE=_F(
                           ITER_GLOB_MAXI = 5,
@@ -130,17 +128,16 @@ EVOLNOLI=STAT_NON_LINE(
 
 
 
-EVOLNOLI=CALC_CHAMP(reuse =EVOLNOLI,
+EVOLNOLI=CALC_CHAMP(reuse =EVOLNOLI, PARALLELISME_TEMPS='OUI',INFO=1,
                     FORCE=('FORC_NODA','REAC_NODA'),
                     GROUP_MA=('CABLE'),
                     RESULTAT=EVOLNOLI,);
-IMPR_CO(CONCEPT=_F(NOM=EVOLNOLI,),UNITE=6,NIVEAU=-1);
-EVOLNOL2=CALC_CHAMP(
+
+EVOLNOL2=CALC_CHAMP(PARALLELISME_TEMPS='OUI',INFO=1,
                     FORCE=('FORC_NODA','REAC_NODA'),
                     MAILLE=('M95'),
                     RESULTAT=EVOLNOLI,);
-IMPR_CO(CONCEPT=_F(NOM=EVOLNOL2,),UNITE=6,NIVEAU=-1);
-FIN();
+
 REACDY=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                                 INTITULE='REACDY',
                                 NOEUD=('N1','N40'),

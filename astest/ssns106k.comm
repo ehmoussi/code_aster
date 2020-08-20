@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -139,7 +139,7 @@ RESU_G1=STAT_NON_LINE(MODELE=MO_G,
                                      RESI_GLOB_MAXI=1.E-4,),
                       ARCHIVAGE=_F(LIST_INST=inst1,),);
 
-RESU_G1=CALC_CHAMP(reuse =RESU_G1,
+RESU_G1=CALC_CHAMP(reuse =RESU_G1,PARALLELISME_TEMPS='OUI',
                    RESULTAT=RESU_G1,
                    FORCE='FORC_NODA',
                    VARI_INTERNE=('VARI_ELNO','VARI_NOEU',),

@@ -82,7 +82,7 @@ nz =  3/14**0.5
 
 MA  =  LIRE_MAILLAGE(FORMAT = 'MED')
 
-MO = AFFE_MODELE(
+MO = AFFE_MODELE(DISTRIBUTION=_F(METHODE='CENTRALISE',),
   MAILLAGE = MA,
   AFFE     = _F(
     GROUP_MA     = 'MATIERE',
@@ -202,7 +202,7 @@ tfin = 2.
 #    EXTRAPOLATION DES VARIABLES INTERNES AUX NOEUDS
 # -----------------------------------------------------
 
-EVOL=CALC_CHAMP(reuse =EVOL,
+EVOL=CALC_CHAMP(reuse =EVOL,PARALLELISME_TEMPS='OUI',
                 RESULTAT=EVOL,
                 VARI_INTERNE=('VARI_ELNO','VARI_NOEU'),
                 );
@@ -275,7 +275,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 # TESTS DES POST-TRAITEMENTS EN DEFORMATIONS ET EN CONTRAINTES
 # ------------------------------------------------------------
 
-EVOL=CALC_CHAMP(reuse =EVOL,
+EVOL=CALC_CHAMP(reuse =EVOL,PARALLELISME_TEMPS='OUI',
                 RESULTAT=EVOL,
                 CONTRAINTE  = ('SIGM_ELGA','SIGM_ELNO','SIEF_ELNO','SIEF_NOEU'),
                 DEFORMATION = ('EPSI_ELGA','EPSI_ELNO','EPSI_NOEU','EPSG_ELGA','EPSG_ELNO','EPSG_NOEU'),
@@ -389,7 +389,7 @@ EVOL2 = STAT_NON_LINE(
     ),
   ) 
 
-CALC_CHAMP(reuse = EVOL2,
+CALC_CHAMP(reuse = EVOL2,PARALLELISME_TEMPS='NON',
   RESULTAT = EVOL2,
   FORCE    = 'FORC_NODA',
   )

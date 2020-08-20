@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
-                      kstop, iret)
+                      kstop, iret, nbz, vchamz)
         character(len=*) :: cnsz
         character(len=*) :: prchnz
         character(len=*) :: prol0
@@ -28,5 +28,7 @@ interface
         character(len=*) :: cnoz
         character(len=1) :: kstop
         integer :: iret
+        integer,           optional :: nbz
+        character(len=24), optional :: vchamz
     end subroutine cnscno
 end interface

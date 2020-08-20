@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -269,7 +269,7 @@ RESU_R1=STAT_NON_LINE(MODELE=MO,
                       ARCHIVAGE=_F(LIST_INST=inst1,),);
 
 RESU_R1=CALC_CHAMP(reuse =RESU_R1,RESULTAT=RESU_R1,PRECISION=1.E-3,
-             FORCE=('FORC_NODA',),)
+             FORCE=('FORC_NODA',),PARALLELISME_TEMPS='OUI',)
 
 RESU_G1=STAT_NON_LINE(MODELE=MO_G,
                       CHAM_MATER=MATER,
@@ -287,7 +287,7 @@ RESU_G1=STAT_NON_LINE(MODELE=MO_G,
                       ARCHIVAGE=_F(LIST_INST=inst1,),);
 
 
-RESU_G1=CALC_CHAMP(reuse =RESU_G1,
+RESU_G1=CALC_CHAMP(reuse =RESU_G1,PARALLELISME_TEMPS='OUI',
                    RESULTAT=RESU_G1,
                    ENERGIE=('DISS_ELGA','DISS_ELNO','DISS_NOEU','DISS_ELEM'),
                    VARI_INTERNE=('VARI_ELNO','VARI_NOEU'),
@@ -788,7 +788,7 @@ RESU_R2=STAT_NON_LINE(MODELE=MO,
 
 
 RESU_R2=CALC_CHAMP(reuse =RESU_R2,RESULTAT=RESU_R2,PRECISION=1.E-3,
-             FORCE=('FORC_NODA',),)
+             FORCE=('FORC_NODA',),PARALLELISME_TEMPS='OUI',)
 
 RESU_G2=STAT_NON_LINE(MODELE=MO_G,
                       CHAM_MATER=MATER,
@@ -805,7 +805,7 @@ RESU_G2=STAT_NON_LINE(MODELE=MO_G,
                       ARCHIVAGE=_F(LIST_INST=inst1,),);
 
 RESU_G2=CALC_CHAMP(reuse =RESU_G2,RESULTAT=RESU_G2,PRECISION=1.E-3,
-             FORCE=('FORC_NODA',),
+             FORCE=('FORC_NODA',),PARALLELISME_TEMPS='OUI',
              VARI_INTERNE=('VARI_ELNO','VARI_NOEU',),
              )
 

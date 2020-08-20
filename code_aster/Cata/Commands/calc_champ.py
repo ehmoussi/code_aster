@@ -332,7 +332,8 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,
          ),
 
 
-     INFO             = SIMP(statut='f',typ='I',defaut= 1,into=(1,2)),
+      INFO             = SIMP(statut='f',typ='I',defaut= 1,into=(1,2,3)),
+      PARALLELISME_TEMPS = SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON") ),
 
      TITRE            = SIMP(statut='f',typ='TXM'),
 );

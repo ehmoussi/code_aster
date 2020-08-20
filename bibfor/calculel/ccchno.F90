@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine ccchno(option, numord, resuin, resuou, lichou,&
                   mesmai, nomail, modele, carael, basopt,&
-                  ligrel, ligmod, codret)
+                  ligrel, ligmod, codret, nochou, ideb, ifin, vcham)
     implicit none
 !     --- ARGUMENTS ---
 #include "asterf_types.h"
@@ -37,7 +37,7 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/rsexc1.h"
+!#include "asterfort/rsexc1.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/utmess.h"
 !
@@ -47,6 +47,9 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
     character(len=16) :: option
     character(len=24) :: lichou(2), mesmai, ligrel
     aster_logical :: ligmod
+    character(len=19), optional :: nochou
+    integer,           optional :: ideb, ifin
+    character(len=24), optional :: vcham
 !  CALC_CHAMP - CALCUL D'UN CHAMP AUX NOEUDS
 !  -    -                   --        --
 ! ----------------------------------------------------------------------
@@ -65,6 +68,9 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
 !   CARAEL  K8   NOM DU CARAEL
 !   BASOPT  K1   BASE SUR LAQUELLE DOIT ETRE CREE LE CHAMP DE SORTIE
 !   LIGREL  K24  NOM DU LIGREL
+!   OPTIONNEL: NOCHOU K19 NOM DU CHAMP INITIAL
+!   OPTIONNEL: IDEB/IFIN   I   INDICES DEBUT/FIN CHAM_NOS SIMULTANES
+!   OPTIONNEL: VCHAM  K24 VECTEUR DES NOMS DES CHAM_NOS SIMULTANES
 !
 ! IN/OUT :
 !   LICHOU  K8*  LISTE DES CHAMPS OUT
@@ -72,15 +78,24 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
 ! person_in_charge: nicolas.sellenet at edf.fr
     integer :: ier, nbma, jmai, ngr, igr, nmaxob, iret
     parameter    (nmaxob=30)
-    integer :: adobj(nmaxob), nbobj, nbsp
+    integer :: adobj(nmaxob), nbobj, nbsp, nb
+    aster_logical :: ldist
 !
     character(len=8) :: k8b, erdm
     character(len=19) :: valk(4)
-    character(len=19) :: optele, nochou, chams0, chams1
+    character(len=19) :: optele, chams0, chams1
     character(len=24) :: chelem, noobj(nmaxob)
 !
 !
     call jemarq()
+! EVENTUEL PARALLELISME EN TEMPS
+    if (present(ideb).and.present(ifin).and.present(vcham)) then
+      ldist=.True.
+      nb=ifin-ideb+1
+    else
+      ldist=.False.
+      nb=0
+    endif
 !
     call jeexin(mesmai, ier)
     if (ier .ne. 0) then
@@ -94,7 +109,6 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
     chams1 = '&&CALCOP.CHAMS1'
     optele = option(1:5)//'ELNO'
 !
-    call rsexc1(resuou, option, numord, nochou)
     lichou(1) = nochou
 !
     call rsexch(' ', resuin, optele, numord, chelem, ier)
@@ -110,6 +124,7 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
         valk(3)=resuin
         valk(4)=resuou
         call utmess('A', 'CALCCHAMP_2', nk=4, valk=valk, si=numord)
+        if (ldist) call utmess('F', 'PREPOST_18')
         goto 999
     endif
     call celces(chelem, 'V', chams0)
@@ -146,7 +161,12 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
     endif
 !
     call cescns(chams0, ' ', 'V', chams1, 'A', codret)
-    call cnscno(chams1, ' ', 'NON', basopt, nochou, ' ', iret)
+! CREATION DES SDS CHAM_NOS SIMPLE OU SIMULTANES
+    if (ldist.and.(nb.ge.2)) then
+      call cnscno(chams1, ' ', 'NON', basopt, nochou, ' ', iret, nbz=nb, vchamz=vcham)
+    else
+      call cnscno(chams1, ' ', 'NON', basopt, nochou, ' ', iret)
+    endif
 !
 !   VERIFICATION POUR LES CHAMPS A SOUS-POINT
     call dismoi('MXNBSP', chelem, 'CHAM_ELEM', repi=nbsp)

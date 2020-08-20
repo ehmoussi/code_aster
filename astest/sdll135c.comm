@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -105,10 +105,11 @@ DYNATRAF=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                       INCREMENT=_F(LIST_INST=LISTE,),);
 
 
-DYNATRAF=CALC_CHAMP(reuse=DYNATRAF,GROUP_MA=('MAILF','MAILI'),RESULTAT=DYNATRAF,CONTRAINTE=('SIEF_ELGA','EFGE_ELNO'))
+DYNATRAF=CALC_CHAMP(reuse=DYNATRAF,GROUP_MA=('MAILF','MAILI'),PARALLELISME_TEMPS='OUI',
+                    RESULTAT=DYNATRAF,CONTRAINTE=('SIEF_ELGA','EFGE_ELNO'))
 
 
-DYNATRAF=CALC_CHAMP(reuse =DYNATRAF,
+DYNATRAF=CALC_CHAMP(reuse =DYNATRAF,PARALLELISME_TEMPS='OUI',
                     RESULTAT=DYNATRAF,
                     FORCE='REAC_NODA',
                     MODELE=MODELE,
@@ -370,10 +371,11 @@ DYNATRAM=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                         INCREMENT=_F(LIST_INST=LISTE2,),
                         ARCHIVAGE=_F(PAS_ARCH=50,),);
 
-DYNATRAM=CALC_CHAMP(reuse=DYNATRAM,GROUP_MA=('MAILF','MAILI'),RESULTAT=DYNATRAM,CONTRAINTE=('SIEF_ELGA','EFGE_ELNO'))
+DYNATRAM=CALC_CHAMP(reuse=DYNATRAM,GROUP_MA=('MAILF','MAILI'),PARALLELISME_TEMPS='OUI',
+                    RESULTAT=DYNATRAM,CONTRAINTE=('SIEF_ELGA','EFGE_ELNO'))
 
 
-DYNATRAM=CALC_CHAMP(reuse =DYNATRAM,
+DYNATRAM=CALC_CHAMP(reuse =DYNATRAM,PARALLELISME_TEMPS='OUI',
                     RESULTAT=DYNATRAM,
                     FORCE=('REAC_NODA','FORC_NODA'),
                     MODELE=MODELE,

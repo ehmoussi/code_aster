@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -109,7 +109,7 @@ STAT2 = MECA_STATIQUE(CARA_ELEM=CARA_ELE,
                              _F(CHARGE=FORCE_Z)),
                       MODELE=MODELE)
 
-STAT1 = CALC_CHAMP(reuse=STAT1,
+STAT1 = CALC_CHAMP(reuse=STAT1,PARALLELISME_TEMPS='NON',
                    CHAM_UTIL=_F(FORMULE=(Meq, ),
                                 NOM_CHAM='EFGE_ELNO',
                                 NUME_CHAM_RESU=1),

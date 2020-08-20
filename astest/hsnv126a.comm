@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -95,7 +95,7 @@ PHASINIT=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='CART_VAR2_R',
     VALE = ( 0.7, 0.0, 0.3, 0.0,  0.0, 1.0, 0.0    ))
                         )
 
-MOTH=AFFE_MODELE( MAILLAGE=MAIL,
+MOTH=AFFE_MODELE( MAILLAGE=MAIL,DISTRIBUTION=_F(METHODE='GROUP_ELEM',),
                   AFFE=_F( TOUT = 'OUI',
                            PHENOMENE = 'THERMIQUE',
                            MODELISATION = 'AXIS'))
@@ -150,7 +150,7 @@ TEMPE=CALC_META(reuse=TEMPE,
 
 # CALCUL MECANIQUE
 
-MOMECA=AFFE_MODELE( MAILLAGE=MAIL,
+MOMECA=AFFE_MODELE( MAILLAGE=MAIL,DISTRIBUTION=_F(METHODE='GROUP_ELEM',),
                     AFFE=_F( TOUT = 'OUI',
                              PHENOMENE = 'MECANIQUE',
                              MODELISATION = 'AXIS'))
@@ -303,7 +303,7 @@ U=STAT_NON_LINE(reuse=U,
 U=CALC_CHAMP(reuse        = U,
              RESULTAT     = U,
              CONTRAINTE   = 'SIGM_NOEU',
-             VARI_INTERNE = 'VARI_NOEU',
+             VARI_INTERNE = 'VARI_NOEU',PARALLELISME_TEMPS='OUI',
              DEFORMATION  = ('EPSI_NOEU','EPVC_NOEU','EPME_NOEU','EPSP_NOEU')
             )
 #

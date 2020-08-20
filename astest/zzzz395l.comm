@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -130,7 +130,7 @@ thnl1=THER_NON_LINE(MODELE=model,
                              ITER_LINE_MAXI=3,),
                    CONVERGENCE=_F(RESI_GLOB_MAXI=1e-5,),);
 
-thnl1=CALC_CHAMP(reuse=thnl1,
+thnl1=CALC_CHAMP(reuse=thnl1,PARALLELISME_TEMPS='OUI',
                 RESULTAT=thnl1,
                 THERMIQUE='FLUX_NOEU',);
 
@@ -144,7 +144,7 @@ thnl2=THER_NON_LINE(MODELE=model,
                              ITER_LINE_MAXI=3,),
                    CONVERGENCE=_F(RESI_GLOB_MAXI=1e-5,),);
 
-thnl2=CALC_CHAMP(reuse=thnl2,
+thnl2=CALC_CHAMP(reuse=thnl2,PARALLELISME_TEMPS='NON',
                 RESULTAT=thnl2,
                 THERMIQUE='FLUX_NOEU',);
 
