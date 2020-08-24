@@ -19,21 +19,22 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`Model` --- Modeling definition
-*****************************************
+:py:class:`PrestressingCable` --- Definition of pretension cable
+****************************************************************
 """
 
-from libaster import Model
+from libaster import PrestressingCable
 
 from ..Utilities import injector
 
 
-@injector(Model)
-class ExtendedModel(object):
-    cata_sdj = "SD.sd_modele.sd_modele"
+@injector(PrestressingCable)
+class ExtendedPrestressingCable(object):
+    cata_sdj = "SD.sd_cabl_precont.sd_cabl_precont"
 
     def __getinitargs__(self):
-        """Returns the argument required to reinitialize a
-        ElementaryCharacteristics object during unpickling.
+        """Returns the argument required to reinitialize a PrestressingCable
+        object during unpickling.
         """
-        return (self.getName(), self.getMesh())
+        return (self.getName(), self.getModel(), self.getMaterialField(),
+                self.getElementaryCharacteristics())

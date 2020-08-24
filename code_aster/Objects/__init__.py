@@ -34,6 +34,7 @@ from .datastructure_ext import (AsFloat, AsInteger, DataStructure,
 from .acousticload_ext import AcousticLoad
 from .assemblymatrix_ext import (AssemblyMatrixDisplacementComplex,
                                  AssemblyMatrixDisplacementReal)
+from .constantfieldoncells_ext import ConstantFieldOnCellsReal
 from .dofnumbering_ext import DOFNumbering
 from .dynamicmacroelement_ext import DynamicMacroElement
 from .dynamicresults_ext import TransientGeneralizedResult
@@ -45,6 +46,7 @@ from .elementarymatrix_ext import (ElementaryMatrixDisplacementComplex,
 from .fieldoncells_ext import FieldOnCellsReal
 from .fieldonnodes_ext import FieldOnNodesReal
 from .formula_ext import Formula
+from .function2d_ext import Function2D
 from .function_ext import Function
 from .generalizedassemblymatrix_ext import (GeneralizedAssemblyMatrixComplex,
                                             GeneralizedAssemblyMatrixReal)
@@ -59,14 +61,14 @@ from .mechanicalload_ext import GenericMechanicalLoad
 from .mesh_ext import Mesh
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .model_ext import Model
-from .constantfieldoncells_ext import ConstantFieldOnCellsReal
+from .prestressingcable_ext import PrestressingCable
 from .result_ext import Result
-from .function2d_ext import Function2D
 from .table_ext import Table
 from .tablecontainer_ext import TableContainer
 from .thermalload_ext import ThermalLoad
 from .timestepmanager_ext import TimeStepManager
-from .transientgeneralizedresultscontainer_ext import TransientGeneralizedResult
+from .transientgeneralizedresultscontainer_ext import \
+    TransientGeneralizedResult
 from .xfemcrack_ext import XfemCrack
 
 # Define unusable objects

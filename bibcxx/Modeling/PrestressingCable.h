@@ -73,11 +73,10 @@ class PrestressingCableClass : public DataStructure {
      * @brief Constructeur
      */
     PrestressingCableClass( const ModelPtr &, const MaterialFieldPtr &,
-                                         const ElementaryCharacteristicsPtr & );
+                            const ElementaryCharacteristicsPtr & );
 
     PrestressingCableClass( const std::string jeveuxName, const ModelPtr &,
-                                         const MaterialFieldPtr &,
-                                         const ElementaryCharacteristicsPtr & );
+                            const MaterialFieldPtr &, const ElementaryCharacteristicsPtr & );
 
     // Since no constructor allows to have null or empty objects,
     // it is not necessary to check if they exist.
