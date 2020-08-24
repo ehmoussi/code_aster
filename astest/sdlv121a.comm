@@ -126,6 +126,13 @@ MASS_ELE=CALC_MATR_ELEM(    MODELE=MODELE,
                               CHARGE=LIAISON
                             )
 
+# Fiche #30160 : MASS_MECA_DIAG avec ABSO
+MAS_ELED=CALC_MATR_ELEM(    MODELE=MODELE,
+                              OPTION='MASS_MECA_DIAG',
+                              CHAM_MATER=CHAMPMAT,
+                              CHARGE=LIAISON
+                            )
+
 AMOR_ELE=CALC_MATR_ELEM(    MODELE=MODELE,
                               OPTION='AMOR_MECA',
                               CHAM_MATER=CHAMPMAT,
