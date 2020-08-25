@@ -33,7 +33,7 @@ cata_msg = {
  Dimensions initiales: [%(i1)d,%(i2)d]
  Dimensions finales  : [%(i3)d,%(i4)d]"""),
 
-    4 : _("""Préparation des coordonnées réduites par Gappy-POD."""),
+    4 : _("""Préparation des coordonnées réduites par reconstruction partielle."""),
 
     5 : _("""Préparation des coordonnées réduites par récupération directe dans la table des coordonnées réduites."""),
 
@@ -43,5 +43,5 @@ cata_msg = {
 
     8 : _("""Calcul des coordonnées réduites."""),
 
-    9 : _("""Échec lors du calcul des coordonnées réduites. Les modes pourraient être colinéaires. Essayez de les orthogonaliser"""),
+    9 : _("""Échec lors du calcul des coordonnées réduites. Les modes sont peut-être colinéaires."""),
 }

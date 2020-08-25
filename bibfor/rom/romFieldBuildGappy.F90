@@ -27,6 +27,7 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
@@ -87,8 +88,6 @@ type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
 ! - Get parameters about mode
 !
     fieldName     = mode%fieldName
-    fieldSupp     = mode%fieldSupp
-    ASSERT(fieldSupp .eq. 'NOEU')
 !
 ! - Get parameters
 !
@@ -113,8 +112,16 @@ type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
         call rsexch(' '      , resultRomName, fieldName,&
                     numeStore, fieldRom     , iret)
         ASSERT(iret .eq. 0)
-        call jelira(fieldRom(1:19)//'.VALE', 'LONMAX', nbEquaRom)
-        call jeveuo(fieldRom(1:19)//'.VALE', 'L', vr = valeRom)
+        call dismoi('TYPE_CHAMP', fieldRom, 'CHAMP', repk = fieldSupp)
+        if (fieldSupp == 'NOEU') then
+            call jeveuo(fieldRom(1:19)//'.VALE', 'L', vr = valeRom)
+            call jelira(fieldRom(1:19)//'.VALE', 'LONMAX', nbEquaRom)
+        else if (fieldSupp == 'ELGA') then
+            call jeveuo(fieldRom(1:19)//'.CELV', 'L', vr = valeRom)
+            call jelira(fieldRom(1:19)//'.CELV', 'LONMAX', nbEquaRom)
+        else
+            ASSERT(ASTER_FALSE)
+        endif
 
 ! ----- Truncate input field if required
         if (fieldBuild%lRIDTrunc) then
@@ -129,7 +136,13 @@ type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
             ASSERT(nbEqua .eq. nbEquaRID)
         else
             ASSERT(nbEquaRom .eq. nbEquaRID)
-            call jeveuo(fieldRom(1:19)//'.VALE', 'L', vr = valeField)
+            if (fieldSupp == 'NOEU') then
+                call jeveuo(fieldRom(1:19)//'.VALE', 'L', vr = valeField)
+            else if (fieldSupp == 'ELGA') then
+                call jeveuo(fieldRom(1:19)//'.CELV', 'L', vr = valeField)
+            else
+                ASSERT(ASTER_FALSE)
+            endif
         endif
 
 ! ----- Compute matrix and vector

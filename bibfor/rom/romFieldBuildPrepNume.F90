@@ -31,8 +31,8 @@ implicit none
 #include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
-#include "asterfort/romFieldEquaToEqua.h"
-#include "asterfort/romFieldNodeFromEqua.h"
+#include "asterfort/romFieldNodeEquaToEqua.h"
+#include "asterfort/romFieldElemEquaToEqua.h"
 #include "asterfort/utmess.h"
 !
 character(len=8), intent(in) :: mesh
@@ -59,10 +59,11 @@ type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
     type(ROM_DS_Field) :: fieldDom, fieldRom
     aster_logical :: lRIDTrunc
     character(len=24) :: grNodeRIDInterface
+    character(len=4) :: fieldSupp
     integer :: iNodeGrno, iCmpName, iEquaDom
     integer, pointer :: grno(:) => null(), grnoInDom(:) => null()
     integer :: nbCmpName, nbEquaDom, nbEquaRom, nbNodeGrno
-    integer :: nord, noeq, numeEqua
+    integer :: nord, noeq, numeEquaRom, numeEquaDom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -75,20 +76,27 @@ type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
 !
     fieldRom           = fieldBuild%fieldRom
     fieldDom           = fieldBuild%fieldDom
+    fieldSupp          = fieldBuild%fieldRom%fieldSupp
     lRIDTrunc          = fieldBuild%lRIDTrunc
     grNodeRIDInterface = fieldBuild%grNodeRIDInterface
     nbCmpName          = fieldDom%nbCmpName
     nbEquaDom          = fieldDom%nbEqua
     nbEquaRom          = fieldRom%nbEqua
 !
-! - Detect nodes on all mesh with equation from reduced domain
-!
-    call romFieldNodeFromEqua(fieldRom, nbNodeMesh, listNode)
-!
-! - Get link between equation in complete domain and equation in reduced domain
+! - Allocate map for equations numbering from complete domain to reduced domain
 !
     AS_ALLOCATE(vi = fieldBuild%equaRIDTotal, size = nbEquaDom)
-    call romFieldEquaToEqua(fieldDom, fieldRom, listNode, fieldBuild%equaRIDTotal)
+!
+! - Create map for equations numbering from complete domain to reduced domain
+!
+    if (fieldSupp .eq. 'NOEU') then
+        call romFieldNodeEquaToEqua(fieldDom, fieldRom, nbNodeMesh, listNode,&
+                                    fieldBuild%equaRIDTotal)
+    elseif (fieldSupp .eq. 'ELGA') then
+        call romFieldElemEquaToEqua(fieldDom, fieldRom, fieldBuild%equaRIDTotal)
+    else
+        ASSERT(ASTER_FALSE)
+    endif
 !
 ! - Total number of equations in RID
 !
@@ -97,6 +105,7 @@ type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
 ! - Numbering for partial RID
 !
     if (lRIDTrunc) then
+        ASSERT(fieldSupp .eq. 'NOEU')
 ! ----- Access to GROUP_NO at interface
         call jelira(jexnom(mesh//'.GROUPENO', grNodeRIDInterface), 'LONUTI', nbNodeGrno)
         call jeveuo(jexnom(mesh//'.GROUPENO', grNodeRIDInterface), 'L'     , vi = grno)
@@ -114,23 +123,48 @@ type(ROM_DS_FieldBuild), intent(inout) :: fieldBuild
         AS_ALLOCATE(vi = fieldBuild%equaRIDTrunc, size = nbEquaDom)
         noeq = 0
         nord = 0
-        do iEquaDom = 1, nbEquaDom
-            numeEqua = fieldBuild%equaRIDTotal(iEquaDom)
-            if (numeEqua .ne. 0) then
-! ------------- This equation is in RID
-                nord = nord + 1
-                if (grnoInDom(iEquaDom) .eq. 0) then
-! ----------------- This equation is not at interface
-                    noeq = noeq + 1
-                    fieldBuild%equaRIDTotal(iEquaDom) = noeq
-                    fieldBuild%equaRIDTrunc(nord)     = noeq
-                else
-! ----------------- This equation is at interface
-                    fieldBuild%equaRIDTotal(iEquaDom) = 0
+
+        if (fieldSupp .eq. 'NOEU') then
+            do iEquaDom = 1, nbEquaDom
+                numeEquaDom = iEquaDom
+                numeEquaRom = fieldBuild%equaRIDTotal(numeEquaDom)
+                if (numeEquaRom .ne. 0) then
+! ----------------- This equation is in RID
+                    nord = nord + 1
+                    if (grnoInDom(numeEquaDom) .eq. 0) then
+! --------------------- This equation is not at interface
+                        noeq = noeq + 1
+                        fieldBuild%equaRIDTotal(numeEquaDom) = noeq
+                        fieldBuild%equaRIDTrunc(nord)        = noeq
+                    else
+! --------------------- This equation is at interface
+                        fieldBuild%equaRIDTotal(numeEquaDom) = 0
+                    endif
                 endif
-            endif
-        enddo
-        fieldBuild%nbEquaRIDTrunc = fieldBuild%nbEquaRIDTotal - nbNodeGrno*nbCmpName
+            enddo
+        elseif (fieldSupp .eq. 'ELGA') then
+            do iEquaDom = 1, nbEquaDom
+                numeEquaDom = iEquaDom
+                numeEquaRom = fieldBuild%equaRIDTotal(numeEquaDom)
+                if (numeEquaRom .ne. 0) then
+                    noeq = noeq + 1
+                    fieldBuild%equaRIDTotal(numeEquaDom) = noeq
+                    fieldBuild%equaRIDTrunc(numeEquaDom) = noeq
+                endif
+            end do
+            ASSERT(noeq .eq. nbEquaRom)
+        else
+            ASSERT(ASTER_FALSE)
+        endif
+
+! ----- Final size
+        if (fieldSupp .eq. 'NOEU') then
+            fieldBuild%nbEquaRIDTrunc = fieldBuild%nbEquaRIDTotal - nbNodeGrno*nbCmpName
+        elseif (fieldSupp .eq. 'ELGA') then
+            fieldBuild%nbEquaRIDTrunc = fieldBuild%nbEquaRIDTotal
+        else
+            ASSERT(ASTER_FALSE)
+        endif
 
 ! ----- Clean
         AS_DEALLOCATE(vi = grnoInDom)

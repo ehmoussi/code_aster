@@ -79,7 +79,7 @@ cata_msg = {
 
    35 : _("""Vérification des paramètres pour la méthode d'orthogonalisation."""),
 
-   36 : _("""On ne peut pas orthogonaliser une base avec des modes définis sur un autre support que les noeuds (ici le support est %(k1)s)."""),
+   36 : _("""On ne peut pas procéder à l'orthogonalisation d'une base avec des modes définis sur un autre support que les noeuds (ici le support est %(k1)s)."""),
  
    37 : _("""Vérification des paramètres pour les méthodes POD."""),
 

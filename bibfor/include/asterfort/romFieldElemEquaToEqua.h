@@ -15,20 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
 interface
-    subroutine utchdl(cham19, nomma, nomail, nonoeu, nupo,&
-                      nusp, ivari, nocmp1, iddl, nogranz)
-        character(len=*) :: cham19
-        character(len=*) :: nomma
-        character(len=*) :: nomail
-        character(len=*) :: nonoeu
-        integer :: nupo
-        integer :: nusp
-        integer :: ivari
-        character(len=*) :: nocmp1
-        integer :: iddl
-        aster_logical, intent(in), optional :: nogranz
-    end subroutine utchdl
+    subroutine romFieldElemEquaToEqua(fieldA, fieldB, equaAToB)
+        use Rom_Datastructure_type
+        type(ROM_DS_Field), intent(in) :: fieldA, fieldB
+        integer, pointer :: equaAToB(:)
+    end subroutine romFieldElemEquaToEqua
 end interface

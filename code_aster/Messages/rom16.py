@@ -43,10 +43,12 @@ cata_msg = {
 
    23 : _("""Le modèle est le même pour la reconstruction que le modèle réduit d'origine."""),
 
-   24 : _("""Vous demandez à calculer un champ de type %(k1)s par REST_REDUIT_COMPLET alors que ce champ n'existe pas dans le résultat réduit.
+   24 : _("""Vous demandez à calculer un champ de type %(k1)s par REST_REDUIT_COMPLET alors que ce champ n'existe pas dans le résultat réduit./
 Conseil: utilisez CALC_CHAMP pour calculer ce champ."""),
 
    25 : _("""Le résultat réduit n'est pas défini sur le même maillage que le résultat complet."""),
+
+   26 : _("""Vous demandez à calculer un champ avec un support de type %(k1)s en réduisant le domaine. Ce n'est pas autorisé."""),
 
    30 : _("""Liste des champs initialement présents dans les résultats réduits: """),
 

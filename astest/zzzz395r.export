@@ -5,6 +5,8 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist submit ci verification sequential
 
-F comm zzzz395q.comm D 1
-F comm zzzz395q.com1 D 1
+F comm zzzz395r.comm D 1
+F comm zzzz395r.com1 D 1
 F mmed zzzz395f.mmed D 20
+F mmed zzzz395f.70 D 70
+F mmed zzzz395q.71 D 71

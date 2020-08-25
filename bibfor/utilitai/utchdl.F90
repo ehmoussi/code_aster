@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine utchdl(cham19, nomma, nomail, nonoeu, nupo,&
-                  nusp, ivari, nocmp1, iddl)
+                  nusp, ivari, nocmp1, iddl, nogranz)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -45,6 +45,7 @@ subroutine utchdl(cham19, nomma, nomail, nonoeu, nupo,&
 !
     integer :: nupo, ivari, iddl, nusp
     character(len=*) :: cham19, nomma, nomail, nonoeu, nocmp1
+    aster_logical, intent(in), optional :: nogranz
 ! ----------------------------------------------------------------------
 !
 ! person_in_charge: jacques.pellet at edf.fr
@@ -61,6 +62,8 @@ subroutine utchdl(cham19, nomma, nomail, nonoeu, nupo,&
 !                (SI NUSP=0 : IL N'Y A PAS DE SOUS-POINT)
 ! IN  : NOCMP1 : NOM DU DDL A EXTRAIRE SUR LE POINT CHERCHE
 ! IN  : IVARI  : NUMERO DE LA CMP (POUR VARI_R)
+! IN  : NOGRAN : COMPORTEMENT SI LA COMPOSANTE N'EST PAS TROUVEE
+!                (ARREUR FATALE SI FALSE)
 ! OUT : IDDL   : NUMERO DU DDL DANS LE .CELV
 !   CONVENTION : IDDL=0 -> ON N'A PAS TROUVE LE DDL CHERCHE
 ! ----------------------------------------------------------------------
@@ -100,7 +103,8 @@ subroutine utchdl(cham19, nomma, nomail, nonoeu, nupo,&
     call jeveuo(chm19z//'.CELK', 'L', vk24=celk)
     noligr = celk(1) (1:19)
     trouve = .false.
-    nogran = .false.
+    nogran = ASTER_FALSE
+    if(present(nogranz)) nogran = nogranz
 !
 !
 !

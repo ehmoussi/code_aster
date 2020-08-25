@@ -101,7 +101,7 @@ cata_msg = {
 
    84 : _("""Calcul avec correction par un calcul élément fini complet."""),
 
-   85 : _("""Le raccord sur l'interface utilise un coefficeint de pénalisation de %(r1)19.12e."""),
+   85 : _("""Le raccord sur l'interface utilise un coefficient de pénalisation de %(r1)19.12e."""),
 
    93 : _("""Évaluation des coefficients pour la valeur initiale des paramètres."""),
 

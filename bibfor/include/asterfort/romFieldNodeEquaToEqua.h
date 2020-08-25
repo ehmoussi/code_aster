@@ -17,9 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romFieldEquaToEqua(fieldA, fieldB, listNode, equaAToB)
+    subroutine romFieldNodeEquaToEqua(fieldA, fieldB, nbNodeMesh, listNode, equaAToB)
         use Rom_Datastructure_type
         type(ROM_DS_Field), intent(in) :: fieldA, fieldB
+        integer, intent(in) :: nbNodeMesh
         integer, pointer :: listNode(:), equaAToB(:)
-    end subroutine romFieldEquaToEqua
+    end subroutine romFieldNodeEquaToEqua
 end interface

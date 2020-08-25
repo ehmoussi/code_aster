@@ -25,6 +25,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 #include "asterfort/as_allocate.h"
@@ -51,6 +52,7 @@ real(kind=8), pointer :: matrPhi(:)
     integer :: iMode, iret, iEqua
     integer :: nbEqua, nbMode, numeMode
     character(len=24) :: resultField, fieldName
+    character(len=4) :: fieldSupp
     character(len=8) :: resultName
     real(kind=8), pointer :: fieldVale(:) => null()
 !
@@ -76,7 +78,14 @@ real(kind=8), pointer :: matrPhi(:)
         call rsexch(' '     , resultName , fieldName,&
                     numeMode, resultField, iret)
         ASSERT(iret .eq. 0)
-        call jeveuo(resultField(1:19)//'.VALE', 'L', vr = fieldVale)
+        call dismoi('TYPE_CHAMP', resultField, 'CHAMP', repk = fieldSupp)
+        if (fieldSupp == 'NOEU') then
+            call jeveuo(resultField(1:19)//'.VALE', 'L', vr = fieldVale)
+        else if (fieldSupp == 'ELGA') then
+            call jeveuo(resultField(1:19)//'.CELV', 'L', vr = fieldVale)
+        else
+            ASSERT(ASTER_FALSE)
+        endif
         do iEqua = 1, nbEqua
             matrPhi(iEqua+nbEqua*(iMode-1)) = fieldVale(iEqua)
         end do

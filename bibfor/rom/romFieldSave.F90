@@ -80,7 +80,6 @@ real(kind=8), optional, pointer :: fieldValeR_(:)
     fieldName = field%fieldName
     fieldSupp = field%fieldSupp
     nbEqua    = field%nbEqua
-    ASSERT(fieldSupp .eq. 'NOEU')
 !
 ! - Get field in output results datastructure
 !
@@ -91,8 +90,15 @@ real(kind=8), optional, pointer :: fieldValeR_(:)
 ! - Copy structure of field to save it
 !
     call copisd('CHAMP_GD', 'G', fieldRefe, resultField)
-    call jeveuo(resultField(1:19)//'.VALE', 'E', vr = valeWrite)
-    call jelira(resultField(1:19)//'.VALE', 'LONMAX', nbEquaRead)
+    if (fieldSupp .eq. 'NOEU') then
+        call jeveuo(resultField(1:19)//'.VALE', 'E', vr = valeWrite)
+        call jelira(resultField(1:19)//'.VALE', 'LONMAX', nbEquaRead)
+    elseif (fieldSupp .eq. 'ELGA') then
+        call jeveuo(resultField(1:19)//'.CELV', 'E', vr = valeWrite)
+        call jelira(resultField(1:19)//'.CELV', 'LONMAX', nbEquaRead)
+    else
+        ASSERT(ASTER_FALSE)
+    endif
     ASSERT(nbEqua .eq. nbEquaRead)
 !
 ! - Set value in field

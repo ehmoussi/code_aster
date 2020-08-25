@@ -62,6 +62,7 @@ type(ROM_DS_FieldBuild), intent(in) :: fieldBuild
     real(kind=8), pointer :: valeRom(:) => null(), valeDom(:) => null()
     real(kind=8), pointer :: valeField(:) => null()
     type(ROM_DS_Field) :: fieldDom
+    character(len=4) :: fieldSupp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,6 +72,7 @@ type(ROM_DS_FieldBuild), intent(in) :: fieldBuild
 !
     fieldDom       = fieldBuild%fieldDom
     fieldName      = fieldDom%fieldName
+    fieldSupp      = fieldDom%fieldSupp
     nbEquaDom      = fieldDom%nbEqua
     lRIDTrunc      = fieldBuild%lRIDTrunc
     nbEquaRID      = fieldBuild%nbEquaRID
@@ -100,7 +102,13 @@ type(ROM_DS_FieldBuild), intent(in) :: fieldBuild
         call rsexch(' '      , resultRomNameZ, fieldName,&
                     numeStore, resultField   , iret)
         ASSERT(iret .eq. 0)
-        call jeveuo(resultField(1:19)//'.VALE', 'L', vr = valeField)
+        if (fieldSupp .eq. 'NOEU') then
+            call jeveuo(resultField(1:19)//'.VALE', 'L', vr = valeField)
+        elseif (fieldSupp .eq. 'ELGA') then
+            call jeveuo(resultField(1:19)//'.CELV', 'L', vr = valeField)
+        else
+            ASSERT(ASTER_FALSE)
+        endif
 
 ! ----- Truncate if required
         if (lRIDTrunc) then

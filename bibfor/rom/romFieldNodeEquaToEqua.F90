@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFieldEquaToEqua(fieldA, fieldB, listNode, equaAToB)
+subroutine romFieldNodeEquaToEqua(fieldA, fieldB, nbNodeMesh, listNode, equaAToB)
 !
 use Rom_Datastructure_type
 !
@@ -29,29 +29,34 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/nbec.h"
+#include "asterfort/romFieldNodeFromEqua.h"
 #include "asterfort/utmess.h"
 !
 type(ROM_DS_Field), intent(in) :: fieldA, fieldB
+integer, intent(in) :: nbNodeMesh
 integer, pointer :: listNode(:), equaAToB(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Get link between equation in domain A and equation in domain B
+! Create map for equation numbering from domain A to domain B - Nodal field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  fieldA        : field (representative) of equations on domain A
-! In  fieldB        : field (representative) of equations on domain B
-! Ptr listNode      : pointer to list of nodes in mesh
-!                       for iNode =  [1:nbNodeMesh]
-!                           listNode[iNode] = 0 if node+component not present from fieldA
-!                           listNode[iNode] = 1 if node+component is present from fieldA
-! Ptr equaAToB      : pointer to list of equations
-!                       for iEquaA =  [1:nbEquaA]
-!                           equaAToB[iEquaA] = 0 => this equation is not in domain B
-!                           equaAToB[iEquaA] = numeEquaB => this equation is in domain B
+! The object listNode has been created before to be efficient.
+!
+! In  fieldA           : field (representative) on domain A
+! In  fieldB           : field (representative) on domain B
+! In  nbNodeMesh       : number of nodes in mesh
+! Ptr listNode         : pointer to list of nodes in mesh for selection
+!                          for iNode =  [1:nbNodeMesh]
+!                              listNode[iNode] = 0 if node+component not present from fieldA
+!                              listNode[iNode] = 1 if node+component is present from fieldA
+! Ptr equaAToB         : pointer to map for equation numbering from domain A to domain B
+!                          for iEquaA =  [1:nbEquaA]
+!                              equaAToB[iEquaA] = 0 => this equation is not in domain B
+!                              equaAToB[iEquaA] = numeEquaB => this equation is in domain B
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -109,6 +114,10 @@ integer, pointer :: listNode(:), equaAToB(:)
     nb_ec = nbec(physNumeA)
     ASSERT(nb_ec .le. nbEcMax)
 !
+! - Detect nodes on all mesh with equation from reduced domain
+!
+    call romFieldNodeFromEqua(fieldB, nbNodeMesh, listNode)
+!
 ! - Select equations
 !
     do iEquaA = 1, nbEquaA
@@ -141,5 +150,9 @@ integer, pointer :: listNode(:), equaAToB(:)
             ASSERT(ASTER_FALSE)
         endif
     end do
+!
+! - Reinitialization of list of nodes
+!
+    listNode = 0
 !
 end subroutine

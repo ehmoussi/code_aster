@@ -47,6 +47,7 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    character(len=4) :: fieldSupp
     character(len=8) :: meshRefe, meshRom
     character(len=8) :: modelRom, modelDom, modelRefe
     character(len=8) :: resultRomName
@@ -55,9 +56,10 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
     integer :: nbMode, nbStore
     integer :: iFieldResult, iFieldBuild
     integer :: nbFieldResult, nbFieldBuild
+    type(ROM_DS_FieldBuild) ::fieldBuild
     character(len=16), pointer :: resultField(:) => null()
     integer, pointer :: resultFieldNume(:) => null()
-    aster_logical :: lInResult, lLinearSolve, lTablFromResu, lBuild
+    aster_logical :: lInResult, lLinearSolve, lTablFromResu, lBuild, lRIDTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,17 +81,17 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
 ! - Check bases
 !
-    mode = cmdPara%fieldBuild(1)%base%mode
+    fieldBuild = cmdPara%fieldBuild(1)
+    mode       = fieldBuild%base%mode
     call romModeChck(mode)
-    ASSERT(mode%fieldSupp .eq. 'NOEU')
     if (modelDom .ne. mode%model) then
         call utmess('F', 'ROM16_22') 
     endif
     modelRefe = mode%model
     do iFieldBuild = 2, nbFieldBuild
-        mode = cmdPara%fieldBuild(iFieldBuild)%base%mode
+        fieldBuild = cmdPara%fieldBuild(iFieldBuild)
+        mode       = fieldBuild%base%mode
         call romModeChck(mode)
-        ASSERT(mode%fieldSupp .eq. 'NOEU')
         if (meshRefe .ne. mode%mesh) then
             call utmess('F', 'ROM16_20')
         endif
@@ -98,6 +100,17 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
         endif
         if (modelDom .ne. mode%model) then
             call utmess('F', 'ROM16_22')
+        endif
+    end do
+!
+! - Checks list of fields option
+!
+    do iFieldBuild = 1, nbFieldBuild
+        fieldBuild = cmdPara%fieldBuild(iFieldBuild)
+        fieldSupp  = fieldBuild%fieldDom%fieldSupp
+        lRIDTrunc  = fieldBuild%lRIDTrunc
+        if (lRIDTrunc .and. fieldSupp .ne. 'NOEU') then
+            call utmess('F', 'ROM16_26', sk = fieldSupp)
         endif
     end do
 !
