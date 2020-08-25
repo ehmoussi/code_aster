@@ -233,25 +233,6 @@ def copy_text_to(text, files):
             _dump(f_i)
 
 
-def _splitline(line, maxlen):
-    """Return a list of lines with a length <= `maxlen`"""
-    line = line.strip()
-    if len(line) <= maxlen:
-        return [line]
-    lines = []
-    for sep in " ,;:/":
-        try:
-            last = line.rindex(sep)
-        except ValueError:
-            last = 0
-    if last > 0:
-        lines.extend(_splitline(line[:last], maxlen))
-        lines.extend(_splitline(line[last:], maxlen))
-    else:
-        lines.append(line[:maxlen])
-        lines.extend(_splitline(line[maxlen:], maxlen))
-    return lines
-
 def _fixed_length(lines, maxlen, align="<"):
     """Fix lines length at `maxlen`.
 
@@ -287,9 +268,7 @@ def textbox(text, maxlen=90):
     foot = " " + botleft + horiz * (maxlen + 2) + botright
     fmt = " " + vert + " {0} " + vert
     lines = ["", head]
-    splitted = []
-    for line in text.splitlines():
-        splitted.extend(_splitline(line, maxlen))
+    splitted = cut_long_lines(text, maxlen).splitlines()
     fixed = _fixed_length(splitted, maxlen)
     lines.extend([fmt.format(line) for line in fixed])
     lines.extend([foot, ""])
@@ -305,8 +284,6 @@ def center(text, maxlen=90):
     Returns:
         str: Centered text.
     """
-    splitted = []
-    for line in text.splitlines():
-        splitted.extend(_splitline(line, maxlen))
+    splitted = cut_long_lines(text, maxlen).splitlines()
     lines = _fixed_length(splitted, maxlen, align="^")
     return os.linesep.join(lines)

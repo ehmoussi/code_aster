@@ -290,9 +290,6 @@ Exception : %s
                 dictmess['corps_message'] = dictmess['corps_message'] % args
             except Exception:
                 dictmess['corps_message'] = repr(args)
-        # limite la longueur des lignes
-        dictmess['corps_message'] = cut_long_lines(
-            dictmess['corps_message'], MAXLENGTH)
         # type d'exception
         if exc_typ:
             if isinstance(exc_typ, int):
@@ -583,6 +580,8 @@ du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
             body = center(body, MAXLENGTH)
         if dmsg['flags'] & DECORATED or typmess != 'I':
             body = textbox(body, MAXLENGTH)
+        else:
+            body = cut_long_lines(body, MAXLENGTH)
         return body
 
     def get_type_message(self, dictmess):
