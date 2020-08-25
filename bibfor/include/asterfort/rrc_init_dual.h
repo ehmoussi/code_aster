@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,17 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rrc_init_dual(mesh       , result_rom , field_name,&
-                             nb_equa_dom, mode_empi  , grnode_int,&
-                             v_equa_rid , nb_equa_rom,&
-                             v_equa_int , nb_equa_int)
-        character(len=8), intent(in) :: mesh, result_rom
-        character(len=24), intent(in) :: field_name, mode_empi
-        integer, intent(in) :: nb_equa_dom
-        character(len=24), intent(in) :: grnode_int
-        integer, pointer :: v_equa_rid(:)
-        integer, intent(out) :: nb_equa_rom
-        integer, pointer :: v_equa_int(:)
-        integer, intent(out) :: nb_equa_int
+    subroutine rrc_init_dual(cmdPara)
+        use Rom_Datastructure_type
+        type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
     end subroutine rrc_init_dual
 end interface

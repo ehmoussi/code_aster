@@ -23,19 +23,19 @@ use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/rs_get_liststore.h"
-#include "asterfort/romTableCreate.h"
-#include "asterfort/rscrsd.h"
-#include "asterfort/rrc_info.h"
-#include "asterfort/tbexve.h"
-#include "asterfort/dismoi.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
-#include "asterfort/rrc_init_prim.h"
+#include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/infniv.h"
+#include "asterfort/romTableCreate.h"
+#include "asterfort/rrc_info.h"
 #include "asterfort/rrc_init_dual.h"
+#include "asterfort/rrc_init_prim.h"
+#include "asterfort/rscrsd.h"
+#include "asterfort/rs_get_liststore.h"
+#include "asterfort/tbexve.h"
+#include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
@@ -52,11 +52,8 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: fieldName
-    integer :: nb_store, nbEquaDual, nbEquaPrim
+    integer :: nbStore
     aster_logical :: l_prev_dual
-    character(len=8) :: result_rom, mesh
-    character(len=24) :: mode_prim, mode_dual
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,12 +65,6 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 ! - Get parameters
 !
     l_prev_dual = cmdPara%l_prev_dual
-    result_rom  = cmdPara%result_rom
-    mesh        = cmdPara%ds_empi_prim%ds_mode%mesh
-    nbEquaPrim  = cmdPara%ds_empi_prim%ds_mode%nbEqua
-    mode_prim   = cmdPara%ds_empi_prim%ds_mode%fieldRefe
-    nbEquaDual  = cmdPara%ds_empi_dual%ds_mode%nbEqua
-    mode_dual   = cmdPara%ds_empi_dual%ds_mode%fieldRefe
 !
 ! - Create datastructure of table in results datastructure for the reduced coordinates
 !
@@ -87,21 +78,19 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! - Type of result
 !
-    fieldName = cmdPara%ds_empi_prim%ds_mode%fieldName
-    if (fieldName .eq. 'DEPL') then
+    if (cmdPara%ds_empi_prim%ds_mode%fieldName .eq. 'DEPL') then
         cmdPara%type_resu = 'EVOL_NOLI'
-    elseif (fieldName .eq. 'TEMP') then
+    elseif (cmdPara%ds_empi_prim%ds_mode%fieldName .eq. 'TEMP') then
         cmdPara%type_resu = 'EVOL_THER'
     else
         ASSERT(ASTER_FALSE)
     endif
-    ASSERT(cmdPara%ds_empi_prim%ds_mode%fieldSupp .eq. 'NOEU')
 !
 ! - Create output result datastructure
 !
-    call rs_get_liststore(cmdPara%result_rom, nb_store)
-    cmdPara%nb_store = nb_store
-    call rscrsd('G', cmdPara%result_dom, cmdPara%type_resu, nb_store)
+    call rs_get_liststore(cmdPara%result_rom, nbStore)
+    cmdPara%nb_store  = nbStore
+    call rscrsd('G', cmdPara%result_dom, cmdPara%type_resu, nbStore)
 !
 ! - Get model
 !
@@ -112,18 +101,12 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! - Initializations for primal base
 !
-    call rrc_init_prim(mesh               , result_rom , fieldName,&
-                       nbEquaPrim         , mode_prim  ,&
-                       cmdPara%v_equa_ridp, cmdPara%nb_equa_ridp)
+    call rrc_init_prim(cmdPara)
 !
 ! - Initializations for dual base
 !
     if (l_prev_dual) then
-        fieldName = cmdPara%ds_empi_dual%ds_mode%fieldName
-        call rrc_init_dual(mesh      , result_rom , fieldName,&
-                           nbEquaDual, mode_dual  , cmdPara%grnode_int,&
-                           cmdPara%v_equa_ridd, cmdPara%nb_equa_ridd,&
-                           cmdPara%v_equa_ridi, cmdPara%nb_equa_ridi)
+        call rrc_init_dual(cmdPara)
     endif
 !
 ! - Print parameters (debug)

@@ -18,9 +18,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romFieldChck(ds_field, fieldName_)
+    subroutine romFieldChck(field, fieldName_)
         use Rom_Datastructure_type
-        type(ROM_DS_Field), intent(in) :: ds_field
+        type(ROM_DS_Field), intent(in) :: field
         character(len=*), optional, intent(in) :: fieldName_
     end subroutine romFieldChck
 end interface

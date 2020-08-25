@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romAlgoNLRead(ds_algorom)
+subroutine romAlgoNLRead(paraAlgo)
 !
 use Rom_Datastructure_type
 !
@@ -28,10 +28,11 @@ implicit none
 #include "asterfort/getvid.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/romBaseGetInfo.h"
+#include "asterfort/romAlgoNLPrintInfo.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+type(ROM_DS_AlgoPara), intent(inout) :: paraAlgo
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,17 +42,17 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_algorom       : datastructure for ROM parameters
+! IO  paraAlgo       : datastructure for ROM parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     real(kind=8) :: coef_pena
-    character(len=8) :: ds_empi_name
+    character(len=8) :: baseName
     character(len=16) :: keywf, answer
     character(len=24) :: grnode_int, grnode_sub
     aster_logical :: l_hrom, l_hrom_corref
-    type(ROM_DS_Empi) :: ds_empi
+    type(ROM_DS_Empi) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,7 +72,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Read parameters
 !
-    call getvid(keywf, 'BASE_PRIMAL'   , iocc=1, scal = ds_empi_name)
+    call getvid(keywf, 'BASE_PRIMAL'   , iocc=1, scal = baseName)
     call getvtx(keywf, 'DOMAINE_REDUIT', iocc=1, scal = answer)
     l_hrom = answer .eq. 'OUI'
     if (l_hrom) then
@@ -86,16 +87,22 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Get informations about base
 !
-    call romBaseGetInfo(ds_empi_name, ds_empi)
+    call romBaseGetInfo(baseName, base)
 !
 ! - Save parameters in datastructure
 !
-    ds_algorom%l_rom         = ASTER_TRUE
-    ds_algorom%ds_empi       = ds_empi
-    ds_algorom%l_hrom        = l_hrom
-    ds_algorom%grnode_int    = grnode_int
-    ds_algorom%l_hrom_corref = l_hrom_corref
-    ds_algorom%grnode_sub    = grnode_sub
-    ds_algorom%vale_pena     = coef_pena
+    paraAlgo%l_rom         = ASTER_TRUE
+    paraAlgo%ds_empi       = base
+    paraAlgo%l_hrom        = l_hrom
+    paraAlgo%grnode_int    = grnode_int
+    paraAlgo%l_hrom_corref = l_hrom_corref
+    paraAlgo%grnode_sub    = grnode_sub
+    paraAlgo%vale_pena     = coef_pena
+!
+! - Debug
+!
+    if (niv .ge. 2) then
+        call romAlgoNLPrintInfo(paraAlgo)
+    endif
 !
 end subroutine

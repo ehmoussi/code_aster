@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romAlgoNLRead(ds_algorom)
+    subroutine romAlgoNLRead(paraAlgo)
         use Rom_Datastructure_type
-        type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+        type(ROM_DS_AlgoPara), intent(inout) :: paraAlgo
     end subroutine romAlgoNLRead
 end interface

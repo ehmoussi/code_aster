@@ -17,8 +17,17 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rrc_init_prim(cmdPara)
+    subroutine romFieldSave(operation, resultName, numeStore,&
+                            field    , fieldValeC_,&
+                            nbEquaR_ , equaCToR_ , fieldValeR_)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
-    end subroutine rrc_init_prim
+        character(len=*), intent(in) :: operation
+        character(len=8), intent(in) :: resultName
+        integer, intent(in) :: numeStore
+        type(ROM_DS_Field), intent(in) :: field
+        real(kind=8), optional, pointer :: fieldValeC_(:)
+        integer, optional, intent(in) :: nbEquaR_
+        integer, optional, pointer :: equaCToR_(:)
+        real(kind=8), optional, pointer :: fieldValeR_(:)
+    end subroutine romFieldSave
 end interface

@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1403
 !
-subroutine romFieldClean(ds_field)
+subroutine romFieldClean(field)
 !
 use Rom_Datastructure_type
 !
@@ -26,21 +26,21 @@ implicit none
 !
 #include "asterfort/as_deallocate.h"
 !
-type(ROM_DS_Field), intent(in) :: ds_field
+type(ROM_DS_Field), intent(in) :: field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction
+! Model reduction - Field management
 !
-! Clean field
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  ds_field         : datastructure for field
+! Clean field datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    AS_DEALLOCATE(vi  = ds_field%equaCmpName)
-    AS_DEALLOCATE(vk8 = ds_field%listCmpName)
+! In  field            : field
+!
+! --------------------------------------------------------------------------------------------------
+!
+    AS_DEALLOCATE(vi  = field%equaCmpName)
+    AS_DEALLOCATE(vk8 = field%listCmpName)
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -144,8 +144,7 @@ aster_logical, intent(out) :: l_stat, l_evol, l_rom, l_line_search, lnkry
 ! - Initialization for reduced method
 !
     if (l_rom) then
-        call romAlgoNLInit('THER'       , model, mesh, nume_dof, result, ds_algorom,&
-                           l_line_search)
+        call romAlgoNLInit('THER', model, mesh, nume_dof, result, ds_algorom, l_line_search)
     endif
 !
 ! - Initializations for printing

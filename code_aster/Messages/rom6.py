@@ -61,13 +61,7 @@ cata_msg = {
 
    33 : _("""Le mode empirique de numéro d'ordre %(i1)d dans la base est mis à zéro."""),
 
-   34 : _("""Création de la liste des noeuds appartenant au domaine réduit."""),
-
-   35 : _("""Le nombre de composantes par noeud n'est pas constant."""),
-
    36 : _("""Le modèle est variable pendant le calcul, ce n'est pas possible en réduction de modèle."""),
-
-   37 : _("""Préparation de la liste des équations appartenant au domaine réduit."""),
 
    38 : _("""Initialisations pour le post-traitement du calcul réduit, quantités primales."""),
 

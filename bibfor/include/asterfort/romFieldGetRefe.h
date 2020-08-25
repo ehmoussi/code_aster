@@ -17,8 +17,15 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rrc_init_prim(cmdPara)
+    subroutine romFieldGetRefe(resultNameZ  , modelZ,&
+                               nbFieldResult, resultField, resultFieldNume, &
+                               fieldName    , field)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
-    end subroutine rrc_init_prim
+        character(len=*), intent(in) :: resultNameZ, modelZ
+        integer, intent(in)  :: nbFieldResult
+        character(len=16), pointer :: resultField(:)
+        integer, pointer :: resultFieldNume(:)
+        character(len=24), intent(in)  :: fieldName
+        type(ROM_DS_Field), intent(inout) :: field
+    end subroutine romFieldGetRefe
 end interface

@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rrc_init_prim(cmdPara)
+    subroutine romFieldDSCopy(fieldIn, fieldOut)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
-    end subroutine rrc_init_prim
+            type(ROM_DS_Field), intent(in)  :: fieldIn
+            type(ROM_DS_Field), intent(Out) :: fieldOut
+    end subroutine romFieldDSCopy
 end interface

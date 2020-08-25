@@ -76,24 +76,24 @@ implicit none
 !
     type ROM_DS_Field
 ! ----- Name of field for read (NOM_CHAM)
-        character(len=24)         :: fieldName = ' '
+        character(len=24)         :: fieldName      = ' '
 ! ----- A field for reference (to manipulate)
-        character(len=24)         :: fieldRefe = ' '
+        character(len=24)         :: fieldRefe      = ' '
 ! ----- Type of field (NOEU/ELGA
-        character(len=4)          :: fieldSupp = ' '
+        character(len=4)          :: fieldSupp      = ' '
 ! ----- Model
-        character(len=8)          :: model = ' '
+        character(len=8)          :: model          = ' '
 ! ----- Mesh
-        character(len=8)          :: mesh  = ' '
+        character(len=8)          :: mesh           = ' '
 ! ----- Components in the field: number and name
         character(len=8), pointer :: listCmpName(:) => null()
-        integer                   :: nbCmp = 0
+        integer                   :: nbCmpName      = 0
 ! ----- For each dof: index of name of components (from listCmpName)
         integer, pointer          :: equaCmpName(:) => null()
 ! ----- Flag if has Lagrange multipliers
-        aster_logical             :: lLagr = ASTER_FALSE
+        aster_logical             :: lLagr          = ASTER_FALSE
 ! ----- Number of equations
-        integer                   :: nbEqua = 0
+        integer                   :: nbEqua         = 0
     end type ROM_DS_Field
 !
 ! - Datastructure for empiric base

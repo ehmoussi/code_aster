@@ -23,8 +23,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-    1 : _("""Les champs ont pour support %(k1)s, ce qui n'est pas autorisé."""),
-
     5 : _("""La base contient %(i1)d modes empiriques."""),
 
     9 : _("""La base empirique a été construite avec %(i1)d clichés."""),

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine romCreateNodeFromEquation(mesh       , field_rom   ,&
-                                         v_list_node, nb_list_node, nb_cmp_node_)
-        character(len=8), intent(in) :: mesh
-        character(len=24), intent(in) :: field_rom
-        integer, pointer, optional :: v_list_node(:)
-        integer, intent(out) :: nb_list_node
-        integer, optional, intent(out) :: nb_cmp_node_
-    end subroutine romCreateNodeFromEquation
+    subroutine romFieldGetComponents(field)
+        use Rom_Datastructure_type
+        type(ROM_DS_Field), intent(inout) :: field
+    end subroutine romFieldGetComponents
 end interface

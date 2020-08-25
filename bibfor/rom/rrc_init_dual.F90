@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,33 +17,26 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_init_dual(mesh       , result_rom , field_name,&
-                         nb_equa_dom, mode_empi  , grnode_int,&
-                         v_equa_rid , nb_equa_rom,&
-                         v_equa_int , nb_equa_int)
+subroutine rrc_init_dual(cmdPara)
+!
+use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/rsexch.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jexnom.h"
-#include "asterfort/jeveuo.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
-#include "asterfort/romSelectEquationFromNode.h"
-#include "asterfort/romCreateNodeFromEquation.h"
+#include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/infniv.h"
+#include "asterfort/jelira.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexnom.h"
+#include "asterfort/romFieldEquaToEqua.h"
+#include "asterfort/romFieldNodeFromEqua.h"
+#include "asterfort/rsexch.h"
+#include "asterfort/utmess.h"
 !
-character(len=8), intent(in) :: mesh, result_rom
-character(len=24), intent(in) :: field_name, mode_empi
-integer, intent(in) :: nb_equa_dom
-character(len=24), intent(in) :: grnode_int
-integer, pointer :: v_equa_rid(:)
-integer, intent(out) :: nb_equa_rom
-integer, pointer :: v_equa_int(:)
-integer, intent(out) :: nb_equa_int
+type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,25 +46,18 @@ integer, intent(out) :: nb_equa_int
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  mesh             : name of mesh
-! In  result_rom       : results from reduced model
-! In  field_name       : name of field where empiric modes have been constructed (NOM_CHAM)
-! In  nb_equa_dom      : total number of equations (for complete model)
-! In  mode_empi        : representative primal empiric mode
-! In  v_equa_rid       : pointer to the list of equations in RID
-! ... for each equation on complete model
-!   0    => equation is not in RID
-!   <> 0 => equation is in RID and is the index of equation
-! Out nb_equa_rom      : total number of equations in RID
+! IO  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: field_rom
-    integer, pointer  :: v_list_node(:) => null()
-    integer :: noeq, nord, iret
-    integer :: nb_list_node, nb_cmp_node, nb_node_grno
-    integer :: i_node, i_cmp, i_equa
+    character(len=24) :: fieldName, fieldRom, fieldDom
+    character(len=8) :: mesh, resultRom
+    integer, pointer  :: listNode(:) => null()
+    integer :: nbNodeMesh, nbEquaRom, iret, nbEquaDom
+    integer :: noeq, nord
+    integer :: nb_cmp_node, nb_node_grno
+    integer :: iNode, iCmp, iEqua
     integer, pointer  :: v_grno(:) => null()
     integer, pointer  :: v_int_dual(:) => null()
 !
@@ -82,59 +68,75 @@ integer, intent(out) :: nb_equa_int
         call utmess('I', 'ROM6_39')
     endif
 !
-! - Get representative solution from ROM model
+! - Get parameters
 !
-    call rsexch(' ', result_rom, field_name, 1, field_rom, iret)
+    resultRom = cmdPara%result_rom
+    fieldName = cmdPara%ds_empi_dual%ds_mode%fieldName
+    mesh      = cmdPara%ds_empi_dual%ds_mode%mesh
+    call dismoi('NB_NO_MAILLA', mesh, 'MAILLAGE', repi = nbNodeMesh)
+!
+! - Get representative field on reduced domain
+!
+    call rsexch(' ', resultRom, fieldName, 1, fieldRom, iret)
     if (iret .ne. 0) then
-        call utmess('F', 'ROM7_25', sk = field_name)
+        call utmess('F', 'ROM7_25', sk = fieldName)
     endif
-    call jelira(field_rom(1:19)//'.VALE', 'LONMAX', nb_equa_rom)
+    call jelira(fieldRom(1:19)//'.VALE', 'LONMAX', nbEquaRom)
 !
-! - Construct list of nodes belonging to RID from equations
+! - Get representative field on complete domain: the mode !
 !
-    call romCreateNodeFromEquation(mesh       , field_rom   ,&
-                                   v_list_node, nb_list_node, nb_cmp_node)
+    fieldDom  = cmdPara%ds_empi_dual%ds_mode%fieldRefe
+    nbEquaDom = cmdPara%ds_empi_dual%ds_mode%nbEqua
+    nb_cmp_node = cmdPara%ds_empi_dual%ds_mode%nbCmpName
 !
-! - Create list of equations in RID
+! - Create list of nodes on all mesh
 !
-    AS_ALLOCATE(vi = v_equa_rid, size = nb_equa_dom)
-    call romSelectEquationFromNode(nb_equa_dom, mode_empi, field_rom, v_list_node,&
-                                   v_equa_rid)
+    AS_ALLOCATE(vi = listNode, size = nbNodeMesh)
+!
+! - Detect nodes on all mesh with equation from reduced domain
+!
+    call romFieldNodeFromEqua(fieldRom, nbEquaRom, nbNodeMesh, listNode)
+!
+! - Get link between equation in complete domain and equation in reduced domain
+!
+    cmdPara%nb_equa_ridd = nbEquaRom
+    AS_ALLOCATE(vi = cmdPara%v_equa_ridd, size = nbEquaDom)
+    call romFieldEquaToEqua(fieldDom, fieldRom, listNode, cmdPara%v_equa_ridd)
 !
 ! - Access to GROUP_NO at interface
 !
-    call jelira(jexnom(mesh//'.GROUPENO',grnode_int), 'LONUTI', nb_node_grno)
-    call jeveuo(jexnom(mesh//'.GROUPENO',grnode_int), 'L'     , vi = v_grno)
+    call jelira(jexnom(mesh//'.GROUPENO', cmdPara%grnode_int), 'LONUTI', nb_node_grno)
+    call jeveuo(jexnom(mesh//'.GROUPENO', cmdPara%grnode_int), 'L'     , vi = v_grno)
 !
 ! - Create list of equations at interface
 !
-    ASSERT(nb_cmp_node*nb_node_grno .le. nb_equa_dom)
-    AS_ALLOCATE(vi = v_int_dual, size = nb_equa_dom)
-    do i_node = 1, nb_node_grno
-        do i_cmp = 1, nb_cmp_node
-            v_int_dual(i_cmp+nb_cmp_node*(v_grno(i_node)-1)) = 1
+    ASSERT(nb_cmp_node*nb_node_grno .le. nbEquaDom)
+    AS_ALLOCATE(vi = v_int_dual, size = nbEquaDom)
+    do iNode = 1, nb_node_grno
+        do iCmp = 1, nb_cmp_node
+            v_int_dual(iCmp+nb_cmp_node*(v_grno(iNode)-1)) = 1
         enddo
     enddo
-    AS_ALLOCATE(vi = v_equa_int, size = nb_equa_dom)
+    AS_ALLOCATE(vi = cmdPara%v_equa_ridi, size = nbEquaDom)
     noeq = 0
     nord = 0
-    do i_equa = 1, nb_equa_dom
-        if (v_equa_rid(i_equa) .ne. 0) then
+    do iEqua = 1, nbEquaDom
+        if (cmdPara%v_equa_ridd(iEqua) .ne. 0) then
             nord = nord + 1
-            if (v_int_dual(i_equa) .eq. 0) then
+            if (v_int_dual(iEqua) .eq. 0) then
                 noeq = noeq + 1
-                v_equa_rid(i_equa) = noeq
-                v_equa_int(nord)   = noeq
+                cmdPara%v_equa_ridd(iEqua) = noeq
+                cmdPara%v_equa_ridi(nord)  = noeq
             else
-                v_equa_rid(i_equa) = 0
+                cmdPara%v_equa_ridd(iEqua) = 0
             endif
         endif
     enddo
-    nb_equa_int = nb_equa_rom - nb_node_grno*nb_cmp_node
+    cmdPara%nb_equa_ridi = nbEquaRom - nb_node_grno*nb_cmp_node
 !
 ! - Clean
 !
-    AS_DEALLOCATE(vi = v_list_node)
+    AS_DEALLOCATE(vi = listNode)
     AS_DEALLOCATE(vi = v_int_dual)
 !
 end subroutine

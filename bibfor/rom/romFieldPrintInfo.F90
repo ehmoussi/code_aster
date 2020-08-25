@@ -17,46 +17,48 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFSINumberingInit(field, algoGreedy)
+subroutine romFieldPrintInfo(field)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
-#include "asterc/indik8.h"
-#include "asterfort/infniv.h"
+#include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
 type(ROM_DS_Field), intent(in) :: field
-type(ROM_DS_AlgoGreedy), intent(inout) :: algoGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction
+! Model reduction - Field management
 !
-! Create numbering of nodes for FSI
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  field            : field to analyze
-! IO  algoGreedy       : datastructure for Greedy algorithm
+! Print informations about field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-    integer :: cmpNume
+! In  mode             : mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM2_53')
+    integer :: iCmpName
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call utmess('I', 'ROM11_50', sk = field%fieldName)
+    call utmess('I', 'ROM11_51', si = field%nbEqua)
+    if (field%fieldSupp .eq. 'NOEU') then
+        call utmess('I', 'ROM11_52')
+    elseif (field%fieldSupp .eq. 'ELGA') then
+        call utmess('I', 'ROM11_53')
+    else
+        ASSERT(ASTER_FALSE)
     endif
-!
-    cmpNume = indik8(field%listCmpName, 'PRES', 1, field%nbCmpName)
-    algoGreedy%nume_pres = cmpNume
-    cmpNume = indik8(field%listCmpName, 'PHI', 1, field%nbCmpName)
-    algoGreedy%nume_phi  = cmpNume
+    call utmess('I', 'ROM11_54', si = field%nbCmpName)
+    do iCmpName = 1, field%nbCmpName
+        call utmess('I', 'ROM11_55', si = iCmpName, sk = field%listCmpName(iCmpName))
+    end do
+    if (field%lLagr) then
+        call utmess('I', 'ROM11_56')
+    endif
 !
 end subroutine

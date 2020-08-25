@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rrc_init_prim(cmdPara)
+    subroutine romFieldEquaToEqua(fieldRefeA, fieldRefeB, listNode, equaAToB)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
-    end subroutine rrc_init_prim
+        character(len=24), intent(in) :: fieldRefeA, fieldRefeB
+        integer, pointer :: listNode(:), equaAToB(:)
+    end subroutine romFieldEquaToEqua
 end interface

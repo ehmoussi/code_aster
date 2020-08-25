@@ -17,46 +17,46 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFSINumberingInit(field, algoGreedy)
+subroutine romAlgoNLPrintInfo(paraAlgo)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
-#include "asterc/indik8.h"
-#include "asterfort/infniv.h"
+#include "asterfort/assert.h"
 #include "asterfort/utmess.h"
+#include "asterfort/romBasePrintInfo.h"
 !
-type(ROM_DS_Field), intent(in) :: field
-type(ROM_DS_AlgoGreedy), intent(inout) :: algoGreedy
+type(ROM_DS_AlgoPara), intent(in) :: paraAlgo
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Create numbering of nodes for FSI
+! Print informations about non-linear parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  field            : field to analyze
-! IO  algoGreedy       : datastructure for Greedy algorithm
+! In  paraAlgo         : datastructure for ROM parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-    integer :: cmpNume
+    aster_logical :: l_hrom, l_hrom_corref
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM2_53')
+    l_hrom        = paraAlgo%l_hrom
+    l_hrom_corref = paraAlgo%l_hrom_corref
+    if (l_hrom) then
+        call utmess('I', 'ROM5_82')
+        if (l_hrom_corref) then
+            call utmess('I', 'ROM5_84')
+            call utmess('I', 'ROM5_85', sr = paraAlgo%vale_pena)
+        endif
+    else
+        call utmess('I', 'ROM5_83')
     endif
-!
-    cmpNume = indik8(field%listCmpName, 'PRES', 1, field%nbCmpName)
-    algoGreedy%nume_pres = cmpNume
-    cmpNume = indik8(field%listCmpName, 'PHI', 1, field%nbCmpName)
-    algoGreedy%nume_phi  = cmpNume
+    call utmess('I', 'ROM5_81')
+    call romBasePrintInfo(paraAlgo%ds_empi)
 !
 end subroutine

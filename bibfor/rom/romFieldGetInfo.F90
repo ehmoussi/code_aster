@@ -27,7 +27,8 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jelira.h"
-#include "asterfort/romGetListComponents.h"
+#include "asterfort/romFieldGetComponents.h"
+#include "asterfort/fieldNodeHasConstantProfile.h"
 #include "asterfort/romFieldChck.h"
 #include "asterfort/utmess.h"
 !
@@ -38,7 +39,7 @@ aster_logical, optional, intent(in) :: l_chck_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction
+! Model reduction - Field management
 !
 ! Get informations from field
 !
@@ -52,10 +53,10 @@ aster_logical, optional, intent(in) :: l_chck_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbEqua, nbCmp
+    integer :: nbEqua
     character(len=8) :: mesh
     character(len=4) :: fieldSupp
-    aster_logical :: lLagr, l_chck
+    aster_logical :: lLagr, l_chck, lConst
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,10 +67,9 @@ aster_logical, optional, intent(in) :: l_chck_
 !
 ! - Initializations
 !
-    lLagr      = ASTER_FALSE
-    fieldSupp  = ' '
-    nbEqua     = 0
-    nbCmp      = 0
+    lLagr     = ASTER_FALSE
+    fieldSupp = ' '
+    nbEqua    = 0
 !
 ! - Get main parameters
 !
@@ -80,25 +80,32 @@ aster_logical, optional, intent(in) :: l_chck_
     elseif (fieldSupp .eq. 'ELGA') then
         call jelira(fieldRefe(1:19)//'.CELV', 'LONUTI', nbEqua)
     else
-        call utmess('F', 'ROM3_1', sk = fieldSupp)
+        call utmess('F', 'ROM11_1', sk = fieldSupp)
     endif
 !
-! - Get list of components in field
+! - Check if number of components is constant by entity
 !
-    call romGetListComponents(fieldRefe        , fieldSupp        , nbEqua,&
-                              field%equaCmpName, field%listCmpName,&
-                              nbCmp            , lLagr)
+    if (fieldSupp .eq. 'NOEU') then
+        call fieldNodeHasConstantProfile(fieldRefe, lConst)
+        if (.not. lConst .and. l_chck) then
+            call utmess('F', 'ROM11_35')
+        endif
+    elseif (fieldSupp .eq. 'ELGA') then
+! ----- Cannot check number of physical components on each element for the moment
+    endif
 !
 ! - Save informations
 !
     field%fieldName = fieldName
     field%fieldRefe = fieldRefe
     field%fieldSupp = fieldSupp
+    field%nbEqua    = nbEqua
     field%mesh      = mesh
     field%model     = model
-    field%nbEqua    = nbEqua
-    field%lLagr     = lLagr
-    field%nbCmp     = nbCmp
+!
+! - Get list of components in field
+!
+    call romFieldGetComponents(field)
 !
 ! - Check components in field
 !

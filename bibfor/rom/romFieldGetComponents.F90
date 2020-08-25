@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romGetListComponents(fieldRefe  , fieldSupp  , nbEqua,&
-                                equaCmpName, listCmpName,&
-                                nbCmp      , lLagr)
+subroutine romFieldGetComponents(field)
+!
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -35,55 +35,47 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 !
-character(len=24), intent(in) :: fieldRefe
-character(len=4), intent(in) :: fieldSupp
-integer, intent(in) :: nbEqua
-integer, pointer :: equaCmpName(:)
-character(len=8), pointer :: listCmpName(:)
-integer, intent(out) :: nbCmp
-aster_logical, intent(out) :: lLagr
+type(ROM_DS_Field), intent(inout) :: field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction
+! Model reduction - Field management
 !
 ! Get list of components in field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  fieldRefe        : field to analyze
-! In  fieldSupp        : cell support of field (NOEU, ELNO, ELEM, ...)
-! In  nbEequa          : number of equations (length of empiric mode)
-! Ptr equaCmpName      : pointer to the index of name (in listCmpName) for each dof
-! Ptr listCmpName      : pointer to the list of name of compoenents
-! Out nbCmp            : length of v_list_type
-! Out lLagr            : flag if vector contains at least one Lagrange multiplier
+! IO  field            : field
 !
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: physName
     character(len=19) :: pfchno
-    integer :: iEqua, nbLagr, cmpNume, nbCmpMaxi, cmpIndx, iCmp
+    character(len=24) :: fieldRefe
+    character(len=4) :: fieldSupp
+    integer :: nbEqua
+    integer :: iEqua, nbLagr, numeCmp, nbCmpMaxi, cmpIndx
     integer, pointer :: deeq(:) => null()
     character(len=8), pointer :: physCmpName(:) => null()
-    character(len=8), pointer :: cmpName(:) => null()
     integer, pointer :: cataToField(:) => null()
     integer, pointer :: fieldToCata(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    lLagr = ASTER_FALSE
-    nbCmp = 0
+    field%lLagr     = ASTER_FALSE
+    field%nbCmpName = 0
+!
+! - Get parameters from field
+!
+    fieldRefe = field%fieldRefe
+    fieldSupp = field%fieldSupp
+    nbEqua    = field%nbEqua
 !
 ! - Get list of components on physical_quantities
 !
     call dismoi('NOM_GD', fieldRefe, 'CHAMP', repk = physName)
     call jelira(jexnom('&CATA.GD.NOMCMP', physName), 'LONMAX', nbCmpMaxi)
     call jeveuo(jexnom('&CATA.GD.NOMCMP', physName), 'L', vk8 = physCmpName)
-!
-! - Allocate object for type of equation
-!
-    AS_ALLOCATE(vi = equaCmpName, size = nbEqua)
 !
 ! - Get name of compoenents and type of components (-1 if Lagrangian)
 !
@@ -92,42 +84,39 @@ aster_logical, intent(out) :: lLagr
         call dismoi('PROF_CHNO' , fieldRefe, 'CHAM_NO', repk = pfchno)
         call jeveuo(pfchno//'.DEEQ', 'L', vi = deeq)
 ! ----- Allocate object for name of components
-        AS_ALLOCATE(vk8 = listCmpName, size = nbCmpMaxi)
-        nbLagr = 0
-        nbCmp  = 0
+        AS_ALLOCATE(vk8 = field%listCmpName, size = nbCmpMaxi)
+! ----- Allocate object for type of equation
+        AS_ALLOCATE(vi = field%equaCmpName, size = nbEqua)
+        nbLagr           = 0
+        field%nbCmpName  = 0
         do iEqua = 1, nbEqua
-            cmpNume = deeq(2*(iEqua-1)+2)
-            if (cmpNume .gt. 0) then
-                cmpIndx = indik8(listCmpName, physCmpName(cmpNume), 1, nbCmp)
+            numeCmp = deeq(2*(iEqua-1)+2)
+            if (numeCmp .gt. 0) then
+                cmpIndx = indik8(field%listCmpName, physCmpName(numeCmp), 1, field%nbCmpName)
                 if (cmpIndx .eq. 0) then
 ! ----------------- Add this name in the list
-                    nbCmp              = nbCmp + 1
-                    listCmpName(nbCmp) = physCmpName(cmpNume)
-                    cmpIndx            = nbCmp
+                    field%nbCmpName                    = field%nbCmpName + 1
+                    field%listCmpName(field%nbCmpName) = physCmpName(numeCmp)
+                    cmpIndx                            = field%nbCmpName
                 endif
-                equaCmpName(iEqua) = cmpIndx
+                field%equaCmpName(iEqua) = cmpIndx
             else
-                nbLagr             = nbLagr + 1
-                equaCmpName(iEqua) = -1
+                nbLagr                   = nbLagr + 1
+                field%equaCmpName(iEqua) = -1
             endif
         end do
-        lLagr = nbLagr .gt. 0
+        field%lLagr = nbLagr .gt. 0
     else if (fieldSupp == 'ELGA') then
+! ----- Allocate object for name of components => in cmpcha
+! ----- Allocate object for type of equation => in cmpcha
 ! ----- Create objects for global components (catalog) <=> local components (field)
-        call cmpcha(fieldRefe, cmpName, cataToField, fieldToCata, nbCmp)
-! ----- Allocate object for name of components
-        AS_ALLOCATE(vk8 = listCmpName, size = nbCmpMaxi)
-        do iCmp = 1, nbCmp
-            listCmpName(iCmp) = cmpName(iCmp)
-        end do
-        AS_DEALLOCATE(vi=cataToField)
-        AS_DEALLOCATE(vi=fieldToCata)
-        AS_DEALLOCATE(vk8=cmpName)
-! ----- To change ! Find the index of name of compoennt for each equation
-        do iEqua = 1, nbEqua
-            equaCmpName(iEqua) = 0
-        end do
-        lLagr = ASTER_FALSE
+        call cmpcha(fieldRefe, field%listCmpName, cataToField, fieldToCata, field%nbCmpName)
+        AS_DEALLOCATE(vi = cataToField)
+        AS_DEALLOCATE(vi = fieldToCata)
+! ----- Cannot identify physical name on each equation for the moment
+        AS_ALLOCATE(vi = field%equaCmpName, size = nbEqua)
+        field%lLagr = ASTER_FALSE
+        field%equaCmpName(1:nbEqua) = -1
     else
         ASSERT(ASTER_FALSE)
     endif

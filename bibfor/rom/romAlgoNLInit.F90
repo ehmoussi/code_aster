@@ -25,7 +25,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
-#include "asterfort/romCreateEquationFromNode.h"
+#include "asterfort/romFieldNodesAreDefined.h"
 #include "asterfort/romAlgoNLCheck.h"
 #include "asterfort/romTableCreate.h"
 #include "asterfort/nonlinDSTableIOCreate.h"
@@ -34,9 +34,8 @@ implicit none
 !
 character(len=4), intent(in) :: phenom
 character(len=24), intent(in) :: model
-character(len=8), intent(in) :: mesh
+character(len=8), intent(in) :: mesh, resultName
 character(len=24), intent(in) :: numeDof
-character(len=8), intent(in) :: resultName
 type(ROM_DS_AlgoPara), intent(inout) :: paraAlgo
 aster_logical, intent(in), optional :: lLineSearch_
 !
@@ -51,7 +50,6 @@ aster_logical, intent(in), optional :: lLineSearch_
 ! In  phenom           : phenomenon (MECA/THER)
 ! In  model            : name of model
 ! In  mesh             : name of mesh
-! In  numeDof          : name of numbering (NUME_DDL)
 ! In  resultName       : name of datastructure for results
 ! IO  paraAlgo         : datastructure for ROM parameters
 ! In  l_line_search    : .true. if line search
@@ -62,6 +60,7 @@ aster_logical, intent(in), optional :: lLineSearch_
     aster_logical :: l_hrom, l_hrom_corref
     integer :: nb_mode
     real(kind=8), pointer :: v_gamma(:) => null()
+    type(ROM_DS_Field) :: mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -75,6 +74,7 @@ aster_logical, intent(in), optional :: lLineSearch_
     l_hrom        = paraAlgo%l_hrom
     l_hrom_corref = paraAlgo%l_hrom_corref
     nb_mode       = paraAlgo%ds_empi%nb_mode
+    mode          = paraAlgo%ds_empi%ds_mode
 !
 ! - Check ROM algorithm datastructure
 !
@@ -83,15 +83,13 @@ aster_logical, intent(in), optional :: lLineSearch_
 ! - Prepare the list of equations at interface
 !
     if (l_hrom) then
-        call romCreateEquationFromNode(paraAlgo%ds_empi%ds_mode, paraAlgo%v_equa_int, numeDof,&
-                                       grnode_ = paraAlgo%grnode_int)
+        call romFieldNodesAreDefined(mode, paraAlgo%v_equa_int, numeDof, paraAlgo%grnode_int)
     endif
 !
 ! - Prepare the list of equation of internal interface
 !
     if (l_hrom_corref) then
-        call romCreateEquationFromNode(paraAlgo%ds_empi%ds_mode, paraAlgo%v_equa_sub, numeDof,&
-                                       grnode_ = paraAlgo%grnode_sub)
+        call romFieldNodesAreDefined(mode, paraAlgo%v_equa_sub, numeDof, paraAlgo%grnode_sub)
     endif
 !
 ! - Initializations for EF correction

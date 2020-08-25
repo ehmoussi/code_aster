@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFieldChck(ds_field, fieldName_)
+subroutine romFieldChck(field, fieldName_)
 !
 use Rom_Datastructure_type
 !
@@ -28,35 +28,35 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_Field), intent(in) :: ds_field
+type(ROM_DS_Field), intent(in) :: field
 character(len=*), optional, intent(in) :: fieldName_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction
+! Model reduction - Field management
 !
-! Check components in field
+! Check components
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_field         : datastructure for field
+! In  field            : field
 ! In  fieldName        : name of field where empiric modes have been constructed
 !
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=24) :: fieldName
-    integer :: nbCmpChck, nbCmp
-    integer :: iCmp, iCmpChck, cmpIndx
+    integer :: nbCmpChck, nbCmpName
+    integer :: iCmpName, iCmpChck, cmpIndx
     character(len=8) :: chckCmpName(6), cmpName
 !
 ! --------------------------------------------------------------------------------------------------
 !
     fieldName = ' '
-    nbCmp     = ds_field%nbCmp
+    nbCmpName = field%nbCmpName
     if (present(fieldName_)) then
         fieldName = fieldName_
     else
-        fieldName = ds_field%fieldName
+        fieldName = field%fieldName
     endif
 !
 ! - List of components authorized in field
@@ -111,19 +111,19 @@ character(len=*), optional, intent(in) :: fieldName_
 !
     do iCmpChck = 1, nbCmpChck
         cmpName = chckCmpName(iCmpChck)
-        cmpIndx = indik8(ds_field%listCmpName, chckCmpName(iCmpChck), 1, nbCmp)
+        cmpIndx = indik8(field%listCmpName, chckCmpName(iCmpChck), 1, nbCmpName)
         if (cmpIndx .eq. 0) then
-            call utmess('F', 'ROM5_25', sk = cmpName)
+            call utmess('F', 'ROM11_25', sk = cmpName)
         endif
     end do
 !
 ! - Forbidden components
 !
-    do iCmp = 1, nbCmp
-        cmpName = ds_field%listCmpName(iCmp)
+    do iCmpName = 1, nbCmpName
+        cmpName = field%listCmpName(iCmpName)
         cmpIndx = indik8(chckCmpName, cmpName, 1, nbCmpChck)
         if (cmpIndx .eq. 0) then
-            call utmess('F', 'ROM5_23', sk = cmpName)
+            call utmess('F', 'ROM11_23', sk = cmpName)
         endif
     end do
 !

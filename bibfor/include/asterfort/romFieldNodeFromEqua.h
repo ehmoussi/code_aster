@@ -17,8 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rrc_init_prim(cmdPara)
+    subroutine romFieldNodeFromEqua(fieldRefe, nbEqua, nbNodeMesh, listNode)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
-    end subroutine rrc_init_prim
+        character(len=24), intent(in) :: fieldRefe
+        integer, intent(in) :: nbEqua, nbNodeMesh
+        integer, pointer :: listNode(:)
+    end subroutine romFieldNodeFromEqua
 end interface

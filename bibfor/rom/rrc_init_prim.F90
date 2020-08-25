@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,27 +17,24 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_init_prim(mesh       , result_rom , field_name,&
-                         nb_equa_dom, mode_empi  ,&
-                         v_equa_rid , nb_equa_rom)
+subroutine rrc_init_prim(cmdPara)
+!
+use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/rsexch.h"
-#include "asterfort/jelira.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
-#include "asterfort/romSelectEquationFromNode.h"
-#include "asterfort/romCreateNodeFromEquation.h"
+#include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/infniv.h"
+#include "asterfort/jelira.h"
+#include "asterfort/romFieldEquaToEqua.h"
+#include "asterfort/romFieldNodeFromEqua.h"
+#include "asterfort/rsexch.h"
+#include "asterfort/utmess.h"
 !
-character(len=8), intent(in) :: mesh, result_rom
-character(len=24), intent(in) :: field_name, mode_empi
-integer, intent(in) :: nb_equa_dom
-integer, pointer :: v_equa_rid(:)
-integer, intent(out) :: nb_equa_rom
+type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,23 +44,15 @@ integer, intent(out) :: nb_equa_rom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  mesh             : name of mesh
-! In  result_rom       : results from reduced model
-! In  field_name       : name of field where empiric modes have been constructed (NOM_CHAM)
-! In  nb_equa_dom      : total number of equations (for complete model)
-! In  mode_empi        : representative primal empiric mode
-! In  v_equa_rid       : pointer to the list of equations in RID
-! ... for each equation on complete model
-!   0    => equation is not in RID
-!   <> 0 => equation is in RID and is the index of equation
-! Out nb_equa_rom      : total number of equations in RID
+! IO  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: field_rom
-    integer, pointer  :: v_list_node(:) => null()
-    integer :: nb_list_node, iret
+    character(len=24) :: fieldName, fieldRom, fieldDom
+    character(len=8) :: mesh, resultRom
+    integer, pointer  :: listNode(:) => null()
+    integer :: nbNodeMesh, nbEquaRom, iret, nbEquaDom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,24 +61,42 @@ integer, intent(out) :: nb_equa_rom
         call utmess('I', 'ROM6_38')
     endif
 !
-! - Get representative solution from ROM model
+! - Get parameters
 !
-    call rsexch(' ', result_rom, field_name, 1, field_rom, iret)
-    call jelira(field_rom(1:19)//'.VALE', 'LONMAX', nb_equa_rom)
+    resultRom = cmdPara%result_rom
+    fieldName = cmdPara%ds_empi_prim%ds_mode%fieldName
+    mesh      = cmdPara%ds_empi_prim%ds_mode%mesh
+    call dismoi('NB_NO_MAILLA', mesh, 'MAILLAGE', repi = nbNodeMesh)
 !
-! - Construct list of nodes belonging to RID from equations
+! - Get representative field on reduced domain
 !
-    call romCreateNodeFromEquation(mesh       , field_rom   ,&
-                                   v_list_node, nb_list_node)
+    call rsexch(' ', resultRom, fieldName, 1, fieldRom, iret)
+    if (iret .ne. 0) then
+        call utmess('F', 'ROM7_25', sk = fieldName)
+    endif
+    call jelira(fieldRom(1:19)//'.VALE', 'LONMAX', nbEquaRom)
 !
-! - Create list of equations in RID (for primal)
+! - Get representative field on complete domain: the mode !
 !
-    AS_ALLOCATE(vi = v_equa_rid, size = nb_equa_dom)
-    call romSelectEquationFromNode(nb_equa_dom, mode_empi, field_rom, v_list_node,&
-                                   v_equa_rid)
+    fieldDom  = cmdPara%ds_empi_prim%ds_mode%fieldRefe
+    nbEquaDom = cmdPara%ds_empi_prim%ds_mode%nbEqua
+!
+! - Create list of nodes on all mesh
+!
+    AS_ALLOCATE(vi = listNode, size = nbNodeMesh)
+!
+! - Detect nodes on all mesh with equation from reduced domain
+!
+    call romFieldNodeFromEqua(fieldRom, nbEquaRom, nbNodeMesh, listNode)
+!
+! - Get link between equation in complete domain and equation in reduced domain
+!
+    cmdPara%nb_equa_ridp = nbEquaRom
+    AS_ALLOCATE(vi = cmdPara%v_equa_ridp, size = nbEquaDom)
+    call romFieldEquaToEqua(fieldDom, fieldRom, listNode, cmdPara%v_equa_ridp)
 !
 ! - Clean
 !
-    AS_DEALLOCATE(vi = v_list_node)
+    AS_DEALLOCATE(vi = listNode)
 !
 end subroutine

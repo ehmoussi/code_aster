@@ -128,10 +128,8 @@ aster_logical, optional, intent(in) :: l_update_redu_
     call jeveuo(matr_asse(1:19)//'.&INT', 'L', jv_matr)
     call dismoi('NB_EQUA', matr_asse, 'MATR_ASSE', repi = nbEqua_matr)
     ASSERT(nbEqua .eq. zi(jv_matr+2))
-
-
 !
-! - Sceond member correction for AFFE_CHAR_CINE
+! - Second member correction for AFFE_CHAR_CINE
 !
     call jeveuo(vcine19//'.VALE', 'L', vr= v_vect_cine)
     call mrconl('MULT', jv_matr, 0, 'R', v_vect_2mbr, 1)

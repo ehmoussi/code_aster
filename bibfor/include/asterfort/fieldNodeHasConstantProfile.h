@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,17 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine romCreateEquationFromNode(ds_mode, v_equa  , nume_dof    ,&
-                                         grnode_, nb_node_, v_list_node_)
-        use Rom_Datastructure_type
-        type(ROM_DS_Field), intent(in) :: ds_mode
-        integer, pointer :: v_equa(:)
-        character(len=24), intent(in) :: nume_dof
-        character(len=24), optional, intent(in) :: grnode_
-        integer, optional, intent(in) :: nb_node_
-        integer, pointer, optional :: v_list_node_(:)
-    end subroutine romCreateEquationFromNode
+    subroutine fieldNodeHasConstantProfile(fieldz, lConst)
+        character(len=*), intent(in) :: fieldz
+        aster_logical, intent(out) :: lConst
+    end subroutine fieldNodeHasConstantProfile
 end interface

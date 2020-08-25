@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_info(ds_para)
+subroutine rrc_info(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -27,7 +27,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -37,7 +37,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para          : datastructure for parameters
+! In  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,14 +48,14 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type_resu    = ds_para%type_resu
-    result_rom   = ds_para%result_rom
-    model_rom    = ds_para%model_rom
-    nb_store     = ds_para%nb_store
-    result_dom   = ds_para%result_dom
-    model_dom    = ds_para%model_dom
-    l_prev_dual  = ds_para%l_prev_dual
-    l_corr_ef    = ds_para%l_corr_ef
+    type_resu    = cmdPara%type_resu
+    result_rom   = cmdPara%result_rom
+    model_rom    = cmdPara%model_rom
+    nb_store     = cmdPara%nb_store
+    result_dom   = cmdPara%result_dom
+    model_dom    = cmdPara%model_dom
+    l_prev_dual  = cmdPara%l_prev_dual
+    l_corr_ef    = cmdPara%l_corr_ef
 !
 ! - Print
 !

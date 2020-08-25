@@ -17,46 +17,64 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFSINumberingInit(field, algoGreedy)
+subroutine romFieldDSCopy(fieldIn, fieldOut)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterc/indik8.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
+#include "asterfort/assert.h"
+#include "asterfort/as_allocate.h"
 !
-type(ROM_DS_Field), intent(in) :: field
-type(ROM_DS_AlgoGreedy), intent(inout) :: algoGreedy
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Model reduction
-!
-! Create numbering of nodes for FSI
+type(ROM_DS_Field), intent(in)  :: fieldIn
+type(ROM_DS_Field), intent(Out) :: fieldOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  field            : field to analyze
-! IO  algoGreedy       : datastructure for Greedy algorithm
+! Model reduction - Field management
+!
+! Copy datastructure of field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-    integer :: cmpNume
+! In  fieldIn          : input field
+! Out fieldOut         : output field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM2_53')
+    integer :: iCmpName, nbCmpName, iEqua, nbEqua
+!
+! --------------------------------------------------------------------------------------------------
+!
+
+!
+! - Copy static variables
+!
+    fieldOut%fieldName = fieldIn%fieldName
+    fieldOut%fieldRefe = fieldIn%fieldRefe
+    fieldOut%fieldSupp = fieldIn%fieldSupp
+    fieldOut%mesh      = fieldIn%mesh
+    fieldOut%model     = fieldIn%model
+    fieldOut%nbEqua    = fieldIn%nbEqua
+    fieldOut%lLagr     = fieldIn%lLagr
+    fieldOut%nbCmpName = fieldIn%nbCmpName
+!
+! - Copy pointers
+!
+    nbCmpName = fieldIn%nbCmpName
+    if (nbCmpName .ne. 0) then
+        AS_ALLOCATE(vk8 = fieldOut%listCmpName, size = nbCmpName)
+        do iCmpName = 1, nbCmpName
+            fieldOut%listCmpName(iCmpName) = fieldIn%listCmpName(iCmpName)
+        end do
     endif
-!
-    cmpNume = indik8(field%listCmpName, 'PRES', 1, field%nbCmpName)
-    algoGreedy%nume_pres = cmpNume
-    cmpNume = indik8(field%listCmpName, 'PHI', 1, field%nbCmpName)
-    algoGreedy%nume_phi  = cmpNume
+    nbEqua = fieldIn%nbEqua
+    if (nbEqua .ne. 0) then
+        AS_ALLOCATE(vi = fieldOut%equaCmpName, size = nbEqua)
+        do iEqua = 1, nbEqua
+            fieldOut%equaCmpName(iEqua) = fieldIn%equaCmpName(iEqua)
+        end do
+    endif
 !
 end subroutine

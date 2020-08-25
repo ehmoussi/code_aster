@@ -29,8 +29,6 @@ cata_msg = {
 
     6 : _("""Tolérance pour détecter les noeuds: %(r1)19.12e."""),
 
-    8 : _("""Création de la liste des équations sur le mode empirique."""),
-
     9 : _("""Base empirique créée à partir de %(i1)d clichés."""),
 
    10 : _("""Vous n'avez sélectionné aucun cliché."""),
@@ -128,8 +126,6 @@ Conseil: Vérifier la liste renseignée dans SNAPSHOT"""),
    56 : _("""Lecture de la base à tronquer. La base tronquée aura le même nom que la base à tronquer."""),
 
    57 : _("""Lecture de la base à tronquer. La base tronquée sera nouvelle."""),
-
-   59 : _("""Création de la nouvelle numérotation sur le domaine complet."""),
 
    60 : _("""Initialisation de la base empirique dans le cas d'une orthogonalisation."""),
 

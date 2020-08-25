@@ -15,18 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
 interface
-    subroutine romGetListComponents(fieldRefe  , fieldSupp  , nbEqua,&
-                                    equaCmpName, listCmpName,&
-                                    nbCmp      , lLagr)
-        character(len=24), intent(in) :: fieldRefe
-        character(len=4), intent(in) :: fieldSupp
-        integer, intent(in) :: nbEqua
-        integer, pointer :: equaCmpName(:)
-        character(len=8), pointer :: listCmpName(:)
-        integer, intent(out) :: nbCmp
-        aster_logical, intent(out) :: lLagr
-    end subroutine romGetListComponents
+    subroutine romFieldNodesAreDefined(field  , listEqua, numeDof  ,&
+                                       grnode_, nbNode_ , listNode_)
+        use Rom_Datastructure_type
+        type(ROM_DS_Field), intent(in) :: field
+        integer, pointer :: listEqua(:)
+        character(len=24), intent(in) :: numeDof
+        character(len=24), optional, intent(in) :: grnode_
+        integer, optional, intent(in) :: nbNode_
+        integer, pointer, optional :: listNode_(:)
+    end subroutine romFieldNodesAreDefined
 end interface

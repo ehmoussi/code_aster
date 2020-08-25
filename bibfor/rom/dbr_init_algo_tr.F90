@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,42 +17,42 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_algo_tr(ds_para_tr)
+subroutine dbr_init_algo_tr(paraTrunc)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/as_allocate.h"
 #include "asterfort/assert.h"
-#include "asterfort/gnomsd.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/numero.h"
+#include "asterfort/gnomsd.h"
+#include "asterfort/infniv.h"
 #include "asterfort/modelNodeEF.h"
-#include "asterfort/romCreateEquationFromNode.h"
+#include "asterfort/numero.h"
+#include "asterfort/romFieldNodesAreDefined.h"
+#include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
+type(ROM_DS_ParaDBR_TR), intent(inout) :: paraTrunc
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Init algorithm - For truncation
+! Init algorithm for truncation of base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para_tr       : datastructure for truncation parameters
+! IO  paraTrunc         : datastructure for truncation parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_equa_rom, nb_node_rom
-    character(len=8) :: model_rom, model_dom
-    character(len=24) :: nume_rom, nume_dom, noojb
-    integer, pointer :: v_node_rom(:) => null()
+    integer :: nbEquaRom, nbNodeRom
+    character(len=8) :: modelRom, modelDom
+    character(len=24) :: numeRom, numeDom, noojb
+    integer, pointer :: numeNodeRom(:) => null()
+    type(ROM_DS_Field) :: mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,42 +63,41 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
 !
 ! - Get parameters
 !
-    noojb     = '12345678.00000.NUME.PRNO'
-    model_dom = ds_para_tr%ds_empi_init%ds_mode%model
-    model_rom = ds_para_tr%model_rom
+    noojb    = '12345678.00000.NUME.PRNO'
+    mode     = paraTrunc%ds_empi_init%ds_mode
+    modelRom = paraTrunc%model_rom
+    modelDom = paraTrunc%ds_empi_init%ds_mode%model
 !
-! - Create numbering
+! - Create numbering for ROM
 !
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_48')
     endif
-    nume_rom = '12345678.NUMED'
+    numeRom = '12345678.NUMED'
     call gnomsd(' ', noojb, 10, 14)
-    nume_rom = noojb(1:14)
-    call numero(nume_rom, 'VV', modelz = model_rom)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM2_59')
-    endif
-    nume_dom = '12345678.NUMED'
+    numeRom = noojb(1:14)
+    call numero(numeRom, 'VV', modelz = modelRom)
+!
+! - Create numbering for DOM
+!
+    numeDom = '12345678.NUMED'
     call gnomsd(' ', noojb, 10, 14)
-    nume_dom = noojb(1:14)
-    call numero(nume_dom, 'VV', modelz = model_dom)
-    call dismoi('NB_EQUA'  , nume_rom, 'NUME_DDL', repi=nb_equa_rom)
+    numeDom = noojb(1:14)
+    call numero(numeDom, 'VV', modelz = modelDom)
 !
 ! - Extract list of nodes on reduced model
 !
-    call modelNodeEF(model_rom, nb_node_rom, v_node_rom)
+    call modelNodeEF(modelRom, nbNodeRom, numeNodeRom)
 !
 ! - Prepare the list of equations from list of nodes
 !
-    call romCreateEquationFromNode(ds_para_tr%ds_empi_init%ds_mode,&
-                                   ds_para_tr%v_equa_rom,&
-                                   nume_dom     ,&
-                                   nb_node_     = nb_node_rom,&
-                                   v_list_node_ = v_node_rom)
+    call romFieldNodesAreDefined(mode, paraTrunc%v_equa_rom, numeDom,&
+                                 nbNode_   = nbNodeRom,&
+                                 listNode_ = numeNodeRom)
 !
 ! - Save parameters
 !
-    ds_para_tr%nb_equa_rom   = nb_equa_rom
+    call dismoi('NB_EQUA', numeRom, 'NUME_DDL', repi = nbEquaRom)
+    paraTrunc%nb_equa_rom = nbEquaRom
 !
 end subroutine

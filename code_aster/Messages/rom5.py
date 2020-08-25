@@ -62,11 +62,7 @@ cata_msg = {
    22 : _("""Un mode empirique contient des conditions limites dualisés (AFFE_CHAR_THER ou AFFE_CHAR_MECA).
               Ce n'est pas possible, utilisez AFFE_CHAR_CINE"""),
 
-   23 : _("""Un mode empirique contient la composante %(k1)s qui n'est pas autorisée. Vous utilisez un modèle qui n'est actuellement pas compatible avec la réduction de modèle."""),
-
    24 : _("""Paramètres généraux de DEFI_BASE_REDUITE."""),
-
-   25 : _("""Le champ d'entrée ne contient pas la composante %(k1)s. Vous utilisez un modèle qui n'est actuellement pas compatible avec la réduction de modèle."""),
 
    27 : _("""Lecture des paramètres pour la méthode GLOUTON."""),
 
@@ -97,6 +93,7 @@ cata_msg = {
    40 : _("""Résolution du problème réduit."""),
 
    41 : _("""Lecture des paramètres pour réaliser le calcul non-linéaire avec réduction de modèle."""),
+
 
    44 : _("""Évaluation des coefficients pour la valeur %(i1)d des paramètres."""),
 
@@ -147,6 +144,16 @@ cata_msg = {
    72 : _("""Orthogonalisation de la base empirique."""),
 
    80 : _("""Vérification de la conformité de la table des coordonnées réduites fournies par l'utilisateur."""),
+
+   81 : _("""Paramètres de la base primale utilisée."""),
+
+   82 : _("""Calcul hyper-réduit (sur un domaine réduit)."""),
+
+   83 : _("""Calcul réduit (sur le domaine complet)."""),
+
+   84 : _("""Calcul avec correction par un calcul élément fini complet."""),
+
+   85 : _("""Le raccord sur l'interface utilise un coefficeint de pénalisation de %(r1)19.12e."""),
 
    92 : _("""Calcul du mode empirique initial."""),
 
