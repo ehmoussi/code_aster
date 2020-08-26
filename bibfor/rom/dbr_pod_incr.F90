@@ -89,6 +89,7 @@ integer, intent(out) :: nbModeOut, nbSnapOut
     real(kind=8), pointer :: b(:)    => null()
     real(kind=8), pointer :: v_gamma(:)    => null()
     character(len=24) :: mode, fieldName
+    character(len=4) :: fieldSupp
     integer :: iret
     real(kind=8), pointer :: v_mode(:) => null()
 !
@@ -117,6 +118,7 @@ integer, intent(out) :: nbModeOut, nbSnapOut
     nbModePrev   = base%nbMode
     nbSnapPrev   = base%nbSnap
     fieldName    = base%mode%fieldName
+    fieldSupp    = base%mode%fieldSupp
 !
 ! - Get previous reduced coordinates when reuse 
 !
@@ -144,7 +146,13 @@ integer, intent(out) :: nbModeOut, nbSnapOut
 ! ----- Add previous modes in v
         do iMode = 1, nbModePrev
             call rsexch(' ', baseName, fieldName, iMode, mode, iret)
-            call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
+            if (fieldSupp .eq. 'NOEU') then
+                call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
+            elseif (fieldSupp .eq. 'ELGA') then
+                call jeveuo(mode(1:19)//'.CELV', 'L', vr = v_mode)
+            else
+                ASSERT(ASTER_FALSE)
+            endif
             do iEqua = 1, nbEqua
                 vt(iEqua+nbEqua*(iMode-1)) = v_mode(iEqua)
             end do

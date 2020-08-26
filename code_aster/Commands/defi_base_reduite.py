@@ -44,16 +44,16 @@ class ReducedBaseDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        if "reuse" in keywords:
-            self._result.update()
-        elif("OPERATION" in keywords and
-             keywords["OPERATION"] == "TRONCATURE"):
-            self._result.appendModelOnAllRanks(keywords["MODELE_REDUIT"])
+        model = None
+        if keywords.get("OPERATION") == "TRONCATURE":
+            model = keywords["MODELE_REDUIT"]
         else:
-            if keywords.get("RESULTAT"):
-                resultat = keywords["RESULTAT"]
-                if resultat is not None:
-                    if resultat.getModel() is not None:
-                        self._result.appendModelOnAllRanks(resultat.getModel())
+            if "reuse" in keywords:
+                model = self._result.getModel()
+            elif keywords.get("RESULTAT"):
+                model = keywords["RESULTAT"].getModel()
+        if model:
+            self._result.appendModelOnAllRanks(model)
+        self._result.update()
 
 DEFI_BASE_REDUITE = ReducedBaseDefinition.run

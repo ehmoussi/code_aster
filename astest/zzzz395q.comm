@@ -103,11 +103,21 @@ IMPR_TABLE(TABLE=coorReduPOD, UNITE=6)
 
 # Create base
 baseSiefElgaPODINCR=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
-                          TOLE      = 1.E-3,
-                          RESULTAT  = stnl,
-                          INFO      = 2,
-                          NOM_CHAM  = 'SIEF_ELGA',
-                          TOLE_SVD  = 1.E-3,);
+                         TOLE      = 1.E-1,
+                         RESULTAT  = stnl,
+                         INFO      = 2,
+                         NOM_CHAM  = 'SIEF_ELGA',
+                         TOLE_SVD  = 1.E-1,);
+
+# Update base
+base_d=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
+                         reuse     = base_d,
+                         BASE      = base_d,
+                         TOLE      = 1.E-3,
+                         RESULTAT  = stnl,
+                         INFO      = 2,
+                         NOM_CHAM  = 'SIEF_ELGA',
+                         TOLE_SVD  = 1.E-3,);
 
 # Print base (recombSiefPOD_ELGA)
 IMPR_RESU(FORMAT='MED',UNITE=82,RESU=_F(RESULTAT=baseSiefElgaPODINCR))
@@ -152,9 +162,9 @@ modeSiefPODINCR_1 = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULT
 modeSiefPODINCR_2 = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULTAT=baseSiefElgaPODINCR, NOM_CHAM='SIEF_ELGA',NUME_ORDRE=2);
 modeSiefPODINCR_3 = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION='EXTR', RESULTAT=baseSiefElgaPODINCR, NOM_CHAM='SIEF_ELGA',NUME_ORDRE=3);
 
-coefSiefPODINCR_1 = -1.31805E+05
-coefSiefPODINCR_2 = -9.74083E+02
-coefSiefPODINCR_3 = -1.82558E+02
+coefSiefPODINCR_1 = 1.31732E+05
+coefSiefPODINCR_2 = 4.46687E+03
+coefSiefPODINCR_3 = 6.44630E+02
 
 recombSiefPODINCR = CREA_CHAMP(OPERATION = 'ASSE',
                                MODELE    = model,
