@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFieldPrepFilter(nbCmpToFilter, cmpToFilter, field)
+subroutine romFieldPrepFilter(nbCmpToFilter, cmpToFilter,&
+                              field)
 !
 use Rom_Datastructure_type
 !

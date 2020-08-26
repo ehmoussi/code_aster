@@ -49,5 +49,6 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     call romSnapClean(paraPod%snap)
     call romFieldClean(paraPod%field)
     AS_DEALLOCATE(vk8 = paraPod%cmpToFilter)
+    AS_DEALLOCATE(vk16 = paraPod%variToFilter)
 !
 end subroutine

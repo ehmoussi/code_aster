@@ -142,4 +142,6 @@ cata_msg = {
    66 : _("""On ne sélectionnera qu'une partie des composantes du champ dont voici la liste."""),
 
    67 : _("""Composante %(i1)d: %(k1)s."""),
+
+   68 : _("""Composante %(i1)d: %(k1)s (NOM_VARI = %(k2)s)."""),
 }

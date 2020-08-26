@@ -108,7 +108,8 @@ base_d=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
                           RESULTAT = stnl,
                           INFO     = 2,
                           NOM_CHAM = 'VARI_ELGA',
-                          NOM_CMP  = 'V1',
+                          #NOM_CMP  = 'V1',
+                          NOM_VARI = 'EPSPEQ',
                           TOLE_SVD = 1.E-3,);
 
 # Print base (VARI_ELGA)

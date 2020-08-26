@@ -46,6 +46,10 @@ implicit none
         integer                 :: nbStore       = 0
 ! ----- Flag for reduced coordinates table
         aster_logical           :: lTablFromResu = ASTER_FALSE
+! ----- Reference model
+        character(len=8)        :: modelRefe     = ' '
+! ----- Reference behaviour
+        character(len=24)       :: comporRefe    = ' '
     end type ROM_DS_Result
 !
 ! - Datastructure to save reduced coordinates
@@ -321,42 +325,44 @@ implicit none
 !
     type ROM_DS_ParaDBR_POD
 ! ----- Name of result to read (high fidelity)
-        character(len=8)          :: resultDomName  = ' '
+        character(len=8)           :: resultDomName   = ' '
 
 ! ----- Result to read (high fidelity)
-        type(ROM_DS_Result)       :: resultDom
+        type(ROM_DS_Result)        :: resultDom
 
 ! ----- Name of field to read (NOM_CHAM)
-        character(len=24)         :: fieldName      = ' '
+        character(len=24)          :: fieldName       = ' '
 
 ! ----- Field to read (high fidelity)
-        type(ROM_DS_Field)        :: field
-        integer                   :: nbCmpToFilter  = 0
-        character(len=8), pointer :: cmpToFilter(:) => null()
+        type(ROM_DS_Field)         :: field
+        integer                    :: nbCmpToFilter   = 0
+        character(len=8), pointer  :: cmpToFilter(:)  => null()
+        integer                    :: nbVariToFilter  = 0
+        character(len=16), pointer :: variToFilter(:) => null()
 
 ! ----- Type of reduced base
-        character(len=8)          :: baseType       = ' '
+        character(len=8)           :: baseType        = ' '
 
 ! ----- Direction of the linear model
-        character(len=8)          :: lineicAxis     = ' '
+        character(len=8)           :: lineicAxis      = ' '
 
 ! ----- First section of the linear model
-        character(len=24)         :: lineicSect     = ' '
+        character(len=24)          :: lineicSect      = ' '
 
 ! ----- Tolerance for SVD
-        real(kind=8)              :: toleSVD        = 0.d0
+        real(kind=8)               :: toleSVD         = 0.d0
 
 ! ----- Tolerance for incremental POD
-        real(kind=8)              :: toleIncr       = 0.d0
+        real(kind=8)               :: toleIncr        = 0.d0
 
 ! ----- Table for reduced coordinates
-        type(ROM_DS_TablReduCoor) :: tablReduCoor
+        type(ROM_DS_TablReduCoor)  :: tablReduCoor
 
 ! ----- Maximum number of modes
-        integer                   :: nbModeMaxi     = 0
+        integer                    :: nbModeMaxi      = 0
 
 ! ----- Datastructure for snapshot selection
-        type(ROM_DS_Snap)         :: snap
+        type(ROM_DS_Snap)          :: snap
 
     end type ROM_DS_ParaDBR_POD
 !

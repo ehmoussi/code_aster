@@ -47,9 +47,10 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 !
     integer :: ifm, niv
     character(len=8) :: cmpFilterName
+    character(len=16) :: variFilterName
     character(len=24) :: fieldName
     real(kind=8) :: toleSVD, toleIncr
-    integer :: nbModeMaxi, nbCmpToFilter, iCmpToFilter
+    integer :: nbModeMaxi, nbCmpToFilter, iCmpToFilter, nbVariToFilter
     type(ROM_DS_Field) :: field
 !
 ! --------------------------------------------------------------------------------------------------
@@ -61,12 +62,13 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 !
 ! - Get parameters
 !
-    toleSVD       = paraPod%toleSVD
-    toleIncr      = paraPod%toleIncr
-    field         = paraPod%field
-    fieldName     = paraPod%fieldName
-    nbModeMaxi    = paraPod%nbModeMaxi
-    nbCmpToFilter = paraPod%nbCmpToFilter
+    toleSVD        = paraPod%toleSVD
+    toleIncr       = paraPod%toleIncr
+    field          = paraPod%field
+    fieldName      = paraPod%fieldName
+    nbModeMaxi     = paraPod%nbModeMaxi
+    nbCmpToFilter  = paraPod%nbCmpToFilter
+    nbVariToFilter = paraPod%nbVariToFilter
 !
 ! - Print - General for POD
 !
@@ -87,7 +89,13 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
             call utmess('I', 'ROM18_66')
             do iCmpToFilter = 1, nbCmpToFilter
                 cmpFilterName = paraPod%cmpToFilter(iCmpToFilter)
-                call utmess('I', 'ROM18_67', si = iCmpToFilter, sk = cmpFilterName)
+                if (nbVariToFilter .ne. 0) then
+                    variFilterName = paraPod%variToFilter(iCmpToFilter)
+                    call utmess('I', 'ROM18_68', si = iCmpToFilter,&
+                                 nk = 2, valk = [cmpFilterName, variFilterName])
+                else
+                    call utmess('I', 'ROM18_67', si = iCmpToFilter, sk = cmpFilterName)
+                endif
             end do
         endif
     endif

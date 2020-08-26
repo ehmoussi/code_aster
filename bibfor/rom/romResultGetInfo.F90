@@ -24,14 +24,18 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/exisd.h"
 #include "asterfort/gettco.h"
 #include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/rs_get_liststore.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/ltnotb.h"
-#include "asterfort/exisd.h"
 #include "asterfort/romResultPrintInfo.h"
+#include "asterfort/rs_get_liststore.h"
+#include "asterfort/rsGetOneBehaviourFromResult.h"
+#include "asterfort/rsGetOneModelFromResult.h"
+#include "asterfort/utmess.h"
 !
 character(len=*), intent(in) :: resultNameZ
 type(ROM_DS_Result), intent(inout) :: result
@@ -52,11 +56,12 @@ type(ROM_DS_Result), intent(inout) :: result
     integer :: ifm, niv
     integer :: iret
     integer :: nbStore, nbLine
-    character(len=8)  :: resultName
-    character(len=24) :: tablName
+    character(len=8)  :: resultName, modelRefe
+    character(len=24) :: tablName, comporRefe
     character(len=16) :: resultType
     aster_logical :: lTablFromResu
     integer, pointer :: tbnp(:) => null()
+    integer, pointer :: listStore(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,6 +76,8 @@ type(ROM_DS_Result), intent(inout) :: result
     resultName    = resultNameZ
     resultType    = ' '
     lTablFromResu = ASTER_FALSE
+    modelRefe     = '#SANS'
+    comporRefe    = '#SANS'
 !
 ! - Get number of storing index
 !
@@ -97,12 +104,27 @@ type(ROM_DS_Result), intent(inout) :: result
     endif
     lTablFromResu = iret .eq. 0
 !
+! - Get reference model and behaviour
+!
+    if (nbStore .gt. 0) then
+        AS_ALLOCATE(vi = listStore, size = nbStore)
+        call rs_get_liststore(resultName, nbStore, listStore)
+        call rsGetOneModelFromResult(resultName, nbStore, listStore, modelRefe)
+        call rsGetOneBehaviourFromResult(resultName, nbStore, listStore, comporRefe)
+    endif
+!
 ! - Save parameters in datastructure
 !
+    result%modelRefe     = modelRefe
+    result%comporRefe    = comporRefe
     result%resultType    = resultType
     result%resultName    = resultName
     result%nbStore       = nbStore
     result%lTablFromResu = lTablFromResu
+!
+! - Clean
+!
+    AS_DEALLOCATE(vi = listStore)
 !
 ! - Debug
 !

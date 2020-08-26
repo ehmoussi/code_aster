@@ -23,11 +23,17 @@ use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
+#include "asterfort/jedetr.h"
 #include "asterfort/romFieldDSCopy.h"
 #include "asterfort/romFieldPrepFilter.h"
+#include "asterfort/utmess.h"
+#include "asterfort/varinonu.h"
+#include "asterfort/wkvect.h"
 !
 type(ROM_DS_Empi), intent(in) :: base
 type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
@@ -46,6 +52,12 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    character(len=8) :: model, mesh
+    character(len=24) :: compor
+    character(len=24), parameter :: listVariNume = '&&LIST_VARInNUME'
+    integer :: iCell, iCmp, nbCell, nbVari
+    integer, pointer :: listCell(:) => null()
+    character(len=8), pointer :: variNume(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,8 +70,33 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
     call romFieldDSCopy(base%mode, paraPod%field)
 !
+! - Convert names of components from VARI_R (NOM_VARI)
+!
+    if (paraPod%nbVariToFilter .ne. 0) then
+        nbVari = paraPod%nbVariToFilter
+        model  = paraPod%resultDom%modelRefe
+        compor = paraPod%resultDom%comporRefe
+        call dismoi('NOM_MAILLA', model, 'MODELE', repk = mesh)
+        call dismoi('NB_MA_MAILLA', mesh, 'MAILLAGE', repi = nbCell)
+        AS_ALLOCATE(vi = listCell, size = nbCell)
+        do iCell = 1, nbCell
+            listCell(iCell) = iCell
+        end do
+        call wkvect(listVariNume, 'V V K8', nbCell*nbVari, vk8 = variNume)
+        call varinonu(model , compor      ,&
+                      nbCell, listCell    ,&
+                      nbVari, paraPod%variToFilter, variNume)
+        ASSERT(paraPod%nbCmpToFilter .eq. nbVari)
+        do iCmp = 1, nbVari
+            paraPod%cmpToFilter(iCmp) = variNume(iCmp)
+        end do
+        AS_DEALLOCATE(vi = listCell)
+        call jedetr(listVariNume)
+    endif
+!
 ! - Prepare filter for components
 !
-    call romFieldPrepFilter(paraPod%nbCmpToFilter, paraPod%cmpToFilter, paraPod%field)
+    call romFieldPrepFilter(paraPod%nbCmpToFilter, paraPod%cmpToFilter ,&
+                            paraPod%field)
 !
 end subroutine

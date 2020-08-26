@@ -57,7 +57,7 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
     character(len=16) :: fieldName
     character(len=8)  :: lineicAxis, lineicSect, baseType
     character(len=8)  :: resultDomName
-    integer :: nbModeMaxi, nbCmpToFilter
+    integer :: nbModeMaxi, nbCmpToFilter, nbVariToFilter
     type(ROM_DS_Result) :: resultDom
 !
 ! --------------------------------------------------------------------------------------------------
@@ -69,15 +69,16 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
 ! - Initializations
 !
-    toleSVD       = 0.d0
-    toleIncr      = 0.d0
-    nbModeMaxi    = 0
-    fieldName     = ' '
-    lineicAxis    = ' '
-    lineicSect    = ' '
-    baseType      = ' '
-    resultDomName = ' '
-    nbCmpToFilter = 0
+    toleSVD        = 0.d0
+    toleIncr       = 0.d0
+    nbModeMaxi     = 0
+    fieldName      = ' '
+    lineicAxis     = ' '
+    lineicSect     = ' '
+    baseType       = ' '
+    resultDomName  = ' '
+    nbCmpToFilter  = 0
+    nbVariToFilter = 0
 !
 ! - Get parameters - Result
 !
@@ -92,6 +93,15 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
         nbCmpToFilter = abs(nbCmpToFilter)
         AS_ALLOCATE(vk8 = paraPod%cmpToFilter, size = nbCmpToFilter)
         call getvtx(' ', 'NOM_CMP', iocc = 1, nbval = nbCmpToFilter, vect = paraPod%cmpToFilter)
+    endif
+    call getvtx(' ', 'NOM_VARI', iocc = 1, nbval=0, nbret = nbVariToFilter)
+    if (nbVariToFilter .ne. 0) then
+        ASSERT(nbCmpToFilter .eq. 0)
+        nbVariToFilter = abs(nbVariToFilter)
+        AS_ALLOCATE(vk16 = paraPod%variToFilter, size = nbVariToFilter)
+        call getvtx(' ', 'NOM_VARI', iocc = 1, nbval = nbVariToFilter, vect = paraPod%variToFilter)
+        nbCmpToFilter = nbVariToFilter
+        AS_ALLOCATE(vk8 = paraPod%cmpToFilter, size = nbCmpToFilter)
     endif
 !
 ! - Maximum number of modes
@@ -134,15 +144,16 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: paraPod
 !
 ! - Save parameters in datastructure
 !
-    paraPod%nbCmpToFilter = nbCmpToFilter
-    paraPod%fieldName     = fieldName
-    paraPod%baseType      = baseType
-    paraPod%lineicAxis    = lineicAxis
-    paraPod%lineicSect    = lineicSect
-    paraPod%toleSVD       = toleSVD
-    paraPod%toleIncr      = toleIncr
-    paraPod%nbModeMaxi    = nbModeMaxi
-    paraPod%resultDomName = resultDomName
-    paraPod%resultDom     = resultDom
+    paraPod%nbCmpToFilter  = nbCmpToFilter
+    paraPod%nbVariToFilter = nbVariToFilter
+    paraPod%fieldName      = fieldName
+    paraPod%baseType       = baseType
+    paraPod%lineicAxis     = lineicAxis
+    paraPod%lineicSect     = lineicSect
+    paraPod%toleSVD        = toleSVD
+    paraPod%toleIncr       = toleIncr
+    paraPod%nbModeMaxi     = nbModeMaxi
+    paraPod%resultDomName  = resultDomName
+    paraPod%resultDom      = resultDom
 !
 end subroutine

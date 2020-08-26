@@ -85,4 +85,12 @@ type(ROM_DS_Empi), intent(in) :: base
         call romTableChck(paraPod%tablReduCoor, lTablFromResu, nbMode, nbSnap)
     endif
 !
+! - Check components
+!
+    if (paraPod%nbVariToFilter .ne. 0) then
+        if (paraPod%fieldName .ne. 'VARI_ELGA') then
+            call utmess('F', 'ROM18_38')
+        endif
+    endif
+!
 end subroutine
