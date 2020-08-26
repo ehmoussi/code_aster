@@ -157,3 +157,21 @@ def run_command(cmd, timeout=None, exitcode_file=None):
         sys.stderr.write(str(exc))
         iret = -9
     return iret
+
+def cmd_abspath(prog):
+    """Return the absolute path of a program as found in PATH.
+
+    If `prog` contains a '/', it is returned unchanged.
+
+    Arguments:
+        prog (str): Executable or script.
+
+    Returns:
+        str: Absolute path to run `prog`.
+    """
+    if os.sep not in prog:
+        for path in os.getenv("PATH").split(os.pathsep):
+            if osp.isfile(osp.join(path, prog)):
+                prog = osp.join(path, prog)
+                break
+    return prog

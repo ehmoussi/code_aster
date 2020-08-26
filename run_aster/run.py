@@ -40,7 +40,8 @@ from .export import Export
 from .logger import logger
 from .status import StateOptions, Status, get_status
 from .timer import Timer
-from .utils import ROOT, compress, copy, make_writable, run_command, uncompress
+from .utils import (ROOT, cmd_abspath, compress, copy, make_writable,
+                    run_command, uncompress)
 
 EXITCODE_FILE = "_exit_code_"
 TMPMESS = "fort.6"
@@ -235,7 +236,7 @@ class RunAster:
         cmd = []
         if self._exectool:
             cmd.append(self._exectool)
-        cmd.append(CFG.get("python"))
+        cmd.append(cmd_abspath(CFG.get("python")))
         if self._interact:
             cmd.append("-i")
         cmd.append(commfile)
@@ -253,12 +254,8 @@ class RunAster:
         if not core:
             return
         logger.info("\ncoredump analysis...")
-        python3 = None
-        for path in os.getenv("PATH").split(os.pathsep):
-            if osp.isfile(osp.join(path, "python3")):
-                python3 = osp.join(path, "python3")
-                break
-        if not python3:
+        python3 = cmd_abspath(CFG.get("python"))
+        if not osp.isfile(python3):
             logger.warn("'python3' not found in PATH.")
             return
         tmpf = "cmd_gdb.sh"
