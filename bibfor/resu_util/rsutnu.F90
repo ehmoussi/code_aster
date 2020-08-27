@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -444,8 +444,10 @@ subroutine rsutnu(resu, motcle, iocc, knum, nbordr,&
         if (nbtrop .gt. 0) then
             knum2='&&RSUTNU.KNUM2'
             if ((nbordr-nbtrop) .eq. 0) then
-                call utmess('F', 'UTILITAI4_53')
+                call utmess('A', 'UTILITAI4_53')
+                goto 800
             endif
+
             call wkvect(knum2, 'V V I', nbordr-nbtrop, jordr3)
             indi=0
             do 778 i = 1, nbordr
@@ -476,6 +478,7 @@ subroutine rsutnu(resu, motcle, iocc, knum, nbordr,&
 !
 !
 !
+800 continue    
     call jedetr('&&RSUTNU.NOM_ACCES')
     call jedetr('&&RSUTNU.VALE_ACCES')
     call jedetr('&&RSUTNU.NOEUD_CMP')
