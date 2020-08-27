@@ -128,7 +128,7 @@ integer, pointer :: equaAToB(:)
 
 ! ----------------- Get the equation number for this component in field A
                     call utchdl(fieldRefeA, mesh, elemName, ' ', iPt,&
-                                1, 0, cmpName, numeEquaA, nogranz = ASTER_TRUE)
+                                1, iCmpName, cmpName, numeEquaA, nogranz = ASTER_TRUE)
 
 ! ----------------- Set equation numbering
                     ASSERT(numeEquaA .gt. 0)

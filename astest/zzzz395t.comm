@@ -1,0 +1,169 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+# person_in_charge: mickael.abbas at edf.fr
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
+
+# Read the mesh (with GROUP_MA for RID)
+mesh=LIRE_MAILLAGE(FORMAT='MED',);
+
+mesh=MODI_MAILLAGE(reuse =mesh,
+                   MAILLAGE=mesh,
+                   ORIE_PEAU_3D=_F(GROUP_MA='S_e',),);
+
+# Define the material
+steel=DEFI_MATERIAU(
+          ELAS=     _F(E= 210000., NU = 0.3),
+          ECRO_LINE=_F(D_SIGM_EPSI=100., SY=100.,),
+          )
+
+chmat=AFFE_MATERIAU(MAILLAGE=mesh,
+                    AFFE=_F(TOUT='OUI',
+                            MATER=steel,),);
+# Mechanic model
+model=AFFE_MODELE(MAILLAGE=mesh,
+               AFFE=_F(TOUT='OUI',
+                       PHENOMENE='MECANIQUE',
+                       MODELISATION='3D',),);
+
+# Boundary condition
+chg_b=AFFE_CHAR_CINE(MODELE=model,
+                      MECA_IMPO=_F(GROUP_MA='S_inf',
+                                 DX=0,DY=0.0,DZ=0),
+                     );
+
+chg_p=AFFE_CHAR_MECA(MODELE=model,
+                     PRES_REP=_F(GROUP_MA='S_e',
+                                 PRES = 1000,),
+                    )
+
+# Time discretization
+list_t=DEFI_LIST_REEL(DEBUT=0.0,
+                      INTERVALLE=_F(JUSQU_A=10.0,
+                                    PAS=1.0,),);
+
+list_i=DEFI_LIST_INST(METHODE='MANUEL',
+                      DEFI_LIST=_F(LIST_INST=list_t,),);
+
+rampe=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.0,0.0,
+                                          10.,1.,
+                   ),);
+
+####################################################################################################
+#
+# Lecture de la base et préparation des données (troncature,...)
+#
+####################################################################################################
+
+# Read the primal base
+base_p=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
+                 FORMAT     = 'MED',
+                 MODELE     = model,
+                 UNITE      = 70,
+                 FORMAT_MED =_F(NOM_CHAM_MED = 'base_p__DEPL',
+                                NOM_CHAM     = 'DEPL',),
+                 NUME_ORDRE = (1, 2,),);
+
+# Re-create GROUP_MA
+mesh=DEFI_GROUP(reuse=mesh,
+                MAILLAGE=mesh,
+                CREA_GROUP_MA=_F(NOM='S_e_rid',
+                               INTERSEC=('RID','S_e',),),);
+
+mesh=DEFI_GROUP(reuse=mesh,
+                MAILLAGE=mesh,
+                CREA_GROUP_MA=_F(NOM='S_inf_rid',
+                                 INTERSEC=('RID','S_inf',),),);
+
+# Mechanic model
+model_r=AFFE_MODELE(MAILLAGE=mesh,
+               AFFE=_F(GROUP_MA='RID',
+                       PHENOMENE='MECANIQUE',
+                       MODELISATION='3D',),);
+
+# Truncation of base
+base_t=DEFI_BASE_REDUITE(OPERATION='TRONCATURE',
+                         MODELE_REDUIT = model_r, 
+                         BASE = base_p,
+                         INFO=2)
+
+# Boundary condition
+chg_b_r=AFFE_CHAR_CINE(MODELE=model_r,
+                      MECA_IMPO=_F(GROUP_MA='S_inf_rid',
+                                 DX=0,DY=0.0,DZ=0),
+                     );
+
+chg_p_r=AFFE_CHAR_MECA(MODELE=model_r,
+                     PRES_REP=_F(GROUP_MA='S_e_rid',
+                                 PRES = 1000,),
+                    )
+
+IMPR_RESU(FORMAT='MED',UNITE=84,RESU=_F(MAILLAGE=mesh))
+
+####################################################################################################
+#
+# Calcul hyper-réduit
+#
+####################################################################################################
+redu=STAT_NON_LINE(MODELE=model_r,
+                   CHAM_MATER=chmat,
+                   EXCIT=(_F(CHARGE=chg_b_r,),
+                          _F(CHARGE=chg_p_r,FONC_MULT=rampe),
+                         ),
+                   INCREMENT=_F(LIST_INST=list_i,),
+                   METHODE='MODELE_REDUIT',
+                   MODELE_REDUIT=_F(
+                   REAC_ITER=1,
+                   BASE_PRIMAL     = base_t,
+                   DOMAINE_REDUIT  = 'OUI',
+                   GROUP_NO_INTERF = 'INF',
+                   ),
+                   COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',),)
+
+IMPR_RESU(FORMAT='MED',UNITE=82,RESU=_F(RESULTAT=redu))
+
+####################################################################################################
+#
+# Gappy-POD pour VARI_ELGA
+#
+####################################################################################################
+
+# Read the dual base
+base_d=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
+                 FORMAT     = 'MED',
+                 MODELE     = model,
+                 UNITE      = 71,
+                 FORMAT_MED =_F(NOM_CHAM_MED = 'base_d__VARI_ELGA',
+                                NOM_CHAM     = 'VARI_ELGA',),
+                 NUME_ORDRE=(1,2,3),);
+
+
+# Reconstruction tout le domaine par Gappy-POD
+reduR = REST_REDUIT_COMPLET(
+    MODELE           = model,
+    RESULTAT_REDUIT  = redu,
+    CHAM_GD          = (
+                        _F(NOM_CHAM         = 'VARI_ELGA',
+                           BASE             = base_d,
+                           OPERATION        = 'GAPPY_POD',),
+                       ),
+    INFO             = 2,)
+
+
+FIN()
