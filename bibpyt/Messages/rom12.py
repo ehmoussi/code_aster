@@ -21,8 +21,6 @@
 
 # Messages for base management in ROM
 
-from ..Utilities import _
-
 cata_msg = {
 
     3 : _("""Création de la base pour les modes réduits."""),
