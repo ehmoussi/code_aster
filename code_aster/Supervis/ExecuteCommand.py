@@ -172,7 +172,8 @@ class ExecuteCommand(object):
         remove_none(keywords)
         try:
             self.check_syntax(keywords)
-        except (CheckerError, TypeError, ValueError) as exc:
+        except (CheckerError, AssertionError, KeyError, TypeError,
+                ValueError) as exc:
             # in case of syntax error, show the syntax and raise the exception
             self.print_syntax(keywords)
             ExecuteCommand.level -= 1
