@@ -77,9 +77,15 @@ integer, intent(out) :: nb_sing
 !
     lda         = max(1, m)
     nb_sing     = min(m, n)
-    lwork       = max(1,3*nb_sing+lda,5*nb_sing)
+    lwork       = -1
     AS_ALLOCATE(vr = v, size = m*nb_sing)
     AS_ALLOCATE(vr = s, size = nb_sing)
+    AS_ALLOCATE(vr = work, size = 1)
+    call dgesvd('S', 'N', m, n, qSave,&
+                lda, s, v, m, w,&
+                1, work, lwork, info)
+    lwork       = nint(work(1))
+    AS_DEALLOCATE(vr = work)
     AS_ALLOCATE(vr = work, size = lwork)
 !
 ! - Use copy of Q matrix (because dgesvd change it ! )
