@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmextk(mesh     , model      ,&
                   keyw_fact, i_keyw_fact,&
                   field    , field_type , field_s  , field_disc,&
@@ -40,29 +41,20 @@ implicit none
 #include "asterfort/varinonu.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=8), intent(in) :: model
-    character(len=16), intent(in) :: keyw_fact
-    integer, intent(in) :: i_keyw_fact
-    character(len=19), intent(in) :: field
-    character(len=24), intent(in) :: field_type
-    character(len=24), intent(in) :: field_s
-    character(len=4), intent(in) :: field_disc
-    integer, intent(in) :: nb_node
-    integer, intent(in) :: nb_elem
-    integer, intent(in) :: nb_poin
-    integer, intent(in) :: nb_spoi
-    character(len=24), intent(in) :: list_node
-    character(len=24), intent(in) :: list_elem
-    character(len=24), intent(in) :: list_poin
-    character(len=24), intent(in) :: list_spoi
-    character(len=19), optional, intent(in) :: compor
-    character(len=24), intent(in) :: list_cmp
-    character(len=24), intent(in) :: list_vari
-    integer, intent(out) :: nb_cmp
-    character(len=8), intent(out) :: type_sele_cmp
+character(len=8), intent(in) :: mesh, model
+character(len=16), intent(in) :: keyw_fact
+integer, intent(in) :: i_keyw_fact
+character(len=19), intent(in) :: field
+character(len=24), intent(in) :: field_type
+character(len=24), intent(in) :: field_s
+character(len=4), intent(in) :: field_disc
+integer, intent(in) :: nb_node, nb_elem, nb_poin, nb_spoi
+character(len=24), intent(in) :: list_node, list_elem, list_poin, list_spoi
+character(len=19), optional, intent(in) :: compor
+character(len=24), intent(in) :: list_cmp
+character(len=24), intent(in) :: list_vari
+integer, intent(out) :: nb_cmp
+character(len=8), intent(out) :: type_sele_cmp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -96,8 +88,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_para_maxi
-    parameter    (nb_para_maxi=20)
+    integer, parameter :: nb_para_maxi = 20
     integer :: n1
     integer :: iret, iad
     integer :: i_node, i_elem, i_cmp, ipi, ispi, ipar, i_cmp_maxi
@@ -158,7 +149,7 @@ implicit none
         call getvtx(keyw_fact, 'NOM_VARI', iocc=i_keyw_fact, nbval=nb_cmp, vect=v_list_vari,&
                     nbret=iret)
         call jeveuo(list_elem, 'L', vi = v_list_elem)
-        call varinonu(model, compor, ' ', nb_elem, v_list_elem, nb_cmp, v_list_vari, v_list_cmp)
+        call varinonu(model, compor, nb_elem, v_list_elem, nb_cmp, v_list_vari, v_list_cmp)
         type_sele_cmp = 'NOM_VARI'
     endif
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine w155mx(nomres, resu, nbordr, liordr)
-        integer :: nbordr
-        character(len=8) :: nomres
-        character(len=8) :: resu
-        integer :: liordr(nbordr)
+    subroutine w155mx(resultOut, resultIn, nbStore, listStore)
+        character(len=8), intent(in) :: resultOut, resultIn
+        integer, intent(in) :: nbStore, listStore(nbStore)
     end subroutine w155mx
 end interface

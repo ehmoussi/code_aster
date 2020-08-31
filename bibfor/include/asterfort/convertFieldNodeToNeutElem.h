@@ -17,9 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine peeint(tableOut, model, nbocc)
-        integer :: nbocc
-        character(len=8) :: model
-        character(len=19) :: tableOut
-    end subroutine peeint
+    subroutine convertFieldNodeToNeutElem(ligrel    , fieldNode  , fieldElemNeut,&
+                                          nbCmpField, cmpNameNode, cmpNameNeut)
+        character(len=*), intent(in) :: ligrel, fieldNode, fieldElemNeut
+        integer, intent(out) :: nbCmpField
+        character(len=8), pointer :: cmpNameNode(:), cmpNameNeut(:)
+    end subroutine convertFieldNodeToNeutElem
 end interface

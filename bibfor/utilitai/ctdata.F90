@@ -49,10 +49,13 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/calcul.h"
 #include "asterfort/celces.h"
 #include "asterfort/cesvar.h"
@@ -71,26 +74,32 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
 #include "asterfort/utmess.h"
 #include "asterfort/varinonu.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/rs_get_liststore.h"
+#include "asterfort/rsGetOneBehaviourFromResult.h"
 !
-    integer :: nbcmp, ndim, nbno, nbma, nbval
-    character(len=1) :: tsca
-    character(len=4) :: tych
-    character(len=8) :: noma
-    character(len=24) :: mesnoe, mesmai, nkcha, nkvari, nkcmp
-    character(len=19) :: chpgs, chpsu
-    aster_logical :: toucmp
+integer :: nbcmp, ndim, nbno, nbma, nbval
+character(len=1) :: tsca
+character(len=4) :: tych
+character(len=8) :: noma
+character(len=24) :: mesnoe, mesmai, nkcha, nkvari, nkcmp
+character(len=19) :: chpgs, chpsu
+aster_logical :: toucmp
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jkcha, i, ibid, iret, jlno, jcmp, n1, jlma, n2, n3, nchi, n0, n4, ncho, ierr
-    integer :: n5, igrel,jcmp16
+    integer :: jkcha, i, ibid, iret, jlno, n1, jlma, n2, n3, nchi, n0, n4, ncho, ierr
+    integer :: n5, igrel, nbVari
     integer, pointer :: repe(:) => null()
-    character(len=8) :: nomo, nomgd, noca
-    character(len=8) :: typmcl(4), lpain(6), lpaout(2), sdresu
-    character(len=16) :: motcle(4),nocham
-    character(len=19) :: ligrel, ligrmo, cel19
+    character(len=8) :: model, nomgd, noca
+    character(len=8) :: typmcl(4), lpain(6), lpaout(2), result
+    character(len=16) :: motcle(4),fieldName
+    character(len=19) :: ligrel, ligrmo, cel19, compor
     character(len=24) :: chgeom, lchin(6), lchout(2)
     aster_logical :: exicar
+    integer, pointer :: listStore(:) => null()
+    integer :: nbStore
+    character(len=16), pointer :: variName(:) => null()
+    character(len=8), pointer :: cmpName(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -100,11 +109,11 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
     call jeveuo(nkcha, 'L', jkcha)
     tych=' '
     ligrel = '&&CTDATA.LIGREL'
-    nomo=' '
+    model=' '
     tsca=' '
-    sdresu=' '
+    result=' '
     exicar=.false.
-    call getvid('RESU', 'RESULTAT', iocc=1, scal=sdresu, nbret=n0)
+    call getvid('RESU', 'RESULTAT', iocc=1, scal=result, nbret=n0)
     call getvid('RESU', 'CHAM_GD', iocc=1, nbval=0, nbret=n4)
     do i = 1, nbval
         if (zk24(jkcha+i-1)(1:18) .ne. '&&CHAMP_INEXISTANT') then
@@ -119,8 +128,8 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
                 call utmess('F', 'TABLE0_42')
             endif
             if (tych(1:2) .eq. 'EL') then
-                call dismoi('NOM_MODELE', zk24(jkcha+i-1)(1:19), 'CHAMP', repk=nomo)
-                call dismoi('NOM_LIGREL', nomo, 'MODELE', repk=ligrmo)
+                call dismoi('NOM_MODELE', zk24(jkcha+i-1)(1:19), 'CHAMP', repk=model)
+                call dismoi('NOM_LIGREL', model, 'MODELE', repk=ligrmo)
                 call jeveuo(ligrmo//'.REPE', 'L', vi=repe)
             endif
             if (tych .eq. 'ELGA') then
@@ -134,7 +143,7 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
                     if (n5 .ne. 0) exicar=.true.
                 endif
 !               DIMENSION MODELE POUR IMPRESSION COOR POINT GAUSS
-                call dismoi('DIM_GEOM', nomo, 'MODELE', repi=ibid)
+                call dismoi('DIM_GEOM', model, 'MODELE', repi=ibid)
                 ndim=ibid
                 if (ibid .ge. 100) then
                     ibid = ibid - 100
@@ -214,9 +223,9 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
 !           calcul de ligrel
             call jeveuo(mesmai, 'L', jlma)
             call jelira(mesmai, 'LONMAX', nbma)
-            call exlim1(zi(jlma), nbma, nomo, 'V', ligrel)
+            call exlim1(zi(jlma), nbma, model, 'V', ligrel)
 !
-            call megeom(nomo, chgeom)
+            call megeom(model, chgeom)
             lchin(1)=chgeom(1:19)
             lpain(1)='PGEOMER'
             nchi=1
@@ -269,31 +278,54 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
     if (n1.ne.0) then
         nbcmp=0
         toucmp=.true.
-        call wkvect(nkcmp, 'V V K8', 1, jcmp)
-        zk8(jcmp)=' '
+        call wkvect(nkcmp, 'V V K8', 1, vk8 = cmpName)
+        cmpName(1) =' '
     else
         toucmp=.false.
         call getvtx('RESU', 'NOM_CMP', iocc=1, nbval=0, nbret=n1)
         if (n1 .ne. 0) then
             nbcmp=-n1
-            call wkvect(nkcmp, 'V V K8', nbcmp, jcmp)
-            call getvtx('RESU', 'NOM_CMP', iocc=1, nbval=nbcmp, vect=zk8(jcmp), nbret=n1)
+            call wkvect(nkcmp, 'V V K8', nbcmp, vk8 = cmpName)
+            call getvtx('RESU', 'NOM_CMP', iocc=1, nbval=nbcmp, vect=cmpName)
         else
-            call getvtx('RESU', 'NOM_VARI', iocc=1, nbval=0, nbret=n1)
-            nbcmp=-n1
-            ASSERT(nbcmp.gt.0)
-            call wkvect(nkcmp, 'V V K8', nbma*nbcmp, jcmp)
-            call wkvect(nkvari, 'V V K16', nbcmp, jcmp16)
-            call getvtx('RESU', 'NOM_VARI', iocc=1, nbval=nbcmp, vect=zk16(jcmp16), nbret=n1)
-            if (sdresu.eq.' ') then
+! --------- Get internal state variables
+            call getvtx('RESU', 'NOM_VARI', iocc=1, nbval=0, nbret=nbVari)
+            nbVari = -nbVari
+            ASSERT(nbVari .gt. 0)
+            call wkvect(nkvari, 'V V K16', nbVari, vk16 = variName)
+            call getvtx('RESU', 'NOM_VARI', iocc = 1, nbval = nbVari, vect=variName)
+            nbcmp  = nbVari
+            call wkvect(nkcmp, 'V V K8', nbma*nbcmp, vk8 = cmpName)
+            if (result .eq. ' ') then
                 call utmess('F', 'EXTRACTION_24')
             endif
-            call getvtx('RESU', 'NOM_CHAM', iocc=1, scal=nocham, nbret=n1)
-            if (nocham(1:7).ne.'VARI_EL') then
-                call utmess('F', 'EXTRACTION_25',sk=nocham)
+            call getvtx('RESU', 'NOM_CHAM', iocc = 1, scal = fieldName)
+            if (fieldName(1:7) .ne. 'VARI_EL') then
+                call utmess('F', 'EXTRACTION_25',sk=fieldName)
             endif
-            ASSERT(nbma.gt.0)
-            call varinonu(nomo, ' ', sdresu, nbma, zi(jlma), nbcmp, zk16(jcmp16), zk8(jcmp))
+            ASSERT(nbma .gt. 0)
+
+! --------- Get list of storing index
+            call rs_get_liststore(result, nbStore)
+            if (nbStore .ne. 0) then
+                AS_ALLOCATE(vi = listStore, size = nbStore)
+                call rs_get_liststore(result, nbStore, listStore)
+            endif
+
+! --------- Get behaviour (only one !)
+            call rsGetOneBehaviourFromResult(result, nbStore, listStore, compor)
+            if (compor .eq. '#SANS') then
+                call utmess('F', 'RESULT1_5')
+            endif
+            if (compor .eq. '#PLUSIEURS') then
+                call utmess('F', 'RESULT1_6')
+            endif
+            AS_DEALLOCATE(vi = listStore)
+
+! --------- Get name of internal state variables
+            call varinonu(model , compor  ,&
+                          nbma  , zi(jlma),&
+                          nbVari, variName, cmpName)
         endif
     endif
 !

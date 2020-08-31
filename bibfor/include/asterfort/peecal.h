@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
     interface
-        subroutine peecal(tych,resu,nomcha,lieu,nomlie, list_ma, nbma, modele,ichagd&
+        subroutine peecal(tych,resu,nomcha,lieu,nomlie, list_ma, nbma, modele,lFromResult&
      &,chpost,nbcmp,nomcmp,nomcp2,nuord,inst,iocc,ligrel,cespoi)
               integer :: nbcmp
               character(len=4) :: tych
@@ -28,7 +28,7 @@
               integer :: list_ma(*)
               integer :: nbma
               character(len=8) :: modele
-              integer :: ichagd
+              aster_logical, intent(in) :: lFromResult
               character(len=19) :: chpost
               character(len=8) :: nomcmp(nbcmp)
               character(len=8) :: nomcp2(nbcmp)

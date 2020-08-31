@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine peeint(tableOut, model, nbocc)
-        integer :: nbocc
-        character(len=8) :: model
-        character(len=19) :: tableOut
-    end subroutine peeint
+    subroutine carcomp(carte_1, carte_2, iret)
+        character(len=*), intent(in) :: carte_1, carte_2
+        integer, intent(out) :: iret
+    end subroutine carcomp
 end interface

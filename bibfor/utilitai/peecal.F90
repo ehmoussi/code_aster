@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine peecal(tych, resu, nomcha, lieu, nomlie, list_ma, nbma,&
-                  modele, ichagd, chpost, nbcmp, nomcmp,&
+                  modele, lFromResult, chpost, nbcmp, nomcmp,&
                   nomcp2, nuord, inst, iocc, ligrel, cespoi)
 !
     implicit none
@@ -50,12 +50,13 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie, list_ma, nbma,&
 #include "asterfort/jexnum.h"
 #include "asterfort/jenuno.h"
 #include "asterfort/panbno.h"
-    integer :: nbcmp, nuord, iocc, ichagd, nbma, list_ma(*)
+    integer :: nbcmp, nuord, iocc, nbma, list_ma(*)
     character(len=8) :: nomcmp(nbcmp), nomcp2(nbcmp), modele, lieu
     character(len=19) :: chpost, resu, cespoi, ligrel
     character(len=24) :: nomcha
     character(len=*) :: nomlie
     character(len=4) :: tych
+    aster_logical, intent(in) :: lFromResult
 !
 !     OPERATEUR   POST_ELEM
 !     TRAITEMENT DU MOT CLE-FACTEUR "INTEGRALE"
@@ -72,7 +73,6 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie, list_ma, nbma,&
 !         (LIEU='TOUT'/'GROUP_MA'/'MAILLE')
 !     IN  NOMLIE : NOM DU LIEU
 !     IN  MODELE : NOM DU MODELE
-!     IN  ICHAGD : INDIQUE SI ON CHAM_GD (ICHAGD=0) OU RESULTAT
 !     IN  CHPOST  : NOM DU CHAMP DU POST-TRAITEMENT
 !     IN  NBCMP   : NOMBRE DE COMPOSANTES
 !     IN  NOMCMP  : NOM DES COMPOSANTES
@@ -116,7 +116,7 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie, list_ma, nbma,&
 ! --- TABLEAUX DE TRAVAIL:
 !     - TABLEAU DES PARAMETRES INTE_XXXX : ZK16(JINTK)
 !     - TABLEAU DES VALEURS DES MOYENNES : ZR(JINTR)
-    if (ichagd .ne. 0) then
+    if (lFromResult) then
         call wkvect('&&PEECAL.INTE_R', 'V V R', 2*nbcmp+2, jintr)
         call wkvect('&&PEECAL.INTE_K', 'V V K16', 2*nbcmp+5, jintk)
         zk16(jintk) ='NOM_CHAM'

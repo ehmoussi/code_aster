@@ -17,9 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine peeint(tableOut, model, nbocc)
-        integer :: nbocc
-        character(len=8) :: model
-        character(len=19) :: tableOut
-    end subroutine peeint
+    subroutine rsSelectStoringIndex(resultZ, lFromField ,&
+                                    nbStore, numeStoreJv, timeStoreJv)
+        character(len=*), intent(in) :: resultZ
+        aster_logical, intent(in) :: lFromField
+        integer, intent(out) :: nbStore
+        character(len=24), intent(out) :: numeStoreJv, timeStoreJv
+    end subroutine rsSelectStoringIndex
 end interface

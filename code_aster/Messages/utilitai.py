@@ -334,10 +334,6 @@ Contactez le support technique.
  type de résultat inconnu :  %(k1)s  pour l'objet :  %(k2)s
 """),
 
-    69 : _("""
- le résultat composé ne contient aucun champ
-"""),
-
     70 : _("""
 Ce message est un message d'erreur développeur.
 Contactez le support technique.

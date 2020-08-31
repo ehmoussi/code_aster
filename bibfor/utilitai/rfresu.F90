@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine rfresu()
-    implicit none
-!     OPERATEUR "RECU_FONCTION"
-!     ------------------------------------------------------------------
-#include "jeveux.h"
+!
+implicit none
+!
 #include "asterc/getres.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/foattr.h"
@@ -35,33 +36,44 @@ subroutine rfresu()
 #include "asterfort/getvtx.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/infniv.h"
-#include "asterfort/jenonu.h"
-#include "asterfort/jexnom.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/jenonu.h"
+#include "asterfort/jexnom.h"
 #include "asterfort/lxliis.h"
 #include "asterfort/ordonn.h"
+#include "asterfort/rs_get_liststore.h"
+#include "asterfort/rsGetOneBehaviourFromResult.h"
+#include "asterfort/rsGetOneModelFromResult.h"
 #include "asterfort/rsutnc.h"
 #include "asterfort/titre.h"
 #include "asterfort/utcmp1.h"
 #include "asterfort/utmess.h"
 #include "asterfort/utnono.h"
 #include "asterfort/varinonu.h"
-#include "asterfort/rsadpa.h"
+!
+! --------------------------------------------------------------------------------------------------
+!
+!   RECU_FONCTION
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: nbtrou, numer1(1), l, n1, iret, ivari
     integer :: nm, ngm, npoint, np, nn, npr, ngn
-    integer :: nres, ifm, niv, nusp, numa, jlue
+    integer :: nres, ifm, niv, nusp, cellNume
     real(kind=8) :: epsi
-    character(len=8) :: k8b, crit, maille, noma, intres, nomo
-    character(len=8) :: noeud, cmp, nomgd
-    character(len=16) :: nomcmd, typcon, nomcha, npresu, nomvari
-    character(len=19) :: nomfon, cham19, resu
-    character(len=24) :: valk(3), nogma, nogno
+    character(len=8) :: k8b, crit, cellName, mesh, intres, model
+    character(len=8) :: nodeName, cmpName, nomgd
+    character(len=16) :: nomcmd, typcon, fieldName, npresu, variName
+    character(len=19) :: funcName, cham19, result
+    character(len=24) :: valk(3), groupCellName, groupNodeName, compor
+    integer, pointer :: listStore(:) => null()
+    integer :: nbStore
 !
-!     ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
-!
-    call getres(nomfon, typcon, nomcmd)
+    call getres(funcName, typcon, nomcmd)
 !
 ! --- RECUPERATION DU NIVEAU D'IMPRESSION
     call infmaj()
@@ -73,26 +85,25 @@ subroutine rfresu()
     call getvtx(' ', 'INTERP_NUME', scal=intres, nbret=n1)
 !
     npoint = 0
-    cmp = ' '
-    noeud = ' '
-    maille = ' '
-    nogma = ' '
-    nogno = ' '
-    call getvtx(' ', 'MAILLE', scal=maille, nbret=nm)
-    call getvtx(' ', 'GROUP_MA', scal=nogma, nbret=ngm)
+    cmpName = ' '
+    nodeName = ' '
+    cellName = ' '
+    groupCellName = ' '
+    groupNodeName = ' '
+    call getvtx(' ', 'MAILLE', scal=cellName, nbret=nm)
+    call getvtx(' ', 'GROUP_MA', scal=groupCellName, nbret=ngm)
     call getvis(' ', 'SOUS_POINT', scal=nusp, nbret=np)
     if (np .eq. 0) nusp = 0
     call getvis(' ', 'POINT', scal=npoint, nbret=np)
-    call getvtx(' ', 'NOEUD', scal=noeud, nbret=nn)
-    call getvtx(' ', 'GROUP_NO', scal=nogno, nbret=ngn)
+    call getvtx(' ', 'NOEUD', scal=nodeName, nbret=nn)
+    call getvtx(' ', 'GROUP_NO', scal=groupNodeName, nbret=ngn)
 !
 !     -----------------------------------------------------------------
 !                       --- CAS D'UN RESULTAT ---
 !     -----------------------------------------------------------------
 !
 !
-!
-    call getvid(' ', 'RESULTAT ', scal=resu, nbret=nres)
+    call getvid(' ', 'RESULTAT ', scal=result, nbret=nres)
 !
     if (nres .ne. 0) then
         call getvtx(' ', 'NOM_PARA_RESU', scal=npresu, nbret=npr)
@@ -100,72 +111,96 @@ subroutine rfresu()
             if (intres(1:3) .ne. 'NON') then
                 call utmess('F', 'UTILITAI4_21')
             endif
-            call focrr3(nomfon, resu, npresu, 'G', iret)
+            call focrr3(funcName, result, npresu, 'G', iret)
             goto 10
         endif
 !
-        call getvtx(' ', 'NOM_CHAM', scal=nomcha, nbret=l)
-        call rsutnc(resu, nomcha, 1, cham19, numer1,&
-                    nbtrou)
+        call getvtx(' ', 'NOM_CHAM', scal=fieldName, nbret=l)
+        call rsutnc(result, fieldName, 1, cham19, numer1, nbtrou)
         if (nbtrou .eq. 0) then
-            call utmess('F', 'UTILITAI4_22', sk=nomcha)
+            call utmess('F', 'UTILITAI4_22', sk=fieldName)
         endif
-        call dismoi('NOM_MAILLA', cham19, 'CHAMP', repk=noma)
+        call dismoi('NOM_MAILLA', cham19, 'CHAMP', repk=mesh)
         call dismoi('NOM_GD', cham19, 'CHAMP', repk=nomgd)
         if (ngn .ne. 0) then
-            call utnono(' ', noma, 'NOEUD', nogno, noeud,&
-                        iret)
+            call utnono(' ', mesh, 'NOEUD', groupNodeName, nodeName, iret)
             if (iret .eq. 10) then
-                call utmess('F', 'ELEMENTS_67', sk=nogno)
+                call utmess('F', 'ELEMENTS_67', sk=groupNodeName)
             else if (iret.eq.1) then
-                valk(1) = nogno
-                valk(2) = noeud
+                valk(1) = groupNodeName
+                valk(2) = nodeName
                 call utmess('A', 'SOUSTRUC_87', nk=2, valk=valk)
             endif
         endif
         if (ngm .ne. 0) then
-            call utnono(' ', noma, 'MAILLE', nogma, maille,&
-                        iret)
+            call utnono(' ', mesh, 'MAILLE', groupCellName, cellName, iret)
             if (iret .eq. 10) then
-                call utmess('F', 'ELEMENTS_73', sk=nogma)
+                call utmess('F', 'ELEMENTS_73', sk=groupCellName)
             else if (iret.eq.1) then
-                valk(1) = maille
+                valk(1) = cellName
                 call utmess('A', 'UTILITAI6_72', sk=valk(1))
             endif
         endif
-        call utcmp1(nomgd, ' ', 1, cmp, ivari, nomvari)
+        call utcmp1(nomgd, ' ', 1, cmpName, ivari, variName)
         if (ivari.eq.-1) then
-            ASSERT(nomcha(1:7).eq.'VARI_EL')
-            call rsadpa(resu, 'L', 1, 'MODELE', 1, 0, sjv=jlue)
-            nomo = zk8(jlue)
-            call jenonu(jexnom(noma//'.NOMMAI', maille), numa)
-            call varinonu(nomo, ' ', resu, 1, [numa], 1, nomvari, cmp)
-            call lxliis(cmp(2:8), ivari, iret)
-            ASSERT(iret.eq.0)
-            ASSERT(cmp(1:1).eq.'V')
+            ASSERT(fieldName(1:7).eq.'VARI_EL')
+
+! --------- Get list of storing index
+            call rs_get_liststore(result, nbStore)
+            if (nbStore .ne. 0) then
+                AS_ALLOCATE(vi = listStore, size = nbStore)
+                call rs_get_liststore(result, nbStore, listStore)
+            endif
+
+! --------- Get model (only one !)
+            call rsGetOneModelFromResult(result, nbStore, listStore, model)
+            if (model .eq. '#PLUSIEURS') then
+                call utmess('F', 'RESULT1_4')
+            endif
+
+! --------- Get behaviour (only one !)
+            call rsGetOneBehaviourFromResult(result, nbStore, listStore, compor)
+            if (compor .eq. '#SANS') then
+                call utmess('F', 'RESULT1_5')
+            endif
+            if (compor .eq. '#PLUSIEURS') then
+                call utmess('F', 'RESULT1_6')
+            endif
+            AS_DEALLOCATE(vi = listStore)
+
+! --------- Get name of internal state variables
+            call jenonu(jexnom(mesh//'.NOMMAI', cellName), cellNume)
+            call varinonu(model , compor  ,&
+                          1, [cellNume],&
+                          1, variName, cmpName)
+            call lxliis(cmpName(2:8), ivari, iret)
+            ASSERT(iret .eq. 0)
+            ASSERT(cmpName(1:1) .eq. 'V')
         else
-            nomvari=' '
+            variName=' '
         endif
 
         if (intres(1:3) .eq. 'NON') then
-            call focrrs(nomfon, resu, 'G', nomcha, maille,&
-                        noeud, cmp, npoint, nusp, ivari, nomvari,&
+            call focrrs(funcName, result, 'G', fieldName, cellName,&
+                        nodeName, cmpName, npoint, nusp, ivari, variName,&
                         iret)
         else
-            call focrr2(nomfon, resu, 'G', nomcha, maille,&
-                        noeud, cmp, npoint, nusp, ivari, nomvari,&
+            call focrr2(funcName, result, 'G', fieldName, cellName,&
+                        nodeName, cmpName, npoint, nusp, ivari, variName,&
                         iret)
         endif
-        goto 10
+!
     endif
  10 continue
-    call foattr(' ', 1, nomfon)
-!     --- VERIFICATION QU'ON A BIEN CREER UNE FONCTION ---
+    call foattr(' ', 1, funcName)
+!     --- VERIFICATION QU'ON A BIEN CREE UNE FONCTION ---
 !         ET REMISE DES ABSCISSES EN ORDRE CROISSANT
-    call ordonn(nomfon, 0)
+    call ordonn(funcName, 0)
 !
     call titre()
-    if (niv .gt. 1) call foimpr(nomfon, niv, ifm, 0, k8b)
+    if (niv .gt. 1) then
+        call foimpr(funcName, niv, ifm, 0, k8b)
+    endif
 !
     call jedema()
 end subroutine

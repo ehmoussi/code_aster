@@ -46,6 +46,8 @@ Erreur utilisateur :
    car ces quantités ne sont pas "continues".
 """),
 
+    6: _("""La sélection des composantes par NOM_VARI n'est possible que sur une structure de données de type résultat et non sur un champ isolé."""),
+
     10: _("""Pour le calcul de l'option MASS_INER sur la géométrie déformée, il faut que le résultat contienne plus d'un numéro d'ordre"""),
 
     11: _("""

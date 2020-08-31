@@ -15,29 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine varinonu(model    , compor_  , sdresu_,&
-                    nb_elem  , list_elem, nb_vari, name_vari,&
-                    nume_vari)
+!
+subroutine varinonu(modelZ, comporZ     ,&
+                    nbCell, listCell    ,&
+                    nbVari, listVariName, listVariNume)
 !
 implicit none
 !
 #include "jeveux.h"
-#include "asterc/lccree.h"
-#include "asterc/lcinfo.h"
-#include "asterc/lcdiscard.h"
-#include "asterc/lcvari.h"
 #include "asterfort/assert.h"
-#include "asterfort/carces.h"
-#include "asterfort/cesred.h"
-#include "asterfort/cesexi.h"
 #include "asterfort/codent.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/detrsd.h"
 #include "asterfort/etenca.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
@@ -46,84 +37,67 @@ implicit none
 #include "asterfort/comp_meca_pvar.h"
 #include "asterfort/utmess.h"
 !
+character(len=*), intent(in) :: modelZ, comporZ
+integer, intent(in) :: nbCell, listCell(nbCell)
+integer, intent(in) :: nbVari
+character(len=16), intent(in) :: listVariName(nbVari)
+character(len=8), intent(out) ::  listVariNume(nbCell, nbVari)
 !
-    character(len=*), intent(in) :: model
-    character(len=*), intent(in) :: compor_
-    character(len=*), intent(in) :: sdresu_
-    integer, intent(in) :: nb_elem
-    integer, intent(in) :: list_elem(nb_elem)
-    integer, intent(in) :: nb_vari
-    character(len=16), intent(in) :: name_vari(nb_vari)
-    character(len=8), intent(out) ::  nume_vari(nb_elem, nb_vari)
+! --------------------------------------------------------------------------------------------------
 !
-! -------------------------------------------------------------------
 ! But : Etablir la correspondance entre les noms "mecaniques" de variables internes
 ! et leurs "numeros"  : 'V1', 'V7', ...
 !
 !  entrees:
-!    compor_: nom de la carte de comportement (ou ' ')
-!    sdresu_: nom d'une sd_resultat (ou ' ')
-!       il faut fournir un et un seul des 2 arguments compor_ et sdresu_
-!    nb_elem   : longueur de la liste list_elem
-!    list_elem   : liste des numeros de mailles concernees
-!    nb_vari : longueur des listes name_vari et nume_vari
-!    name_vari : liste des noms "mecaniques" des variables internes
+!    comporZ  : nom de la carte de comportement
+!    nbCell   : longueur de la liste listCell
+!    listCell : liste des numeros de mailles concernees
+!    nbVari : longueur des listes listVariName et listVariNume
+!    listVariName : liste des noms "mecaniques" des variables internes
 ! sorties:
-!    nume_vari : liste des "numeros" des variables internes
-! -------------------------------------------------------------------
+!    listVariNume : liste des "numeros" des variables internes
 !
-    integer :: i_vari,inum
-    integer :: iret, i_elem, i_zone, jv_vari
-    integer :: nume_elem, nb_vari_zone
-    aster_logical, parameter :: dbg=.false.
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: iVari, variNume
+    integer :: iret, iCell, zoneField, jv_vari
+    integer :: cellNume, nbVariZone
     character(len=19) :: compor, ligrmo
-    character(len=19) :: compor_info
-    integer, pointer :: v_compor_ptma(:) => null()
+    character(len=19), parameter :: comporInfo = '&&NMDOCC.INFO'
+    integer, pointer :: comporPtma(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    compor_info = '&&NMDOCC.INFO'
 !
-! - Get COMPOR field
+! - Prepare COMPOR field
 !
-    if (compor_ .ne.' ') then
-        ASSERT(sdresu_ .eq. ' ')
-        compor=compor_
-    else
-        ASSERT(sdresu_ .ne. ' ')
-        call dismoi('COMPOR_1', sdresu_, 'RESULTAT', repk=compor)
-        ASSERT(compor.ne.' ')
-    endif
-!
-! - Access to COMPOR field
-!
-    ligrmo = model(1:8)//'.MODELE'
+    compor = comporZ
+    ligrmo = modelZ(1:8)//'.MODELE'
     call etenca(compor, ligrmo, iret)
-    call jeveuo(compor//'.PTMA', 'L', vi = v_compor_ptma)
+    call jeveuo(compor//'.PTMA', 'L', vi = comporPtma)
 !
 ! - Prepare informations about internal variables
 !
-    call jeexin(compor_info(1:19)//'.ZONE', iret)
+    call jeexin(comporInfo(1:19)//'.ZONE', iret)
     if (iret .eq. 0) then
-        call comp_meca_pvar(model_ = model, compor_cart_ = compor, compor_info = compor_info)
+        call comp_meca_pvar(model_ = modelZ, compor_cart_ = compor, compor_info = comporInfo)
     endif
 !
 ! - Access to informations
 !
-    do i_elem = 1, nb_elem
-        nume_elem = list_elem(i_elem)
-        i_zone    = v_compor_ptma(nume_elem)
-        call jelira(jexnum(compor_info(1:19)//'.VARI', i_zone), 'LONMAX', nb_vari_zone)
-        call jeveuo(jexnum(compor_info(1:19)//'.VARI', i_zone), 'L', jv_vari)
-        do i_vari = 1, nb_vari
-            inum = indk16(zk16(jv_vari), name_vari(i_vari), 1, nb_vari_zone)
-            if (inum .eq. 0) then
-                call utmess('F','EXTRACTION_22',sk=name_vari(i_vari))
+    do iCell = 1, nbCell
+        cellNume  = listCell(iCell)
+        zoneField = comporPtma(cellNume)
+        call jelira(jexnum(comporInfo(1:19)//'.VARI', zoneField), 'LONMAX', nbVariZone)
+        call jeveuo(jexnum(comporInfo(1:19)//'.VARI', zoneField), 'L', jv_vari)
+        do iVari = 1, nbVari
+            variNume = indk16(zk16(jv_vari), listVariName(iVari), 1, nbVariZone)
+            if (variNume .eq. 0) then
+                call utmess('F','EXTRACTION_22', sk = listVariName(iVari))
             endif
-            nume_vari(i_elem, i_vari) = 'V'
-            call codent(inum, 'G', nume_vari(i_elem, i_vari)(2:8))
-            if (dbg) write(6,*) 'varinonu nnuvari=',nume_vari(i_elem, i_vari)
+            listVariNume(iCell, iVari) = 'V'
+            call codent(variNume, 'G', listVariNume(iCell, iVari)(2:8))
         enddo
     end do
 !

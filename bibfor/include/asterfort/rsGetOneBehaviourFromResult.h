@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine peeint(tableOut, model, nbocc)
-        integer :: nbocc
-        character(len=8) :: model
-        character(len=19) :: tableOut
-    end subroutine peeint
+    subroutine rsGetOneBehaviourFromResult(resultZ, nbStore, listStore, compor)
+        character(len=*), intent(in) :: resultZ
+        integer, intent(in) :: nbStore, listStore(nbStore)
+        character(len=*), intent(out) :: compor
+    end subroutine rsGetOneBehaviourFromResult
 end interface

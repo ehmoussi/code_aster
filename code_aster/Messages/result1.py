@@ -34,6 +34,14 @@ Ce n'est pas possible dans cet opérateur.
 On ne trouve aucun numéro d'ordre dans la structure de données résultat de nom <%(k1)s>
 """),
 
+    4 : _("""Le modèle n'est pas unique sur tous les pas de temps. La commande ne sait pas gérer cette situation."""),
+
+    5 : _("""Il n'y a pas d'information relative au comportement dans le résultat. La commande ne sait pas gérer cette situation."""),
+
+    6 : _("""Le comportement n'est pas unique sur tous les pas de temps. La commande ne sait pas gérer cette situation."""),
+
+    7 : _("""On ne peut pas utiliser NOM_VARI car on n'a pas accès à la définition du comportement."""),
+
     37: _("""
 Le MODELE fourni par l'utilisateur est différent de celui présent dans la structure de données Résultat.
 On poursuit les calculs avec le MODELE fourni par l'utilisateur.

@@ -15,9 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501
+!
 subroutine trresu(ific, nocc)
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8prem.h"
@@ -60,31 +63,30 @@ subroutine trresu(ific, nocc)
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/isParallelMesh.h"
-    integer, intent(in) :: ific
-    integer, intent(in) :: nocc
+integer, intent(in) :: ific, nocc
 !     COMMANDE:  TEST_RESU
 !                MOT CLE FACTEUR "RESU"
 ! ----------------------------------------------------------------------
 !
 !
-    integer :: vali, iocc, iret, ivari, jlue, jordr, n1, n2, n3, n4
-    integer :: nbordr, numord, nupo, nbcmp
-    integer :: n1r, n2r, n3r, irefrr, irefir, irefcr, n1a, n1b, numa
+    integer :: vali, iocc, iret, ivari, jvPara, jordr, n1, n2, n3, n4
+    integer :: nbStore, numeStore, nupo, nbcmp
+    integer :: n1r, n2r, n3r, irefrr, irefir, irefcr, n1a, n1b, cellNume
     integer :: nusp, irefr, irefi, irefc, nref, nl1, nl2, nl11, nl22
-    integer :: jnuma
+    integer :: jnuma, nbVari
     real(kind=8) :: valr, epsi, epsir, prec, ordgrd
     complex(kind=8) :: valc
     character(len=1) :: typres
     character(len=3) :: ssigne
     character(len=4) :: typch, chpt
-    character(len=8) :: crit, crit2, nomail, noddl, nomma
+    character(len=8) :: crit, crit2, cellName, noddl, mesh
     character(len=8) :: noresu, typtes, nomgd, exclgr
     character(len=8) :: leresu, model
     character(len=11) :: motcle
-    character(len=16) :: nopara, k16b, tbtxt(2), tbref(2),nomcha, nom_vari
+    character(len=16) :: nopara, k16b, tbtxt(2), tbref(2),fieldName, variName
     character(len=19) :: cham19, knum
     character(len=33) :: nonoeu
-    character(len=24) :: travr, travi, travc, travrr, travir, travcr, nogrno, nogrma
+    character(len=24) :: travr, travi, travc, travrr, travir, travcr, nogrno, nogrma, compor
     character(len=33) :: titres, valk(3)
     character(len=200) :: lign1, lign2
     integer :: iarg
@@ -189,16 +191,16 @@ subroutine trresu(ific, nocc)
         leresu = noresu
         titres = ' '
 !
+! ----- Get storing index
         knum = '&&TRRESU.NUME_ORDRE'
-        call rsutnu(leresu, 'RESU', iocc, knum, nbordr,&
+        call rsutnu(leresu, 'RESU', iocc, knum, nbStore,&
                     prec, crit2, iret)
         if (iret .ne. 0) then
             call utmess('F', 'CALCULEL6_94')
         endif
-!
         call jeveuo(knum, 'L', jordr)
-        ASSERT(nbordr.eq.1)
-        numord = zi(jordr)
+        ASSERT(nbStore .eq. 1)
+        numeStore = zi(jordr)
 !
         lign1(1:21)='---- '//motcle(1:8)
         lign1(22:22)='.'
@@ -207,7 +209,7 @@ subroutine trresu(ific, nocc)
         nl1 = lxlgut(lign1)
         nl2 = lxlgut(lign2)
         lign1(1:nl1+16)=lign1(1:nl1-1)//' NUME_ORDRE'
-        call codent(numord, 'G', chpt)
+        call codent(numeStore, 'G', chpt)
         lign2(1:nl2+16)=lign2(1:nl2-1)//' '//chpt
         lign1(nl1+17:nl1+17)='.'
         lign2(nl2+17:nl2+17)='.'
@@ -226,16 +228,16 @@ subroutine trresu(ific, nocc)
 !
             call tresu_read_refe('RESU', iocc, tbtxt)
 !
-            call rsadpa(leresu, 'L', 1, nopara, numord,&
-                        1, sjv=jlue, styp=k16b)
+            call rsadpa(leresu, 'L', 1, nopara, numeStore,&
+                        1, sjv=jvPara, styp=k16b)
             if (k16b(1:1) .ne. typres) then
                 call utmess('F', 'CALCULEL6_95')
             else if (typres.eq.'R') then
-                valr = zr(jlue)
+                valr = zr(jvPara)
             else if (typres.eq.'I') then
-                vali = zi(jlue)
+                vali = zi(jvPara)
             else if (typres.eq.'C') then
-                valc = zc(jlue)
+                valc = zc(jvPara)
             endif
 !
             nl1 = lxlgut(lign1)
@@ -275,17 +277,17 @@ subroutine trresu(ific, nocc)
             endif
         endif
 !
-        call getvtx('RESU', 'NOM_CHAM', iocc=iocc, scal=nomcha, nbret=n1)
+        call getvtx('RESU', 'NOM_CHAM', iocc=iocc, scal=fieldName, nbret=n1)
 !
         if (n1 .ne. 0) then
 !
-            call rsexch('F', leresu, nomcha, numord, cham19,&
+            call rsexch('F', leresu, fieldName, numeStore, cham19,&
                         iret)
 !
             nl1 = lxlgut(lign1)
             nl2 = lxlgut(lign2)
             lign1(1:nl1+16)=lign1(1:nl1-1)//' NOM_CHAM'
-            lign2(1:nl2+16)=lign2(1:nl2-1)//' '//nomcha
+            lign2(1:nl2+16)=lign2(1:nl2-1)//' '//fieldName
             lign1(nl1+17:nl1+17)='.'
             lign2(nl2+17:nl2+17)='.'
 !
@@ -384,9 +386,9 @@ subroutine trresu(ific, nocc)
 !
 !
                 nonoeu = ' '
-                call dismoi('NOM_MAILLA', cham19, 'CHAMP', repk=nomma)
-                l_parallel_mesh = isParallelMesh(nomma)
-                call getvem(nomma, 'NOEUD', 'RESU', 'NOEUD', iocc,&
+                call dismoi('NOM_MAILLA', cham19, 'CHAMP', repk=mesh)
+                l_parallel_mesh = isParallelMesh(mesh)
+                call getvem(mesh, 'NOEUD', 'RESU', 'NOEUD', iocc,&
                             iarg, 1, nonoeu(1:8), n1)
                 if (n1 .ne. 0) then
                     if (l_parallel_mesh) then
@@ -400,7 +402,7 @@ subroutine trresu(ific, nocc)
                     lign2(nl2+17:nl2+17)='.'
                 endif
 !
-                call getvem(nomma, 'GROUP_NO', 'RESU', 'GROUP_NO', iocc,&
+                call getvem(mesh, 'GROUP_NO', 'RESU', 'GROUP_NO', iocc,&
                             iarg, 1, nogrno, n2)
                 if (n2 .ne. 0) then
                     nl1 = lxlgut(lign1)
@@ -414,14 +416,14 @@ subroutine trresu(ific, nocc)
                 if (n1 .ne. 0) then
 !              RIEN A FAIRE.
                 else if (n2.ne.0) then
-                    call utnono('F', nomma, 'NOEUD', nogrno, nonoeu(1:8),&
+                    call utnono('F', mesh, 'NOEUD', nogrno, nonoeu(1:8),&
                                 iret)
                     nonoeu(10:33) = nogrno
                 endif
                 call dismoi('TYPE_CHAMP', cham19, 'CHAMP', repk=typch)
-                call dismoi('NOM_MAILLA', cham19, 'CHAMP', repk=nomma)
+                call dismoi('NOM_MAILLA', cham19, 'CHAMP', repk=mesh)
                 call dismoi('NOM_GD', cham19, 'CHAMP', repk=nomgd)
-                call utcmp1(nomgd, 'RESU', iocc, noddl, ivari, nom_vari)
+                call utcmp1(nomgd, 'RESU', iocc, noddl, ivari, variName)
 
                 call getvis('RESU', 'SOUS_POINT', iocc=iocc, scal=nusp, nbret=n2)
                 if (n2 .eq. 0) nusp = 0
@@ -430,9 +432,9 @@ subroutine trresu(ific, nocc)
                 if (typch .eq. 'NOEU') then
                     if (n2 .ne. 0) then
                         valk(1) = noresu
-                        valk(2) = nomcha
+                        valk(2) = fieldName
                         valk(3) = titres
-                        call utmess('F', 'CALCULEL6_97', nk=3, valk=valk, si=numord)
+                        call utmess('F', 'CALCULEL6_97', nk=3, valk=valk, si=numeStore)
                     endif
 !
                     nl1 = lxlgut(lign1)
@@ -471,26 +473,40 @@ subroutine trresu(ific, nocc)
                                             crit, .false._1, ssigne)
                     endif
                 else if (typch(1:2).eq.'EL') then
-                    call getvem(nomma, 'MAILLE', 'RESU', 'MAILLE', iocc,&
-                                iarg, 1, nomail, n1a)
+                    call getvem(mesh, 'MAILLE', 'RESU', 'MAILLE', iocc,&
+                                iarg, 1, cellName, n1a)
                     if (n1a .eq. 0) then
-                        call getvem(nomma, 'GROUP_MA', 'RESU', 'GROUP_MA', iocc,&
+                        call getvem(mesh, 'GROUP_MA', 'RESU', 'GROUP_MA', iocc,&
                                 iarg, 1, nogrma, n1b)
                         ASSERT(n1b.eq.1)
-                        call jelira(jexnom(nomma//'.GROUPEMA', nogrma),'LONUTI',ival=n1b)
+                        call jelira(jexnom(mesh//'.GROUPEMA', nogrma),'LONUTI',ival=n1b)
                         if (n1b .ne. 1) call utmess('F', 'TEST0_20',sk=nogrma,si=n1b)
-                        call jeveuo(jexnom(nomma//'.GROUPEMA', nogrma), 'L', jnuma)
-                        call jenuno(jexnum(nomma//'.NOMMAI', zi(jnuma)), nomail)
+                        call jeveuo(jexnom(mesh//'.GROUPEMA', nogrma), 'L', jnuma)
+                        call jenuno(jexnum(mesh//'.NOMMAI', zi(jnuma)), cellName)
                     endif
 
-                    if (ivari.eq.-1) then
-                        ASSERT(nomcha(1:7).eq.'VARI_EL')
-                        call rsadpa(leresu, 'L', 1, 'MODELE', numord, 0, sjv=jlue)
-                        model = zk8(jlue)
-                        call jenonu(jexnom(nomma//'.NOMMAI', nomail), numa)
-                        call varinonu(model,' ', leresu, 1, [numa], 1, nom_vari, noddl)
+                    if (ivari .eq.- 1) then
+                        ASSERT(fieldName(1:7) .eq. 'VARI_EL')
+
+! --------------------- Get model
+                        call rsadpa(leresu, 'L', 1, 'MODELE', numeStore, 0, sjv=jvPara)
+                        model = zk8(jvPara)
+
+! --------------------- Get behaviour
+                        call rsexch(' ', leresu, 'COMPORTEMENT', numeStore, compor, iret)
+                        if (iret .ne. 0) then
+                            call utmess('F', 'RESULT1_5')
+                        endif
+                        call jenonu(jexnom(mesh//'.NOMMAI', cellName), cellNume)
+
+! --------------------- Get name of internal state variables
+                        nbVari = 1
+                        call varinonu(model , compor    ,&
+                                      1     , [cellNume],&
+                                      nbVari, variName  , noddl)
+
                         call lxliis(noddl(2:8), ivari, iret)
-                        ASSERT(iret.eq.0)
+                        ASSERT(iret .eq. 0)
                         ASSERT(noddl(1:1).eq.'V')
                     endif
 !
@@ -501,7 +517,7 @@ subroutine trresu(ific, nocc)
                         nl1 = lxlgut(lign1)
                         nl2 = lxlgut(lign2)
                         lign1(1:nl1+16)=lign1(1:nl1-1)//' MAILLE'
-                        lign2(1:nl2+16)=lign2(1:nl2-1)//' '//nomail
+                        lign2(1:nl2+16)=lign2(1:nl2-1)//' '//cellName
                         lign1(nl1+17:nl1+17)='.'
                         lign2(nl2+17:nl2+17)='.'
                     else
@@ -558,12 +574,12 @@ subroutine trresu(ific, nocc)
                         tbref(2)=tbtxt(2)
                         tbtxt(1)='NON_REGRESSION'
                     endif
-                    call tresu_champ_val(cham19, nomail, nonoeu, nupo, nusp,&
+                    call tresu_champ_val(cham19, cellName, nonoeu, nupo, nusp,&
                                          ivari, noddl, nref, tbtxt, zi(irefi),&
                                          zr(irefr), zc(irefc), typres, epsi, crit,&
                                          .true._1, ssigne, ignore=skip, compare=ordgrd)
                     if (lref) then
-                        call tresu_champ_val(cham19, nomail, nonoeu, nupo, nusp,&
+                        call tresu_champ_val(cham19, cellName, nonoeu, nupo, nusp,&
                                              ivari, noddl, nref, tbref, zi(irefir),&
                                              zr(irefrr), zc(irefcr), typres, epsir, crit,&
                                              .false._1, ssigne)

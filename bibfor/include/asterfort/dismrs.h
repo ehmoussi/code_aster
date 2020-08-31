@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dismrs(questi, nomobz, repi, repkz, ierd)
-        character(len=*) :: questi
-        character(len=*) :: nomobz
-        integer :: repi
-        character(len=*) :: repkz
-        integer :: ierd
+    subroutine dismrs(questionZ, objNameZ, repi, repkz, ierd)
+        character(len=*), intent(in) :: questionZ, objNameZ
+        character(len=*), intent(out)  :: repkz
+        integer, intent(out) :: repi, ierd
     end subroutine dismrs
 end interface
