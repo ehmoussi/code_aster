@@ -40,7 +40,7 @@ DEFI_BASE_REDUITE=OPER(
                                NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('TEMP','FLUX_NOEU')),
                           ),
         b_mecanique      =BLOC(condition = """is_type("RESULTAT") == evol_noli""",
-                               NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('DEPL','SIEF_NOEU', 'SIEF_ELGA')),
+                               NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('DEPL','SIEF_NOEU', 'SIEF_ELGA', 'VARI_ELGA')),
                           ),
         TYPE_BASE        =SIMP(statut='f',typ='TXM',defaut="3D",into=("3D","LINEIQUE")),
         b_lineique       =BLOC(condition ="""(equal_to("TYPE_BASE", 'LINEIQUE'))""",
@@ -51,7 +51,10 @@ DEFI_BASE_REDUITE=OPER(
         SNAPSHOT         =SIMP(statut='f',typ='I',min=1,max='**',
                                fr =tr("Numéros d'ordre dans RESULTAT à converser comme snapshot")),
         MODELE           =SIMP(statut='f',typ=modele_sdaster),
-        NOM_CMP          =SIMP(statut='f',typ='TXM',max='**' ),
+        NOM_CMP          =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**' ),
+        b_vari = BLOC(condition ="""(equal_to("NOM_CHAM", 'VARI_ELGA'))""",
+            NOM_VARI         =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**'),
+        )
     ),
 
     b_incr = BLOC(condition ="""(equal_to("OPERATION", 'POD_INCR'))""",
@@ -60,7 +63,7 @@ DEFI_BASE_REDUITE=OPER(
                                NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('TEMP','FLUX_NOEU')),
                           ),
         b_mecanique      =BLOC(condition = """is_type("RESULTAT") == evol_noli""",
-                               NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('DEPL','SIEF_NOEU', 'SIEF_ELGA')),
+                               NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('DEPL','SIEF_NOEU', 'SIEF_ELGA', 'VARI_ELGA')),
                           ),
         TYPE_BASE        =SIMP(statut='f',typ='TXM',defaut="3D",into=("3D","LINEIQUE")),
         b_lineique       =BLOC(condition ="""(equal_to("TYPE_BASE", 'LINEIQUE'))""",
@@ -73,7 +76,10 @@ DEFI_BASE_REDUITE=OPER(
         TABL_COOR_REDUIT =SIMP(statut='f',typ=table_sdaster),
         SNAPSHOT         =SIMP(statut='f',typ='I',validators=NoRepeat(),min=1,max='**',
                                fr =tr("Numéros d'ordre dans RESULTAT à converser comme snapshot")),
-        NOM_CMP          =SIMP(statut='f',typ='TXM',max='**' ),
+        NOM_CMP          =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**' ),
+        b_vari = BLOC(condition ="""(equal_to("NOM_CHAM", 'VARI_ELGA'))""",
+            NOM_VARI         =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**'),
+        )
     ),
 
     b_type_rb       =BLOC(condition ="""(equal_to("OPERATION", 'GLOUTON'))""",

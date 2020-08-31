@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/cmpcha.h"
+#include "asterfort/codent.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jelira.h"
@@ -124,18 +125,28 @@ type(ROM_DS_Field), intent(inout) :: field
         field%lLagr = nbLagr .gt. 0
 
     else if (fieldSupp == 'ELGA') then
-! ----- Allocate object for name of components => in cmpcha
-! ----- Allocate object for type of equation => in cmpcha
-! ----- Create objects for global components (catalog) <=> local components (field)
-        call cmpcha(fieldRefe, field%listCmpName, cataToField, fieldToCata, field%nbCmpName)
-        AS_DEALLOCATE(vi = cataToField)
-        AS_DEALLOCATE(vi = fieldToCata)
-
 ! ----- Access to field
         call dismoi('NOM_LIGREL', fieldRefe, 'CHAMP', repk = ligrName)
         call dismoi('NB_GREL', ligrName, 'LIGREL', repi = nbGrel)
         call jeveuo(fieldRefe(1:19)//'.CELD', 'L', vi = celd)
         call jeveuo(fieldRefe(1:19)//'.CELV', 'L', vr = celv)
+
+! ----- Allocate object for name of components => in cmpcha
+! ----- Allocate object for type of equation => in cmpcha
+! ----- Create objects for global components (catalog) <=> local components (field)
+        if (physName .eq. 'VARI_R') then
+            nbCmpMaxi = celd(4)
+            field%nbCmpName = nbCmpMaxi
+            AS_ALLOCATE(vk8 = field%listCmpName, size = field%nbCmpName)
+            do iCmpName = 1, field%nbCmpName
+                field%listCmpName(iCmpName) = 'V'
+                call codent(iCmpName, 'G', field%listCmpName(iCmpName)(2:8))
+            end do
+        else
+            call cmpcha(fieldRefe, field%listCmpName, cataToField, fieldToCata, field%nbCmpName)
+            AS_DEALLOCATE(vi = cataToField)
+            AS_DEALLOCATE(vi = fieldToCata)
+        endif
 
 ! ----- Detect equation
         do iGrel = 1, nbGrel
@@ -164,7 +175,7 @@ type(ROM_DS_Field), intent(inout) :: field
                 call jenuno(jexnum(mesh(1:8)//'.NOMMAI', elemNume), elemName)
 
 ! ------------- Adress in .CELV of the first field value for the element
-                addr = celd(celd(4+iGrel)+4+4*(iElem-1)+4)
+                addr     = celd(celd(4+iGrel)+4+4*(iElem-1)+4)
 
                 do iPt = 1, nbPt
                     do iCmpName = 1, field%nbCmpName
@@ -173,7 +184,7 @@ type(ROM_DS_Field), intent(inout) :: field
 
 ! --------------------- Get the equation number for this component in field
                         call utchdl(fieldRefe, mesh, elemName, ' ', iPt,&
-                                    1, 0, cmpName, equaNume, nogranz = ASTER_TRUE)
+                                    1, iCmpName, cmpName, equaNume, nogranz = ASTER_TRUE)
 
 ! --------------------- Set equation
                         ASSERT(equaNume .gt. 0)
@@ -191,7 +202,7 @@ type(ROM_DS_Field), intent(inout) :: field
         ASSERT(ASTER_FALSE)
     endif
 !
-! Decompte
+! - Decompte
 !
     do iCmpName = 1, field%nbCmpName
         nbEquaCmp = 0

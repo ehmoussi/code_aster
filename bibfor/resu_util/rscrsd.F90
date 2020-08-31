@@ -104,13 +104,14 @@ integer, intent(in) :: nbStore
 !     ------------------------------------------------------------------
 !                      For reduced mode
 !     ------------------------------------------------------------------
-    integer, parameter :: nbFieldRom = 5
+    integer, parameter :: nbFieldRom = 6
     character(len=16), parameter :: fieldRom(nbFieldRom) = (/&
         'TEMP            ',&
         'DEPL            ',&
         'FLUX_NOEU       ',&
         'SIEF_NOEU       ',&
-        'SIEF_ELGA       '/)
+        'SIEF_ELGA       ',&
+        'VARI_ELGA       '/)
 
 !     ------------------------------------------------------------------
 !                      For mechanic

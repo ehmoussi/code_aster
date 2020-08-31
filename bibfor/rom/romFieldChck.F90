@@ -103,6 +103,8 @@ character(len=*), optional, intent(in) :: fieldName_
         chckCmpName(3) = 'DZ'
         chckCmpName(4) = 'PRES'
         chckCmpName(5) = 'PHI'
+    elseif (fieldName .eq. 'VARI_ELGA') then
+        nbCmpChck      = 0
     else
         ASSERT(ASTER_FALSE)
     endif
@@ -119,12 +121,14 @@ character(len=*), optional, intent(in) :: fieldName_
 !
 ! - Forbidden components
 !
-    do iCmpName = 1, nbCmpName
-        cmpName = field%listCmpName(iCmpName)
-        cmpIndx = indik8(chckCmpName, cmpName, 1, nbCmpChck)
-        if (cmpIndx .eq. 0) then
-            call utmess('F', 'ROM11_23', sk = cmpName)
-        endif
-    end do
+    if (nbCmpChck .gt. 0) then
+        do iCmpName = 1, nbCmpName
+            cmpName = field%listCmpName(iCmpName)
+            cmpIndx = indik8(chckCmpName, cmpName, 1, nbCmpChck)
+            if (cmpIndx .eq. 0) then
+                call utmess('F', 'ROM11_23', sk = cmpName)
+            endif
+        end do
+    endif
 !
 end subroutine

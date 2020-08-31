@@ -1,0 +1,90 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+# person_in_charge: mickael.abbas at edf.fr
+
+POURSUITE(CODE='OUI')
+
+# Tests du problème complet en non-régression 
+TEST_RESU(RESU=(
+                _F(RESULTAT  = stnl,
+                   INST      = 10.,
+                   NOM_CHAM  = 'VARI_ELGA',
+                   GROUP_MA  = 'CellInRID',
+                   POINT     = 1,
+                   NOM_CMP   = 'V1',
+                   VALE_CALC = 0.26333466273360195,
+                   ),
+                _F(RESULTAT  = stnl,
+                   INST      = 10.,
+                   NOM_CHAM  = 'VARI_ELGA',
+                   GROUP_MA  = 'CellOutRID',
+                   POINT     = 1,
+                   NOM_CMP   = 'V1',
+                   VALE_CALC = 0.10931348759602624,
+                   ),
+                ),
+          );
+
+# Tests du problème reconstruit par recombinaison des modes (POD simple) par rapport au problème complet
+TEST_RESU(CHAM_ELEM=(
+                _F(CHAM_GD   = recombVariPOD,
+                   REFERENCE = 'AUTRE_ASTER',
+                   GROUP_MA  = 'CellInRID',
+                   POINT     = 1,
+                   NOM_CMP   = 'V1',
+                   VALE_REFE = 0.26333466273360195,
+                   VALE_CALC = 0.26354527069095013,
+                   PRECISION = 8.E-4,
+                   ),
+                _F(CHAM_GD   = recombVariPOD,
+                   REFERENCE = 'AUTRE_ASTER',
+                   GROUP_MA  = 'CellOutRID',
+                   POINT     = 1,
+                   NOM_CMP   = 'V1',
+                   VALE_REFE = 0.10931348759602624,
+                   VALE_CALC = 0.10936529767231658,
+                   PRECISION = 4.8E-4,
+                   ),
+                ),
+          );
+
+# Tests du problème reconstruit par recombinaison des modes (POD incrémentale) par rapport au problème complet
+TEST_RESU(CHAM_ELEM=(
+                _F(CHAM_GD   = recombVariPODINCR,
+                   REFERENCE = 'AUTRE_ASTER',
+                   GROUP_MA  = 'CellInRID',
+                   POINT     = 1,
+                   NOM_CMP   = 'V1',
+                   VALE_REFE = 0.26333466273360195,
+                   VALE_CALC = 0.2636881272382495,
+                   PRECISION = 1.35E-3,
+                   ),
+                _F(CHAM_GD   = recombVariPODINCR,
+                   REFERENCE = 'AUTRE_ASTER',
+                   GROUP_MA  = 'CellOutRID',
+                   POINT     = 1,
+                   NOM_CMP   = 'V1',
+                   VALE_REFE = 0.10931348759602624,
+                   VALE_CALC = 0.10933198637945811,
+                   PRECISION = 1.7E-4,
+                   ),
+                ),
+          );
+
+FIN()
