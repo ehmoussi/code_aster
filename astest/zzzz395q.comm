@@ -110,9 +110,9 @@ baseSiefElgaPODINCR=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
                          TOLE_SVD  = 1.E-1,);
 
 # Update base
-base_d=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
-                         reuse     = base_d,
-                         BASE      = base_d,
+baseSiefElgaPODINCR=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
+                         reuse     = baseSiefElgaPODINCR,
+                         BASE      = baseSiefElgaPODINCR,
                          TOLE      = 1.E-3,
                          RESULTAT  = stnl,
                          INFO      = 2,
