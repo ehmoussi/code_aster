@@ -26,7 +26,7 @@ subroutine lc0076(fami, kpg, ksp, ndim, imate,&
 
  
 ! aslint: disable=W1504,W0104
-    use vmis_isot_nl_module, only: CONSTITUTIVE_LAW, Init, Integrate 
+    use vmis_isot_nl_module, only: CONSTITUTIVE_LAW, Init, InitViscoPlasticity, Integrate 
     implicit none
 #include "asterfort/assert.h"
 
@@ -56,8 +56,11 @@ subroutine lc0076(fami, kpg, ksp, ndim, imate,&
     eps    = epsm(1:ndimsi) + deps(1:ndimsi)
     
     cl = Init(ndimsi, option, fami, kpg, ksp, imate, nint(carcri(1)), &
-            carcri(3), instap-instam)
+            carcri(3))
             
+    if (compor(1)(1:4) .eq. 'VISC') &
+        call InitViscoPlasticity(cl,fami,kpg,ksp,imate,instap-instam)
+        
     call Integrate(cl, eps, vim(1:nvi), sig, vi, dsde)
 
     codret = cl%exception

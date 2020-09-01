@@ -1,0 +1,285 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(
+    CODE  = _F(NIV_PUB_WEB='INTERNET'),
+    DEBUG = _F(SDVERI='NON'),
+    )
+
+#......................................................................
+# CYLINDRE A COMPOSANTE DE CONTRAINTES DONNEES DANS LE REPERE CYL.
+# VISCOPLASTICITE ISOTROPE VON MISES A ECROUISSAGE NON LINERAIRE
+#......................................................................
+
+
+# Geometrie
+Rint =  50.0
+Rext = 100.0
+L    =  15.0
+
+
+# Composantes des contraintes normalisees
+srr = 1/6.
+stt = 1/6.
+szz = 2./3.
+srz = 0.5
+
+nrr = -1/6.
+ntt = -1/6.
+nzz =  2/6.
+nrz =  0.5
+
+
+# Parametres du materiau
+E  = 195000.
+NU = 0.3
+  
+class ECRO:
+    def __init__(self):
+        self.R0 = 490
+        self.RH = 3000.0
+        self.R1 = 60.0
+        self.G1 = 8500.0
+        self.R2 = 250.0
+        self.G2 = 10.0
+        self.RK = 50.0
+        self.P0 = 1.e-3
+        self.GM = 0.15         
+        
+    def __call__(self,ka):
+        return (self.R0 + self.RH*ka + self.R1*(1-exp(-self.G1*ka)) + 
+                self.R2*(1-exp(-self.G2*ka)) + self.RK*(ka+self.P0)**self.GM)
+
+ecro = ECRO()
+
+
+class VISCO:
+    def __init__(self):
+        self.K    = 150.0
+        self.N    = 14.0   
+        
+    def __call__(self,rate):
+        return self.K*rate**(1.0/self.N)
+        
+visco = VISCO()
+
+
+
+# Cible de chargement
+rate = 0.05       
+tmax = 1.00
+ka   = rate*tmax
+
+# Etat initial
+q0 = visco(rate)+ecro(0.0)
+
+
+
+# Reponse
+q   = visco(rate) + ecro(ka)
+err = 1.5*ka*nrr + (1+NU)/E*q*srr - NU/E*q*(srr+stt+szz)
+ezz = 1.5*ka*nzz + (1+NU)/E*q*szz - NU/E*q*(srr+stt+szz)
+erz = 1.5*ka*nrz + (1+NU)/E*q*srz 
+ur  = Rext*err
+uz  = ezz*L + 2*erz*(Rext-Rint)
+
+
+# Simulation
+
+MA = LIRE_MAILLAGE()
+
+
+MO = AFFE_MODELE(
+    MAILLAGE =  MA,
+    AFFE     = _F(
+        TOUT         = 'OUI',
+        PHENOMENE    = 'MECANIQUE',
+        MODELISATION = 'AXIS_GRAD_VARI',
+        ),
+    )
+
+
+ACIER = DEFI_MATERIAU(
+    ELAS      = _F(E=E, NU=NU),
+    ECRO_NL   = _F(R0=ecro.R0, RH=ecro.RH, GAMMA_1=ecro.G1, R1=ecro.R1, GAMMA_2=ecro.G2, R2=ecro.R2, RK=ecro.RK, P0=ecro.P0, GAMMA_M=ecro.GM),
+    NORTON    = _F(K=visco.K, N=visco.N),
+    NON_LOCAL = _F(C_GRAD_VARI=ecro.R0*(L/5.)**2, PENA_LAGR=ecro.R0),
+    )
+
+
+MAT_ELAS = DEFI_MATERIAU(
+    ELAS      = _F(E=E, NU=NU),
+    ECRO_NL   = _F(R0=10*ecro.R0),
+    NORTON    = _F(K=visco.K, N=visco.N),
+    NON_LOCAL = _F(C_GRAD_VARI=ecro.R0*(L/5.)**2, PENA_LAGR=ecro.R0),
+    )
+
+
+CM = AFFE_MATERIAU(
+    MAILLAGE = MA,
+    AFFE     = _F(TOUT='OUI', MATER=ACIER),
+    )
+
+
+CM_ELAS = AFFE_MATERIAU(
+    MAILLAGE = MA,
+    AFFE     = _F(TOUT='OUI', MATER=MAT_ELAS),
+    )
+
+
+
+CH_BORD = AFFE_CHAR_MECA(
+    MODELE     =  MO,
+    FORCE_CONTOUR = (
+        _F(GROUP_MA = 'INT', FX=-srr, FY=-srz),
+        _F(GROUP_MA = 'EXT', FX= srr, FY= srz),
+        _F(GROUP_MA = 'SUP', FX= srz, FY= szz),
+        _F(GROUP_MA = 'INF', FX=-srz, FY=-szz),
+        ),
+    )
+    
+
+F_VOLU = FORMULE(NOM_PARA='X', VALE='-srz/X', srz=srz) 
+
+
+CH_VOLU = AFFE_CHAR_MECA_F(
+    MODELE     =  MO,
+    FORCE_INTERNE = _F(GROUP_MA='VOLU', FY=F_VOLU),
+    )
+    
+
+RIGIDE = AFFE_CHAR_MECA(
+    MODELE = MO,
+    DDL_IMPO = _F(GROUP_NO='INF_INT', DY=0),
+    )
+    
+
+
+L_INST = DEFI_LIST_REEL(
+    DEBUT      =  -1.0,
+    INTERVALLE = (
+        _F(JUSQU_A=0,    NOMBRE=1),
+        _F(JUSQU_A=1 ,   NOMBRE=8),
+        ),
+    )
+    
+    
+RAMPE_0 = DEFI_FONCTION(
+    NOM_PARA = 'INST',
+    VALE     = (-1,0,0,q0),
+    )
+    
+        
+RAMPE = FORMULE(
+    NOM_PARA='INST',
+    VALE    = 'visco(rate) + ecro(rate*INST)',
+    visco   = visco,
+    ecro    = ecro,
+    rate    = rate,
+    )
+    
+    
+INIT = STAT_NON_LINE(
+    MODELE       = MO,
+    CHAM_MATER   = CM_ELAS,
+    EXCIT = (
+        _F(CHARGE=RIGIDE),
+        _F(CHARGE=CH_VOLU, FONC_MULT=RAMPE_0),
+        _F(CHARGE=CH_BORD, FONC_MULT=RAMPE_0),
+        ),
+    COMPORTEMENT = _F(RELATION='VISC_ISOT_NL'),
+    INCREMENT    = _F(LIST_INST=L_INST, INST_FIN=0),
+    NEWTON       = _F(REAC_ITER=1),
+    )
+    
+
+EVOL = STAT_NON_LINE(
+    ETAT_INIT = _F(EVOL_NOLI=INIT),
+    MODELE=MO,
+    CHAM_MATER=CM,
+    EXCIT = (
+        _F(CHARGE=RIGIDE),
+        _F(CHARGE=CH_VOLU, FONC_MULT=RAMPE),
+        _F(CHARGE=CH_BORD, FONC_MULT=RAMPE),
+        ),
+    COMPORTEMENT = _F(RELATION='VISC_ISOT_NL'),
+    INCREMENT    = _F(LIST_INST=L_INST),
+    NEWTON       = _F(REAC_ITER=1),
+    )
+
+
+EVOL = CALC_CHAMP(reuse=EVOL,
+    RESULTAT     = EVOL, 
+    CONTRAINTE   = 'SIEF_NOEU',
+    VARI_INTERNE = 'VARI_NOEU',
+    DEFORMATION  = 'EPSI_NOEU',
+    )
+
+
+TEST_RESU(
+    RESU = (
+        _F(
+            INST=1.0, 
+            RESULTAT=EVOL, 
+            NOM_CHAM='SIEF_NOEU', 
+            NOM_CMP='SIXX',
+            GROUP_NO='SUP_EXT', 
+            VALE_REFE=q*srr, 
+            VALE_CALC=158.57811067756384,
+            REFERENCE='ANALYTIQUE',
+            PRECISION=1.E-3,
+            ),
+        _F(
+            INST=1.0, 
+            RESULTAT=EVOL, 
+            NOM_CHAM='DEPL', 
+            NOM_CMP='DX',
+            GROUP_NO='SUP_EXT', 
+            VALE_REFE=ur, 
+            VALE_CALC=-1.2906608938532367,
+            REFERENCE='ANALYTIQUE',
+            PRECISION=1.E-3,
+            ),
+        _F(
+            INST=1.0, 
+            RESULTAT=EVOL, 
+            NOM_CHAM='DEPL', 
+            NOM_CMP='DY',
+            GROUP_NO='SUP_EXT', 
+            VALE_REFE=uz, 
+            VALE_CALC=4.4836299607833565,
+            REFERENCE='ANALYTIQUE',
+            PRECISION=1.E-3,
+            ),
+        _F(
+            INST=1.0, 
+            RESULTAT=EVOL, 
+            NOM_CHAM='VARI_NOEU', 
+            NOM_CMP='V6',
+            GROUP_NO='SUP_EXT', 
+            VALE_REFE=1.5*ka*nrz, 
+            VALE_CALC=0.03749999533434368,
+            REFERENCE='ANALYTIQUE',
+            PRECISION=1.E-3,
+            ),
+        ),
+    )
+
+
+FIN()

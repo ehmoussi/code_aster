@@ -24,7 +24,8 @@ subroutine lc6076(fami, kpg, ksp, ndim, imate,&
 
 
 ! aslint: disable=W1504,W0104
-    use vmis_isot_nl_module, only: CONSTITUTIVE_LAW, Init, InitGradVari, Integrate 
+    use vmis_isot_nl_module, only: CONSTITUTIVE_LAW, Init, InitGradVari, InitViscoPlasticity, &
+                                    Integrate 
     implicit none
     
 #include "asterf_types.h"
@@ -63,10 +64,13 @@ subroutine lc6076(fami, kpg, ksp, ndim, imate,&
     grad   = eps(ndimsi+3:ndimsi+2+ndim)
 
     cl = Init(ndimsi, option, fami, kpg, ksp, imate, nint(carcri(1)), &
-            carcri(3), instap-instam)
+            carcri(3))
 
     call InitGradVari(cl,fami,kpg,ksp,imate,lag,apg)
 
+    if (compor(1)(1:4) .eq. 'VISC') &
+        call InitViscoPlasticity(cl,fami,kpg,ksp,imate,instap-instam)
+        
     call Integrate(cl, eps(1:ndimsi), vim(1:nvi), sig, &
             vi, deps_sig, dphi_sig, deps_vi, dphi_vi)
 

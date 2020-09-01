@@ -201,6 +201,7 @@ def C_RELATION( COMMAND ):
                                         "VISC_DRUC_PRAG",
                                         "VISC_IRRA_LOG",
                                         "VISC_ISOT_LINE",
+                                        "VISC_ISOT_NL",
                                         "VISC_ISOT_TRAC",
                                         "VISC_TAHERI",
                                         "VMIS_ASYM_LINE",
