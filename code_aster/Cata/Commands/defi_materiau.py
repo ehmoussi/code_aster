@@ -3311,6 +3311,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              LONG_CARA       =SIMP(statut='f',typ='R'),
              C_GRAD_VARI     =SIMP(statut='f',typ='R'),
              PENA_LAGR       =SIMP(statut='f',typ='R'), #defaut= 1.0E3 dans fortran
+             PENA_LAGR_INCO  =SIMP(statut='f',typ='R',defaut=0.0),
              C_GONF          =SIMP(statut='f',typ='R'),
              COEF_RIGI_MINI  =SIMP(statut='f',typ='R'),
            ),

@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmepsi.h"
+#include "asterfort/rcvalb.h"
 !
 aster_logical,intent(in)       :: matsym
 character(len=8),intent(in)    :: typmod(*)
@@ -112,15 +113,22 @@ integer,intent(out)            :: codret
               0.d0,    0.d0,    0.d0, 1.d0, 0.d0, 0.d0, &
               0.d0,    0.d0,    0.d0, 0.d0, 1.d0, 0.d0, &
               0.d0,    0.d0,    0.d0, 0.d0, 0.d0, 1.d0  /), (/6,6/))
+    real(kind=8), dimension(6,6), parameter:: projdh = reshape( &
+        (/   1.d0,  1.d0,  1.d0, 0.d0, 0.d0, 0.d0, &
+             1.d0,  1.d0,  1.d0, 0.d0, 0.d0, 0.d0, &
+             1.d0,  1.d0,  1.d0, 0.d0, 0.d0, 0.d0, &
+              0.d0,    0.d0,    0.d0, 0.d0, 0.d0, 0.d0, &
+              0.d0,    0.d0,    0.d0, 0.d0, 0.d0, 0.d0, &
+              0.d0,    0.d0,    0.d0, 0.d0, 0.d0, 0.d0  /), (/6,6/))
 ! ----------------------------------------------------------------------
     type(GDLOG_DS):: gdlm,gdlp
     aster_logical :: axi, resi
-    integer       :: g,n,i
+    integer       :: g,n,i,iok(1)
     integer       :: xu(ndim,nno),xg(2,nnob),xq(2,nnob)
     integer       :: cod(npg)
     integer       :: nnu,nng,nnq,ndu,ndg,ndq,neu,neg,neq
-    real(kind=8)  :: dev(2*ndim,2*ndim),hyd(2*ndim),kr(2*ndim)
-    real(kind=8)  :: r,dff(nno,ndim),dffb(nnob,ndim),poids
+    real(kind=8)  :: dev(2*ndim,2*ndim),dh(2*ndim,2*ndim),hyd(2*ndim),kr(2*ndim)
+    real(kind=8)  :: r,dff(nno,ndim),dffb(nnob,ndim),poids,rinco
     real(kind=8)  :: fm(3,3), fp(3,3)
     real(kind=8)  :: bu(2*ndim,ndim,nno),bg(2+ndim,2,nnob),bq(2,2,nnob)
     real(kind=8)  :: dum(ndim,nno),dup(ndim,nno)
@@ -137,7 +145,7 @@ integer,intent(out)            :: codret
     real(kind=8)  :: kefuu(2*ndim,2*ndim),kefug(2*ndim,2+ndim),kefuq(2*ndim,2    )
     real(kind=8)  :: kefgu(2+ndim,2*ndim),kefgg(2+ndim,2+ndim),kefgq(2+ndim,2    )
     real(kind=8)  :: kefqu(2     ,2*ndim),kefqg(2     ,2+ndim),kefqq(2     ,2    )
-    real(kind=8)  :: tbid(6)
+    real(kind=8)  :: tbid(6),valinco(1)
     type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
@@ -174,6 +182,7 @@ integer,intent(out)            :: codret
     hyd = projhyd(1:neu)
     dev = projdev(1:neu,1:neu)
     tbid = 0.d0
+    dh  = projdh(1:neu,1:neu)
 
     call gdlog_init(gdlm,ndu,nnu,axi,lMatr)
     call gdlog_init(gdlp,ndu,nnu,axi,lMatr)
@@ -218,6 +227,11 @@ integer,intent(out)            :: codret
         call gdlog_defo(gdlp,fp,epefup,cod(g))
         if (cod(g).ne.0) goto 999
 
+        ! Coefficient de penalisation par rapport au gonflement
+        call rcvalb(fami,g,1,'-',mate,' ','NON_LOCAL',0,' ',[0.d0],&
+                    1,'PENA_LAGR_INCO',valinco,iok,2)
+        rinco = valinco(1)
+        
         ! Calcul des matrices BU, BG et BQ
         call gdlog_matb(gdlp,r,vff(:,g),dff,bu)
         bg = 0
@@ -271,9 +285,10 @@ integer,intent(out)            :: codret
         if (lSigm) then
             ! Contraintes generalisees EF par bloc
             t = silcp(1:neu)
-            siefup = matmul(dev,t) + epefqp(1)*kr
+            siefup = matmul(dev,t) + epefqp(1)*kr + rinco*(dot_product(kr,epefup)-epefqp(2))*kr
             siefgp = silcp(neu+1:neu+neg)
-            siefqp = (/ dot_product(kr,epefup)-epefqp(2), dot_product(hyd,t)-epefqp(1) /)
+            siefqp = (/ dot_product(kr,epefup)-epefqp(2), dot_product(hyd,t)-epefqp(1)- &
+                     rinco*(dot_product(kr,epefup)-epefqp(2)) /)
         endif
         if (lVect) then
             ! Forces interieures au point de Gauss g
@@ -311,22 +326,22 @@ integer,intent(out)            :: codret
             dgg = dsde(neu+1:neu+neg,neu+1:neu+neg)
 
             ! Construction des blocs de la matrice tangente EF
-            kefuu = matmul(matmul(dev,dee),dev)
+            kefuu = matmul(matmul(dev,dee),dev) + rinco*dh
             kefug = matmul(dev,deg)
             kefuq(:,1) = kr
-            kefuq(:,2) = matmul(matmul(dev,dee),hyd)
+            kefuq(:,2) = matmul(matmul(dev,dee),hyd)-rinco*kr
             kefgu = matmul(dge,dev)
             kefgg = dgg
             kefgq(:,1) = 0
             kefgq(:,2) = matmul(dge,hyd)
             kefqu(1,:) = kr
-            kefqu(2,:) = matmul(matmul(hyd,dee),dev)
+            kefqu(2,:) = matmul(matmul(hyd,dee),dev) - rinco*kr
             kefqg(1,:) = 0
             kefqg(2,:) = matmul(hyd,deg)
             kefqq(1,1) = 0
             kefqq(1,2) = -1
             kefqq(2,1) = -1
-            kefqq(2,2) = dot_product(matmul(hyd,dee),hyd)
+            kefqq(2,2) = dot_product(matmul(hyd,dee),hyd) + rinco
 
             ! Assemblage des blocs de la matrice EF
             if (.not. matsym) then
