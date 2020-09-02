@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -1320,7 +1320,7 @@ implicit none
         vrgi0=var0(60)
 !       l avancement est actualisee dans bgpg        
         call bgpg3d(ppas,bg,pg,mg,vrgi,treps,trepspg,epspt6,epspc6,&
-        phivg,pglim,brgi,dpg_depsa6,dpg_depspg6,taar,nrjg,tetar,aar0,&
+        phivg,pglim,brgi,dpg_depsa6,dpg_depspg6,taar,nrjg,trag,aar0,&
         srw,srsrag,teta,dt1,vrag00,aar1,tdef,nrjd,def0,srsdef,vdef00,&
         def1,cna,nrjp,ttrd,tfid,ttdd,tdid,exmd,exnd,cnab,cnak,ssad,&
         At,St,M1,E1,M2,E2,AtF,StF,M1F,E1F,M2F,E2F,vrgi0)
@@ -1928,7 +1928,7 @@ end if
            vrgi0=vrgi          
 !          dt mis a zero pour forcer la reprise de vrgi0    
            call bgpg3d(ppas,bg,pg,mg,vrgi,treps,trepspg,epspt6,epspc6,&
-           phivg,pglim,brgi,dpg_depsa6,dpg_depspg6,taar,nrjg,tetar,aar0,&
+           phivg,pglim,brgi,dpg_depsa6,dpg_depspg6,taar,nrjg,trag,aar0,&
            srw,srsrag,teta,0.d0,vrag00,aar1,tdef,nrjd,def0,srsdef,vdef00,&
            def1,cna,nrjp,ttrd,tfid,ttdd,tdid,exmd,exnd,cnab,cnak,ssad,&
            At,St,M1,E1,M2,E2,AtF,StF,M1F,E1F,M2F,E2F,vrgi0)
