@@ -445,7 +445,7 @@ def check_dis_choc_endo(keywords):
     #           message 9 : xx[0] Riy[xx[0]] Riy[xx[0]+1]
     pente = Riy[2]
     for ii in range(3, len(Riy)):
-        if pente < Riy[ii]:
+        if Riy[ii]-pente > Riy[0]*precis:
             _message(9, "%s" % Clefs['RIGI_NOR'].getName(),"(%d) : %s %s" %(ii,pente, Riy[ii]))
         pente = Riy[ii]
     # --------------------------------------------------------------- Fin des vérifications
