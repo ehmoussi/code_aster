@@ -322,7 +322,7 @@ class THER_HEXA20(Element):
 
         OP.RIGI_THER_CONV_T(te=522,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (SP.PNEUK24, LC.CDECENT), (SP.PTEMPEI, DDL_THER),
+                     (SP.PTEMPEI, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), (SP.PVITESR, NVITESR),
                      ),
             para_out=((OP.RIGI_THER_CONV_T.PMATTTR, MMATTSR), ),

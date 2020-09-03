@@ -65,11 +65,11 @@ subroutine metnth(modele, lchar, cara, mate, mateco, time,&
 !     ------------------
 !
 !
-    character(len=8) :: nomcha, lpain(7), lpaout(1)
-    character(len=8) :: vitess, decent
+    character(len=8) :: nomcha, lpain(6), lpaout(1)
+    character(len=8) :: vitess
     character(len=16) :: option
-    character(len=24) :: lchin(7), lchout(1), chgeom, chcara(18)
-    character(len=24) :: chvite, ligrmo, carte, convch, carele
+    character(len=24) :: lchin(6), lchout(1), chgeom, chcara(18)
+    character(len=24) :: chvite, ligrmo, convch, carele
     integer :: iret, ilires
     integer :: nchar, jchar
 !
@@ -120,18 +120,13 @@ subroutine metnth(modele, lchar, cara, mate, mateco, time,&
                 call utmess('F', 'CALCULEL3_72')
             endif
 !
-            decent = 'OUI'
-            option = 'RIGI_THER_CONV'
-            if (decent .eq. 'OUI') option = 'RIGI_THER_CONV_T'
+            option = 'RIGI_THER_CONV_T'
             call memare('V', metrnl, modele(1:8), mate, cara,&
                         option)
 !
             call jeveuo(convch, 'L', jvites)
             vitess = zk8(jvites)
             chvite = vitess
-            carte = '&&METNTH'//'.CONVECT.DECENT'
-            call mecact('V', carte, 'MODELE', modele(1:8)//'.MODELE', 'NEUT_K24',&
-                        ncmp=1, nomcmp='Z1', sk=decent)
             lpain(1) = 'PGEOMER'
             lchin(1) = chgeom
             lpain(2) = 'PMATERC'
@@ -142,8 +137,6 @@ subroutine metnth(modele, lchar, cara, mate, mateco, time,&
             lchin(4) = time
             lpain(5) = 'PVITESR'
             lchin(5) = chvite
-            lpain(7) = 'PNEUK24'
-            lchin(7) = carte
             lpain(6) = 'PTEMPEI'
             lchin(6) = chtni
 !
