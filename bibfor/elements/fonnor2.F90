@@ -20,6 +20,7 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
     implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/dis2no.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/fonext.h"
 #include "asterfort/fonno1.h"
@@ -27,6 +28,7 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
 #include "asterfort/fonno3.h"
 #include "asterfort/fonno4.h"
 #include "asterfort/fonno5.h"
+#include "asterfort/fonno52.h"
 #include "asterfort/fonno62.h"
 #include "asterfort/fonno7.h"
 #include "asterfort/fonno8.h"
@@ -38,8 +40,10 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jenonu.h"
+#include "asterfort/jenuno.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
+#include "asterfort/jexnum.h"
 #include "asterfort/normev.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
@@ -48,8 +52,8 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
     character(len=19) :: cnxinv, basnof
 ! FONCTION REALISEE:
 !
-!     CALCUL DE LA NORMALE AU FOND DE FISSURE POUR DEFI_FOND_FISS
-!     EN 2D ET 3D DE LA BASE LOCALE
+!     CALCUL EN 2D ET 3D DE LA BASE LOCALE POUR DEFI_FISSURE
+!     
 !
 !     ENTREES:
 !        RESU       : NOM DU CONCEPT RESULTAT DE L'OPERATEUR
@@ -60,14 +64,17 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
 !-----------------------------------------------------------------------
 !
     integer :: j, jnoe1, jbasno,  jbasse, jtail, k
-    integer :: jborl, jdirol, jnvdir
-    integer :: i, ina, inb, iseg, iret, nbnose, nbnoff, inc, ilev
+    integer :: jborl, jdirol, jnvdir, jnor
+    integer :: i, ina, inb, iseg, iret, nbnose, nbnoff, inc, inor
     integer :: na, nb, nret, ndim, nbnoel, nseg, nbmax, nbmac, inoext
-    integer :: indic(4), noe(4, 4), indr(2), tablev(2), inoseg
+    integer :: indic(4), noe(4, 4), indr(2), tablev(2), inoseg, nblev
+    integer, pointer :: connex(:) => null()
     real(kind=8) :: vdir(2, 3), vnor(2, 3), norme, vecdir(3), hmax, hmaxpr
-    real(kind=8) :: vect(3), sens
+    real(kind=8) :: vect(3), sens, dist, disttemp
+    real(kind=8), pointer :: geom(:) => null()
     character(len=6) :: tyfond
     character(len=8) :: noeua, nompro
+    character(len=8), pointer :: mail(:) => null()
     character(len=16) :: casfon
     character(len=19) :: basseg, macofo
     parameter    (nompro='FONNOR2')
@@ -79,6 +86,10 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
 !     INITIALISATIONS
 !     ------------------------------------------------------------------
 !
+    indr=0
+    nbnoel=0
+    dist=0
+    disttemp=0
 !
 !     RECUPERATION DES INFORMATIONS RELATIVES AU MAILLAGE
 !
@@ -104,8 +115,9 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
         ASSERT(.FALSE.)
     endif
 !
-!     VERIFICATION DE LA PRESENCE DE LEVRE_SUP
-    call jeexin(resu//'.LEVRESUP.MAIL', ilev)
+!
+!     VERIFICATION DE LA PRESENCE DE NORMALE
+    call jeexin(resu//'.NORMALE', inor)
 !
 !     INITIALISATION DU SENS DU VECTEUR NORMAL
     sens=1.d0
@@ -133,6 +145,18 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
         nbmax = 3
     endif
     if (ndim .eq. 2) casfon = '2D'
+
+!
+!     RECUPERATION DU VECTEUR .NORMALE S'IL EXISTE ET REMPLISSAGE DE
+!     VNOR. S'IL N'EXISTE PAS, VNOR SERA REMPLI DANS FONNO5
+    if(inor.ne.0) then
+        call jeveuo(resu//'.NORMALE', 'L', jnor)
+        do i =1, 3
+!     DEUX VECTEUR NOMALE IDENTIQUES (UN PAR LEVRE)
+            vnor(1,i)=zr(jnor-1+i)
+            vnor(2,i)=zr(jnor-1+i)
+        end do
+    endif
 !
 !
 !     ALLOCATION DU VECTEUR DES BASES LOCALES PAR NOEUD DU FOND  :
@@ -179,7 +203,6 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
         zl(jborl-1+i)=.false.
     end do
 !
-!
 !     ------------------------------------------------------------------
 !     BOUCLE SUR LES "SEGMENTS" DU FOND DE FISSURE
 !     ------------------------------------------------------------------
@@ -199,10 +222,11 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
             inc = 2*iseg
         endif
 !
-!       NUMEROS (ABSOLUS) DES NOEUDS SOMMETS DU SEGMENT : NA ET NB
+!       NUMEROS (ABSOLUS) DU PREMIER NOEUDS SOMMETS DU SEGMENT : NA
         noeua = zk8(jnoe1-1+ina)
         call jenonu(jexnom(noma//'.NOMNOE', noeua), na)
         if (ndim .eq. 3) then
+!       EN 3D : NB EST LE NUMERO (ABSOLU) DU DEUXIEME NOEUD SOMMETS DU SEGMENT 
             call jenonu(jexnom(noma//'.NOMNOE', zk8(jnoe1-1+inb)), nb)
             if (iseg .eq. 1) then
                 inoext=na
@@ -212,6 +236,31 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
                 inoext=nb
                 inoseg=na
             endif
+        else if (ndim .eq. 2)then
+!       EN 2D : NB EST LE NUMERO (ABSOLU) D'UN NOEUD DE L'EXTREMITE DE LA
+!       LEVRE SUPERIEURE QUE L'ON CHERCHE COMME ETANT UN NOEUD "ELOIGNE"
+!       DU FOND
+
+!       ON RECUPERE LES LEVRES DE LA FISSURE ET LES COORDONNEES DES NOEUDS
+            call jeveuo(resu//'.LEVRESUP.MAIL', 'L', vk8=mail)
+            call jelira(resu//'.LEVRESUP.MAIL', 'LONUTI', nblev)
+            call jeveuo(noma//'.COORDO    .VALE', 'L', vr=geom)
+            do i =1, nblev
+!               POUR CHAQUE SEGMENT, ON RECUPERE LA CONNEXITE
+                call jenonu(jexnom(noma//'.NOMMAI', mail(i)), iret)
+                call jeveuo(jexnum(noma//'.CONNEX', iret), 'L', vi=connex)
+
+!               ON TESTE UNIQUEMENT UN NOEUD PAR SEGMENT (SUFFISANT)
+                disttemp = dis2no(geom,na,connex(1))
+                if (disttemp.ge.dist)then
+                    nb=connex(1)
+                    dist=disttemp
+                endif
+                
+            enddo
+
+        else
+            ASSERT(.FALSE.)
         endif
 !
 !
@@ -240,8 +289,11 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
 !          -> REMPLISSAGE DE NOE
 !       ----------------------------------------------------
 !
-        call fonno3(noma, tablev, ndim, na, nb,&
+        if (inor .eq. 0) then
+!           CETTE OPERATION N'EST PAS FAITE SI ON N'A PAS LA NORMALE
+            call fonno3(noma, tablev, ndim, na, nb,&
                     noe)
+        endif
 !
 !
 !       4) FILTRE DES FACES LIBRES
@@ -259,22 +311,31 @@ subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
 !        RQ : CHACUN CONTIENT EN FAIT 2 VECTEURS (UN PAR LEVRE)
 !       --------------------------------------------------------
 !
-        call fonno5(noma, indic, nbnoff, noe, na,&
-                    nb, ndim, nbnoel, indr, vnor,&
-                    vdir)
+!
+!       ON TEST L'EXISTENCE DU MOT CLE NORMALE CORRESPONDANT
+!       AU CAS LEVRES DECOLLEES
+!
+        if (inor .eq. 0) then
+            call fonno5(noma, indic, noe, na, nb,&
+                     ndim, nbnoel, indr, vnor,vdir)
+        else
+            call fonno52(noma, na, nb, ndim, vnor,vdir)
+        endif
 !
 !
 !       6) DETERMINATION DU VRAI VECTEUR ET BASE PAR SEGMENT
 !          -> REMPLISSAGE DE BASSEG
 !       ----------------------------------------------------
 !
-        if (ilev .ne. 0 .and. iseg .eq. 1) then
+        if (iseg .eq. 1) then
             call fonno8(resu, noma, tablev, vect)
         endif
 !
+
         call fonno62(resu, noma, ndim, &
-                    iseg, noe, indr, nbnoel,&
-                    vnor, vdir, basseg, vect, sens)
+                iseg, noe, indr, nbnoel,&
+                vnor, vdir, basseg, vect, sens)
+
 !
 !
 !

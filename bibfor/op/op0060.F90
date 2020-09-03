@@ -39,6 +39,7 @@ subroutine op0060()
 #include "asterfort/fonnof2.h"
 #include "asterfort/fonnor2.h"
 #include "asterfort/getvid.h"
+#include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
@@ -53,8 +54,8 @@ subroutine op0060()
 !
     integer :: iadr1, ifm, niv
     integer :: nbocc, nbnoff
-    integer :: ibas, ibid, iocc, idon, idonn, ifonoe, ndonn
-    integer :: iret1, iret, irets, inor
+    integer :: ibas, ibid, iocc, idon, idonn, ifonoe, ndonn, nvenor
+    integer :: iret1, iret, irets, jnorm
     integer :: n1, n2
     character(len=6) :: nompro
     character(len=8) :: resu, noma, typfon, confin, typmp, typm
@@ -155,7 +156,6 @@ subroutine op0060()
 11      continue
 !
 !
-!
 !       ---------------------------------------------------------------
 !       CONSTRUCTION DE FOND DE FISSURE
 !       ---------------------------------------------------------------
@@ -209,16 +209,23 @@ subroutine op0060()
 !
     call fonlev(resu, noma, nbnoff)
 !
+!
+!     TRAITEMENT DU MOT-CLE NORMALE
+!     ----------------------------------------
+!
+    call getvr8(' ', 'NORMALE', nbval=0, nbret=nvenor)
+    if (nvenor .ne. 0) then
+        nvenor = -nvenor
+        call wkvect(resu//'.NORMALE', 'G V R8', 3, jnorm)
+        call getvr8(' ', 'NORMALE', nbval=3, vect=zr(jnorm), nbret=nvenor)
+    endif
+
+
 !   OBJET CONTENANT LA BASE LOCALE EN CHAQUE NOEUD DU FOND DE FISSURE
 !   OBJET QUI N'EXISTE QUE DANS DEFI_FISSURE    
     basnof = '&&OP0060.BASNOF'
 !
-!   ON TEST L'EXISTENCE DU MOT CLE NORMALE DANS LE CAS DECOLLEE
-!
-    call jeexin(resu//'.NORMALE', inor)
-    if (inor .eq. 0) then
-        call fonnor2(resu, noma, cnxinv, typm, basnof)
-    endif
+    call fonnor2(resu, noma, cnxinv, typm, basnof)
 !
     call jedetr(cnxinv)
 !

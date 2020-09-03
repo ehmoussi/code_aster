@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -261,9 +261,8 @@ subroutine fonnor(resu, noma, cnxinv)
 !        RQ : CHACUN CONTIENT EN FAIT 2 VECTEURS (UN PAR LEVRE)
 !       --------------------------------------------------------
 !
-        call fonno5(noma, indic, nbnoff, noe, na,&
-                    nb, ndim, nbnoel, indr, vnor,&
-                    vdir)
+        call fonno5(noma, indic, noe, na, nb,&
+                     ndim, nbnoel, indr, vnor, vdir)
 !
 !
 !       6) DETERMINATION DU VRAI VECTEUR ET BASE PAR SEGMENT

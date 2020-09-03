@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,9 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fonno5(noma, indic, nbnoff, noe, na,&
-                  nb, ndim, nbnoel, indr, vnor,&
-                  vdir)
+subroutine fonno5(noma, indic, noe, na, nb,&
+                   ndim, nbnoel, indr, vnor,vdir)
     implicit none
 #include "jeveux.h"
 #include "asterfort/gdire3.h"
@@ -29,7 +28,7 @@ subroutine fonno5(noma, indic, nbnoff, noe, na,&
 #include "asterfort/provec.h"
 #include "asterfort/vecini.h"
     character(len=8) :: noma
-    integer :: indic(4), nbnoff, noe(4, 4), na, nb, ndim, nbnoel, indr(2)
+    integer :: indic(4), noe(4, 4), na, nb, ndim, nbnoel, indr(2)
     real(kind=8) :: vnor(2, 3), vdir(2, 3)
 !
 !
@@ -37,6 +36,7 @@ subroutine fonno5(noma, indic, nbnoff, noe, na,&
 !     BUT : CALCUL DES VECTEURS DE LA BASE LOCALE :
 !             - VNOR : VECTEUR NORMAL A LA SURFACE DE LA FISSURE
 !             - VDIR : VECTEUR DANS LA DIRECTION DE PROPAGATION
+!           CAS OU CONFIG_INIT = COLLEE
 !
 !           RQ : CHACUN CONTIENT EN FAIT 2 VECTEURS (UN PAR LEVRE)
 !     ------------------------------------------------------------------

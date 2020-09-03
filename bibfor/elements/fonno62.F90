@@ -71,7 +71,7 @@ subroutine fonno62(resu, noma, ndim, &
 !
     integer ::  iamase, ityp, iatyma,  jbasse
     integer :: i, j, iret, inp, compt, ino, ifl
-    integer :: ilev
+    integer :: ilev, inor
     integer :: nblev, nn
     real(kind=8) :: s, ndir, nnor, alpha, angmax, beta
     real(kind=8) :: vecdir(ndim), vecnor(ndim), vnprec(ndim)
@@ -90,7 +90,11 @@ subroutine fonno62(resu, noma, ndim, &
 !     INDICE DE LA LEVRE A CONSIDERER
     ifl = 0
 !
+!     VERIFICATION DE LA PRESENCE DE LEVRE_SUP
     call jeexin(resu//'.LEVRESUP.MAIL', ilev)
+!
+!     VERIFICATION DE LA PRESENCE DE NORMALE
+    call jeexin(resu//'.NORMALE', inor)
 !
 !     RECUPERATION DE L'ADRESSE DE LA BASE PAR SEGMENT DU FOND
     call jeveuo(basseg, 'E', jbasse)
@@ -99,31 +103,34 @@ subroutine fonno62(resu, noma, ndim, &
 !
 !
 !     1) VERIFICATION DE LA COHERENCE DES 2 VECTEURS DIRECTION
+!        A FAIRE UNIQUEMENT SI LES LEVRES SONT COLLEES
 !     --------------------------------------------------------
 !
-!     ALPHA = ANGLE ENTRE LES 2 VECTEURS (EN DEGRES)
-    s = vdir(1,1)*vdir(2,1) + vdir(1,2)*vdir(2,2) + vdir(1,3)*vdir(2,3)
+    if(inor.eq.0)then
+!        ALPHA = ANGLE ENTRE LES 2 VECTEURS (EN DEGRES)
+        s = vdir(1,1)*vdir(2,1) + vdir(1,2)*vdir(2,2) + vdir(1,3)*vdir(2,3)
 !
-!     ATTENTION, NE JAMAIS UTILISER LA FONCTION FORTRAN ACOS
-    alpha = trigom('ACOS',s)*180.d0/r8pi()
+!        ATTENTION, NE JAMAIS UTILISER LA FONCTION FORTRAN ACOS
+        alpha = trigom('ACOS',s)*180.d0/r8pi()
 !
-!     CAS SYMETRIQUE
-    if (syme .eq. 'OUI') then
+!        CAS SYMETRIQUE
+        if (syme .eq. 'OUI') then
 !
-!       ANGLE DOIT ETRE EGAL A 180+-2,5 DEGRES, SINON CA VEUT DIRE
-!       QUE L'HYPOTHESE DE LEVRES COLLEES EST FAUSSE : ON PLANTE
-        if (abs(alpha-180.d0) .gt. angmax) then
-            call utmess('F', 'RUPTURE0_34')
+!          ANGLE DOIT ETRE EGAL A 180+-2,5 DEGRES, SINON CA VEUT DIRE
+!          QUE L'HYPOTHESE DE LEVRES COLLEES EST FAUSSE : ON PLANTE
+            if (abs(alpha-180.d0) .gt. angmax) then
+                call utmess('F', 'RUPTURE0_34')
+            endif
+!
+        else if (syme.eq.'NON') then
+!
+!          ANGLE DOIT ETRE EGAL A 0+-5 DEGRES, SINON CA VEUT DIRE
+!          QUE L'HYPOTHESE DE LEVRES COLLEES EST FAUSSE : ON PLANTE
+            if (abs(alpha) .gt. 2.d0*angmax) then
+                call utmess('F', 'RUPTURE0_34')
+            endif
+!
         endif
-!
-    else if (syme.eq.'NON') then
-!
-!       ANGLE DOIT ETRE EGAL A 0+-5 DEGRES, SINON CA VEUT DIRE
-!       QUE L'HYPOTHESE DE LEVRES COLLEES EST FAUSSE : ON PLANTE
-        if (abs(alpha) .gt. 2.d0*angmax) then
-            call utmess('F', 'RUPTURE0_34')
-        endif
-!
     endif
 !
 !
@@ -164,11 +171,11 @@ subroutine fonno62(resu, noma, ndim, &
                     endif
                 end do
             end do
-!
-!       SINON, ON PLANTE CAR ON NE SAIT PAS QUELLE DIRECTION CHOISIR
-!
         else
-            call utmess('F', 'RUPTURE0_8')
+!
+!       SINON, PB CAR LA DEFINITION DES LEVRE EST OBLIGATOIRE EN SYNTAXE
+!
+            ASSERT(.FALSE.)
         endif
 !
     endif

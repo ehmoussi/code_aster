@@ -1,0 +1,133 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+# ********************************************************************
+# ********************************************************************
+#
+# VERIFICATION DE L'OBJET BASLOC DE LA SD_FOND_FISSURE DANS LE CAS
+# D'UNE ENTAILLE (CONFIG_INIT='DECOLLEE')
+# CAS 2D
+#
+# ********************************************************************
+# ********************************************************************
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+
+M=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='MED',   )
+
+
+FISSH=DEFI_FISSURE(MAILLAGE=M,
+                    FOND_FISS=_F(GROUP_NO='D',),
+                    LEVRE_SUP=_F(GROUP_MA='CD',),
+                    SYME='OUI',
+                    CONFIG_INIT='DECOLLEE',
+                    NORMALE=(0.,1.,0.));
+
+baseloc0=FISSH.sdj.BASLOC.VALE.get()
+
+ndfon=[]
+xproj=[]
+yproj=[]
+vnorX=[]
+vnorY=[]
+vdirX=[]
+vdirY=[]
+
+for i in range(0,len(baseloc0)//6):
+  ndfon.append(i+1)
+  xproj.append(baseloc0[6*i])
+  yproj.append(baseloc0[6*i+1])
+  vnorX.append(baseloc0[6*i+2])
+  vnorY.append(baseloc0[6*i+3])
+  vdirX.append(baseloc0[6*i+4])
+  vdirY.append(baseloc0[6*i+5])
+
+TABL0=CREA_TABLE(LISTE=(_F(LISTE_I=ndfon,PARA='ND_FOND'),
+                        _F(LISTE_R=xproj,PARA='XPROJ'),
+                        _F(LISTE_R=yproj,PARA='YPROJ'),
+                        _F(LISTE_R=vnorX,PARA='VNORX'),
+                        _F(LISTE_R=vnorY,PARA='VNORY'),
+                        _F(LISTE_R=vdirX,PARA='VDIRX'),
+                        _F(LISTE_R=vdirY,PARA='VDIRY'),
+                        ),);
+
+#EN 2D, BASLOC EST IDENTIQUE EN TOUT POINT :
+#   -CHAQUE NOEUD SE PROJETTE SUR LE FOND DE FISSURE EN (4,0)
+#   -LA NORMALE EST (0,1) TELLE QUE DEFINIT DANS DEFI_FISSURE
+#   -LA DIRECTION DE PROPAGATION EST (1,0)
+
+
+for i in range(0,len(baseloc0)//6):
+   TEST_TABLE(TABLE=TABL0,
+              FILTRE=_F(  NOM_PARA = 'ND_FOND',
+                          VALE_I = i+1),
+              NOM_PARA='XPROJ',
+              VALE_CALC=4.,
+              VALE_REFE=4.,
+              CRITERE='ABSOLU',
+              REFERENCE='ANALYTIQUE' )
+              
+   TEST_TABLE(TABLE=TABL0,
+              FILTRE=_F(  NOM_PARA = 'ND_FOND',
+                          VALE_I = i+1),
+              NOM_PARA='YPROJ',
+              VALE_CALC=0.,
+              VALE_REFE=0.,
+              CRITERE='ABSOLU',
+              REFERENCE='ANALYTIQUE' )
+              
+   TEST_TABLE(TABLE=TABL0,
+              FILTRE=_F(  NOM_PARA = 'ND_FOND',
+                          VALE_I = i+1),
+              NOM_PARA='VNORX',
+              VALE_CALC=0.,
+              VALE_REFE=0.,
+              CRITERE='ABSOLU',
+              REFERENCE='ANALYTIQUE' )
+
+   TEST_TABLE(TABLE=TABL0,
+              FILTRE=_F(  NOM_PARA = 'ND_FOND',
+                          VALE_I = i+1),
+                          NOM_PARA='VNORY',
+              VALE_CALC=1.0,
+              VALE_REFE=1.,
+              CRITERE='ABSOLU',
+              REFERENCE='ANALYTIQUE' )
+
+   TEST_TABLE(TABLE=TABL0,
+              FILTRE=_F(  NOM_PARA = 'ND_FOND',
+                          VALE_I = i+1),
+                          NOM_PARA='VDIRX',
+              VALE_CALC=1.0,
+              VALE_REFE=1.,
+              CRITERE='ABSOLU',
+              REFERENCE='ANALYTIQUE' )
+
+   TEST_TABLE(TABLE=TABL0,
+              FILTRE=_F(  NOM_PARA = 'ND_FOND',
+                          VALE_I = i+1),
+                          NOM_PARA='VDIRY',
+              VALE_CALC=0.,
+              VALE_REFE=0.,
+              CRITERE='ABSOLU',
+              REFERENCE='ANALYTIQUE' )
+
+FIN()
+#
