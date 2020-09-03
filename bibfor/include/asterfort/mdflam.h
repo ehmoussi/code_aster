@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ interface
     subroutine mdflam(dnorm, vitloc, knorm, cnorm, cost, sint,&
                   flim, fseuil, rigifl, defpla, fnorma,&
                   flocal, vnorm, defmax, enfo_fl, def,&
-                  deft0, deft, amor, cfl)
+                  deft0, deft, amor, cfl, critamor)
         real(kind=8) :: dnorm
         real(kind=8) :: vitloc(3)
         real(kind=8) :: knorm
@@ -40,6 +40,7 @@ interface
         real(kind=8) :: enfo_fl
         real(kind=8) :: deft0
         real(kind=8) :: cfl  
+        integer :: critamor  
         real(kind=8)     , pointer  :: def(:)                 
         real(kind=8)     , pointer  :: deft(:)
         real(kind=8)     , pointer  :: amor(:)           

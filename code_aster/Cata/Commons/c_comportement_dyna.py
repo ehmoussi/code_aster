@@ -133,6 +133,7 @@ def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
             DEPL_POST_FL=     SIMP(statut='f',typ='R',max='**'),
             RIGI_POST_FL=     SIMP(statut='f',typ='R',max='**'),
             AMOR_POST_FL=     SIMP(statut='f',typ='R',max='**'),
+            CRIT_AMOR   =     SIMP(statut='f',typ='TXM',into=("INCLUS","EXCLUS"),defaut= "INCLUS"),
         ), # end b_buckling
 
 #       C.2.5 Anti-sismic disposition non linearity

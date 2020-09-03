@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
 !   -0.2- Local variables
     aster_logical     :: multi_support
     integer           :: i, iex, nbexci, ier, par_coorno(2)
-    integer           :: nbno, ino, start, finish
+    integer           :: nbno, ino, start, finish, critamor
     real(kind=8)      :: sina, cosa, sinb, cosb, sing
     real(kind=8)      :: cosg, depglo(3), vitglo(3), deploc(6), vitloc(6)
     real(kind=8)      :: dvitlo(3), xjeu, knorm, flim, fseuil
@@ -211,12 +211,12 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     call nlget(sd_nl, _DIST_NO2                  , iocc=nl_ind, rscal=dist2 , buffer=buffnl)
     call nlget(sd_nl, _BUCKLING_LIMIT_FORCE      , iocc=nl_ind, rscal=flim  , buffer=buffnl)
     call nlget(sd_nl, _BUCKLING_POST_PALIER_FORCE, iocc=nl_ind, rscal=fseuil, buffer=buffnl)
-    call nlget(sd_nl, _BUCKLING_DEF             , iocc=nl_ind, rscal=enfo_fl, buffer=buffnl)
-    call nlget(sd_nl, _BUCKLING_DEF_PLA         , iocc=nl_ind, vr=def, buffer=buffnl)
-    call nlget(sd_nl, _BUCKLING_DEF_TOT         , iocc=nl_ind, vr=deft, buffer=buffnl)
-    call nlget(sd_nl, _BUCKLING_AMOR            , iocc=nl_ind, vr=amor, buffer=buffnl)
-    call nlget(sd_nl, _BUCKLING_DEF_TOT_0       , iocc=nl_ind, rscal=deft0, buffer=buffnl)
-
+    call nlget(sd_nl, _BUCKLING_DEF              , iocc=nl_ind, rscal=enfo_fl, buffer=buffnl)
+    call nlget(sd_nl, _BUCKLING_DEF_PLA          , iocc=nl_ind, vr=def, buffer=buffnl)
+    call nlget(sd_nl, _BUCKLING_DEF_TOT          , iocc=nl_ind, vr=deft, buffer=buffnl)
+    call nlget(sd_nl, _BUCKLING_AMOR             , iocc=nl_ind, vr=amor, buffer=buffnl)
+    call nlget(sd_nl, _BUCKLING_DEF_TOT_0        , iocc=nl_ind, rscal=deft0, buffer=buffnl)
+    call nlget(sd_nl, _BUCKLING_AMOR_IN          , iocc=nl_ind, iscal=critamor, buffer=buffnl)
 !
     dnorm = 0.d0
     call distno(deploc, sign_dyz, obst_typ, xjeu, dist1,&
@@ -236,8 +236,7 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
         call mdflam(dnorm, dvitlo, knorm, cnorm, cost, sint,&
                     flim, fseuil, rigifl, defpla, fn,&
                     flocal, vnorm, defmax ,enfo_fl, def,&
-                    deft0, deft, amor, cfl)
-
+                    deft0, deft, amor, cfl, critamor)
 
 !       --- Conversion to the global (physical) reference
         call locglo(flocal, sina, cosa, sinb, cosb,&

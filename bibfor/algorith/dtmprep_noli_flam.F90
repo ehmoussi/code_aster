@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
     integer           :: ino1, ino2, ind1, ind2, nbmode
     integer           :: info, vali, j, neq, mxlevel
     integer           :: nbchoc, nexcit, nl_type, tomove, k
-    integer           :: cntr, n2, n3
+    integer           :: cntr, n2, n3, amorin
 !
     real(kind=8)      :: r8bid, gap, xjeu, sina, cosa
     real(kind=8)      :: sinb, cosb, sing, cosg, valr(10)
@@ -97,6 +97,7 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
     character(len=16) :: valk(2), obst_typ, motfac
     character(len=19) :: nomres
     character(len=24) :: nl_title, mdgene, jvname, jvname0
+    character(len=3)  :: typamor
 !
     integer          , pointer  :: ddlcho(:)         => null()
     real(kind=8)     , pointer  :: coor_no1(:)       => null()
@@ -312,6 +313,15 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
     call getvr8(motfac, 'RIGI_NOR', iocc=icomp, scal=kn, nbret=n1)
     if (n1.gt.0) call nlsav(sd_nl, _STIF_NORMAL, 1, iocc=i, rscal=kn)
 
+    call getvtx(motfac, 'CRIT_AMOR', iocc=icomp, scal=typamor, nbret=n1)
+        if (typamor(1:3) .eq. 'INC') then
+            amorin=1
+            call nlsav(sd_nl, _BUCKLING_AMOR_IN, 1, iocc=i, iscal=amorin)
+        else if (typamor(1:3) .eq. 'EXC') then
+            amorin=0
+            call nlsav(sd_nl, _BUCKLING_AMOR_IN, 1, iocc=i, iscal=amorin)
+        end if
+
     if (kn.le.0.d0) then
         call utmess('F', 'ALGORITH5_40')
     endif
@@ -343,7 +353,6 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
     call getvr8(motfac, 'DEPL_POST_FL', iocc=icomp, nbval=0, nbret=n1)
     call nlinivec(sd_nl, _BUCKLING_DEF_PLA, (-n1+1), iocc=i, vr=def)
     def(1)=def1
-
   
     if (n1.lt.0) then
        call getvr8(motfac, 'DEPL_POST_FL', iocc=icomp, nbval=-n1, vect=def(2:(-n1+1))) 
@@ -353,7 +362,6 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
           endif
        enddo
     endif
-
 
     call getvr8(motfac, 'RIGI_POST_FL', iocc=icomp, nbval=0, nbret=n2)
     call nlinivec(sd_nl, _BUCKLING_RIGI_NOR, (-n1+1), iocc=i, vr=rigi)
@@ -382,7 +390,6 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
           call utmess('F', 'ALGORITH5_85') 
        endif
     enddo
-
 
     call getvr8(motfac, 'AMOR_POST_FL', iocc=icomp, nbval=0, nbret=n2)
     if ((n2.ne.n1).and.(n2.lt.0)) then

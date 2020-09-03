@@ -168,6 +168,7 @@ TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        AMOR_NOR=AMOR_NOR,
                                        AMOR_FL=AMOR_FL,
                                        AMOR_POST_FL=AMOR_POST_FL,
+                                       CRIT_AMOR='INCLUS',
                                        ),
                       INCREMENT=_F(
                                   INST_INIT = 0.,   INST_FIN = 1.,
@@ -198,7 +199,7 @@ TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        AMOR_NOR=AMOR_NOR,
                                        AMOR_FL=AMOR_FL,
                                        AMOR_POST_FL=AMOR_POST_FL,
-
+                                       CRIT_AMOR='INCLUS',
                                        ),
                       INCREMENT=_F(INST_FIN = 1.,  PAS = 0.0002,)
                             )
@@ -224,6 +225,7 @@ TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        AMOR_NOR=AMOR_NOR,
                                        AMOR_FL=AMOR_FL,
                                        AMOR_POST_FL=AMOR_POST_FL,
+                                       CRIT_AMOR='INCLUS',
                                        ),
                       INCREMENT=_F(
                                  INST_FIN = 9.,  PAS = 0.001)
@@ -262,6 +264,63 @@ TEST_RESU(RESU=_F(INST=9.,
                   CRITERE=('ABSOLU', 'RELATIF'),
                    ),
           )
+
+
+# CRIT_AMOR='EXCLUS'
+TRAN_G=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
+                            MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
+                            SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
+                      ETAT_INIT=_F(  VITE = VIT_GENE),
+                      COMPORTEMENT=_F( RELATION='FLAMBAGE',
+                                       INTITULE='FLAMBAGE_SDND105a',
+                                       NOEUD_1 = 'N02',
+                                       OBSTACLE = PLANY,
+                                       NORM_OBST = (0., 1., 0.,),
+                                       ORIG_OBST = (0., 0., 0.,),
+                                       JEU = 1.,
+                                       RIGI_NOR = 1.,
+                                       FNOR_CRIT = 1.,
+                                       FNOR_POST_FL = 0.5,
+                                       LARG_PLAT =LARG_PLAT,
+                                       ENFO_FL = ENFO_FL,
+                                       DEPL_POST_FL=DEPL_POST_FL,
+                                       RIGI_POST_FL=RIGI_POST_FL,
+                                       AMOR_NOR=AMOR_NOR,
+                                       AMOR_FL=AMOR_FL,
+                                       AMOR_POST_FL=AMOR_POST_FL,
+                                       CRIT_AMOR='EXCLUS',
+                                       ),
+                      INCREMENT=_F(
+                                  INST_INIT = 0.,   INST_FIN = 9.,
+                                  PAS = 0.0002)
+                            )
+
+TRAN2=REST_GENE_PHYS(   RESU_GENE=TRAN_G,
+                       NOM_CHAM=('VITE'),
+                       )
+
+TEST_RESU(RESU=_F(INST=9.,
+                  RESULTAT=TRAN2,
+                  NOM_CHAM='VITE',
+                  NOEUD='N02',
+                  NOM_CMP='DX',
+                  VALE_CALC=-0.02620966562606413,
+                  CRITERE=('ABSOLU', 'RELATIF'),
+                   ),
+          )
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 FIN()
