@@ -294,6 +294,7 @@ for K in range(len(alphaREF)):
                          NOM_CHAM = 'DEPL',
                          TYPE_CHAM = 'NOEU_DEPL_R',
                          RESULTAT = UTOT[K],
+                         NUME_ORDRE=1,
                         );
 
    CH_AF[K]=CREA_CHAMP(OPERATION='AFFE',

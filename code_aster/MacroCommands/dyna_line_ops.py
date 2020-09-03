@@ -928,7 +928,6 @@ class DynaLineBasis:
                                       TYPE_CHAM = 'NOEU_DEPL_R',
                                       RESULTAT = mode_intf,
                                       NOM_CHAM = 'DEPL',
-                                      INTERPOL = 'NON',
                                       OPERATION = 'EXTR',
                                      )
                 affe_crea_resu.append(_F(CHAM_GD = __champ,

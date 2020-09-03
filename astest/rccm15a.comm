@@ -632,11 +632,13 @@ RMECAV=CALC_CHAMP(RESULTAT=RMECAV,reuse=RMECAV,
 MP=CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
               OPERATION='EXTR',
               RESULTAT=RMECAP,
+              NUME_ORDRE= 1,
               NOM_CHAM='EFGE_ELNO',);
 
 MV=CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
               OPERATION='EXTR',
               RESULTAT=RMECAV,
+              NUME_ORDRE= 1,
               NOM_CHAM='EFGE_ELNO',);
 
 

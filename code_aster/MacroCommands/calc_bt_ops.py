@@ -1911,6 +1911,7 @@ def calc_bt_ops(self,
             NOM_CHAM='EFGE_ELGA',
             OPERATION='EXTR',
             RESULTAT=__resu,
+            NUME_ORDRE= 1,
             TYPE_CHAM='ELGA_SIEF_R')
 
 
@@ -2069,6 +2070,7 @@ def calc_bt_ops(self,
             NOM_CHAM='EFGE_ELGA',
             OPERATION='EXTR',
             RESULTAT=__resu1,
+            NUME_ORDRE=1,
             TYPE_CHAM='ELGA_SIEF_R')
 
 

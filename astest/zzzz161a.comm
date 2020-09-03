@@ -119,6 +119,7 @@ RESUTRQ2=CALC_ERREUR(reuse=RESUTRQ2,
 REQT_GD=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                    OPERATION='EXTR',
                    RESULTAT=RESUTRQ2,
+                   NUME_ORDRE=1,
                    NOM_CHAM = 'DEPL',);
 #
 # 4. Impressions

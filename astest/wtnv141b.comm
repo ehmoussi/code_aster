@@ -250,6 +250,7 @@ DEP_INIB=CREA_RESU(OPERATION='AFFE',
 DEPL_INI=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                     OPERATION='EXTR',
                     RESULTAT=DEP_INIB,
+                    NUME_ORDRE=1,
                     NOM_CHAM='DEPL');
 
 ######################################

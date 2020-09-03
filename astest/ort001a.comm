@@ -140,6 +140,7 @@ RESU_TH0=THER_LINEAIRE(MODELE=MO_THER,
 TEMP_0=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
                   OPERATION='EXTR',
                   RESULTAT=RESU_TH0,
+                  NUME_ORDRE = 0,
                   NOM_CHAM='TEMP',);
 
 

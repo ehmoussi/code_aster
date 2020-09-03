@@ -224,6 +224,7 @@ PRASS1 = CALC_CHAMP(MODELE=mo, RESULTAT=PRASS1, reuse=PRASS1, FORCE='FORC_NODA')
 
 FEXT1 = CREA_CHAMP(OPERATION='EXTR',
                    TYPE_CHAM='NOEU_DEPL_R',
+                   NUME_ORDRE=1,
                    NOM_CHAM='FORC_NODA',
                    RESULTAT=PRASS1,
                    NUME_DDL=nddl)
