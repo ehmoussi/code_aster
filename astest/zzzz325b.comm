@@ -82,6 +82,53 @@ IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=RESU1, NOM_CHAM='SIRO_ELEM',MAILLE=
 #-------------------------------------------------------------------------
 RESU2=CALC_CHAMP(RESULTAT=RESU1,CONTRAINTE=('SIRO_ELEM'))
 
+SIRO = CREA_CHAMP(OPERATION = 'EXTR',
+                    NOM_CHAM = 'SIRO_ELEM',
+                    TYPE_CHAM = 'ELEM_SIEF_R',
+                    RESULTAT = RESU2,
+                    NUME_ORDRE = 1,
+                    INFO=2,
+                    )
+
+
+#### USAGE TOUT_INI_ELEM AVEC CHAMPS NEUT_R ET NEUT_F POUR MODELISATION D_PLAN
+#### ET MAILLES DE PEAU EN D_PLAN
+
+MA = DEFI_GROUP(reuse = MA,
+            MAILLAGE = MA,
+            CREA_GROUP_MA = _F(NOM = 'LIGNE',
+                               TYPE_MAILLE=('SEG2'),
+                               TOUT='OUI',),)
+
+CHAEL= CREA_CHAMP(TYPE_CHAM = 'ELEM_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MO,
+                    PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA='LIGNE',
+                                   NOM_CMP  = 'X1',
+                                   VALE   = 1.0,),);
+
+def fonc(sn,x1):
+    a = sn*x1
+    return a
+
+FORM = FORMULE(VALE = 'fonc(SIG_N,X1)',
+                     NOM_PARA=('SIG_N','X1',),fonc=fonc)
+
+CHAELF = CREA_CHAMP(OPERATION = 'AFFE',
+                  TYPE_CHAM = 'ELEM_NEUT_F',
+                  MODELE = MO,
+                  PROL_ZERO='OUI',
+                  AFFE = _F(GROUP_MA='LIGNE',
+                       NOM_CMP  = 'X1',
+                       VALE_F   = FORM,),)
+
+CHAELR = CREA_CHAMP(TYPE_CHAM = 'ELEM_NEUT_R',
+       OPERATION = 'EVAL',
+       CHAM_F    = CHAELF,
+       CHAM_PARA = (SIRO,CHAEL),
+       INFO=1,)
+
 #-------------------------------------------------------------------------
 # LE CHAMP SIGM_ELGA OBTENU EST HOMOGENE :
 #  SIXX    SIYY    SIZZ    SIXY  
@@ -506,6 +553,7 @@ TEST_RESU(RESU=(_F(CRITERE='ABSOLU',
                    NOM_CHAM='SIRO_ELEM',
                    VALE_ABS='NON',),),
           )
+
 TEST_RESU(RESU=(_F(CRITERE='ABSOLU',
                    NUME_ORDRE=1,
                    REFERENCE='ANALYTIQUE',
@@ -893,4 +941,22 @@ TEST_RESU(RESU=(_F(CRITERE='ABSOLU',
                    NOM_CHAM='SIRO_ELEM',
                    VALE_ABS='NON',),),
           )
+
+TEST_RESU(CHAM_ELEM=(_F(REFERENCE='AUTRE_ASTER',
+                   NOM_CMP='X1',
+                   PRECISION=1.E-08,
+                   VALE_CALC=100.0,
+                   VALE_REFE=100.0,
+                   MAILLE='M5',
+                   CHAM_GD=CHAELR,
+                   VALE_ABS='NON'),
+                 _F(REFERENCE='AUTRE_ASTER',
+                   NOM_CMP='X1',
+                   PRECISION=1.E-08,
+                   VALE_CALC=200.0,
+                   VALE_REFE=200.0,
+                   MAILLE='M8',
+                   CHAM_GD=CHAELR,
+                   VALE_ABS='NON'),
+            ),)
 FIN();

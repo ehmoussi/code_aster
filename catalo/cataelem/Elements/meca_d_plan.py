@@ -156,6 +156,11 @@ EGNEUT_F = LocatedComponents(phys=PHY.NEUT_F, type='ELGA', location='RIGI',
 EGNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELGA', location='RIGI',
     components=('X[30]',))
 
+ENEU1_R  = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
+                             components=('X[30]',))
+
+ELNEUT_F = LocatedComponents(phys=PHY.NEUT_F, type='ELEM',
+                             components=('X[30]',))
 
 EMNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
     components=('X[30]',))
@@ -1007,6 +1012,7 @@ class MEDPQS8(Element):
 
         OP.TOU_INI_ELEM(te=99,
             para_out=((OP.TOU_INI_ELEM.PERREUR, EERREUR), (OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D),
+                      (OP.TOU_INI_ELEM.PNEUT_F, ELNEUT_F), (SP.PNEU1_R, ENEU1_R),
                      ),
         ),
 

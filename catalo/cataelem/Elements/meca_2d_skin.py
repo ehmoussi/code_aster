@@ -40,6 +40,12 @@ MMATUNS  = ArrayOfComponents(phys=PHY.MDNS_R, locatedComponents=DDL_MECA)
 
 MVECTUR  = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=DDL_MECA)
 
+ENEU1_R  = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
+                             components=('X[30]',))
+
+ELNEUT_F = LocatedComponents(phys=PHY.NEUT_F, type='ELEM',
+                             components=('X[30]',))
+
 #---------------------------------------------------------------------------------------------------
 class MEPLSE2(Element):
     """Skin element for 2D isoparametric elements - On SE2"""
@@ -173,7 +179,8 @@ class MEPLSE2(Element):
         ),
 
         OP.TOU_INI_ELEM(te=99,
-            para_out = ((OP.TOU_INI_ELEM.PERREUR, LC.CERROR),),
+            para_out = ((OP.TOU_INI_ELEM.PERREUR, LC.CERROR),
+                        (OP.TOU_INI_ELEM.PNEUT_F, ELNEUT_F), (SP.PNEU1_R, ENEU1_R),),
         ),
 
         OP.TOU_INI_ELGA(te=99,
