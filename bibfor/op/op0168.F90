@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -74,6 +74,7 @@ subroutine op0168()
     character(len=3) :: ouinon
     character(len=8) :: k8b, modeou, modein
     character(len=16) :: typcon, nomcmd, critfi, nompar(3), nomsy, nompav
+    character(len=16) :: nompa2(3)
     character(len=19) :: numedd
     character(len=24) :: masse, amor, raide, refd, massi, amori, raidi, kmode
     character(len=24) :: valk(3)
@@ -87,6 +88,8 @@ subroutine op0168()
     data  kvalk / '&&OP0168.GRAN_MODAL_K_' /
     data nompar / 'MASS_EFFE_UN_DX' , 'MASS_EFFE_UN_DY' ,&
      &              'MASS_EFFE_UN_DZ' /
+    data nompa2 / 'MASS_EFFE_DX' , 'MASS_EFFE_DY' ,&
+     &              'MASS_EFFE_DZ' /
     data  nopara /        'NUME_MODE'       ,&
      &  'NORME'           , 'TYPE_MODE'       , 'NOEUD_CMP'       ,&
      &  'FREQ'            , 'OMEGA2'          , 'AMOR_REDUIT'     ,&
@@ -309,6 +312,41 @@ subroutine op0168()
 !
                     end do
                 endif
+                if (critfi .eq. 'MASS_EFFE' .and. typcon(1:9) .eq. 'MODE_MECA') then
+                    do j = 1, nbmodt
+                        iord = zi(jor+j-1)
+                        call rsadpa(modein, 'L', 3, nompa2, iord,&
+                                    0, tjv=lpar, styp=k8b, istop=0)
+                        dx = zr(lpar(1))
+                        dy = zr(lpar(2))
+                        dz = zr(lpar(3))
+                        if (dx .eq. undf .or. dy .eq. undf .or. dz .eq. undf) then
+                            call utmess('F', 'ALGELINE3_10')
+                        endif
+                        if (n7 .ne. 0) then
+                            if (dx .ge. seuil .or. dy .ge. seuil .or. dz .ge. seuil) then
+                                nbmode = nbmode + 1
+                                zi(jordr+nbmode-1) = iord
+                            endif
+                        else if (n8.ne.0) then
+                            if (dx .ge. seuil) then
+                                nbmode = nbmode + 1
+                                zi(jordr+nbmode-1) = iord
+                            endif
+                        else if (n9.ne.0) then
+                            if (dy .ge. seuil) then
+                                nbmode = nbmode + 1
+                                zi(jordr+nbmode-1) = iord
+                            endif
+                        else if (n10.ne.0) then
+                            if (dz .ge. seuil) then
+                                nbmode = nbmode + 1
+                                zi(jordr+nbmode-1) = iord
+                            endif
+                        endif
+!
+                    end do
+                endif
                 if (critfi .eq. 'MASS_GENE') then
                     mastot = zero
                     do j = 1, nbmodt
@@ -455,6 +493,58 @@ subroutine op0168()
                             0, sjv=jadr, styp=k8b, istop=0)
                 freq = zr(jadr)
                 call rsadpa(modeou, 'L', 3, nompar, iord,&
+                            0, tjv=lpar, styp=k8b, istop=0)
+                dx = zr(lpar(1))
+                dy = zr(lpar(2))
+                dz = zr(lpar(3))
+                if (dx .eq. undf .or. dy .eq. undf .or. dz .eq. undf) then
+                    call utmess('F', 'ALGELINE3_10')
+                endif
+                cumulx = cumulx + dx
+                cumuly = cumuly + dy
+                cumulz = cumulz + dz
+                vali(1) = iord
+                vali(2) = nume
+                valr(1) = freq
+                valr(2) = dx
+                valr(3) = dy
+                valr(4) = dz
+                valr(5) = cumulx
+                valr(6) = cumuly
+                valr(7) = cumulz
+                if (ouinon .eq. 'OUI') then
+                    call utmess('I', 'ALGELINE6_51', ni=2, vali=vali, nr=7,&
+                                valr=valr)
+                else
+                    call utmess('I', 'ALGELINE6_53', ni=2, vali=vali, nr=4,&
+                                valr=valr)
+                endif
+            end do
+        endif
+        call rsvpar(modeou, 1, 'MASS_EFFE_DX', ibid, undf,&
+                    k8b, iret)
+        call rsadpa(modeou, 'L', 1, 'MASS_EFFE_DX', 1,&
+                    0, sjv=jadr, styp=k8b, istop=0)
+!
+        if (iret .ne. 100 .and. critfi .eq. 'MASS_EFFE' .and. typcon(1:9) .eq.&
+            'MODE_MECA') then
+            if (ouinon .eq. 'OUI') then
+                call utmess('I', 'ALGELINE6_50')
+            else
+                call utmess('I', 'ALGELINE6_52')
+            endif
+            cumulx = 0.d0
+            cumuly = 0.d0
+            cumulz = 0.d0
+            do j = 1, nbmode
+                iord = zi(jordr+j-1)
+                call rsadpa(modeou, 'L', 1, 'NUME_MODE', iord,&
+                            0, sjv=jadr, styp=k8b, istop=0)
+                nume = zi(jadr)
+                call rsadpa(modeou, 'L', 1, 'FREQ', iord,&
+                            0, sjv=jadr, styp=k8b, istop=0)
+                freq = zr(jadr)
+                call rsadpa(modeou, 'L', 3, nompa2, iord,&
                             0, tjv=lpar, styp=k8b, istop=0)
                 dx = zr(lpar(1))
                 dy = zr(lpar(2))

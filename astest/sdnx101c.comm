@@ -23,6 +23,7 @@ DEBUT(   CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'));
 MAIL0=LIRE_MAILLAGE(FORMAT='MED',);
 MAIL = CREA_MAILLAGE(MAILLAGE=MAIL0,
                   CREA_POI1 =_F(NOM_GROUP_MA = 'PSI0',GROUP_NO = ('PSI0'),),);
+IMPR_RESU(RESU=_F(MAILLAGE=MAIL,), FORMAT='ASTER',UNITE=8)
 
 #
 # ----------------------------------------------------------------------
@@ -520,13 +521,37 @@ MODEB=CALC_MODES(MATR_RIGI=MATRRIGB,
                  MATR_MASS=MATRMASB,
                  )
 
+MODEB2=EXTR_MODE(
+    FILTRE_MODE=_F(CRIT_EXTR ='MASS_EFFE', SEUIL=1.E0,MODE=MODEB),
+                 ),
+
+TEST_RESU(RESU=(_F(RESULTAT=MODEB,
+                   NUME_ORDRE=5,
+                   PARA='FREQ',
+                   CRITERE='RELATIF',
+                   VALE_CALC=6.521084E+00,),
+                _F(RESULTAT=MODEB2,
+                   NUME_ORDRE=4,
+                   PARA='FREQ',
+                   CRITERE='RELATIF',
+                   VALE_CALC=6.521084E+00,),
+                _F(RESULTAT=MODEB,
+                   NUME_ORDRE=9,
+                   PARA='FREQ',
+                   CRITERE='RELATIF',
+                   VALE_CALC=7.885330E+00,),
+                _F(RESULTAT=MODEB2,
+                   NUME_ORDRE=6,
+                   PARA='FREQ',
+                   CRITERE='RELATIF',
+                   VALE_CALC=7.885330E+00,),
+                ),);
+
 
 CHAPP=AFFE_CHAR_MECA(MODELE=MODELB,
                      PESANTEUR=_F(GRAVITE=9.81,
                                   DIRECTION=(0.0,0.0,-1.0,),),);
 #
-
-
 
 TEMPL2B=DEFI_LIST_REEL(
                       DEBUT=0.01,
