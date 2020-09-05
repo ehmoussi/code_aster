@@ -462,34 +462,6 @@ amto2=COMB_MATR_ASSE(COMB_R=(
 # epsilon = 1.0e-10
 # 
 
-'''
-CALC_LAPL_TEMPS( 
-     INST_FIN = 20,
-     PRECISION = 1E-10,
-     PAS_INST = 0.01,
-     NB_MODE = 6,
-     UNITE_RESU_RIGI = 35,
-     UNITE_RESU_AMOR = 37,
-     UNITE_RESU_MASS = 38,
-     UNITE_IMPR_ASTER = 26,
-     TABLE_SOL = TABSOL,
-     MACR_ELEM_DYNA = MAEL0,
-     GROUP_MA_INTERF = 'RADIER',
-     PARAMETRE = _F(
-                                Z0 = -5.80,
-                                SURF = 'OUI',
-                                DREF = 5,
-                                ALGO = 'DEPL',
-                                OFFSET_MAX=40,
-                                OFFSET_NB=400,
-                                ),
-     MATR_GENE = _F(
-                  MATR_MASS = mato,
-                  MATR_RIGI = rito,
-                  MATR_AMOR = amto2,
-                   ), 
-                );
-'''
 
 CALC_MISS(
              TYPE_RESU='FICHIER_TEMPS',
@@ -502,6 +474,7 @@ CALC_MISS(
              PRECISION = 1E-10,
              PAS_INST = 0.05,
              COEF_SURECH = 1.0, # Pour accélérer le calcul on ne suréchantillonne pas
+             COEF_MULT = 1.0,
              UNITE_RESU_RIGI = 35,
              UNITE_RESU_AMOR = 37,
              UNITE_RESU_MASS = 38,

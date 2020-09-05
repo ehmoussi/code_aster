@@ -831,6 +831,7 @@ class PostMissFichierTemps(PostMissFichier):
         self.dt = self.param['PAS_INST']
         N_inst = int(self.param['INST_FIN']/self.param['PAS_INST'])
         factor = self.param['COEF_SURECH']
+        coefm = self.param['COEF_MULT']
         self.L_points = int(factor * N_inst)
         self.nbr_freq = self.L_points//2 + 1
         eps = self.param['PRECISION']
@@ -861,6 +862,7 @@ class PostMissFichierTemps(PostMissFichier):
         """Calcul de l'impédance dans le domaine temporel"""
         fid = open(self.fname("impe_Laplace"), 'r')
         reduc_factor = self.reducFactor
+        coefm = self.param['COEF_MULT']
         angle_seuil = self.cutOffValue
         if angle_seuil == 1:
             fc = self.cutOffValue*self.nbr_freq/float(reduc_factor) % self.nbr_freq
@@ -957,7 +959,7 @@ class PostMissFichierTemps(PostMissFichier):
                 for k in range(0, len(x_t)):
                     x_t[k] = fact * x_t[k]  # x_t[k] = rho**(-k) * x_t[k]
                     fact = fact*rhoinv
-                self.Z_temps[r, l,:] = x_t
+                self.Z_temps[r, l,:] = coefm*x_t
 
         termes_diag = NP.diag(self.Z_temps[:,:, 0])
         liste_ddl_pb = ''
