@@ -65,9 +65,9 @@ type(Behaviour_PrepPara), intent(inout) :: behaviourPrep
     character(len=24), parameter :: cellAffe = '&&COMPMECASAVE.LIST'
     aster_logical :: lAllCellAffe
     integer :: nbCellAffe
-    character(len=16) :: defoComp, relaComp, typeCpla, typeComp
+    character(len=16) :: defoComp, relaComp, typeCpla, typeComp, reguVisc
     character(len=16) :: relaCompPY, defoCompPY
-    integer :: iComp, nbComp, exteDefo
+    integer :: iComp, nbComp, exteDefo, lctestIret
     character(len=24) :: ligrmo
     character(len=8) :: partit
     mpi_int :: nbCPU, mpiCurr
@@ -103,6 +103,7 @@ type(Behaviour_PrepPara), intent(inout) :: behaviourPrep
         relaComp = behaviourPrep%v_para(iComp)%rela_comp
         defoComp = behaviourPrep%v_para(iComp)%defo_comp
         typeComp = behaviourPrep%v_para(iComp)%type_comp
+        reguVisc = behaviourPrep%v_para(iComp)%regu_visc
         lMfront  = behaviourPrep%v_paraExte(iComp)%l_mfront_offi .or.&
                    behaviourPrep%v_paraExte(iComp)%l_mfront_proto
         exteDefo = behaviourPrep%v_paraExte(iComp)%strain_model
@@ -129,6 +130,14 @@ type(Behaviour_PrepPara), intent(inout) :: behaviourPrep
                                 lMfront     , exteDefo     ,&
                                 defoComp    , defoCompPY   ,&
                                 relaComp    , relaCompPY)
+
+! ----- Checking REGU_VISC
+        if (reguVisc .ne. 'VIDE') then
+            call lctest(relaCompPY, 'REGU_VISC', reguVisc, lctestIret)
+            if (lctestIret .eq. 0) then
+                call utmess('F', 'COMPOR1_33', nk = 2, valk = [reguVisc, relaComp])
+            endif
+        endif
 
 ! ----- No Deborst allowed with large strains models
         if (lNeedDeborst .and. defoComp .eq. 'GDEF_LOG') then

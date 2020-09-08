@@ -173,6 +173,11 @@ Seules quelques lois de comportement qui ne nécessitent pas la méthode Deborst
  Si vous voulez seulement de l'élastoplasticité, il faut utiliser %(k2)s
 """),
 
+    33: _("""
+ Le type de régularisation visqueuse <%(k1)s> est incompatible avec le comportement <%(k2)s>
+"""),
+
+
     41: _("""
  CAM_CLAY :
  Pour la maille <%(k1)s> une des exponentielles pose un problème numérique.
