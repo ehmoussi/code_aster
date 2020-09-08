@@ -299,7 +299,7 @@ Il faut supprimer cette occurrence pour que le calcul fonctionne.
 """),
 
     61: _("""
-Vous utilisez un comportement élastique non-linéaire avec un état initial.
+Vous utilisez un comportement non-incrémental (élasticité non-linéaire par exemple) avec un état initial.
 Cet état initial ne sera pas pris en compte.
 """),
 

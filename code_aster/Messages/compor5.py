@@ -86,31 +86,18 @@ La déformation est supposée nulle.
  des contraintes planes (ou des coques) ou des contraintes 1D (barres, poutres) avec ce comportement, on a utilisé  DEBORST.
  """),
 
-    21: _("""
- Sur certaines mailles, aucun comportement n'est défini. Code_Aster a défini par défaut
-  COMPORTEMENT='ELAS', DEFORMATION='PETIT'.
-"""),
+    21: _("""Sur certaines mailles, aucun comportement n'étant donné, on a défini par défaut un comportement élastique en petites déformations."""),
 
-    22: _("""
- Sur certaines mailles, la modélisation est incompatible avec le comportement.
- Une erreur fatale pourrait suivre ce message.
-"""),
-
-    23: _("""
- La modélisation choisie <%(k1)s> sur la maille <%(k2)s> est incompatible avec les déformations <%(k3)s>.
- Utilisez un autre type de déformations (cf. U4.51.11 et les documents R).
-"""),
+    23: _("""L'occurrence numéro %(i1)d du mot-clé COMPORTEMENT affecte le modèle de déformation %(k1)s sur une modélisation %(k2)s. Ce n'est pas possible."""),
 
     24 : _("""
-Erreur utilisateur :
   Sur la maille %(k1)s le calcul prend en compte le séchage. Mais il manque la valeur de référence.
   On ne peut donc pas calculer la déformation de dessication associée.
 """),
 
-    30: _("""
-  Pour les poutres multifibres, l'utilisation de lois de comportement via
-  DEBORST nécessite d'avoir un seul matériau par poutre!
- """),
+    25 : _("""Vous utilisez le comportement ENDO_HETEROGENE mais seul le parallélisme de type centralisé est autorisé pour ce comportement."""),
+
+    30: _("""Pour les poutres multifibres, l'utilisation de lois de comportement via DEBORST nécessite d'avoir un seul matériau par poutre."""),
  
     32 : _("""
 Sur la maille %(k1)s la variable de commande %(k2)s est définie. Mais il manque le paramètre matériau %(k3)s.

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine comp_meca_chck(model, mesh, full_elem_s, l_etat_init, ds_compor_prep)
+subroutine comp_meca_chck(model, mesh, fullElemField, lInitialState, behaviourPrep)
 !
 use Behaviour_type
 !
@@ -25,24 +25,25 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/lccree.h"
-#include "asterc/lctest.h"
 #include "asterc/lcdiscard.h"
+#include "asterc/lctest.h"
 #include "asterfort/assert.h"
+#include "asterfort/compMecaChckModel.h"
+#include "asterfort/compMecaChckStrain.h"
 #include "asterfort/comp_meca_full.h"
 #include "asterfort/comp_meca_l.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/nmdovd.h"
-#include "asterfort/nmdovm.h"
+#include "asterfort/compMecaSelectPlaneStressAlgo.h"
 #include "asterfort/comp_read_mesh.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/utmess.h"
 !
 #include "asterc/asmpi_comm.h"
 #include "asterfort/asmpi_info.h"
 !
 character(len=8), intent(in) :: model, mesh
-character(len=19), intent(in) :: full_elem_s
-aster_logical, intent(in) :: l_etat_init
-type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
+character(len=19), intent(in) :: fullElemField
+aster_logical, intent(in) :: lInitialState
+type(Behaviour_PrepPara), intent(inout) :: behaviourPrep
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,104 +55,114 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
 !
 ! In  mesh             : name of mesh
 ! In  model            : name of model
-! In  full_elem_s      : <CHELEM_S> of FULL_MECA option
-! In  l_etat_init      : .true. if initial state is defined
-! IO  ds_compor_prep   : datastructure to prepare comportement
+! In  fullElemField    : <CHELEM_S> of FULL_MECA option
+! In  lInitialState    : .true. if initial state is defined
+! IO  behaviourPrep    : datastructure to prepare behaviour
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: list_elem_affe
-    aster_logical :: l_affe_all
-    integer :: nb_elem_affe
-    character(len=16) :: defo_comp, rela_comp, rela_thmc, type_cpla
-    character(len=16) :: rela_comp_py, defo_comp_py
-    character(len=16) :: keywordfact
-    integer :: i_comp, nb_comp, exte_defo
-    aster_logical :: l_one_elem, l_elem_bound
+    character(len=16), parameter :: keywordfact = 'COMPORTEMENT'
+    character(len=24), parameter :: cellAffe = '&&COMPMECASAVE.LIST'
+    aster_logical :: lAllCellAffe
+    integer :: nbCellAffe
+    character(len=16) :: defoComp, relaComp, typeCpla, typeComp
+    character(len=16) :: relaCompPY, defoCompPY
+    integer :: iComp, nbComp, exteDefo
     character(len=24) :: ligrmo
     character(len=8) :: partit
-    mpi_int :: nb_proc, mpicou
-    aster_logical :: l_auto_elas, l_auto_deborst, l_comp_erre, l_mfront
+    mpi_int :: nbCPU, mpiCurr
+    aster_logical :: lElasByDefault, lNeedDeborst, lMfront, lDistParallel
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    keywordfact    = 'COMPORTEMENT'
-    list_elem_affe = '&&COMPMECASAVE.LIST'
-    nb_comp        = ds_compor_prep%nb_comp
-    l_auto_elas    = ASTER_FALSE
-    l_auto_deborst = ASTER_FALSE
-    l_comp_erre    = ASTER_FALSE
+    nbComp = behaviourPrep%nb_comp
+    lNeedDeborst   = ASTER_FALSE
+    lElasByDefault = ASTER_FALSE
+    lDistParallel  = ASTER_FALSE
 !
 ! - MPI initialisation
 !
-    call asmpi_comm('GET', mpicou)
-    call asmpi_info(mpicou, size=nb_proc)
+    call asmpi_comm('GET', mpiCurr)
+    call asmpi_info(mpiCurr, size=nbCPU)
+!
+! - Distributed parallelism
+!
+    ligrmo = model//'.MODELE'
+    call dismoi('PARTITION', ligrmo, 'LIGREL', repk=partit)
+    lDistParallel = partit .ne. ' ' .and. nbCPU .gt. 1
 !
 ! - Loop on occurrences of COMPORTEMENT
 !
-    do i_comp = 1, nb_comp
-! ----- Get list of elements where comportment is defined
-        call comp_read_mesh(mesh          , keywordfact, i_comp        ,&
-                            list_elem_affe, l_affe_all , nb_elem_affe)
-! ----- Get infos
-        rela_comp = ds_compor_prep%v_para(i_comp)%rela_comp
-        defo_comp = ds_compor_prep%v_para(i_comp)%defo_comp
-        type_cpla = ds_compor_prep%v_para(i_comp)%type_cpla
-        rela_thmc = ds_compor_prep%v_para(i_comp)%kit_comp(1)
-        l_mfront  = ds_compor_prep%v_paraExte(i_comp)%l_mfront_offi .or.&
-                    ds_compor_prep%v_paraExte(i_comp)%l_mfront_proto
-        exte_defo = ds_compor_prep%v_paraExte(i_comp)%strain_model
-! ----- Detection of specific cases
-        if (rela_comp .eq. 'ENDO_HETEROGENE') then
-            ligrmo = model//'.MODELE'
-            call dismoi('PARTITION', ligrmo, 'LIGREL', repk=partit)
-            if (partit .ne. ' ' .and. nb_proc .gt. 1) then
-                call utmess('F', 'CALCULEL_25', sk=model)
+    do iComp = 1, nbComp
+
+! ----- Get list of cells where behaviour is defined
+        call comp_read_mesh(mesh    , keywordfact , iComp     ,&
+                            cellAffe, lAllCellAffe, nbCellAffe)
+
+! ----- Get main parameters for this behaviour
+        relaComp = behaviourPrep%v_para(iComp)%rela_comp
+        defoComp = behaviourPrep%v_para(iComp)%defo_comp
+        typeComp = behaviourPrep%v_para(iComp)%type_comp
+        lMfront  = behaviourPrep%v_paraExte(iComp)%l_mfront_offi .or.&
+                   behaviourPrep%v_paraExte(iComp)%l_mfront_proto
+        exteDefo = behaviourPrep%v_paraExte(iComp)%strain_model
+
+! ----- Coding comportment (Python)
+        call lccree(1, relaComp, relaCompPY)
+        call lccree(1, defoComp, defoCompPY)
+
+! ----- Checking the consistency of the modelization with the behaviour
+        call compMecaChckModel(iComp       ,&
+                               model       , fullElemField ,&
+                               lAllCellAffe, cellAffe      , nbCellAffe  ,&
+                               relaCompPY  , lElasByDefault, lNeedDeborst)
+
+! ----- Select plane stress algorithm
+        typeCpla = behaviourPrep%v_para(iComp)%type_cpla
+        call compMecaSelectPlaneStressAlgo(lNeedDeborst, typeCpla)
+        behaviourPrep%v_para(iComp)%type_cpla = typeCpla
+
+! ----- Checking the consistency of the strain model with the behaviour
+        call compMecaChckStrain(iComp,&
+                                model       , fullElemField,&
+                                lAllCellAffe, cellAffe     , nbCellAffe,&
+                                lMfront     , exteDefo     ,&
+                                defoComp    , defoCompPY   ,&
+                                relaComp    , relaCompPY)
+
+! ----- No Deborst allowed with large strains models
+        if (lNeedDeborst .and. defoComp .eq. 'GDEF_LOG') then
+            call utmess('F', 'COMPOR1_13')
+        endif
+        if (lNeedDeborst .and. defoComp .eq. 'SIMO_MIEHE') then
+            call utmess('F', 'COMPOR1_13')
+        endif
+
+! ----- No ENDO_HETEROGENE whith distributed parallelism
+        if (relaComp .eq. 'ENDO_HETEROGENE') then
+            if (lDistParallel) then
+                call utmess('F', 'COMPOR5_25')
             endif
          endif
+
 ! ----- Warning if ELASTIC comportment and initial state
-        if (l_etat_init .and. rela_comp(1:10).eq.'ELAS_VMIS_') then
+        if (lInitialState .and. typeComp .eq. 'COMP_ELAS') then
             call utmess('A', 'COMPOR1_61')
         endif
+
 ! ----- Coding comportment (Python)
-        call lccree(1, rela_comp, rela_comp_py)
-        call lccree(1, defo_comp, defo_comp_py)
-! ----- Check comportment/model with Comportement.py
-        call nmdovm(model       , l_affe_all  , list_elem_affe, nb_elem_affe  , full_elem_s,&
-                    rela_comp_py, type_cpla   , l_auto_elas   , l_auto_deborst, l_comp_erre,&
-                    l_one_elem  , l_elem_bound)
-        if (.not. l_one_elem) then
-            if (l_elem_bound) then
-                call utmess('F', 'COMPOR1_60', si=i_comp)
-            else
-                call utmess('F', 'COMPOR1_59', si=i_comp)
-            endif
-        endif
-        ds_compor_prep%v_para(i_comp)%type_cpla = type_cpla
-! ----- Check strain model
-        call nmdovd(model         , l_affe_all  , l_auto_deborst,&
-                    list_elem_affe, nb_elem_affe, full_elem_s   ,&
-                    l_mfront      , exte_defo   ,&
-                    defo_comp     , defo_comp_py,&
-                    rela_comp     , rela_comp_py)
-!
-        call lcdiscard(rela_comp_py)
-        call lcdiscard(defo_comp_py)
+        call lcdiscard(relaCompPY)
+        call lcdiscard(defoCompPY)
+
     end do
 !
-! - Some informations
-!   l_auto_elas      : .true. if at least one element use ELAS by default
-!   l_auto_deborst   : .true. if at least one element swap to Deborst algorithm
-!   l_comp_erre      : .true. if at least one element use comportment on element doesn't support it
+! - Some general informations
 !
-    if (l_auto_deborst) then
+    if (lNeedDeborst) then
         call utmess('I', 'COMPOR5_20')
     endif
-    if (l_auto_elas) then
+    if (lElasByDefault) then
         call utmess('I', 'COMPOR5_21')
-    endif
-    if (l_comp_erre) then
-        call utmess('I', 'COMPOR5_22')
     endif
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,17 +18,8 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmdovd(model         , l_affe_all  , l_auto_deborst,&
-                      list_elem_affe, nb_elem_affe, full_elem_s   ,&
-                      l_mfront      , exte_defo   ,&
-                      defo_comp     , defo_comp_py,&
-                      rela_comp     , rela_comp_py)
-        character(len=8), intent(in) :: model
-        character(len=24), intent(in) :: list_elem_affe
-        aster_logical, intent(in) :: l_affe_all, l_auto_deborst, l_mfront
-        integer, intent(in) :: nb_elem_affe, exte_defo
-        character(len=19), intent(in) :: full_elem_s
-        character(len=16), intent(in) :: defo_comp, defo_comp_py
-        character(len=16), intent(in) :: rela_comp, rela_comp_py
-    end subroutine nmdovd
+    subroutine compMecaSelectPlaneStressAlgo(lNeedDeborst, type_cpla)
+        aster_logical, intent(in) :: lNeedDeborst
+        character(len=16), intent(inout) :: type_cpla
+    end subroutine compMecaSelectPlaneStressAlgo
 end interface

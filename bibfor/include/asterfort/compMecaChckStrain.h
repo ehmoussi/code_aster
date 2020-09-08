@@ -15,13 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+#include "asterf_types.h"
 !
 interface
-    subroutine comp_meca_chck(model, mesh, fullElemField, lInitialState, behaviourPrep)
-        use Behaviour_type
-        character(len=8), intent(in) :: model, mesh
+    subroutine compMecaChckStrain(iComp,&
+                                  model       , fullElemField,&
+                                  lAllCellAffe, cellAffe     , nbCellAffe,&
+                                  lMfront     , exteDefo     ,&
+                                  defoComp    , defoCompPY   ,&
+                                  relaComp    , relaCompPY)
+        integer, intent(in) :: iComp
+        character(len=8), intent(in) :: model
         character(len=19), intent(in) :: fullElemField
-        aster_logical, intent(in) :: lInitialState
-        type(Behaviour_PrepPara), intent(inout) :: behaviourPrep
-    end subroutine comp_meca_chck
+        aster_logical, intent(in) :: lAllCellAffe
+        character(len=24), intent(in) :: cellAffe
+        integer, intent(in) :: nbCellAffe
+        aster_logical, intent(in) :: lMfront
+        integer, intent(in) :: exteDefo
+        character(len=16), intent(in) :: defoComp, defoCompPY
+        character(len=16), intent(in) :: relaComp, relaCompPY
+    end subroutine compMecaChckStrain
 end interface
