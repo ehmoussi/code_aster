@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine carcomp(carte_1, carte_2, iret)
+subroutine carcomp(carte_1, carte_2, iret, indxCmpExcl_)
 !
 implicit none
 !
@@ -35,6 +35,7 @@ implicit none
 !
 character(len=*), intent(in) :: carte_1, carte_2
 integer, intent(out) :: iret
+integer, intent(in), optional :: indxCmpExcl_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,6 +66,7 @@ integer, intent(out) :: iret
     character(len=80) :: valk1, valk2
     aster_logical :: vall1, vall2, lok
     real(kind=8) :: epsi
+    integer :: indxCmpExcl
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,6 +79,11 @@ integer, intent(out) :: iret
     carte_1s = '&&CARCOMP.C1S'
     carte_2s = '&&CARCOMP.C2S'
     epsi = 1.d-15
+    indxCmpExcl = 0
+    if (present(indxCmpExcl_)) then
+        indxCmpExcl = indxCmpExcl_
+        ASSERT(indxCmpExcl .gt. 0)
+    endif
 !
 ! - <GRANDEUR>
 !
@@ -129,6 +136,11 @@ integer, intent(out) :: iret
             call cesexi('C', jcesd2, jcesl2, iCell, 1, 1, iCmp, iad2)
             if (iad1 .lt. 0 .or. iad2 .lt. 0) then
                 cycle
+            endif
+            if (indxCmpExcl .gt. 0) then
+                if (iCmp .eq. indxCmpExcl) then
+                    cycle
+                endif
             endif
             if (iad1 .eq. 0) then
                 if (iad2 .ne. 0) then

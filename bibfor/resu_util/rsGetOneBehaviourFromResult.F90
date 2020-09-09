@@ -20,6 +20,7 @@ subroutine rsGetOneBehaviourFromResult(resultZ, nbStore, listStore, compor)
 !
 implicit none
 !
+#include "asterfort/Behaviour_type.h"
 #include "asterfort/carcomp.h"
 #include "asterfort/rsexch.h"
 !
@@ -43,12 +44,13 @@ character(len=*), intent(out) :: compor
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=24) :: comporRefe, comporRead
-    integer :: numeStore, iStore, icode, iret
+    integer :: numeStore, iStore, icode, iret, indxCmpExcl
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    compor    = ' '
-    numeStore = listStore(1)
+    compor      = ' '
+    numeStore   = listStore(1)
+    indxCmpExcl = INCRELAS
 
     call rsexch(' ', resultZ, 'COMPORTEMENT', numeStore, comporRefe, icode)
     if (icode .ne. 0) then
@@ -62,7 +64,7 @@ character(len=*), intent(out) :: compor
             compor = '#SANS'
             goto 99
         endif
-        call carcomp(comporRead, comporRefe, iret)
+        call carcomp(comporRead, comporRefe, iret, indxCmpExcl_ = indxCmpExcl)
         if (iret .eq. 1) then
             compor = '#PLUSIEURS'
             goto 99
