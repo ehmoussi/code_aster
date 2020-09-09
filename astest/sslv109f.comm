@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -330,6 +330,71 @@ TEST_RESU(RESU=_F(NUME_MODE=1,
           )
 
 #---------------------------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------------------------
+# Pour valider la possibilite d'un cas de charge de type PRE_SIGM
+#---------------------------------------------------------------------------------------------------
+
+SIG_CART=CREA_CHAMP(TYPE_CHAM='CART_SIEF_R',
+                  OPERATION='AFFE',
+                  MODELE=MO,
+                  AFFE=_F(TOUT='OUI',
+                          NOM_CMP=('SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ'),
+                          VALE=(0.,0.,200.,0.,0.,0.),),);
+
+
+SIG_CHAM=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
+                  OPERATION='AFFE',
+                  MODELE=MO,
+                  AFFE=_F(TOUT='OUI',
+                          NOM_CMP=('SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ'),
+                          VALE=(0.,0.,-200.,0.,0.,0.),),);
+
+
+CHA_CART=AFFE_CHAR_MECA(MODELE=MO,
+                        PRE_SIGM=_F(SIGM=SIG_CART),
+                                    );
+
+CHA_CHAM=AFFE_CHAR_MECA(MODELE=MO,
+                        PRE_SIGM=_F(SIGM=SIG_CHAM),
+                                    );
+
+RESU3=MACRO_ELAS_MULT(MODELE=MO, 
+                      CHAM_MATER=CM, 
+                      CHAR_MECA_GLOBAL=BLOQU,
+                       CAS_CHARGE=_F( MODE_FOURIER = 1, TYPE_MODE = 'SYME',
+                                 CHAR_MECA = (CHA_CART, CHA_CHAM, CH2), SOUS_TITRE = 'MODE FOURIER 1 SYME' ))
+
+RESU3=CALC_CHAMP(reuse=RESU3,
+                RESULTAT=RESU3,
+                FORCE=('FORC_NODA','REAC_NODA',)
+)
+
+
+# Reference: RESU2
+TEST_RESU(RESU=_F(NUME_MODE=1,
+                  RESULTAT=RESU3,
+                  NOM_CHAM='REAC_NODA',
+                  NOEUD='N12',
+                  NOM_CMP='DY',
+                  VALE_CALC=-11.0,
+                  VALE_REFE=-11.0,
+                  REFERENCE='AUTRE_ASTER',
+                  CRITERE='RELATIF',
+                  ),
+          )
+
+TEST_RESU(RESU=_F(NUME_MODE=1,
+                  RESULTAT=RESU3,
+                  NOM_CHAM='DEPL',
+                  NOEUD='N12',
+                  NOM_CMP='DY',
+                  VALE_CALC=-57.02195377042,
+                  VALE_REFE=-57.021953770986997,
+                  REFERENCE='ANALYTIQUE',
+                  CRITERE='RELATIF',
+                  ),
+          )
 
 
 

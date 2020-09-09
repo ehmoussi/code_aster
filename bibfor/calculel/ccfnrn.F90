@@ -563,7 +563,8 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 !
             if (typesd.ne.'DYNA_HARMO') then
                 call vechme(stop, modele, charge, infoch, partps,&
-                        carac, mater, mateco, vechmp, varc_currz = chvarc, ligrel_calcz = ligrel)
+                        carac, mater, mateco, vechmp, varc_currz = chvarc, ligrel_calcz = ligrel,&
+                        nharm = nh)
                 call asasve(vechmp, nume, 'R', vachmp)
                 call ascova('D', vachmp, fomult, 'INST', time, 'R', cnchmp)
 !
