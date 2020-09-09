@@ -101,9 +101,9 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
     mpi_int :: mpicou, mpibid
 !
     integer :: nopout, jlisop, iop, ibid, nbord2, lres, n0, n1, n2, n3, posopt, jvcham
-    integer :: nbtrou, minord, maxord, jlinst, iordr, nbordl, lcompo, rang, nbproc
+    integer :: nbtrou, minord, maxord, jlinst, iordr, nbordl, rang, nbproc
     integer :: numord, iret, npass, nbma, codre2, jliopg, nbopt, ipas, nbpas, jldist
-    integer :: jacalc, nordm1, jpara, nbchre, ioccur, icompo, ncharg, p, k, numork
+    integer :: jacalc, nordm1, jpara, nbchre, ioccur, ncharg, p, k, numork
     integer :: ideb, ifin, irelat, ifm, niv, lonch, lonnew
 !
     real(kind=8) :: r8b
@@ -119,8 +119,8 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
     character(len=8) :: modele, carael, k8b, sd_partition, modnew
     character(len=8) :: nomail, nobase, modeli
     character(len=11) :: nobaop
-    character(len=16) :: optio2, typmcl(4), motcle(4),valk(2)
-    character(len=19) :: nonbor, compor, lischa, k19b, nochou, nochok
+    character(len=16) :: optio2, typmcl(4), motcle(4)
+    character(len=19) :: nonbor, lischa, k19b, nochou, nochok
     character(len=24) :: chaout, ligrel, mater, ligres, mateco, k24b, vldist, vcham, vcnoch
     character(len=24) :: noliop, lisins, mesmai, lacalc, suropt, mode24, chamno
 !
@@ -146,29 +146,6 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
 !
     call ccliop('OPTION', option, nobase, noliop, nopout)
     if (nopout .eq. 0) goto 999
-
-
-!
-!
-    if (option(1:4).eq.'EPSI')then
-! ------get COMPORTEMENT from RESULT
-        call rsexch(' ', resuin, 'COMPORTEMENT', 1, compor, lcompo)
-        if (lcompo .eq.0) then
-! ------get DEFORMATION value from RESULT
-            call jeveuo(compor//'.VALE','L',icompo)
-! ------Coherence verification for large deformation
-            if ((zk16(icompo+43-1)(1:8) .eq. 'GDEF_LOG').or. &
-                (zk16(icompo+43-1)(1:10) .eq. 'SIMO_MIEHE'))then
-                valk(1) = zk16(icompo+43-1)
-                if (zk16(icompo+43-1)(1:8) .eq. 'GDEF_LOG') then
-                    valk(2) = 'EPSL_'//option(6:10)
-                else
-                    valk(2) = 'EPSG_'//option(6:10)
-                endif
-                call utmess('A','CALCCHAMP_3',nk=2,valk=valk)
-            endif
-        endif
-    endif
 !
     nonbor = nobase//'.NB_ORDRE'
     lacalc = nobase//'.ACALCULER'
@@ -208,14 +185,7 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
     call dismoi('NOM_MAILLA', modele, 'MODELE', repk=nomail)
 !
     call dismoi('MODELISATION', modele, 'MODELE', repk=modeli)
-!
-    if ((modeli(1:6).eq.'C_PLAN').and.(option(1:4).eq.'EPSI')&
-        .and. (lcompo .eq. 0)) then
-        if (zk16(icompo+41-1)(1:4) .ne. 'ELAS' .and. &
-            zk16(icompo+41-1)(1:16) .ne. '                ') then
-            call utmess('A', 'ELEMENTS3_11')
-        endif
-    endif
+
 !  ROUTINE PERMETTANT DE SAVOIR SI DES POUTRES SONT DANS LE LIGREL
 !   REDUIT ET DE VERIFIER LES CHARGES REPARTIES
     call ccvepo(modele, resuin, typesd, lisord, nbordr,&

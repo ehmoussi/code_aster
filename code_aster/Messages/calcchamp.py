@@ -42,15 +42,6 @@ Conseil :
  L'option demandée n'est calculable sur les éléments du modèle.
 """),
 
-3 : _("""
-La sortie EPSI_%(k2)s de CALC_CHAMP est incorrecte pour décrire les
-composantes de la déformation en grandes déformations.
-
-Conseil:
-Avec des déformations de type %(k1)s,
-il est préférable d'utiliser %(k2)s
-"""),
-
 4 : _("""
 Les contributions de l'amortissement liées à la vitesse pour les
 réactions nodales sont négligées dans la version actuelle du code.

@@ -35,16 +35,6 @@ cata_msg = {
  on ne peut pas affecter la modélisation "AXIS_DIAG" aux éléments de l'axe
 """),
 
-    11 : _("""
-  -> Attention vous avez une loi de comportement inélastique et vous êtes
-     en contraintes planes, la composante du tenseur de déformations EPZZ que
-     vous allez calculer n'est valable que tant que vous restez dans le
-     domaine élastique. Les autres composantes EPXX, EPYY, EPXY sont correctes.
-  -> Risque & Conseil :
-     Si le comportement est effectivement non linéaire, il ne faut pas utiliser
-     la valeur de EPZZ calculée par cette option.
-"""),
-
     13 : _("""
   Les composantes SIXZ et SIYZ du champs de contraintes sont nulles pour les
   éléments DKT et TUYAU. Le calcul des composantes EPXZ et EPYZ du champs de déformations
