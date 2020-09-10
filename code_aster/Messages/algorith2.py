@@ -141,9 +141,38 @@ Risques & conseils :
 
 
 
+    31 : _("""
+Commande MODI_REPERE : le changement de repère sur le type VECT_3D avec
+6 composantes n'est pas disponible.
+"""),
 
+    32 : _("""
+Commande MODI_REPERE, pour le type VECT_3D (6 composantes) il faut :
+ - le MODÈLE, le CARA_ELEM.
+ - le repère doit être UTILISATEUR
+ - le champ doit être EFGE_ELNO
+ """),
 
+    33 : _("""
+Commande MODI_REPERE : pour EFGE_ELNO et VECT_3D, les 6 composantes sont dans l'ordre
+suivant : N, VY, VZ, MT, MFY, MFZ
+"""),
 
+    34 : _("""
+Commande MODI_REPERE : pour le type VECT_3D et EFGE_ELNO , les éléments traités sont :
+    POU_D_E  POU_D_T
+Le changement de repère des EFGE_ELNO sur des %(k1)s ne sera pas réalisé.
+"""),
+
+    35 : _("""
+Commande MODI_REPERE : pour le champ EFGE_ELNO le type doit être
+    VECT_3D à 6 composantes ou COQUE_GENE et pas %(k1)s.
+"""),
+
+    36 : _("""
+Commande MODI_REPERE :
+    Pour VECT_3D c'est 3 ou 6 composantes et pas %(i1)d.
+"""),
 
 
 

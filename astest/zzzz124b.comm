@@ -1,0 +1,407 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+MA=LIRE_MAILLAGE(UNITE=20, INFO=2, FORMAT='ASTER')
+
+MODELE=AFFE_MODELE(MAILLAGE=MA,
+    AFFE=(
+        _F(GROUP_MA = ('POUTRES',),PHENOMENE='MECANIQUE',MODELISATION='POU_D_T',),
+        _F(GROUP_MA = ('RESSORT',),PHENOMENE='MECANIQUE',MODELISATION='DIS_T',),
+    ),
+)
+
+MAT = DEFI_MATERIAU ( ELAS = _F(E = 2.1e11 , NU = 3.000000e-01, RHO = 7.8e3,),)
+
+CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
+    AFFE=(_F(GROUP_MA = ('POUTRES',), MATER = MAT,),),
+)
+
+CARA=AFFE_CARA_ELEM(MODELE=MODELE,
+    DISCRET=(
+        _F(GROUP_MA = ('RESSORT',), CARA='K_T_D_L', VALE= (0. ,0.,5.e2,),), ),
+    POUTRE=(
+        _F(GROUP_MA = ('POUTRES',),SECTION='CERCLE', CARA=('R','EP',), VALE= (0.03 , 0.001 ,),),
+    ),
+)
+
+CHAR=AFFE_CHAR_MECA(MODELE=MODELE,
+    DDL_IMPO= _F(GROUP_NO = "BLOC", DX = 0.0, DY = 0.0, DZ = 0.0, DRX = 0.0, DRY = 0.0, DRZ = 0.0),
+)
+
+KE=CALC_MATR_ELEM(OPTION='RIGI_MECA',
+    MODELE=MODELE,
+    CHAM_MATER=CHMAT,
+    CARA_ELEM=CARA,
+    CHARGE=(CHAR,),
+)
+
+ME=CALC_MATR_ELEM(OPTION='MASS_MECA',
+    MODELE=MODELE,
+    CHAM_MATER=CHMAT,
+    CARA_ELEM=CARA,
+    CHARGE=(CHAR,),
+)
+NUM=NUME_DDL(MATR_RIGI=KE,)
+
+K=ASSE_MATRICE(MATR_ELEM=KE,NUME_DDL=NUM,)
+M=ASSE_MATRICE(MATR_ELEM=ME,NUME_DDL=NUM,)
+
+TabMass=POST_ELEM(MASS_INER=_F(TOUT='OUI',),
+    MODELE=MODELE,
+    CHAM_MATER=CHMAT,
+    CARA_ELEM=CARA,
+)
+#IMPR_TABLE(TABLE=TabMass,);
+
+MODES = CALC_MODES(
+    CALC_FREQ=_F(FREQ=(0.1, 30.)),
+    IMPRESSION=_F(CUMUL='OUI'),
+    MATR_MASS=M,
+    MATR_RIGI=K,
+    NORM_MODE=_F(NORME='MASS_GENE'),
+    OPTION='BANDE',
+    SOLVEUR=_F(METHODE='MUMPS', NPREC=9),
+    VERI_MODE=_F(STOP_ERREUR='NON', STURM='OUI'),
+)
+
+MODES=CALC_CHAMP(reuse=MODES, RESULTAT=MODES, CONTRAINTE=('SIEF_ELGA','EFGE_ELNO'),)
+MODES=CALC_CHAMP(reuse=MODES, RESULTAT=MODES, FORCE='REAC_NODA',)
+
+#------------------------------------------------
+# CALCUL DES MODES STATIQUES SOUS
+# ACCELERATION UNITAIRE:CORRECTION STATIQUE
+#------------------------------------------------
+
+CORST=MODE_STATIQUE(
+    MATR_RIGI=K,
+    MATR_MASS=M,
+    PSEUDO_MODE=(_F(AXE=('X', 'Y', 'Z'),),),
+    SOLVEUR=_F(RENUM='AUTO', NPREC=9),
+    INFO=1,
+)
+
+CORST=CALC_CHAMP(reuse=CORST, RESULTAT=CORST, CONTRAINTE=('SIEF_ELGA','EFGE_ELNO'),)
+CORST=CALC_CHAMP(reuse=CORST, RESULTAT=CORST, FORCE='REAC_NODA')
+
+#IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(RESULTAT=MODES, TOUT_CHAM='OUI',),);
+#IMPR_RESU(FORMAT='MED',UNITE=81,RESU=_F(RESULTAT=CORST, TOUT_CHAM='OUI',),);
+
+def Transforme(Txt):
+    tmp = Txt.split()
+    compo = ['N','VY','VZ','MT','MFY','MFZ',]
+    resu={}
+    for ii in range(len(compo)):
+        resu[compo[ii]] =float(tmp[ii])
+    return resu
+
+
+CORST_EFGE_ELNO={};
+CORST_EFGE_ELNO['N1_local']  = [
+    (1,Transforme(""" 8.13007432473127E-01 -7.66730523052640E-01 -6.59294530696835E-04
+                     -9.51158512619676E-02  4.94470898022819E-04 -9.24784622102955E-01"""),),
+    (2,Transforme(""" 8.13007432473236E-01  7.66730523052640E-01 -6.59294530696469E-04
+                      9.51158512619676E-02  4.94470898022158E-04  9.24784622102956E-01"""),),
+    (3,Transforme(""" 2.52037052837761E+00  3.57288412065033E-16  2.58932975643241E-01
+                      5.99244841480499E-17 -1.32822622447302E-01  5.18952665887250E-16"""),),
+]
+CORST_EFGE_ELNO['N3_local']  = [
+    (1,Transforme(""" 8.13007432473236E-01 -7.66730523052640E-01 -6.59294530696466E-04
+                      9.51158512619676E-02 -4.94470898022157E-04  9.24784622102955E-01"""),),
+    (2,Transforme(""" 8.13007432473127E-01  7.66730523052640E-01 -6.59294530696832E-04
+                     -9.51158512619676E-02 -4.94470898022818E-04 -9.24784622102956E-01"""),),
+    (3,Transforme("""-2.52037052837761E+00  3.76194054590169E-16 -2.58932975643241E-01
+                     -6.72836001879970E-17 -1.32822622447302E-01 -5.28348472355136E-16"""),),
+]
+
+MODES_EFGE_ELNO={}; MODES_REAC_NODA={}
+MODES_EFGE_ELNO['N1_local']  = [
+    (1,Transforme(""" 1.00256941213419E-09  2.46733254762840E+04  1.58993547832209E-11
+                      2.62877120598698E+03 -1.43165215015727E-11  2.60489825203296E+04"""),),
+]
+MODES_EFGE_ELNO['N3_local']  = [
+    (1,Transforme("""-1.00256941213419E-09  2.46733254762840E+04 -1.58993547832209E-11
+                     -2.62877120598698E+03 -1.43165215015727E-11 -2.60489825203296E+04"""),),
+]
+MODES_REAC_NODA['N1_global']  = [
+    (1, Transforme(""" 1.74466757587026E+04 -1.74466757587039E+04 -3.49001250070401E-10
+                       4.38728992372031E+03  4.38728992372033E+03 -2.54354733128422E+04"""),),
+]
+MODES_REAC_NODA['N3_global']  = [
+    (1, Transforme(""" 1.74466757587039E+04 -1.74466757587026E+04 -3.48843102972058E-10
+                      -4.38728992372033E+03 -4.38728992372031E+03 -2.54354733128422E+04"""),),
+]
+
+"""
+CORST :
+=======
+ CHAMP PAR ELEMENT AUX NOEUDS DE NOM SYMBOLIQUE  EFGE_ELNO
+ NUMERO D'ORDRE: 1
+ N1  8.13007432473127E-01 -7.66730523052640E-01 -6.59294530696835E-04 -9.51158512619676E-02  4.94470898022819E-04 -9.24784622102955E-01
+ N3  8.13007432473236E-01 -7.66730523052640E-01 -6.59294530696466E-04  9.51158512619676E-02 -4.94470898022157E-04  9.24784622102955E-01
+
+ CHAMP PAR ELEMENT AUX NOEUDS DE NOM SYMBOLIQUE  EFGE_ELNO
+ NUMERO D'ORDRE: 2
+ N1  8.13007432473236E-01  7.66730523052640E-01 -6.59294530696469E-04  9.51158512619676E-02  4.94470898022158E-04  9.24784622102956E-01
+ N3  8.13007432473127E-01  7.66730523052640E-01 -6.59294530696832E-04 -9.51158512619676E-02 -4.94470898022818E-04 -9.24784622102956E-01
+
+ CHAMP PAR ELEMENT AUX NOEUDS DE NOM SYMBOLIQUE  EFGE_ELNO
+ NUMERO D'ORDRE: 3
+ N1  2.52037052837761E+00  3.57288412065033E-16  2.58932975643241E-01  5.99244841480499E-17 -1.32822622447302E-01  5.18952665887250E-16
+ N3 -2.52037052837761E+00  3.76194054590169E-16 -2.58932975643241E-01 -6.72836001879970E-17 -1.32822622447302E-01 -5.28348472355136E-16
+
+MODES :
+=======
+ CHAMP PAR ELEMENT AUX NOEUDS DE NOM SYMBOLIQUE  EFGE_ELNO
+ NUMERO D'ORDRE: 1 FREQ:   2.77443778415643E+01 NUME_MODE: 1
+ N1  1.00256941213419E-09  2.46733254762840E+04  1.58993547832209E-11  2.62877120598698E+03 -1.43165215015727E-11  2.60489825203296E+04
+ N3 -1.00256941213419E-09  2.46733254762840E+04 -1.58993547832209E-11 -2.62877120598698E+03 -1.43165215015727E-11 -2.60489825203296E+04
+
+ CHAMP AUX NOEUDS DE NOM SYMBOLIQUE  REAC_NODA
+ NUMERO D'ORDRE: 1 FREQ:   2.77443778415643E+01 NUME_MODE: 1
+ N1  1.74466757587026E+04 -1.74466757587039E+04 -3.49001250070401E-10  4.38728992372031E+03  4.38728992372033E+03 -2.54354733128422E+04
+ N3  1.74466757587039E+04 -1.74466757587026E+04 -3.48843102972058E-10 -4.38728992372033E+03 -4.38728992372031E+03 -2.54354733128422E+04
+"""
+
+#IMPR_RESU(FORMAT='RESULTAT',RESU=_F(RESULTAT=CORST,NOM_CHAM=('EFGE_ELNO','REAC_NODA'),),)
+#IMPR_RESU(FORMAT='RESULTAT',RESU=_F(RESULTAT=MODES,NOM_CHAM=('EFGE_ELNO','REAC_NODA'),),)
+#
+# ==================================================================================================
+# Le repère utilisateur est le repère local des éléments de poutre : EFGE_ELNO inchangé
+CORST1=MODI_REPERE(
+    RESULTAT    = CORST,
+    TOUT_ORDRE  = 'OUI',
+    MODI_CHAM  = (
+        _F(NOM_CHAM   = 'EFGE_ELNO',
+           NOM_CMP    = ('N','VY','VZ','MT','MFY','MFZ'),
+           TYPE_CHAM  = 'VECT_3D',),
+    ),
+    REPERE = 'UTILISATEUR',
+    AFFE = (
+        _F(GROUP_MA='POU1', VECT_X= ( 1.0, 1.0, 0.5), VECT_Y=(-1.0, 1.0, 0.0),),
+        _F(GROUP_MA='POU2', VECT_X= (-1.0,-1.0, 0.5), VECT_Y=( 1.0,-1.0, 0.0),),
+    ),
+    INFO=1,
+)
+
+for nume_ordre, force in CORST_EFGE_ELNO['N1_local']:
+    for nom_cmp,valer in force.items():
+        if ( abs(valer) > 1.0E-6 ):
+            TEST_RESU(
+                RESU=_F(NUME_ORDRE=nume_ordre, REFERENCE='AUTRE_ASTER', RESULTAT=CORST1, GROUP_MA='POU1',
+                        NOM_CHAM='EFGE_ELNO', NOEUD='N1', NOM_CMP=nom_cmp,
+                        VALE_CALC= valer, VALE_REFE= valer, ),
+            )
+for nume_ordre, force in CORST_EFGE_ELNO['N3_local']:
+    for nom_cmp,valer in force.items():
+        if ( abs(valer) > 1.0E-6 ):
+            TEST_RESU(
+                RESU=_F(NUME_ORDRE=nume_ordre, REFERENCE='AUTRE_ASTER', RESULTAT=CORST1, GROUP_MA='POU2',
+                        NOM_CHAM='EFGE_ELNO', NOEUD='N3', NOM_CMP=nom_cmp,
+                        VALE_CALC= valer, VALE_REFE= valer, ),
+            )
+
+
+# ==================================================================================================
+# Le repère utilisateur est le repère global :
+CORST=MODI_REPERE(reuse=CORST,
+    RESULTAT    = CORST,
+    TOUT_ORDRE  = 'OUI',
+    MODI_CHAM  = (
+        _F(NOM_CHAM   = 'EFGE_ELNO',
+           NOM_CMP    = ('N','VY','VZ','MT','MFY','MFZ'),
+           TYPE_CHAM  = 'VECT_3D',),
+    ),
+    REPERE = 'UTILISATEUR',
+    AFFE = (
+        #_F(GROUP_MA=('POU1','POU2'), ANGL_NAUT= (0.,0.,0.,),),
+        _F(TOUT='OUI', ANGL_NAUT= (0.,0.,0.,),),
+    ),
+    INFO=1,
+)
+
+import numpy as NP
+# Repère POU1 : VECT_X= ( 1.0, 1.0, 0.5), VECT_Y=(-1.0, 1.0, 0.0)
+vx  = NP.array( [ 1.0, 1.0, 0.5 ] ) ; vy = NP.array( [ -1.0, 1.0, 0.0 ] )
+vxn = NP.array( vx )/(vx.dot(vx)**0.5)
+vyn = NP.array( vy )/(vy.dot(vy)**0.5)
+vzn = NP.cross( vxn, vyn )
+# Matrice de passage du gl(vecteur global vers vecteur local) lg(vecteur local vers vecteur global)
+mat1gl = NP.array( [vxn, vyn, vzn ] )
+mat1lg = mat1gl.transpose()
+#
+# Repère POU2 : VECT_X= (-1.0,-1.0, 0.5), VECT_Y=( 1.0,-1.0, 0.0)
+vx  = NP.array( [ -1.0, -1.0, 0.5 ] ) ; vy = NP.array( [ 1.0, -1.0, 0.0 ] )
+vxn = NP.array( vx )/(vx.dot(vx)**0.5)
+vyn = NP.array( vy )/(vy.dot(vy)**0.5)
+vzn = NP.cross( vxn, vyn )
+# Matrice de passage du gl(vecteur global vers vecteur local) lg(vecteur local vers vecteur global)
+mat2gl = NP.array( [vxn, vyn, vzn ] )
+mat2lg = mat2gl.transpose()
+
+
+for nume_ordre, force in CORST_EFGE_ELNO['N1_local']:
+    floc = NP.array( [force['N'],  force['VY'],  force['VZ'] ] )
+    mloc = NP.array( [force['MT'], force['MFY'], force['MFZ'] ] )
+    fglob = mat1lg.dot( floc )
+    mglob = mat1lg.dot( mloc )
+    fmglob={'N':fglob[0],'VY':fglob[1],'VZ':fglob[2],'MT':mglob[0],'MFY':mglob[1],'MFZ':mglob[2]}
+    for nom_cmp,valer in fmglob.items():
+        if ( abs(valer) > 1.0E-6 ):
+            TEST_RESU(
+                RESU=_F(NUME_ORDRE=nume_ordre, REFERENCE='AUTRE_ASTER', RESULTAT=CORST, GROUP_MA='POU1',
+                        NOM_CHAM='EFGE_ELNO', NOEUD='N1', NOM_CMP=nom_cmp,
+                        VALE_CALC= valer, VALE_REFE= valer, ),
+            )
+
+for nume_ordre, force in CORST_EFGE_ELNO['N3_local']:
+    floc = NP.array( [force['N'],  force['VY'],  force['VZ'] ] )
+    mloc = NP.array( [force['MT'], force['MFY'], force['MFZ'] ] )
+    fglob = mat2lg.dot( floc )
+    mglob = mat2lg.dot( mloc )
+    fmglob={'N':fglob[0],'VY':fglob[1],'VZ':fglob[2],'MT':mglob[0],'MFY':mglob[1],'MFZ':mglob[2]}
+    for nom_cmp,valer in fmglob.items():
+        if ( abs(valer) > 1.0E-6 ):
+            TEST_RESU(
+                RESU=_F(NUME_ORDRE=nume_ordre, REFERENCE='AUTRE_ASTER', RESULTAT=CORST, GROUP_MA='POU2',
+                        NOM_CHAM='EFGE_ELNO', NOEUD='N3', NOM_CMP=nom_cmp,
+                        VALE_CALC= valer, VALE_REFE= valer, ),
+            )
+
+
+
+# ==================================================================================================
+# Le repère utilisateur est le repère local des éléments de poutre : EFGE_ELNO inchangé
+MODES1=MODI_REPERE(
+    RESULTAT    = MODES,
+    TOUT_ORDRE  = 'OUI',
+    MODI_CHAM  = (
+        _F(NOM_CHAM   = 'EFGE_ELNO',
+           NOM_CMP    = ('N','VY','VZ','MT','MFY','MFZ'),
+           TYPE_CHAM  = 'VECT_3D',),
+    ),
+    REPERE = 'UTILISATEUR',
+    AFFE = (
+        _F(GROUP_MA='POU1', VECT_X= ( 1.0, 1.0, 0.5), VECT_Y=(-1.0, 1.0, 0.0),),
+        _F(GROUP_MA='POU2', VECT_X= (-1.0,-1.0, 0.5), VECT_Y=( 1.0,-1.0, 0.0),),
+    ),
+    INFO=1,
+)
+for nume_ordre, force in MODES_EFGE_ELNO['N1_local']:
+    for nom_cmp,valer in force.items():
+        if ( abs(valer) > 1.0E-6 ):
+            TEST_RESU(
+                RESU=_F(NUME_ORDRE=nume_ordre, REFERENCE='AUTRE_ASTER', RESULTAT=MODES1, GROUP_MA='POU1',
+                        NOM_CHAM='EFGE_ELNO', NOEUD='N1', NOM_CMP=nom_cmp,
+                        VALE_CALC= valer, VALE_REFE= valer, ),
+            )
+for nume_ordre, force in MODES_EFGE_ELNO['N3_local']:
+    for nom_cmp,valer in force.items():
+        if ( abs(valer) > 1.0E-6 ):
+            TEST_RESU(
+                RESU=_F(NUME_ORDRE=nume_ordre, REFERENCE='AUTRE_ASTER', RESULTAT=MODES1, GROUP_MA='POU2',
+                        NOM_CHAM='EFGE_ELNO', NOEUD='N3', NOM_CMP=nom_cmp,
+                        VALE_CALC= valer, VALE_REFE= valer, ),
+            )
+
+
+# ==================================================================================================
+# Le repère utilisateur est le repère global :
+#   EFGE_ELNO = -REAC_NODA sur le noeud N1  (1er noeud de la poutre)
+#   EFGE_ELNO =  REAC_NODA sur le noeud N3  (2nd noeud de la poutre)
+MODES=MODI_REPERE(reuse=MODES,
+    RESULTAT    = MODES,
+    TOUT_ORDRE  = 'OUI',
+    MODI_CHAM  = (
+        _F(NOM_CHAM   = 'EFGE_ELNO',
+           NOM_CMP    = ('N','VY','VZ','MT','MFY','MFZ'),
+           TYPE_CHAM  = 'VECT_3D',),
+    ),
+    REPERE = 'UTILISATEUR',
+    AFFE = (
+        _F(GROUP_MA=('POU1','POU2'), ANGL_NAUT= (0.,0.,0.,),),
+    ),
+    INFO=1,
+)
+for nume_ordre, force in MODES_REAC_NODA['N1_global']:
+    for nom_cmp,valer in force.items():
+        if ( abs(valer) > 1.0E-6 ):
+            TEST_RESU(
+                RESU=_F(NUME_ORDRE=nume_ordre, REFERENCE='AUTRE_ASTER', RESULTAT=MODES, GROUP_MA='POU1',
+                        NOM_CHAM='EFGE_ELNO', NOEUD='N1', NOM_CMP=nom_cmp,
+                        VALE_CALC= -valer, VALE_REFE= -valer, ),
+            )
+for nume_ordre, force in MODES_REAC_NODA['N3_global']:
+    for nom_cmp,valer in force.items():
+        if ( abs(valer) > 1.0E-6 ):
+            TEST_RESU(
+                RESU=_F(NUME_ORDRE=nume_ordre, REFERENCE='AUTRE_ASTER', RESULTAT=MODES, GROUP_MA='POU2',
+                        NOM_CHAM='EFGE_ELNO', NOEUD='N3', NOM_CMP=nom_cmp,
+                        VALE_CALC= valer, VALE_REFE= valer, ),
+            )
+
+
+
+# --------------------------------------------------------------------------------------------------
+#  Aucune vérification de résultat :
+#       ==> Vérification que tous les champs présents sont complets et exploitables
+#
+lfxy=[0.33,0.5,0.6,0.98,1.12,1.35,1.58,1.86,1.95,3.08,6.62,9.2,11.23,13.65,18.82,50.]
+accxy=[0.17,0.3383,0.4658,1.4773,2.6163,3.9355,4.675,4.675,4.675,3.196,3.5165,3.5165,3.364,1.476,1.087,1.027]
+
+lfz=[0.33,0.4,0.63,0.79,1,1.23,1.48,1.9,2.04,2.51,3.64,4.6,5.65,6.14,9.45,11.43,23.45,50.]
+accz=[0.1088,0.1445,0.2958,0.4097,0.51,0.6511,0.8262,1.1339,1.2342,1.4365,1.6218,2.5416,3.7632,4.2456,4.2456,2.03,0.8712,0.7812]
+
+ACCXY=DEFI_FONCTION(NOM_PARA='FREQ',
+  ABSCISSE=lfxy,
+  ORDONNEE=accxy,
+  INTERPOL='LOG',
+  PROL_DROITE='CONSTANT',
+  PROL_GAUCHE='EXCLU',)
+
+ACCZ=DEFI_FONCTION(NOM_PARA='FREQ',
+  ABSCISSE=lfz,
+  ORDONNEE=accz,
+  INTERPOL='LOG',
+  PROL_DROITE='CONSTANT',
+  PROL_GAUCHE='EXCLU',)
+
+
+SPEXY=DEFI_NAPPE(NOM_PARA='AMOR', PARA=0.05, FONCTION=ACCXY, INFO=1,)
+SPEZ =DEFI_NAPPE(NOM_PARA='AMOR', PARA=0.05, FONCTION=ACCZ,  INFO=1,)
+
+RGQBIC=COMB_SISM_MODAL(
+    MODE_MECA=MODES,
+    MODE_CORR=CORST,
+    AMOR_REDUIT=0.05,
+    MASS_INER=TabMass,
+    CORR_FREQ='NON',
+    MONO_APPUI ='OUI',
+    EXCIT=_F(TRI_SPEC='OUI', SPEC_OSCI=(SPEXY,SPEXY,SPEZ,), ECHELLE=(9.81, 9.81, 9.81),),
+    COMB_MODE=_F(TYPE='SRSS',),
+    COMB_DIRECTION=_F(TYPE='QUAD'),
+    OPTION=('DEPL','REAC_NODA','SIEF_ELGA','EFGE_ELNO','ACCE_ABSOLU'),
+    IMPRESSION=_F(TOUT='OUI',),
+)
+
+#IMPR_RESU(FORMAT='RESULTAT',RESU=_F(RESULTAT=RGQBIC,NOM_CHAM=('EFGE_ELNO'),),)
+
+
+FIN();

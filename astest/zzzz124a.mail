@@ -1,0 +1,25 @@
+TITRE
+Poutre droite encastree a une extremite
+et soumise a des efforts a son autre extremite
+FINSF
+COOR_3D
+ R1        0.0000000000D+00  0.0000000000D+00  0.0000000000D+00
+ R2        5.7735026919D-01  5.7735026919D-01  5.7735026919D-01
+ R3        1.1547005384D+00  1.1547005384D+00  1.1547005384D+00
+FINSF
+%
+%
+SEG2
+  S12      R1       R2
+  S23      R2       R3
+FINSF
+GROUP_MA
+ G123        S12   S23
+FINSF
+GROUP_NO
+ A         R1
+FINSF
+GROUP_NO
+ B         R3
+FINSF
+FIN

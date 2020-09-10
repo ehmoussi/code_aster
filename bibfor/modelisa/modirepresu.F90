@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -104,14 +104,16 @@ subroutine modirepresu(resuou, resuin )
 !
 !   DEFINITION DU REPERE UTILISE
     call getvtx(' ', 'REPERE', scal=repere, nbret=i)
-    
-    if ( lreuse ) then  
-       if ( i .eq. 0) then 
+
+    if ( lreuse ) then
+       if ( i .eq. 0) then
           call utmess('F', 'MODELISA3_14')
        endif
-       if (repere .ne. 'COQUE_INTR_UTIL' .and. repere .ne. 'COQUE_UTIL_INTR' ) then
+       if ( (repere.ne.'COQUE_INTR_UTIL') .and. &
+            (repere.ne.'COQUE_UTIL_INTR') .and. &
+            (repere.ne.'UTILISATEUR') ) then
           call utmess('F', 'MODELISA3_15', nk=1, valk=repere )
-       endif 
+       endif
     endif
 !
 !   RECUPERATION DES NUMEROS D'ORDRE DE LA STRUCTURE DE DONNEES DE TYPE RESULTAT RESU A PARTIR
@@ -131,10 +133,18 @@ subroutine modirepresu(resuou, resuin )
     call rscrsd('G', resuou, tysd, nbordr)
 !
     do ioc = 1, nocc
-        call getvtx('MODI_CHAM', 'NOM_CHAM', iocc=ioc, scal=option, nbret=n0)
+        call getvtx('MODI_CHAM', 'NOM_CHAM',  iocc=ioc, scal=option,    nbret=n0)
         call getvtx('MODI_CHAM', 'TYPE_CHAM', iocc=ioc, scal=type_cham, nbret=n0)
-        call getvtx('MODI_CHAM', 'NOM_CMP', iocc=ioc, nbval=0, nbret=n1)
+        call getvtx('MODI_CHAM', 'NOM_CMP',   iocc=ioc, nbval=0,        nbret=n1)
         nbcmp = - n1
+        if ( type_cham.eq.'VECT_3D' ) then
+            if ((nbcmp.ne.3).and.(nbcmp.ne.6)) then
+                call utmess('F', 'ALGORITH2_36',si=nbcmp)
+            endif
+            if (nbcmp.eq.6) then
+                type_cham = 'VECTR_3D'
+            endif
+        endif
         do iord = 1, nbordr
             call jemarq()
             call jerecu('V')
@@ -146,22 +156,35 @@ subroutine modirepresu(resuou, resuin )
 !           CHAMP1 SERA ENSUITE RECREE SUR LA BASE GLOBALE
             call copisd('CHAMP_GD', 'V', champ0, champ1)
 !           RECUPERATION DU MODELE ASSOCIE AU CHAMP
+            modele='';carele=''
             call rslesd(resuin(1:8), iordr, model_ = modele, cara_elem_ = carele)
             if (modele .ne. '') then
                 call dismoi('EXI_PLAQUE', modele, 'MODELE', repk=exipla)
-                call dismoi('EXI_COQUE', modele, 'MODELE', repk=exicoq)
-                if ( ((exipla(1:3).eq.'OUI').or.(exicoq(1:3).eq.'OUI')) .and.&
+                call dismoi('EXI_COQUE',  modele, 'MODELE', repk=exicoq)
+                if ( ((exipla(1:3).eq.'OUI').or.(exicoq(1:3).eq.'OUI')) .and. &
                      ((type_cham.eq.'TENS_2D').or.(type_cham.eq.'TENS_3D')) .and.&
                      (repere.eq.'UTILISATEUR') ) then
                     call utmess('F', 'ALGORITH3_7')
                 endif
             endif
+!           Dans le cas 'VECTR_3D'
+!               Obligatoire : modèle, cara_elem
+!                             repere == UTILISATEUR
+            if (type_cham.eq.'VECTR_3D') then
+                if ( (modele.eq.'') .or. (carele.eq.'') .or. &
+                     (repere.ne.'UTILISATEUR') .or. (option.ne.'EFGE_ELNO') ) then
+                    call utmess('F', 'ALGORITH2_32')
+                endif
+            endif
 !
 !           RECUPERATION DE LA NATURE DES CHAMPS (CHAM_NO OU CHAM_ELEM)
             if (tych(1:4) .eq. 'NOEU') then
+                if (type_cham.eq.'VECTR_3D') then
+                    call utmess('F', 'ALGORITH2_31')
+                endif
                 call chrpno(champ1, repere, nbcmp, ioc, type_cham)
             else if (tych(1:2).eq.'EL') then
-                call chrpel(champ1, repere, nbcmp, ioc, type_cham,&
+                call chrpel(champ1, repere, nbcmp, ioc, type_cham, &
                             option, modele, carele)
             else
                 valk(1) = tych
@@ -210,8 +233,8 @@ subroutine modirepresu(resuou, resuin )
 !   CREATION DE L'OBJET .REFD SI NECESSAIRE :
     call refdcp(resuin, resuou)
 !
-!   TRAITEMENT DU CAS OU IL Y A REENTRANCE
-!   UTILISE SI LE MOT CLE REPERE VAUT 'COQUE_INTR_UTIL' OU 'COQUE_UTIL_INTR'
+!   Traitement du cas ou il y a reentrance
+!       REPERE = 'COQUE_INTR_UTIL' ou 'COQUE_UTIL_INTR' ou 'UTILISATEUR'
     if (lreuse) then
         do ioc = 1, nocc
             call getvtx('MODI_CHAM', 'NOM_CHAM', iocc=ioc, scal=option, nbret=n0)
