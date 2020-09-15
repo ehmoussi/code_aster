@@ -34,6 +34,7 @@ def formule_prod(self, VALE, VALE_C, **args):
 
 FORMULE=FORM(nom="FORMULE",
              op=-5,
+             sd_prod=formule_prod,
              fr=tr("Définit une formule réelle ou complexe à partir de son expression mathématique"),
     regles = (UN_PARMI('VALE', 'VALE_C',),),
     VALE     = SIMP(statut='f', typ='TXM'),
