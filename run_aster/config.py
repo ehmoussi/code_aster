@@ -40,8 +40,9 @@ The list of the supported *version parameters* are (with their type):
     addmem: int             - memory added to the memory limit found from export
     parallel: bool          - true for a parallel version
     python: str             - Python interpreter
-    mpiexec: str             - mpiexec command line with arguments
-    mpi_get_rank: str        - command line to get the mpi rank
+    python_interactive: str - Python interpreter for interactive executions
+    mpiexec: str            - mpiexec command line with arguments
+    mpi_get_rank: str       - command line to get the mpi rank
     only-proc0: bool        - true to limit output to proc #0, false to show all
     FC: str                 - fortran compiler
     FCFLAGS: list[str]      - flags for fortran compiler
@@ -49,12 +50,12 @@ The list of the supported *version parameters* are (with their type):
 
 All these parameters are set during the *configure* step of the installation.
 
-They can be overridden in a configuration file (in ``wafcfg/``) by setting a
-Python dict named ``env["CONFIG_PARAMETERS"]``.
+They can be set during the *configure* step using environment variables named
+``CONFIG_PARAMETERS_<parameter-name>``.
 
 .. note::
 
-    ``mpiexec`` command line needs these variables ``mpinb_cpu`` and ``program``
+    ``mpiexec`` command line needs these variables ``mpi_nbcpu`` and ``program``
     following the `Python Format String Syntax`_. For example:
 
     .. code-block:: sh
@@ -85,11 +86,11 @@ is set in different cases):
             {
                 "name": "*",
                 "config": {
-                    "tmpdir": "/tmp_for_all_servers",
+                    "tmpdir": "/tmp_for_all_servers"
                 },
                 "name": "eocn*",
                 "config": {
-                    "tmpdir": "/tmp_for_eocn_nodes",
+                    "tmpdir": "/tmp_for_eocn_nodes"
                 }
             }
         ],
@@ -97,13 +98,13 @@ is set in different cases):
             {
                 "path": "*/install/14*",
                 "config": {
-                    "tmpdir": "/tmp_for_v14",
+                    "tmpdir": "/tmp_for_v14"
                 }
             },
             {
                 "path": "*/dev/codeaster/install/*",
                 "config": {
-                    "tmpdir": "/tmp_for_development_version",
+                    "tmpdir": "/tmp_for_development_version"
                 }
             }
         ]
@@ -162,7 +163,7 @@ from .utils import ROOT
 
 USERCFG = osp.join(os.getenv("HOME", ""), ".config", "aster", "config.json")
 
-# all parameters must be set by `data/wscript`
+# all parameters must be set by `data/wscript - check_config()`
 VERSION_PARAMS = {
     "version_tag": "str",
     "version_sha1": "str",
@@ -170,6 +171,7 @@ VERSION_PARAMS = {
     "addmem": "int",
     "parallel": "bool",
     "python": "str",
+    "python_interactive": "str",
     "mpiexec": "str",
     "mpi_get_rank": "str",
     "only-proc0": "bool",

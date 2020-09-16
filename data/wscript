@@ -343,6 +343,7 @@ def check_config(self):
     cfg["version_tag"] = ".".join([str(i) for i in self.env.ASTER_VERSION[0]])
     cfg["version_sha1"] = self.env.ASTER_VERSION[1]
     cfg["python"] = "python3"
+    cfg["python_interactive"] = cfg["python"]
     cfg["parallel"] = int(self.get_define('HAVE_MPI') or 0)
     cfg["only-proc0"] = 0
     self.env["base_mpiexec"] = ["mpiexec"]
@@ -355,8 +356,8 @@ def check_config(self):
     cfg["exectool"] = {}
     self.end_msg("done")
     from_env = self.env["CONFIG_PARAMETERS"]
-    for param in ("tmpdir", "addmem", "python", "mpiexec", "mpi_get_rank",
-                  "only-proc0", "exectool"):
+    for param in ("tmpdir", "addmem", "python", "python_interactive",
+                  "mpiexec", "mpi_get_rank", "only-proc0", "exectool"):
         if cfg.get(param):
             self.start_msg(f". use '{param}'")
             cfg[param] = from_env.get(param, cfg[param])

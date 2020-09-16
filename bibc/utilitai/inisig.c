@@ -41,11 +41,9 @@ void hancpu (int sig);
 #elif defined _WINDOWS
 #include <float.h>
   void hanfpe(int sig);
-  void stptrap(int sig);
 
 #elif defined _POSIX
   void hanfpe(int sig);
-  void stptrap(int sig);
   void stpusr1(int sig);
 #endif
 
@@ -99,11 +97,6 @@ void DEF0(INISIG, inisig)
 #endif
 
 /*                          */
-/* Arret par CRTL C         */
-/*                          */
-   signal(SIGINT,  stptrap);
-
-/*                          */
 /* Arret par SIGUSR1        */
 /*                          */
 /* Note : l'arret par SIGUSR1 ne fonctionne pas sous MSVC,
@@ -111,13 +104,6 @@ void DEF0(INISIG, inisig)
 #if defined _POSIX
    signal(SIGUSR1,  stpusr1);
 #endif
-}
-
-
-void stptrap (int sig)
-{
-  CALL_UTMESS("I", "SUPERVIS_97");
-  exit(EXIT_FAILURE);
 }
 
 

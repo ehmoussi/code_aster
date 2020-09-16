@@ -75,11 +75,21 @@ def stop_at_end(text):
         str: Changed content.
     """
     refin = re.compile(r"^(?P<cmd>(FIN|code_aster\.close) *\()", re.M)
-    subst = "\n".join([
-        "print('Type <Enter> to enter in interactive mode "
-        "(it is normal to see EOFError).')",
-        "raise EOFError",
-        r"\g<cmd>"
-    ])
+    subst = \
+r"""
+import code
+import readline
+import rlcompleter
+
+readline.parse_and_bind('tab: complete')
+
+code.interact(local=locals(),
+                banner=('\\nEntering in interactive mode\\n'
+                        'Use exit() or Ctrl-D (i.e. EOF) to continue '
+                        'with \g<cmd>...)'),
+                exitmsg='Use exit() or Ctrl-D (i.e. EOF) to exit')
+
+\g<cmd>
+"""
     text = refin.sub(subst, text)
     return text

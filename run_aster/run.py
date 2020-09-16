@@ -236,9 +236,15 @@ class RunAster:
         cmd = []
         if self._exectool:
             cmd.append(self._exectool)
-        cmd.append(cmd_abspath(CFG.get("python")))
-        if self._interact:
+        python = CFG.get("python")
+        if not self._interact:
+            # absolute path is necessary to call the debugger
+            cmd.append(cmd_abspath(python))
+        else:
+            cmd.append(CFG.get("python_interactive", python))
             cmd.append("-i")
+        # remaining arguments are treated for code_aster script
+        cmd.append("--")
         cmd.append(commfile)
         if self._test:
             cmd.append("--test")
@@ -276,7 +282,9 @@ class RunAster:
             list[str]: List of command line arguments.
         """
         cmd = self._get_cmdline_exec(commfile)
-        if self._tee:
+        if self._interact:
+            pass
+        elif self._tee:
             orig = " ".join(cmd)
             cmd = [
                 f"( {orig} ; echo $? > {EXITCODE_FILE} )",
