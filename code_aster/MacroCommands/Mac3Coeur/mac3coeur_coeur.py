@@ -290,9 +290,9 @@ class Coeur(object):
         # cas ou la force d'archimede est activee
         if use_archimede == 'OUI':
 
-            ARCHFR1 = 873.  # Valeur en arret a froid (20 degres)
-            ARCHFR2 = 860.  # Valeur en arret a froid (60 degres)
-            ARCHCH = 620.  # Valeur a chaud (307 degres)
+            ARCHFR1 = 9.81 * 1.005305e+03  # Valeur en arret a froid (20 degres)
+            ARCHFR2 = 9.81 * 0.989942e+03  # Valeur en arret a froid (60 degres)
+            ARCHCH  = 9.81 * 0.712066e+03  # Valeur a chaud (307 degres)
 
         # cas ou la force d'archimede n'est pas activee
         elif use_archimede == 'NON':
@@ -317,11 +317,11 @@ class Coeur(object):
 
     def definition_temp_hydro_axiale(self):
         """ Fonction multiplicative de la force hydrodynamique axiale.
-            On multiplie par 0.722 les forces hydrodynamiques a froid pour obtenir celles a chaud."""
+            On multiplie par 0.708 les forces hydrodynamiques a froid pour obtenir celles a chaud."""
         assert self.temps_simu[
             'T0'] is not None, '`definition_time` must be called first!'
         FOHYFR_1 = 1.0    # Valeur a froid
-        FOHYCH_1 = 0.722  # Valeur a chaud
+        FOHYCH_1 = 0.708  # Valeur a chaud
 
         _HYDR_F1 = DEFI_FONCTION(
             NOM_PARA='INST', PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',

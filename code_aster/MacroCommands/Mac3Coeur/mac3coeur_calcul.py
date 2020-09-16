@@ -786,7 +786,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                     ))
                 nb_test+=1
             else :
-                raise aster.NonConvergenceError('no convergence')
+                raise ConvergenceError('no convergence')
             keywords = self.snl(
                                 reuse=__RESULT,
                                 RESULTAT=__RESULT,
@@ -874,7 +874,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                    ))
                 nb_test+=1
             else :
-                raise aster.NonConvergenceError('no convergence')
+                raise ConvergenceError('no convergence')
             keywords = self.snl(reuse = __RESULT,
                                 RESULTAT=__RESULT,
                                 NEWTON= _F(MATRICE='TANGENTE',
@@ -1112,7 +1112,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                                ))
             nb_test+=1
         else :
-            raise  aster.NonConvergenceError('no convergence')
+            raise  ConvergenceError('no convergence')
 
 
         keywords = self.snl_lame(

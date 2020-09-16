@@ -144,10 +144,10 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
     différents résultats
     """
     # Fonction multiplicative de la force hydrodynamique axiale.
-    # On multiplie par 0.722 les forces hydrodynamiques a froid pour obtenir
+    # On multiplie par 0.708 les forces hydrodynamiques a froid pour obtenir
     # celles a chaud.
     FOHYFR_1 = 1.0    # Valeur a froid
-    FOHYCH_1 = 0.722  # Valeur a chaud
+    FOHYCH_1 = 0.708  # Valeur a chaud
     res = ThycResult()
 
     f = open(nom_fic, 'r')
