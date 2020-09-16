@@ -199,6 +199,14 @@ class AssemblyMatrixClass : public DataStructure {
     };
 
     /**
+     * @brief Set new values
+     */
+    void setValues(const VectorLong idx, const VectorLong jdx, const VectorReal values) {
+        // Template class raises error. It must be specialized in each instanciated class.
+        throw std::runtime_error( "Not implemented" );
+    };
+
+/**
      * @brief Transpose
      */
     void transpose() {
@@ -302,17 +310,22 @@ class AssemblyMatrixClass : public DataStructure {
 };
 
 /** @typedef Definition d'une matrice assemblee de double */
-template class AssemblyMatrixClass< double, Displacement >;
+template <> void AssemblyMatrixClass< double, Displacement >::setValues(const VectorLong idx, 
+            const VectorLong jdx, const VectorReal values);
 typedef AssemblyMatrixClass< double, Displacement > AssemblyMatrixDisplacementRealClass;
+
 /** @typedef Definition d'une matrice assemblee de complexe */
+template class AssemblyMatrixClass< RealComplex, Displacement >;
 typedef AssemblyMatrixClass< RealComplex, Displacement > AssemblyMatrixDisplacementComplexClass;
 
 /** @typedef Definition d'une matrice assemblee de double temperature */
-template class AssemblyMatrixClass< double, Temperature >;
+template <> void AssemblyMatrixClass< double, Temperature >::setValues(const VectorLong idx, 
+            const VectorLong jdx, const VectorReal values);
 typedef AssemblyMatrixClass< double, Temperature > AssemblyMatrixTemperatureRealClass;
 
 /** @typedef Definition d'une matrice assemblee de double pression */
-template class AssemblyMatrixClass< double, Pressure >;
+template <> void AssemblyMatrixClass< double, Pressure >::setValues(const VectorLong idx, 
+            const VectorLong jdx, const VectorReal values);
 typedef AssemblyMatrixClass< double, Pressure > AssemblyMatrixPressureRealClass;
 
 /** @typedef Definition d'une matrice assemblee de RealComplex temperature */
@@ -323,14 +336,18 @@ typedef AssemblyMatrixClass< RealComplex, Temperature > AssemblyMatrixTemperatur
 template class AssemblyMatrixClass< RealComplex, Pressure >;
 typedef AssemblyMatrixClass< RealComplex, Pressure > AssemblyMatrixPressureComplexClass;
 
-typedef boost::shared_ptr< AssemblyMatrixDisplacementRealClass > AssemblyMatrixDisplacementRealPtr;
+typedef boost::shared_ptr< AssemblyMatrixDisplacementRealClass > 
+    AssemblyMatrixDisplacementRealPtr;
 typedef boost::shared_ptr< AssemblyMatrixDisplacementComplexClass >
     AssemblyMatrixDisplacementComplexPtr;
-typedef boost::shared_ptr< AssemblyMatrixTemperatureRealClass > AssemblyMatrixTemperatureRealPtr;
+typedef boost::shared_ptr< AssemblyMatrixTemperatureRealClass > 
+    AssemblyMatrixTemperatureRealPtr;
 typedef boost::shared_ptr< AssemblyMatrixTemperatureComplexClass >
     AssemblyMatrixTemperatureComplexPtr;
-typedef boost::shared_ptr< AssemblyMatrixPressureRealClass > AssemblyMatrixPressureRealPtr;
-typedef boost::shared_ptr< AssemblyMatrixPressureComplexClass > AssemblyMatrixPressureComplexPtr;
+typedef boost::shared_ptr< AssemblyMatrixPressureRealClass > 
+    AssemblyMatrixPressureRealPtr;
+typedef boost::shared_ptr< AssemblyMatrixPressureComplexClass > 
+    AssemblyMatrixPressureComplexPtr;
 
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 AssemblyMatrixClass< ValueType, PhysicalQuantity >::AssemblyMatrixClass(

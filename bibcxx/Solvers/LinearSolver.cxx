@@ -225,6 +225,11 @@ bool BaseLinearSolverClass::matrixFactorization(
 FieldOnNodesRealPtr BaseLinearSolverClass::solveRealLinearSystem(
     const AssemblyMatrixDisplacementRealPtr &currentMatrix,
     const FieldOnNodesRealPtr &currentRHS, FieldOnNodesRealPtr result ) const {
+        
+    if (!currentMatrix->isFactorized()) {
+        throw std::runtime_error( "Matrix must be factored first" );
+    }
+    
     if ( result->getName() == "" )
         result = FieldOnNodesRealPtr( new FieldOnNodesRealClass( Permanent ) );
 
@@ -246,6 +251,11 @@ FieldOnNodesRealPtr BaseLinearSolverClass::solveRealLinearSystemWithKinematicsLo
     const AssemblyMatrixDisplacementRealPtr &currentMatrix,
     const FieldOnNodesRealPtr &kinematicsField, const FieldOnNodesRealPtr &currentRHS,
     FieldOnNodesRealPtr result ) const {
+    
+    if (!currentMatrix->isFactorized()) {
+        throw std::runtime_error( "Matrix must be factored first" );
+    }
+    
     if ( result->getName() == "" )
         result = FieldOnNodesRealPtr( new FieldOnNodesRealClass( Permanent ) );
 

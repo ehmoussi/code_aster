@@ -22,3 +22,42 @@
  */
 
 #include "LinearAlgebra/AssemblyMatrix.h"
+
+// Specialization for <double, Displacement>
+template <> void AssemblyMatrixClass< double, Displacement >::setValues(const VectorLong idx, 
+        const VectorLong jdx, const VectorReal values) {
+        if (get_sh_jeveux_status() == 1 ) {
+            const ASTERINTEGER dim = idx.size();
+            if (idx.size() != jdx.size() || idx.size() != values.size()){
+                throw std::runtime_error( "All lists must have same length" );
+            }
+            CALLO_MATR_ASSE_SET_VALUES(getName(), &dim, idx.data(), jdx.data(), values.data());
+            _isFactorized = false;
+       }
+    };
+
+// Specialization for <double, Temperature>
+template <> void AssemblyMatrixClass< double, Temperature >::setValues(const VectorLong idx, 
+        const VectorLong jdx, const VectorReal values) {
+        if (get_sh_jeveux_status() == 1 ) {
+            const ASTERINTEGER dim = idx.size();
+            if (idx.size() != jdx.size() || idx.size() != values.size()){
+                throw std::runtime_error( "All lists must have same length" );
+            }
+            CALLO_MATR_ASSE_SET_VALUES(getName(), &dim, idx.data(), jdx.data(), values.data());
+            _isFactorized = false;
+        }
+    };
+
+// Specialization for <double, Pressure>
+template <> void AssemblyMatrixClass< double, Pressure >::setValues(const VectorLong idx, 
+        const VectorLong jdx, const VectorReal values) {
+        if (get_sh_jeveux_status() == 1 ) {
+            const ASTERINTEGER dim = idx.size();
+            if (idx.size() != jdx.size() || idx.size() != values.size()){
+                throw std::runtime_error( "All lists must have same length" );
+            }
+            CALLO_MATR_ASSE_SET_VALUES(getName(), &dim, idx.data(), jdx.data(), values.data());
+            _isFactorized = false;
+        }
+    };

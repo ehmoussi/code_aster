@@ -53,8 +53,9 @@ cata_msg = {
     de le détruire avec DEFI_GROUP / DETR_GROUP_MA.
 """),
 
-
-
+    8: _("""
+ La matrice  %(k1)s n'est pas stockée MORSE.
+"""),
 
     9: _("""
  Mode non compatible.

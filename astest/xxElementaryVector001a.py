@@ -60,14 +60,34 @@ vecass    = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R', NUME_DDL=numeddl, OPERATION='AFF
                        AFFE=_F(TOUT='OUI', NOM_CMP=('DX','DY','DZ',),  VALE=(0.,0.,0.,),),);
 vcine     = CALC_CHAR_CINE(NUME_DDL=numeddl, CHAR_CINE=bloq)
 
-monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 monSolver.matrixFactorization(matass)
 resu2=monSolver.solveRealLinearSystemWithKinematicsLoad(matass, vcine, vecass)
 y2=resu2.EXTR_COMP().valeurs
 
-
 # Comparaison des 2 solutions
 [test.assertAlmostEqual(y1[i], y2[i]) for i,_ in enumerate(y1)]
+
+
+# 3ème résolution en réinjectant les valeurs de la matrice sans élimination pour vérifier que les CL sont bien appliquées
+# on multiplie les valeurs par 10 mais comme le pb est en déplacement imposé seul, la solution est invariante par cette modification
+matass    = ASSE_MATRICE(MATR_ELEM=rigiel , NUME_DDL=numeddl, )
+values, idx, jdx, neq = matass.EXTR_MATR(sparse=True)
+matass    = ASSE_MATRICE(MATR_ELEM=rigiel , NUME_DDL=numeddl, CHAR_CINE=bloq )
+matass.setValues(idx.tolist(), jdx.tolist(), [10.*v for v in values])
+
+monSolver.matrixFactorization(matass)
+resu3=monSolver.solveRealLinearSystemWithKinematicsLoad(matass, vcine, vecass)
+y3=resu3.EXTR_COMP().valeurs
+[test.assertAlmostEqual(y1[i], y3[i]) for i,_ in enumerate(y1)]
+
+matass.setValues(idx.tolist(), jdx.tolist(), [10.*v for v in values])
+monSolver = code_aster.MultFrontSolver( code_aster.Renumbering.Metis )
+monSolver.matrixFactorization(matass)
+resu3=monSolver.solveRealLinearSystemWithKinematicsLoad(matass, vcine, vecass)
+y3=resu3.EXTR_COMP().valeurs
+[test.assertAlmostEqual(y1[i], y3[i]) for i,_ in enumerate(y1)]
+
 test.printSummary()
+
 
 FIN()

@@ -49,7 +49,6 @@ void exportAssemblyMatrixToPython() {
         .def( "appendElementaryMatrix",
               &AssemblyMatrixDisplacementRealClass::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixDisplacementRealClass::build )
-        .def( "transpose", &AssemblyMatrixDisplacementRealClass::transpose )
         .def( "getDOFNumbering", &AssemblyMatrixDisplacementRealClass::getDOFNumbering )
         .def( "getModel", &AssemblyMatrixDisplacementRealClass::getModel, R"(
 Return the model.
@@ -83,7 +82,19 @@ Returns:
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixDisplacementRealClass::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixDisplacementRealClass::setDOFNumbering )
-        .def( "setSolverName", &AssemblyMatrixDisplacementRealClass::setSolverName );
+        .def( "setSolverName", &AssemblyMatrixDisplacementRealClass::setSolverName )
+        .def( "setValues", &AssemblyMatrixDisplacementRealClass::setValues, R"(
+Erase the assembly matrix and set new values in it. 
+The new values are in coordinate format (i, j, aij). The matrix  must be stored in CSR format.
+There is no rule for the indices - they can be in arbitrary order and can be repeated. Repeated
+indices are sumed according to an assembly process.
+
+Arguments:
+    idx (list[int]): List of the row indices.
+    jdx (list[int]): List of the column indices.
+    values (list[float]): List of the values.
+        )")
+        .def( "transpose", &AssemblyMatrixDisplacementRealClass::transpose );
 
     void ( AssemblyMatrixDisplacementComplexClass::*c3 )(
         const KinematicsLoadPtr &currentLoad ) =
@@ -136,7 +147,18 @@ Returns:
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixTemperatureRealClass::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixTemperatureRealClass::setDOFNumbering )
-        .def( "setSolverName", &AssemblyMatrixTemperatureRealClass::setSolverName );
+        .def( "setSolverName", &AssemblyMatrixTemperatureRealClass::setSolverName )
+        .def( "setValues", &AssemblyMatrixTemperatureRealClass::setValues, R"(
+Erase the assembly matrix and set new values in it. 
+The new values are in coordinate format (i, j, aij). The matrix  must be stored in CSR format.
+There is no rule for the indices - they can be in arbitrary order and can be repeated. Repeated
+indices are sumed according to an assembly process.
+
+Arguments:
+    idx (list[int]): List of the row indices.
+    jdx (list[int]): List of the column indices.
+    values (list[float]): List of the values.
+        )");
 
     void ( AssemblyMatrixTemperatureComplexClass::*c7 )( const KinematicsLoadPtr &currentLoad ) =
         &AssemblyMatrixTemperatureComplexClass::addLoad;
@@ -185,7 +207,18 @@ Returns:
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixPressureRealClass::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixPressureRealClass::setDOFNumbering )
-        .def( "setSolverName", &AssemblyMatrixPressureRealClass::setSolverName );
+        .def( "setSolverName", &AssemblyMatrixPressureRealClass::setSolverName )
+        .def( "setValues", &AssemblyMatrixPressureRealClass::setValues, R"(
+Erase the assembly matrix and set new values in it. 
+The new values are in coordinate format (i, j, aij). The matrix  must be stored in CSR format.
+There is no rule for the indices - they can be in arbitrary order and can be repeated. Repeated
+indices are sumed according to an assembly process.
+
+Arguments:
+    idx (list[int]): List of the row indices.
+    jdx (list[int]): List of the column indices.
+    values (list[float]): List of the values.
+        )");
 
     void ( AssemblyMatrixPressureComplexClass::*c11 )( const KinematicsLoadPtr &currentLoad ) =
         &AssemblyMatrixPressureComplexClass::addLoad;
