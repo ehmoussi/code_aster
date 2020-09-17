@@ -50,20 +50,35 @@ module sort_module
   !! Sort in place an integer(kind=4) array by the Quicksort algorithm
   !
 implicit none
-!
+
 private
+#include "asterf_types.h"
 #include "asterfort/assert.h"
-!
-public :: qsort
-public :: qsort_i8
+
+public :: qsort, qsort_i4
 
 integer(kind=4), parameter, private :: un = 1
 integer(kind=8), parameter, private :: un8 = 1
-!
+
 contains
-!
+
 subroutine qsort(a,pv)
-   ! Dummy arguments
+!  Generic function for the default integer size
+!  Use `qsort_i4` to explicitly work on short integers
+   integer, dimension(:), intent(inout) :: a
+   integer, dimension(:), intent(inout), optional :: pv
+
+#if ASTER_INT_SIZE == 4
+   call qsort_i4(a, pv)
+#else
+   call qsort_i8(a, pv)
+#endif
+
+end subroutine qsort
+
+
+subroutine qsort_i4(a,pv)
+! Dummy arguments
    integer(kind=4), dimension(:), intent(inout) :: a
    integer(kind=4), dimension(:), intent(inout), optional     :: pv
    ! Local variables
@@ -88,8 +103,10 @@ subroutine qsort(a,pv)
       call rqsort(A,p,r)
    endif
    !
- end subroutine qsort
- !
+ end subroutine qsort_i4
+
+! --- Privates functions
+!
  recursive subroutine rqsort(A,p,r,pv)
    ! Dummy arguments
    integer(kind=4), dimension(:), intent(inout)           :: A

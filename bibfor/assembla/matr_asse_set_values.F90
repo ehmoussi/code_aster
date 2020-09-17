@@ -46,7 +46,7 @@ use sort_module
     real(kind=8) :: values(*)
 !-----------------------------------------------------------------------
 ! Goal : replace and set the values of an assembly matrix.
-!        The new values are in coordinate format (i, j, aij). The matrix  
+!        The new values are in coordinate format (i, j, aij). The matrix
 !        must be stored in CSR format.
 !        There is no rule for the indices - they can be in arbitrary
 !        order and can be repeated. Repeated indices are sumed according
@@ -71,13 +71,13 @@ use sort_module
     integer(kind=4), pointer :: smhc(:) => null()
     real(kind=8), pointer :: valm1(:) => null()
     real(kind=8), pointer :: valm2(:) => null()
-    integer, pointer :: idx_new(:) => null() 
-    integer, pointer :: jdx_new(:) => null() 
-    integer, pointer :: sum_ij(:) => null() 
-    real(kind=8), pointer :: v_up(:) => null() 
-    real(kind=8), pointer :: v_low(:) => null() 
+    integer, pointer :: idx_new(:) => null()
+    integer, pointer :: jdx_new(:) => null()
+    integer, pointer :: sum_ij(:) => null()
+    real(kind=8), pointer :: v_up(:) => null()
+    real(kind=8), pointer :: v_low(:) => null()
     integer, dimension(:), pointer :: pv => null()
-    integer, dimension(:), allocatable, target :: ibuffer 
+    integer, dimension(:), allocatable, target :: ibuffer
     !-------------------------------------------------------------------
     call jemarq()
     matass=matasz
@@ -107,24 +107,24 @@ use sort_module
     AS_ALLOCATE(vr=v_low, size=dim+neq)
 
 
-    ! Symmetrize profile 
+    ! Symmetrize profile
     ! ------------------
-    ! 1. Since all diagonal terms must be stored, we extend all the arrays by neq terms to 
+    ! 1. Since all diagonal terms must be stored, we extend all the arrays by neq terms to
     !    set them to 0
     ! 2. We duplicate the values array in order to store the upper and lower diagonal terms
     !    since, in code_aster, sparse matrices are stored this way with *symmetric profile*
     do i=1,dim
-        if (idx(i) < jdx(i)) then 
+        if (idx(i) < jdx(i)) then
             idx_new(i) = idx(i)
             jdx_new(i) = jdx(i)
             v_up(i) = values(i)
             v_low(i) = 0.D0
-        else if (idx(i) > jdx(i)) then 
+        else if (idx(i) > jdx(i)) then
             idx_new(i) = jdx(i)
             jdx_new(i) = idx(i)
             v_up(i) = 0.D0
             v_low(i) = values(i)
-        else if (idx(i) == jdx(i)) then 
+        else if (idx(i) == jdx(i)) then
             idx_new(i) = jdx(i)
             jdx_new(i) = idx(i)
             v_up(i) = values(i)
@@ -141,21 +141,21 @@ use sort_module
 
     ! Sum duplicates
     ! --------------
-    ! Super hack : to sort the row (idx) first and then the column (jdx) in a single process, 
+    ! Super hack : to sort the row (idx) first and then the column (jdx) in a single process,
     !              we define a new index array containing 10*max(row)*row + col and we sort it
     AS_ALLOCATE(vi=sum_ij,size=dim+neq)
     sum_ij=10*maxval(jdx_new(1:dim+neq))*jdx_new(1:dim+neq) + idx_new(1:dim+neq)
     allocate(ibuffer(dim+neq), stat = ierr )
     pv=>ibuffer(1:dim+neq)
-    call qsort_i8(sum_ij, pv)
+    call qsort(sum_ij, pv)
 
-    ! reorder the arrays 
+    ! reorder the arrays
     idx_new(1:dim+neq)=idx_new(pv)
     jdx_new(1:dim+neq)=jdx_new(pv)
     v_up(1:dim+neq)=v_up(pv)
     v_low(1:dim+neq)=v_low(pv)
 
-    ! sum the duplicates 
+    ! sum the duplicates
     k=1
     do i=2, dim+neq
         if ( (idx_new(k) .ne. idx_new(i)) .or. (jdx_new(k)) .ne. jdx_new(i)) then
@@ -218,8 +218,8 @@ use sort_module
     ! Set the matrix as non-symmetric
     refa(9)='MR'
 
-    ! if kinematic load, they are not taken into account in the new matrix 
-    if (refa(3).ne.' ') then 
+    ! if kinematic load, they are not taken into account in the new matrix
+    if (refa(3).ne.' ') then
         refa(3)='ELIML'
         call jedetr(matass//'.CCVA')
     endif
