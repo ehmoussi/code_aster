@@ -171,7 +171,7 @@ class Starter(ExecuteCommand):
                 UTMESS("I", "SUPERVIS_12")
             iwarn = iwarn or jxveri or sdveri or dbgjeveux
         if iwarn:
-            UTMESS('I', 'SUPERVIS_22')
+            UTMESS('I', 'SUPERVIS_22', valk=("--test", "code_aster.init()"))
 
         if keywords.get('IMPR_MACRO') == 'OUI':
             ExecutionParameter().enable(Options.ShowChildCmd)

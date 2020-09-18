@@ -105,10 +105,11 @@ Conseils :
 """),
 
     22 : { 'message' : _("""
-   Les mots-clés facteurs CODE et DEBUG dans DEBUT/POURSUITE sont réservés aux cas-tests.
-   Il ne faut pas les utiliser dans les études car ils modifient certaines valeurs par
-   défaut des commandes DEBUT/POURSUITE qui ont des conséquences sur le comportement
-   en cas d'erreur ou sur les performances.
+Les mots-clés CODE et DEBUG dans DEBUT/POURSUITE sont réservés aux cas-tests.
+De même pour l'option, "%(k1)s" de %(k2)s.
+Il ne faut pas les utiliser dans les études car ils modifient certaines valeurs par
+défaut des commandes DEBUT/POURSUITE qui ont des conséquences sur le comportement
+en cas d'erreur ou sur les performances.
 """), 'flags' : 'DECORATED',
            },
 
