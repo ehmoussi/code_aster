@@ -18,8 +18,8 @@
 # --------------------------------------------------------------------
 from code_aster.Commands import DEFI_FONCTION
 
-def F_ACCEL() : 
-	ACCEL=DEFI_FONCTION( NOM_PARA='INST',
+def F_ACCEL() :
+    ACCEL=DEFI_FONCTION( NOM_PARA='INST',
                          NOM_RESU='AXTAB1',
                          INTERPOL='LIN',
                          PROL_DROITE='EXCLU',
@@ -48,4 +48,4 @@ def F_ACCEL() :
      0.20000000,      -0.23660140,
      ))
 
-	return ACCEL
+    return ACCEL

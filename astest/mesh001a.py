@@ -20,7 +20,7 @@
 import code_aster
 import numpy as np
 
-code_aster.init()
+code_aster.init("--test")
 
 # check Mesh object API
 test = code_aster.TestCase()

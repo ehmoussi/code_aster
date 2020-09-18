@@ -22,7 +22,7 @@ from code_aster.Commands import *
 
 test = code_aster.TestCase()
 
-code_aster.init()
+code_aster.init("--test")
 
 one = 1
 

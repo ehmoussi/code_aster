@@ -21,7 +21,7 @@
 #
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ), DEBUG=_F(SDVERI='OUI'))
 
-from ssnl130c_form import Deplacer, Pression
+from ssnl130a import Deplacer, Pression
 
 mail=LIRE_MAILLAGE(FORMAT='MED',);
 

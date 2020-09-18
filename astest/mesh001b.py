@@ -22,7 +22,7 @@ import numpy as np
 
 from code_aster.Commands import DEFI_GROUP
 
-code_aster.init()
+code_aster.init("--test")
 
 # check ParallelMesh object API
 test = code_aster.TestCase()

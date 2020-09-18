@@ -25,7 +25,7 @@ test = code_aster.TestCase()
 
 # extract from zzzz351a
 # DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
-code_aster.init("--abort")
+code_aster.init("--test", "--abort")
 
 params = ExecutionParameter()
 

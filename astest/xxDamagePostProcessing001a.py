@@ -23,7 +23,7 @@ import copy
 
 from code_aster.Commands import *
 
-code_aster.init()
+code_aster.init("--test")
 
 test = code_aster.TestCase()
 

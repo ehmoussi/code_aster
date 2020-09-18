@@ -18,8 +18,8 @@
 # --------------------------------------------------------------------
 from code_aster.Commands import DEFI_FONCTION
 
-def F_FONC() : 
-	LBEW=DEFI_FONCTION(NOM_PARA='INST',
+def F_FONC() :
+    LBEW=DEFI_FONCTION(NOM_PARA='INST',
                    NOM_RESU='ACCE',
                    VALE=
                    (0.0,-0.19949,0.01,-0.25486999999999999,0.02,-0.30562,0.029999999999999999,-0.23882,
@@ -1091,7 +1091,7 @@ def F_FONC() :
                    PROL_GAUCHE='EXCLU',);
 
 
-	LBNS=DEFI_FONCTION(NOM_PARA='INST',
+    LBNS=DEFI_FONCTION(NOM_PARA='INST',
                    NOM_RESU='ACCE',
                    VALE=
                    (0.0,0.058599999999999999,0.01,0.016899999999999998,0.02,-0.0528,0.029999999999999999,
@@ -2168,4 +2168,4 @@ def F_FONC() :
                    PROL_GAUCHE='EXCLU',);
 
 
-	return LBEW, LBNS
+    return LBEW, LBNS

@@ -26,7 +26,7 @@ import os
 
 test = code_aster.TestCase()
 
-code_aster.init()
+code_aster.init("--test")
 nProc = code_aster.getMPINumberOfProcs()
 rank = code_aster.getMPIRank()
 parallel= (nProc>1)
