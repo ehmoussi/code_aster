@@ -265,6 +265,9 @@ class ExecutionParameter(metaclass=Singleton):
         parser.add_argument('--test', dest='TestMode',
             action='store_const', const=1, default=0,
             help="set execution in testcase mode")
+        parser.add_argument('--slave', dest='SlaveMode',
+            action='store_const', const=1, default=0,
+            help="slave mode, try not to exit in case of error")
 
         parser.add_argument('--dbgjeveux',
             action='store_const', const=1, default=0,

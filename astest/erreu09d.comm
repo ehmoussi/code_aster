@@ -18,16 +18,16 @@
 # --------------------------------------------------------------------
 
 # Same as ssna111a up to STAT_NON_LINE.
-# The expected exit status is CPU_LIMIT.
+# Here, it's run in slave mode to enable to catch TimeLimitError.
 
+import code_aster
+from code_aster import TimeLimitError
 from code_aster.Commands import *
 from code_aster.Utilities import ExecutionParameter
 
 params = ExecutionParameter()
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      PAR_LOT='NON',
-      DEBUG=_F(SDVERI='OUI'))
+code_aster.init("--test", "--slave")
 
 MA=LIRE_MAILLAGE(FORMAT='MED',);
 
@@ -112,8 +112,9 @@ print(("Decrease time limit from {0} to {1} s to force STAT_NON_LINE to "
       "interrupt.".format(tpmax, tpsnl)))
 params.set_option("tpmax", tpsnl)
 
-# should raise TimeLimitError and exit(1)
-RESU = STAT_NON_LINE(
+is_ok = 0
+try:
+    RESU = STAT_NON_LINE(
                      MODELE=MO,
                      CHAM_MATER=CHMAT,
                      EXCIT=_F(CHARGE=CHA,
@@ -134,3 +135,21 @@ RESU = STAT_NON_LINE(
                               PREDICTION='ELASTIQUE',MATR_RIGI_SYME='OUI',
                               REAC_ITER=1,),
                      ARCHIVAGE=_F(LIST_INST=L_INST,),);
+except TimeLimitError as err:
+    if err.id_message == "MECANONLINE9_2":
+        is_ok = 1
+
+TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                     _F(PARA='BOOLEEN',LISTE_I=is_ok,),
+                     ),
+               )
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC_I=1,
+           VALE_REFE_I=1,
+           NOM_PARA='BOOLEEN',
+           TABLE=TAB1,
+           FILTRE=_F(NOM_PARA='TEST',
+                     VALE_K='VALEUR  ',),
+           )
+
+FIN()

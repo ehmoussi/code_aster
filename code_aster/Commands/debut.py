@@ -150,6 +150,8 @@ class Starter(ExecuteCommand):
         if erreur:
             if erreur.get('ERREUR_F'):
                 stop_with = erreur['ERREUR_F']
+        if ExecutionParameter().option & Options.SlaveMode:
+            stop_with = "EXCEPTION"
         libaster.onFatalError(stop_with)
 
         debug = keywords.get('DEBUG')
@@ -224,13 +226,15 @@ def init(*argv, **kwargs):
     """Initialize code_aster as `DEBUT`/`POURSUITE` command does + command
     line options.
 
-    .. note:: :func:`init` automatically enables the ``--test`` option.
+    If the code_aster study is embedded under another Python program, the
+    "--slave" option may be useful to catch exceptions (even *TimeLimitError*)
+    and **try** not to exit the Python interpreter.
 
     Arguments:
         argv (list): List of command line arguments.
-        kwargs (dict): Keywords arguments passed to 'DEBUT'/'POURSUITE'
-            + 'debug' same as -g/--debug
-            + 'noargv' to ignore ``sys.argv``.
+        kwargs (dict): Keywords arguments passed to 'DEBUT'/'POURSUITE' +
+            'debug' same as -g/--debug,
+            'noargv' to ignore ``sys.argv``.
     """
     if not kwargs.get('noargv'):
         argv = list(argv) + list(sys.argv)

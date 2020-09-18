@@ -35,6 +35,7 @@ class Options(object):
     ShowDeprecated = 0x0020
     ShowChildCmd = 0x0040
     TestMode = 0x0080
+    SlaveMode = 0x0100
 
     @classmethod
     def by_name(cls, name):

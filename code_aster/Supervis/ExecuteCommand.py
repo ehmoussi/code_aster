@@ -204,7 +204,7 @@ class ExecuteCommand(object):
                 publish_in(self._caller["context"],
                            {self._result.userName: self._result})
             stop = (isinstance(self._exc, libaster.TimeLimitError)
-                    or not ExecutionParameter().option & Options.TestMode)
+                    and not ExecutionParameter().option & Options.SlaveMode)
             if not stop:
                 raise
         finally:
