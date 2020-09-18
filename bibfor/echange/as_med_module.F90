@@ -37,7 +37,7 @@ contains
 !>  Open a med file in read, write or read+write mode.
 !>  In write mode (creation of a new file) the version of the med format may be
 !>  selected. The default version is "3.3.1".
-!>  Other possible value is "4.0.0".
+!>  Other possible value is "4.0.0" and "4.1.0".
 !>  The version value is ignored in other opening modes.
 !
 !>  @param[out]     fid     file identifier
@@ -70,11 +70,13 @@ subroutine as_med_open(fid, nom, acces, cret)
             endif
         endif
 
-        if (vers(1) .eq. 4 .and. vers(2) .eq. 0) then
+        if (vers(1) .eq. 4 .and. (vers(2) .eq. 0 .or. vers(2) .eq. 1)) then
 !               pass
         elseif (vers(1) .eq. 3 .and. vers(2) .eq. 3) then
+#if (MED_NUM_MAJOR == 4 && MED_NUM_MINOR == 0)
             call write33header(nom)
             mode = med_acc_rdwr
+#endif
         else
             call utmess('F', 'MED_9', ni=3, vali=vers)
         endif
