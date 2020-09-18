@@ -47,7 +47,8 @@ class NoRepeat(Validator):
         """Check values"""
         values = force_list(values)
         if len(set(values)) != len(values):
-            raise ValueError("All the values must be different")
+            raise ValueError("All the values must be different: "
+                             "{0!r}".format(values))
 
 
 class LongStr(Validator):

@@ -229,7 +229,7 @@ def init(*argv, **kwargs):
     Arguments:
         argv (list): List of command line arguments.
         kwargs (dict): Keywords arguments passed to 'DEBUT'/'POURSUITE'
-            + 'debug' to quickly enable debugging messages
+            + 'debug' same as -g/--debug
             + 'noargv' to ignore ``sys.argv``.
     """
     if not kwargs.get('noargv'):
@@ -238,7 +238,6 @@ def init(*argv, **kwargs):
     if not ExecutionStarter.init(argv):
         return
 
-    ExecutionParameter().enable(Options.TestMode)
     if kwargs.get('debug'):
         ExecutionParameter().enable(Options.Debug)
     kwargs.pop('debug', None)
