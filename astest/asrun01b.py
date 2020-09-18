@@ -63,10 +63,11 @@ class TestConfig(unittest.TestCase):
         self.assertTrue(CFG.storage.has_param("parallel"))
         self.assertTrue(CFG.storage.has_param("only-proc0"))
         self.assertTrue(CFG.storage.has_param("python"))
+        self.assertTrue(CFG.storage.has_param("python_interactive"))
         self.assertTrue(CFG.storage.has_param("FC"))
         self.assertTrue(CFG.storage.has_param("FCFLAGS"))
         self.assertTrue(CFG.storage.has_param("exectool"))
-        size = 10
+        size = 11
         if CFG.get("parallel"):
             self.assertTrue(CFG.storage.has_param("mpiexec"))
             self.assertTrue(CFG.storage.has_param("mpi_get_rank"))
@@ -480,7 +481,7 @@ class TestCommandFiles(unittest.TestCase):
         ])
         res = stop_at_end(text)
         self.assertIn("DEBUT()", res)
-        self.assertIn("raise EOFError", res)
+        self.assertIn("code.interact", res)
         self.assertIn("FIN(PROC0='OUI')", res)
 
 

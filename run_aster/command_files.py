@@ -89,7 +89,6 @@ code.interact(local=locals(),
                         'with \g<cmd>...)'),
                 exitmsg='Use exit() or Ctrl-D (i.e. EOF) to exit')
 
-\g<cmd>
-"""
+\g<cmd>"""
     text = refin.sub(subst, text)
     return text
