@@ -419,8 +419,7 @@ def change_comm_file(comm, interact=False, wrkdir=None, show=False):
     if text.strip() == text_init.strip():
         return comm
 
-    filename = osp.join(wrkdir or ".",
-                        osp.splitext(osp.basename(comm))[0] + ".changed.py")
+    filename = osp.join(wrkdir or ".", osp.basename(comm) + ".changed.py")
     with open(filename, 'w') as fobj:
         fobj.write(text)
     if show:
