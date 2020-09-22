@@ -6,7 +6,7 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm mac3c04w.comm D 1
-F mmed mac3c04s.mmed D 20
+F mmed mac3c04a.mmed D 20
 F libr mac3c04a.32   D 32
 F libr mac3c04w.38   D 38
 F libr mac3c04s.21   D 21
