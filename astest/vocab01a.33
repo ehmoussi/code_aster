@@ -116,6 +116,21 @@ class CataChecker:
             if len(into) == 0:
                 self.cr.fatal("At least one value is expected for 'into'")
 
+    def check_enum(self, step):
+        """Check 'enum' attribute"""
+        enum = step.definition.get("enum")
+        if enum is not None:
+            into = step.definition.get("into", [])
+            if step.definition.get("typ") != "TXM":
+                self.cr.fatal("'enum' only support for 'TXM'")
+            if not isinstance(enum, (list, tuple)):
+                self.cr.fatal("Unexpected type for 'enum' attr: %r", into)
+            if len(enum) == 0:
+                self.cr.fatal("At least one value is expected for 'enum'")
+            elif len(enum) != len(into):
+                self.cr.fatal("'into' and 'enum' must have the same size: "
+                              "{0} != {1}".format(len(into), len(enum)))
+
     def check_position(self, step):
         """Vérifie l'attribut position."""
         if step.definition.get("position") is not None:
@@ -204,6 +219,7 @@ class CataChecker:
         self.check_fr(step)
         self.check_statut(step)
         self.check_into(step)
+        self.check_enum(step)
         self.check_position(step)
         self.check_validators(step)
         self.check_defaut(step)

@@ -27,7 +27,7 @@ from ..Messages import UTMESS
 from ..Objects import (DataStructure, Formula, Function,
                        GenericMaterialProperty, Material, MaterialProperty,
                        Function2D, Table)
-from ..Supervis import ExecuteCommand
+from ..Supervis import ExecuteCommand, replace_enum
 
 
 class MaterialDefinition(ExecuteCommand):
@@ -56,6 +56,7 @@ class MaterialDefinition(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         check_keywords(keywords)
+        replace_enum(self._cata, keywords)
 
         mater = keywords.get("MATER")
         if keywords.get("reuse"):

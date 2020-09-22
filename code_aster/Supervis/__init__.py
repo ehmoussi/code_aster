@@ -30,3 +30,4 @@ from .exceptions_ext import (AsterError, ContactError, ConvergenceError,
 from .ExecuteCommand import (CO, ExecuteCommand, ExecuteCommandOps,
                              ExecuteMacro, UserMacro)
 from .Serializer import Serializer, loadObjects, saveObjects
+from .visitors import replace_enum
