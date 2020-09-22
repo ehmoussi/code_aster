@@ -39,23 +39,21 @@ FLEX = CALC_MAC3COEUR(TYPE_COEUR  = 'MONO_FROID',
                                        TYPE_MAINTIEN = 'FORCE',
                                        FORCE_MAINTIEN =5610.,
                                        ARCHIMEDE      = 'NON',
-                                       ),)
+                                       ))
 
 FLEX = CALC_CHAMP(reuse = FLEX,
                   RESULTAT = FLEX,
                   FORCE = ('FORC_NODA',),)
 
-
 FLEX_CH = LIRE_FONCTION(UNITE = 21,
-                    NOM_PARA = 'DX',
-                    PROL_DROITE = 'CONSTANT',
-                    PROL_GAUCHE = 'CONSTANT',)
+                        NOM_PARA = 'DX',
+                        PROL_DROITE = 'CONSTANT',
+                        PROL_GAUCHE = 'CONSTANT',)
 
 FLEX_DCH = LIRE_FONCTION(UNITE=22,
-                    NOM_PARA='DX',
-                    PROL_DROITE='CONSTANT',
-                    PROL_GAUCHE = 'CONSTANT',);
-
+                         NOM_PARA='DX',
+                         PROL_DROITE='CONSTANT',
+                         PROL_GAUCHE = 'CONSTANT')
 
 POST1 = POST_RELEVE_T(ACTION = _F(OPERATION = 'EXTRACTION',
                                   INTITULE = 'DY',
