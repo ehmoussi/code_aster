@@ -136,7 +136,7 @@ try:
                               REAC_ITER=1,),
                      ARCHIVAGE=_F(LIST_INST=L_INST,),);
 except TimeLimitError as err:
-    if err.id_message == "MECANONLINE9_2":
+    if err.id_message in ("MECANONLINE9_1", "MECANONLINE9_2"):
         is_ok = 1
 
 TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
