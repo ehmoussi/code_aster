@@ -164,7 +164,7 @@ character(len=16), intent(in) :: option, nomte
                        zr(ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
                        zr(ivarip), zr(ivectu), zr(imatuu),&
                        lMatr, lVect, lSigm, lVari,&
-                       zi(icoret))
+                       codret)
         else
             call ngvlog('RIGI', option, typmod, ndim, nnoQ,nnoL,&
                        npg,nddl, jv_poids, zr(jv_vfQ), zr(jv_vfL),jv_dfdeQ,jv_dfdeL,&
@@ -173,7 +173,7 @@ character(len=16), intent(in) :: option, nomte
                        zr(ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
                        zr(ivarip), zr(ivectu), zr(imatuu),&
                        lMatr, lVect, lSigm, lVari,&
-                       zi(icoret))
+                       codret)
         endif
     else if (defo_comp(1:5) .eq. 'PETIT') then
         call nmgvmb(ndim, nnoQ, nnoL, npg, axi,&
@@ -186,12 +186,16 @@ character(len=16), intent(in) :: option, nomte
                     zr(iinstp), zr(ideplm), zr(ideplp), ni2ldc, zr(icontm),&
                     zr(ivarim), zr(icontp), zr(ivarip), zr(ivectu), zr(imatuu),&
                     lMatr, lVect, lSigm,&
-                    zi(icoret))
+                    codret)
         deallocate(b)
         deallocate(w)
         deallocate(ni2ldc)
     else
         ASSERT(ASTER_FALSE)
     endif
+!
+    if(lSigm) then
+        zi(icoret) = codret
+    end if
 !
 end subroutine
