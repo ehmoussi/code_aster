@@ -238,7 +238,7 @@ implicit none
                     fimpe)
     endif
     if (nondp .ne. 0) then
-        call fondpl(modele, mateco, numedd, neq, chondp,&
+        call fondpl(modele, mate, mateco, numedd, neq, chondp,&
                     nondp, vecond, veonde, vaonde, temps,&
                     fonde)
     endif

@@ -49,6 +49,8 @@ EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
 CTEMPSR  = LocatedComponents(phys=PHY.INST_R, type='ELEM',
     components=('INST',))
 
+EGNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELGA', location='RIGI',
+    components=('X[30]',))
 
 MVECTUR  = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=DDL_MECA)
 
@@ -68,6 +70,7 @@ class MEAB_FACE3(Element):
 
         OP.AMOR_MECA(te=569,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (OP.AMOR_MECA.PVARCPR, LC.ZVARCPG), 
                      ),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
@@ -80,6 +83,7 @@ class MEAB_FACE3(Element):
         OP.FORC_NODA(te=569,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                     (OP.FORC_NODA.PVARCPR, LC.ZVARCPG),
                      ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
@@ -87,8 +91,13 @@ class MEAB_FACE3(Element):
         OP.FULL_MECA(te=569,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                     (OP.FULL_MECA.PVARCPR, LC.ZVARCPG),
                      ),
             para_out=((SP.PMATUUR, MMATUUR), (SP.PVECTUR, MVECTUR), ),
+        ),
+
+        OP.INIT_VARC(te=99,
+            para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), (OP.INIT_VARC.PVARCNO, LC.ZVARCNO),),
         ),
         
         OP.MATE_ELGA(te=142,
@@ -101,22 +110,30 @@ class MEAB_FACE3(Element):
             para_out=((OP.MATE_ELEM.PMATERR, LC.EEMATE_R), ),
         ),
 
+        OP.NSPG_NBVA(te=496,
+            para_in=((OP.NSPG_NBVA.PCOMPOR, LC.CCOMPO2), ),
+            para_out=((SP.PDCEL_I, LC.EDCEL_I), ),
+        ),
+
         OP.ONDE_PLAN(te=498,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PONDPLA, LC.CONDPLA), (SP.PONDPLR, LC.CONDPLR),
-                     (SP.PTEMPSR, CTEMPSR), ),
+                     (SP.PTEMPSR, CTEMPSR), (OP.ONDE_PLAN.PVARCPR, LC.ZVARCPG),
+                    ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
         OP.RAPH_MECA(te=569,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                     (OP.RAPH_MECA.PVARCPR, LC.ZVARCPG),
                      ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
         OP.RIGI_MECA(te=569,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (OP.RIGI_MECA.PVARCPR, LC.ZVARCPG),
                      ),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
@@ -131,6 +148,7 @@ class MEAB_FACE3(Element):
         OP.RIGI_MECA_TANG(te=569,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                     (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
                      ),
             para_out = ((SP.PMATUUR, MMATUUR), 
                         (SP.PVECTUR, MVECTUR), 
@@ -140,21 +158,28 @@ class MEAB_FACE3(Element):
         
         OP.RIGI_MECA_ELAS(te=569,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (OP.RIGI_MECA_ELAS.PVARCPR, LC.ZVARCPG),
                      ),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
 
         OP.TOU_INI_ELGA(te=99,
-            para_out=((OP.TOU_INI_ELGA.PGEOM_R, EGGEOP_R), ),
+            para_out=((OP.TOU_INI_ELGA.PGEOM_R, EGGEOP_R), 
+                      (OP.TOU_INI_ELGA.PNEUT_R, EGNEUT_R), ),
         ),
 
         OP.TOU_INI_ELEM(te=99,
             para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
         ),
 
-
         OP.TOU_INI_ELNO(te=99,
             para_out=((OP.TOU_INI_ELNO.PGEOM_R, NGEOMER), ),
+        ),
+
+        OP.VARC_ELGA(te=530,
+            para_in=((OP.VARC_ELGA.PVARCPR, LC.ZVARCPG), ),
+            para_out=((SP.PVARC_R, LC.EVARC_R), 
+            ),
         ),
 
     )

@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fondpl(modele, mateco, numedd, neq, chondp,&
+subroutine fondpl(modele, mate, mateco, numedd, neq, chondp,&
                   nchond, vecond, veonde, vaonde, temps,&
                   foonde)
     implicit none
@@ -32,17 +32,21 @@ subroutine fondpl(modele, mateco, numedd, neq, chondp,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/mecact.h"
 #include "asterfort/reajre.h"
+#include "asterfort/vrcins.h"
 !
     integer :: i, ibid, iret, j,  jvaond
     integer :: nchond, neq, npain
-    character(len=8) :: lpain(5), lpaout(1), chondp(nchond)
+    character(len=8) :: lpain(6), lpaout(1), chondp(nchond)
     character(len=24) :: modele, mateco, numedd, vecond
     character(len=24) :: chinst
-    character(len=24) :: veonde, vaonde, lchin(5), lchout(1)
+    character(len=24) :: veonde, vaonde, lchin(6), lchout(1)
     character(len=24) :: chgeom, ligrel
     real(kind=8) :: foonde(neq), temps
     character(len=8), pointer :: lgrf(:) => null()
     real(kind=8), pointer :: vale(:) => null()
+    character(len=19) :: chvarc
+    character(len=2) :: codret
+    character(len=8) :: mate
 !
 !-----------------------------------------------------------------------
     call jemarq()
@@ -57,18 +61,27 @@ subroutine fondpl(modele, mateco, numedd, neq, chondp,&
     ligrel = modele(1:8)//'.MODELE'
     call jeveuo(ligrel(1:19)//'.LGRF', 'L', vk8=lgrf)
     chgeom = lgrf(1)//'.COORDO'
+!
+! --- CREATION CHAMP DE VARIABLES DE COMMANDE CORRESPONDANT
+!
+    chvarc = '&&CHME.ONDPL.CHVARC'
+    call vrcins(modele, mate, ' ', temps, chvarc,&
+                codret)
+!
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom
     lpain(2) = 'PMATERC'
     lchin(2) = mateco
 !
-    lpain(3) = 'PTEMPSR'
-    lchin(3) = chinst
+    lpain(3) = 'PVARCPR'
+    lchin(3) = chvarc(1:19)
+    lpain(4) = 'PTEMPSR'
+    lchin(4) = chinst
 !
-    lpain(4) = 'PONDPLA'
-    lpain(5) = 'PONDPLR'
+    lpain(5) = 'PONDPLA'
+    lpain(6) = 'PONDPLR'
 !
-    npain = 5
+    npain = 6
 !
     lpaout(1) = 'PVECTUR'
     lchout(1) = vecond
@@ -77,8 +90,8 @@ subroutine fondpl(modele, mateco, numedd, neq, chondp,&
         call exisd('CARTE', chondp(i)//'.CHME.ONDPL', iret)
         call exisd('CARTE', chondp(i)//'.CHME.ONDPR', ibid)
         if (iret .ne. 0 .and. ibid .ne. 0) then
-            lchin(4) = chondp(i)//'.CHME.ONDPL.DESC'
-            lchin(5) = chondp(i)//'.CHME.ONDPR.DESC'
+            lchin(5) = chondp(i)//'.CHME.ONDPL.DESC'
+            lchin(6) = chondp(i)//'.CHME.ONDPR.DESC'
 !
             call calcul('S', 'ONDE_PLAN', ligrel, npain, lchin,&
                         lpain, 1, lchout, lpaout, 'V',&
@@ -99,6 +112,8 @@ subroutine fondpl(modele, mateco, numedd, neq, chondp,&
 !
         endif
     end do
+!
+    call detrsd('CHAMP_GD', chvarc)
 !
     call jedema()
 end subroutine

@@ -71,6 +71,51 @@ CHAMPMAT=AFFE_MATERIAU(    MAILLAGE=MAIL,AFFE=(
                           MATER = MAT1))
                            )
 
+EX = FORMULE(VALE='-4.44E+8*Z/50.',
+             NOM_PARA='Z',)
+NU = DEFI_CONSTANTE(VALE=0.48)
+RHO = DEFI_CONSTANTE(VALE=1900.)
+
+YOUNG_F = DEFI_FONCTION(NOM_PARA='NEUT1',
+                        VALE =(-1.e-9,-1.e-9,1.e+10,1.e+10),
+                        PROL_DROITE='LINEAIRE',
+                        PROL_GAUCHE='LINEAIRE',)
+
+MAT2  = DEFI_MATERIAU(ELAS_FO= _F(E=YOUNG_F, NU=NU, RHO=RHO,),)
+
+
+CHGEOMG = CREA_CHAMP(TYPE_CHAM = 'NOEU_GEOM_R',
+                     OPERATION = 'EXTR',
+                     MAILLAGE  = MAIL,
+                     NOM_CHAM  = 'GEOMETRIE',)
+
+CHE_ = CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_F',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODELE,
+                    AFFE      = _F(GROUP_MA = 'ABSO',
+                                   NOM_CMP  = 'X1',
+                                   VALE_F   = EX,),)
+
+CHE  = CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                   OPERATION = 'EVAL',
+                   CHAM_F    = CHE_,
+                   CHAM_PARA = CHGEOMG,
+                    INFO=2)
+
+
+CHAMATC=AFFE_MATERIAU(    MAILLAGE=MAIL,
+                   AFFE=(_F(  GROUP_MA = ('VOLU', ),
+                             MATER = MAT1),
+                         _F(  GROUP_MA = ( 'ABSO',),
+                             MATER = MAT2),
+                        ),
+                       AFFE_VARC=(_F(NOM_VARC='NEUT1',
+                                    CHAM_GD =CHE,
+                                    GROUP_MA=('ABSO'),),
+                                ),
+                           )
+
+
 LIAISON=AFFE_CHAR_MECA(
                MODELE=MODELE,LIAISON_UNIF=(
               _F( GROUP_NO = 'FACE1', DDL = 'DX'),
@@ -248,6 +293,130 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.0,
                       ),
               )
 
+##### PARAMETRES PAR VARIABLE DE COMMANDE
+##### TEST POUR ONDE_PLANE
+
+RIGI_ELC=CALC_MATR_ELEM(    MODELE=MODELE,
+                              OPTION='RIGI_MECA',
+                              CHAM_MATER=CHAMATC,
+                              CHARGE=LIAISON
+                            )
+
+MASS_ELC=CALC_MATR_ELEM(    MODELE=MODELE,
+                              OPTION='MASS_MECA',
+                              CHAM_MATER=CHAMATC,
+                              CHARGE=LIAISON
+                            )
+
+AMOR_ELC=CALC_MATR_ELEM(    MODELE=MODELE,
+                              OPTION='AMOR_MECA',
+                              CHAM_MATER=CHAMATC,
+                              CHARGE=LIAISON,
+                              RIGI_MECA=RIGI_ELC,
+                              MASS_MECA=MASS_ELC,
+                            )
+
+VECT_ELC=CALC_VECT_ELEM(     OPTION='CHAR_MECA',
+                             CHAM_MATER=CHAMATC,
+                             CHARGE=LIAISON
+                           )
+
+
+NUMEDDLC=NUME_DDL(    MATR_RIGI=RIGI_ELC)
+
+## On test également la prise en compte des VARC
+#VECT_EL2=CALC_VECT_ELEM(INST=5.E-3, OPTION='CHAR_MECA', CHAM_MATER=CHAMATC, CHARGE=ONDE)
+#VECA2=ASSE_VECTEUR(VECT_ELEM=VECT_EL2, NUME_DDL=NUMEDDLC)
+#TEST_RESU(CHAM_NO=_F(NOEUD='N41',
+#                     NOM_CMP='DY',
+#                     CHAM_GD=VECA2,
+#                     VALE_CALC=-7.6231708412726098,),
+#          )
+
+
+RIGIDITC=ASSE_MATRICE(    MATR_ELEM=RIGI_ELC,
+                            NUME_DDL=NUMEDDLC
+                          )
+
+AMORTC=ASSE_MATRICE(    MATR_ELEM=AMOR_ELC,
+                            NUME_DDL=NUMEDDLC
+                          )
+
+MASSEC=ASSE_MATRICE(    MATR_ELEM=MASS_ELC,
+                         NUME_DDL=NUMEDDLC
+                       )
+
+VECASC=ASSE_VECTEUR(    VECT_ELEM=VECT_ELC,
+                         NUME_DDL=NUMEDDLC
+                       )
+
+DYNAC=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
+                        MODELE=MODELE,
+                        MATR_MASS=MASSEC,
+                        MATR_RIGI=RIGIDITC,
+                        MATR_AMOR=AMORTC,
+                        EXCIT=(
+                          _F(  VECT_ASSE = VECASC,
+                               COEF_MULT = 1.),
+                          _F(  CHARGE = ONDE)),
+###CDURAND###           ETAT_INIT=_F( INST_INIT = 0.),
+                        INCREMENT=_F( LIST_INST = TEMPLI),
+#                        ARCHIVAGE=_F( LIST_ARCH = INTLI),
+                        SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
+                        )
+
+DXN22C=RECU_FONCTION(     RESULTAT=DYNAC,   NOEUD='N22',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DX'
+                       )
+
+DYN22C=RECU_FONCTION(     RESULTAT=DYNAC,   NOEUD='N22',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DY'
+                       )
+
+DZN22C=RECU_FONCTION(     RESULTAT=DYNAC,   NOEUD='N22',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DZ'
+                       )
+
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.0,
+                         VALE_REFE=0.0,
+                         REFERENCE='ANALYTIQUE',
+                         CRITERE='ABSOLU',
+                         VALE_PARA=0.2656,
+                         FONCTION=DXN22C,),
+                      _F(VALE_CALC=1.002456482770E-3,
+                         VALE_REFE=1.E-3,
+                         PRECISION=4.0E-3,
+                         REFERENCE='ANALYTIQUE',
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.2656,
+                         FONCTION=DYN22C,),
+                      _F(VALE_CALC=9.939582018115E-4,
+                         VALE_REFE=1.E-3,
+                         PRECISION=7.0E-3,
+                         REFERENCE='ANALYTIQUE',
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.4384,
+                         FONCTION=DYN22C,),
+                      _F(VALE_CALC=-2.87E-06,
+                         VALE_REFE=0.0,
+                         REFERENCE='ANALYTIQUE',
+                         CRITERE='ABSOLU',
+                         VALE_PARA=0.8,
+                         FONCTION=DYN22C,),
+                      _F(VALE_CALC=7.10E-18,
+                         VALE_REFE=0.0,
+                         REFERENCE='ANALYTIQUE',
+                         CRITERE='ABSOLU',
+                         VALE_PARA=0.2656,
+                         FONCTION=DZN22C,),
+                      ),
+              )
+
+#######################################################"
+
 TEMLI=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=_F( JUSQU_A = 0.72, NOMBRE = 450))
 
 TEMLI2=DEFI_LIST_REEL(DEBUT=0.0016,
@@ -322,6 +491,78 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.0,
                          CRITERE='ABSOLU',
                          VALE_PARA=0.2672,
                          FONCTION=DZNB22,),
+                      ),
+              )
+
+##### TEST DYNA_NON_LINE ET ONDE_PLAN AVEC VARC
+
+DYND=DYNA_NON_LINE(     MODELE=MODELE,
+                        CHAM_MATER=CHAMATC,
+                        EXCIT=(
+                          _F(  CHARGE = LIAISON),
+                          _F(  CHARGE = ONDE)),
+#                       ETAT_INIT=_F( INST_INIT = 0.),
+                        COMPORTEMENT=_F( RELATION = 'ELAS',
+                                      TOUT = 'OUI'),
+                        CONVERGENCE=_F( RESI_GLOB_RELA = 1.E-8),
+                        SOLVEUR=_F(  METHODE = 'LDLT',
+                                     STOP_SINGULIER = 'NON'),
+#                         NEWTON=_F(  MATRICE = 'ELASTIQUE',
+#                                     REAC_INCR = 0,
+#                                     REAC_ITER = 0),
+                        NEWTON=_F(  MATRICE = 'TANGENTE',
+                                    PAS_MINI_ELAS = 1.,
+                                    REAC_ITER = 1,),
+                        INCREMENT=_F( LIST_INST = TEMLI),
+###CDURAND              ARCHIVAGE=_F( LIST_ARCH = INLI),
+                        SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
+                                FORMULATION='DEPLACEMENT',),
+                        )
+
+DXNB22D=RECU_FONCTION(   LIST_INST=TEMLI2,   PRECISION=1.E-4,
+                         RESULTAT=DYND,   NOEUD='N22',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DX'
+                       )
+
+DYNB22D=RECU_FONCTION(   LIST_INST=TEMLI2,   PRECISION=1.E-4,
+                         RESULTAT=DYND,   NOEUD='N22',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DY'
+                       )
+
+DZNB22D=RECU_FONCTION(   LIST_INST=TEMLI2,   PRECISION=1.E-4,
+                         RESULTAT=DYND,   NOEUD='N22',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DZ'
+                       )
+
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.0,
+                         CRITERE='ABSOLU',
+                         VALE_PARA=0.2672,
+                         FONCTION=DXNB22D,),
+                      _F(VALE_CALC=9.989051E-04,
+                         VALE_REFE=1.003477E-3,
+                         REFERENCE='AUTRE_ASTER',
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.2672,
+                         PRECISION=7.0E-3,
+                         FONCTION=DYNB22D,),
+                      _F(VALE_CALC=9.914943E-04,
+                         VALE_REFE=9.946329E-4,
+                         REFERENCE='AUTRE_ASTER',
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.44,
+                         PRECISION=5.0E-3,
+                         FONCTION=DYNB22D,),
+                      _F(VALE_CALC=4.61E-06,
+                         CRITERE='ABSOLU',
+                         VALE_PARA=0.72,
+                         FONCTION=DYNB22D,),
+                      _F(VALE_CALC=1.63E-19,
+                         CRITERE='ABSOLU',
+                         VALE_PARA=0.2672,
+                         FONCTION=DZNB22D,),
                       ),
               )
 

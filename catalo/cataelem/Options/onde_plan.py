@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,8 @@ import cataelem.Commons.parameters as SP
 import cataelem.Commons.attributes as AT
 
 
-
+PVARCPR  = InputParameter(phys=PHY.VARI_R,
+comment="""  PVARCPR : VARIABLES DE COMMANDE  """)
 
 ONDE_PLAN = Option(
     para_in=(
@@ -36,6 +37,7 @@ ONDE_PLAN = Option(
         SP.PONDPLA,
         SP.PONDPLR,
         SP.PTEMPSR,
+        PVARCPR,
     ),
     para_out=(
         SP.PVECTUR,

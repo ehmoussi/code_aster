@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,8 +44,7 @@ subroutine te0499(option, nomte)
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: fami, poum
-    character(len=16) :: nomres(5)
-    integer :: icodre(5), kpg, spt
+    integer :: icodre(5), kpg
     character(len=1) :: type
     real(kind=8) :: poids, nx, ny, valres(5), e, nu, lambda, mu, cp, cs
     real(kind=8) :: rho, taux, tauy, nux, nuy, scal
@@ -54,13 +53,18 @@ subroutine te0499(option, nomte)
     real(kind=8) :: taondx, taondy, norx, nory, dirx, diry, cele
     real(kind=8) :: trace, norm, jac, coef_amor
     real(kind=8) :: param0, param, param2, h, h2, instd, instd2, ris, rip, l0, usl0
-    integer :: nno, kp, npg, ipoids, ivf, idfde, igeom
+    integer :: nno, npg, ipoids, ivf, idfde, igeom
     integer :: ivectu, k, i, mater
     integer :: ier, ii, imate, indic1, indic2, iondc, ionde
     integer :: j, jgano, jinst, ndim, nnos, ndim2
     real(kind=8) :: coedir, typer, valfon, valfon2
     character(len=8) :: nompar(2), lpar2(2)
-    real(kind=8) :: valpar(2), vpar2(2)
+    real(kind=8) :: vpar2(2)
+    real(kind=8) :: xygau(2)
+    integer :: idecpg, idecno
+    character(len=16), parameter :: nomres(5) = (/'E        ', 'NU       ',&
+                                                  'RHO      ',&
+                                                  'COEF_AMOR', 'LONG_CARA'/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,7 +80,6 @@ subroutine te0499(option, nomte)
     call jevech('PTEMPSR', 'L', jinst)
     call jevech('PVECTUR', 'E', ivectu)
 !
-!
     if (zk8(ionde)(1:7) .eq. '&FOZERO') goto 99
 !
 !     --- INITIALISATION DE SIGMA
@@ -88,53 +91,13 @@ subroutine te0499(option, nomte)
     enddo
 !
     mater = zi(imate)
-    nomres(1) = 'E'
-    nomres(2) = 'NU'
-    nomres(3) = 'RHO'
-    nomres(4) = 'COEF_AMOR'
-    nomres(5) = 'LONG_CARA'
-    fami='FPG1'
-    kpg=1
-    spt=1
+    fami='RIGI'
     poum='+'
-    ndim2 = 2
+    ASSERT(ndim .ne. 2)
+    ndim2=ndim+1
 !
     nompar(1) = 'X'
     nompar(2) = 'Y'
-!   coordonnées du barycentre de l'élément
-    valpar(:) = 0.d0
-    do i = 1, nnos
-        do j = 1, ndim2
-            valpar(j) = valpar(j) + zr(igeom-1+(i-1)*ndim2+j)/nnos
-        enddo
-    enddo
-!
-    call rcvalb(fami, kpg, spt, poum, mater,&
-                ' ', 'ELAS', 3, nompar, valpar,&
-                4, nomres, valres, icodre, 1)
-!   appel LONG_CARA en iarret = 0
-    call rcvalb(fami, kpg, spt, poum, mater,&
-                ' ', 'ELAS', 3, nompar, valpar,&
-                1, nomres(5), valres(5), icodre(5), 0)
-!
-    e = valres(1)
-    nu = valres(2)
-    rho = valres(3)
-    coef_amor = valres(4)
-!
-    usl0 = 0.d0
-    if (icodre(5) .eq. 0) then
-      l0 = valres(5)
-      usl0=1.d0/l0
-    endif
-!
-    lambda = e*nu/ (1.d0+nu)/ (1.d0-2.d0*nu)
-    mu = e/2.d0/ (1.d0+nu)
-!
-    cp = sqrt((lambda+2.d0*mu)/rho)
-    cs = sqrt(mu/rho)
-    rip = (lambda+2.d0*mu)*usl0
-    ris = mu*usl0
 !
 !     --- CARACTERISTIQUES DE L'ONDE PLANE
 !
@@ -144,7 +107,6 @@ subroutine te0499(option, nomte)
     h = zr(iondc+4)
     h2 = zr(iondc+5)
 !ER h2 équivalent de h pour définir la position du toit du rocher par rapport a l'onde
-
 !
     if (typer .eq. 0.d0) type = 'P'
     if (typer .eq. 1.d0) type = 'S'
@@ -159,35 +121,73 @@ subroutine te0499(option, nomte)
     norx = -diry
     nory = dirx
 !
-    do kp = 1, npg
-       xgg(kp)=0.d0
-       ygg(kp)=0.d0
+    do kpg = 1, npg
+       xgg(kpg)=0.d0
+       ygg(kpg)=0.d0
     enddo
 !
 !    write(6,*) 'npg=',npg,'nno=',nno
-    do kp = 1, npg
-       k = (kp-1)*nno
+    do kpg = 1, npg
+       k = (kpg-1)*nno
        do i = 1, nno
           ii = 2*i-1
-          xgg(kp)=xgg(kp)+zr(igeom+ii-1)*zr(ivf+k+i-1)
-          ygg(kp)=ygg(kp)+zr(igeom+ii)*zr(ivf+k+i-1)
+          xgg(kpg)=xgg(kpg)+zr(igeom+ii-1)*zr(ivf+k+i-1)
+          ygg(kpg)=ygg(kpg)+zr(igeom+ii)*zr(ivf+k+i-1)
        enddo
 !      write(6,*) 'kp=',kp,'xgg=',xgg(kp),'ygg=',ygg(kp)
     enddo
 !
-    if (type .eq. 'P') then
-        cele = cp
-    else
-        cele = cs
-    endif
-!
 !    BOUCLE SUR LES POINTS DE GAUSS
 !
-    do kp = 1, npg
-        k = (kp-1)*nno
+    do kpg = 1, npg
 !
-!        CALCUL DU CHARGEMONT PAR ONDE PLANE
-        param0=dirx*xgg(kp)+diry*ygg(kp)
+        idecpg = nno* (kpg-1) - 1
+! ----- Coordinates for current Gauss point
+        xygau(:) = 0.d0
+        do i = 1, nno
+            idecno = ndim2* (i-1) - 1
+            do j = 1, ndim2
+                xygau(j) = xygau(j) + zr(ivf+i+idecpg)*zr(igeom+j+idecno)
+            enddo
+        end do
+!
+        call rcvalb(fami, kpg, 1, poum, mater,&
+                    ' ', 'ELAS', 2, nompar, xygau,&
+                    4, nomres, valres, icodre, 1)
+!       appel LONG_CARA en iarret = 0
+        call rcvalb(fami, kpg, 1, poum, mater,&
+                    ' ', 'ELAS', 2, nompar, xygau,&
+                    1, nomres(5), valres(5), icodre(5), 0)
+!
+        e = valres(1)
+        nu = valres(2)
+        rho = valres(3)
+        coef_amor = valres(4)
+!
+        usl0 = 0.d0
+        if (icodre(5) .eq. 0) then
+          l0 = valres(5)
+          usl0=1.d0/l0
+        endif
+!
+        lambda = e*nu/ (1.d0+nu)/ (1.d0-2.d0*nu)
+        mu = e/2.d0/ (1.d0+nu)
+!
+        cp = sqrt((lambda+2.d0*mu)/rho)
+        cs = sqrt(mu/rho)
+        rip = (lambda+2.d0*mu)*usl0
+        ris = mu*usl0
+
+        if (type .eq. 'P') then
+            cele = cp
+        else
+            cele = cs
+        endif
+!
+        k = (kpg-1)*nno
+!
+!        CALCUL DU CHARGEMENT PAR ONDE PLANE
+        param0=dirx*xgg(kpg)+diry*ygg(kpg)
         if (h .ne. r8vide()) then
           param = param0 -h
           instd = zr(jinst) - param/cele
@@ -263,7 +263,7 @@ subroutine te0499(option, nomte)
             enddo
         enddo
 !
-        call vff2dn(ndim, nno, kp, ipoids, idfde,&
+        call vff2dn(ndim, nno, kpg, ipoids, idfde,&
                     zr(igeom), nx, ny, poids)
 !
         jac = sqrt(nx*nx+ny*ny)

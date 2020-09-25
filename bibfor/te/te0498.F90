@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,17 +57,21 @@ subroutine te0498(option, nomte)
     real(kind=8) :: param0, param, param2, h, h2, instd, instd2, ris, rip, l0, usl0
     real(kind=8) :: sigma(3, 3), epsi(3, 3), grad(3, 3), valfon, valfon2
     real(kind=8) :: xgg(9), ygg(9), zgg(9), vondn(3), vondt(3), uondn(3), uondt(3)
-    integer :: icodre(5), kpg, spt, ndim2
+    integer :: icodre(5), ndim2
     character(len=2) :: type
     character(len=8) :: fami, poum
-    character(len=16) :: nomres(5)
     character(len=8) :: nompar(3)
-    real(kind=8) :: valpar(3)
     character(len=8) :: lpar2(2)
     real(kind=8) :: vpar2(2)
+    real(kind=8) :: xyzgau(3)
+    integer :: idecpg, idecno
+    character(len=16), parameter :: nomres(5) = (/'E        ', 'NU       ',&
+                                                  'RHO      ',&
+                                                  'COEF_AMOR', 'LONG_CARA'/)
 ! --------------------------------------------------------------------------------------------------
 !
     ASSERT(option.eq.'ONDE_PLAN')
+!
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
   npg=npg1,jpoids=ipoids,jvf=ivf,jdfde=idfdx,jgano=jgano)
     idfdy = idfdx + 1
@@ -90,54 +94,14 @@ subroutine te0498(option, nomte)
     enddo
 !
     mater=zi(imate)
-    nomres(1)='E'
-    nomres(2)='NU'
-    nomres(3) = 'RHO'
-    nomres(4) = 'COEF_AMOR'
-    nomres(5) = 'LONG_CARA'
-    fami='FPG1'
-    kpg=1
-    spt=1
+    fami='RIGI'
     poum='+'
-    ndim2 = 3
+    ASSERT(ndim .ne. 3)
+    ndim2 = ndim+1
 !
     nompar(1) = 'X'
     nompar(2) = 'Y'
     nompar(3) = 'Z'
-!   coordonnées du barycentre de l'élément
-    valpar(:) = 0.d0
-    do i = 1, nnos
-        do j = 1, ndim2
-            valpar(j) = valpar(j) + zr(igeom-1+(i-1)*ndim2+j)/nnos
-        enddo
-    enddo
-!
-    call rcvalb(fami, kpg, spt, poum, mater,&
-                ' ', 'ELAS', 3, nompar, valpar,&
-                4, nomres, valres, icodre, 1)
-!   appel LONG_CARA en iarret = 0
-    call rcvalb(fami, kpg, spt, poum, mater,&
-                ' ', 'ELAS', 3, nompar, valpar,&
-                1, nomres(5), valres(5), icodre(5), 0)
-!
-    e = valres(1)
-    nu = valres(2)
-    rho = valres(3)
-    coef_amor = valres(4)
-!
-    usl0 = 0.d0
-    if (icodre(5) .eq. 0) then
-      l0 = valres(5)
-      usl0=1.d0/l0
-    endif
-!
-    lambda = e*nu/(1.d0+nu)/(1.d0-2.d0*nu)
-    mu = e/2.d0/(1.d0+nu)
-!
-    cp = sqrt((lambda+2.d0*mu)/rho)
-    cs = sqrt(mu/rho)
-    rip = (lambda+2.d0*mu)*usl0
-    ris = mu*usl0
 !
 !     --- CARACTERISTIQUES DE L'ONDE PLANE
 !
@@ -181,11 +145,6 @@ subroutine te0498(option, nomte)
         tanx = 0.d0
         tany = dirz
     endif
-    if (type .eq. 'P') then
-        cele = cp
-    else
-        cele = cs
-    endif
 !
 !     --- CALCUL DES PRODUITS VECTORIELS OMI X OMJ ---
 !
@@ -219,6 +178,51 @@ subroutine te0498(option, nomte)
 !     --- BOUCLE SUR LES POINTS DE GAUSS ---
 !
     do ipg = 1, npg1
+!
+! -     Get material properties
+!
+        idecpg = nno* (ipg-1) - 1
+! ----- Coordinates for current Gauss point
+        xyzgau(:) = 0.d0
+        do i = 1, nno
+            idecno = ndim2* (i-1) - 1
+            do j = 1, ndim2
+                xyzgau(j) = xyzgau(j) + zr(ivf+i+idecpg)*zr(igeom+j+idecno)
+            enddo
+        end do
+!
+        call rcvalb(fami, ipg, 1, poum, mater,&
+                    ' ', 'ELAS', 3, nompar, xyzgau,&
+                    4, nomres, valres, icodre, 1)
+!       appel LONG_CARA en iarret = 0
+        call rcvalb(fami, ipg, 1, poum, mater,&
+                    ' ', 'ELAS', 3, nompar, xyzgau,&
+                    1, nomres(5), valres(5), icodre(5), 0)
+!
+        e = valres(1)
+        nu = valres(2)
+        rho = valres(3)
+        coef_amor = valres(4)
+    !
+        usl0 = 0.d0
+        if (icodre(5) .eq. 0) then
+          l0 = valres(5)
+          usl0=1.d0/l0
+        endif
+    !
+        lambda = e*nu/(1.d0+nu)/(1.d0-2.d0*nu)
+        mu = e/2.d0/(1.d0+nu)
+    !
+        cp = sqrt((lambda+2.d0*mu)/rho)
+        cs = sqrt(mu/rho)
+        rip = (lambda+2.d0*mu)*usl0
+        ris = mu*usl0
+!
+        if (type .eq. 'P') then
+            cele = cp
+        else
+            cele = cs
+        endif
 !
         kdec = (ipg-1)*nno*ndim
         ldec = (ipg-1)*nno

@@ -31,6 +31,12 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'));
 
 MAIL=LIRE_MAILLAGE(FORMAT='MED', )
 
+MAIL = MODI_MAILLAGE(reuse=MAIL,
+                       MAILLAGE=MAIL,
+                       ORIE_PEAU_2D=_F(GROUP_MA=('ABSO', ),
+                                       GROUP_MA_SURF=('SURFACE', ),),
+                       INFO=1,)
+
 MAIL=DEFI_GROUP( reuse=MAIL,   MAILLAGE=MAIL,CREA_GROUP_NO=(
                        _F( GROUP_MA = 'FACE1'),
                        _F( GROUP_MA = 'FACE2'),
@@ -67,6 +73,52 @@ CHAMPMAT=AFFE_MATERIAU(    MAILLAGE=MAIL,AFFE=(
                    _F(  GROUP_MA = 'ABSO',
                           MATER = MAT1))
                            )
+
+
+EX = FORMULE(VALE='-4.44E+8*Y/50.',
+             NOM_PARA='Y',)
+NU = DEFI_CONSTANTE(VALE=0.48)
+RHO = DEFI_CONSTANTE(VALE=1900.)
+
+YOUNG_F = DEFI_FONCTION(NOM_PARA='NEUT1',
+                        VALE =(-1.e-9,-1.e-9,1.e+10,1.e+10),
+                        PROL_DROITE='LINEAIRE',
+                        PROL_GAUCHE='LINEAIRE',)
+
+MAT2  = DEFI_MATERIAU(ELAS_FO= _F(E=YOUNG_F, NU=NU, RHO=RHO,),)
+
+
+CHGEOMG = CREA_CHAMP(TYPE_CHAM = 'NOEU_GEOM_R',
+                     OPERATION = 'EXTR',
+                     MAILLAGE  = MAIL,
+                     NOM_CHAM  = 'GEOMETRIE',)
+
+CHE_ = CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_F',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODELE,
+                    AFFE      = _F(GROUP_MA = 'ABSO',
+                                   NOM_CMP  = 'X1',
+                                   VALE_F   = EX,),)
+
+CHE  = CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                   OPERATION = 'EVAL',
+                   CHAM_F    = CHE_,
+                   CHAM_PARA = CHGEOMG,
+                    INFO=2)
+
+
+CHAMATC=AFFE_MATERIAU(    MAILLAGE=MAIL,
+                   AFFE=(_F(  GROUP_MA = ('SURFACE', ),
+                             MATER = MAT1),
+                         _F(  GROUP_MA = ( 'ABSO',),
+                             MATER = MAT2),
+                        ),
+                       AFFE_VARC=(_F(NOM_VARC='NEUT1',
+                                    CHAM_GD =CHE,
+                                    GROUP_MA=('ABSO'),),
+                                ),
+                           )
+
 
 LIAISON=AFFE_CHAR_MECA(
                MODELE=MODELE,LIAISON_UNIF=(
@@ -203,6 +255,112 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=-1.002456482770E-03,
                          FONCTION=DYN11,),
                       ),
               )
+
+####################################
+# Prise en compte des VARC
+
+RIGI_ELC=CALC_MATR_ELEM(    MODELE=MODELE,
+                              OPTION='RIGI_MECA',
+                              CHAM_MATER=CHAMATC,
+                              CHARGE=LIAISON
+                            )
+
+MASS_ELC=CALC_MATR_ELEM(    MODELE=MODELE,
+                              OPTION='MASS_MECA',
+                              CHAM_MATER=CHAMATC,
+                              CHARGE=LIAISON
+                            )
+
+AMOR_ELC=CALC_MATR_ELEM(    MODELE=MODELE,
+                              OPTION='AMOR_MECA',
+                              CHAM_MATER=CHAMATC,
+                              CHARGE=LIAISON,
+                              RIGI_MECA=RIGI_ELC,
+                              MASS_MECA=MASS_ELC,
+                            )
+
+VECT_ELC=CALC_VECT_ELEM(     OPTION='CHAR_MECA',
+                             CHAM_MATER=CHAMATC,
+                             CHARGE=LIAISON
+                           )
+
+NUMEDDLC=NUME_DDL(    MATR_RIGI=RIGI_ELC)
+
+RIGIDITC=ASSE_MATRICE(    MATR_ELEM=RIGI_ELC,
+                            NUME_DDL=NUMEDDLC
+                          )
+
+AMORTC=ASSE_MATRICE(    MATR_ELEM=AMOR_ELC,
+                            NUME_DDL=NUMEDDLC
+                          )
+
+MASSEC=ASSE_MATRICE(    MATR_ELEM=MASS_ELC,
+                         NUME_DDL=NUMEDDLC
+                       )
+
+VECASC=ASSE_VECTEUR(    VECT_ELEM=VECT_ELC,
+                         NUME_DDL=NUMEDDLC
+                       )
+
+TEMPLI=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=_F( JUSQU_A = 0.8, NOMBRE = 1000))
+
+INTLI=DEFI_LIST_ENTI( DEBUT=1, INTERVALLE=_F( JUSQU_A = 1001, PAS = 1))
+
+DYNAC=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
+                        SOLVEUR=_F(METHODE='LDLT'),
+                        MODELE=MODELE,
+                        MATR_MASS=MASSEC,
+                        MATR_RIGI=RIGIDITC,
+                        MATR_AMOR=AMORTC,
+                        EXCIT=(
+                          _F(  VECT_ASSE = VECASC,
+                               COEF_MULT = 1.),
+                          _F(  CHARGE = ONDE)),
+                        INCREMENT=_F( LIST_INST = TEMPLI),
+                        SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
+                        )
+
+DXN11C=RECU_FONCTION(     RESULTAT=DYNAC,   NOEUD='N11',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DX'
+                       )
+
+DYN11C=RECU_FONCTION(     RESULTAT=DYNAC,   NOEUD='N11',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DY'
+                       )
+
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=-1.002456482770E-03,
+                         VALE_REFE=-1.E-3,
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.2656,
+                         REFERENCE='ANALYTIQUE',
+                         PRECISION=1.E-2,
+                         FONCTION=DXN11C,),
+                      _F(VALE_CALC=-9.939582018104E-04,
+                         VALE_REFE=-1.E-3,
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.4384,
+                         REFERENCE='ANALYTIQUE',
+                         PRECISION=1.E-2,
+                         FONCTION=DXN11C,),
+                      _F(VALE_CALC=2.87086035956e-06,
+                         VALE_REFE=0.0,
+                         CRITERE='ABSOLU',
+                         VALE_PARA=0.8,
+                         REFERENCE='ANALYTIQUE',
+                         PRECISION=1.0E-05,
+                         FONCTION=DXN11C,),
+                      _F(VALE_CALC=1.21717311031e-18,
+                         VALE_REFE=0.0,
+                         CRITERE='ABSOLU',
+                         VALE_PARA=0.2656,
+                         REFERENCE='ANALYTIQUE',
+                         PRECISION=1.E-10,
+                         FONCTION=DYN11C,),
+                      ),
+              )
+##############################################
 
 TEMLI=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=_F( JUSQU_A = 0.8, NOMBRE = 500))
 

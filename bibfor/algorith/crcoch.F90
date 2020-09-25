@@ -277,7 +277,7 @@ subroutine crcoch()
             do ie = 1, neq
                 zr(jchou1+ie-1) = 0.d0
             end do
-            call fondpl(modele, mate, numedd, neq, v_ondp,&
+            call fondpl(modele, materi, mate, numedd, neq, v_ondp,&
                         nb_ondp, vecond, veonde, vaonde, tps, zr(jchou1))
             do ie = 1, neq
                 zr(jchout+ie-1) = zr(jchout+ie-1) - zr(jchou1+ie-1)

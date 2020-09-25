@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,10 @@
 !
 !
 interface
-    subroutine veondp(modele, mate, sddyna, temps, vecelz)
+    subroutine veondp(modele, mate, mateco, sddyna, temps, vecelz)
         character(len=24) :: modele
         character(len=24) :: mate
+        character(len=24) :: mateco
         character(len=19) :: sddyna
         real(kind=8) :: temps
         character(len=*) :: vecelz

@@ -101,8 +101,8 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
         if (mode .eq. 'FIXE') then
             call nmchex(hval_veelem, 'VEELEM', 'CNONDP', vect_elem)
             call nmchex(hval_veasse, 'VEASSE', 'CNONDP', vect_asse)
-            call veondp(model, ds_material%mateco, sddyna, time_curr,&
-                        vect_elem)
+            call veondp(model, ds_material%mater, ds_material%mateco, &
+                            sddyna, time_curr, vect_elem)
             call asasve(vect_elem, nume_dof, 'R', vect_alem)
             call ascova('D', vect_alem, ' ', 'INST', time_curr,&
                         'R', vect_asse)

@@ -25,6 +25,7 @@ implicit none
 #include "asterfort/jevech.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/assert.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -32,7 +33,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! Elementary computation
 !
-! Elements: 3D_GVNO
+! Elements: 3D_ABSO
 !
 ! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
 !          AMOR_MECA
@@ -47,7 +48,7 @@ character(len=16), intent(in) :: option, nomte
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ipoids, ivf, idfdx, idfdy, igeom, i, j
-    integer :: ndim, nno, kpg, npg, ino, jno, ij, spt
+    integer :: ndim, nno, kpg, npg, ino, jno, ij
     integer :: idec, jdec, kdec, ldec, imate, imatuu
     integer :: mater, ll, k, l, nnos
     integer :: ideplm, ideplp, ivectu
@@ -65,8 +66,9 @@ character(len=16), intent(in) :: option, nomte
                                                   'RHO      ',&
                                                   'COEF_AMOR', 'LONG_CARA'/)
     character(len=8) :: nompar(3)
-    real(kind=8) :: valpar(3)
     aster_logical :: lDamp, lMatr, lVect
+    real(kind=8) :: xyzgau(3)
+    integer :: idecpg, idecno
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,64 +80,17 @@ character(len=16), intent(in) :: option, nomte
     call jevech('PMATERC', 'L', imate)
 !
     mater = zi(imate)
-    fami='FPG1'
-    kpg=1
-    spt=1
+    fami='RIGI'
     poum='+'
-    ndim2 = 3
+    ASSERT(ndim .ne. 3)
+    ndim2=ndim+1
 !
     nompar(1) = 'X'
     nompar(2) = 'Y'
     nompar(3) = 'Z'
-!   coordonnées du barycentre de l'élément
-    valpar(:) = 0.d0
-    do i = 1, nnos
-        do j = 1, ndim2
-            valpar(j) = valpar(j) + zr(igeom-1+(i-1)*ndim2+j)/nnos
-        enddo
-    enddo
     lDamp = option .eq. 'AMOR_MECA'
     lVect = L_VECT(option)
     lMatr = L_MATR(option)
-!
-! - Get material properties
-!
-    call rcvalb(fami, kpg, spt, poum, mater,&
-                ' ', 'ELAS', 3, nompar, valpar,&
-                4, nomres, valres, icodre, 1)
-!   appel LONG_CARA en iarret = 0
-    call rcvalb(fami, kpg, spt, poum, mater,&
-                ' ', 'ELAS', 3, nompar, valpar,&
-                1, nomres(5), valres(5), icodre(5), 0)
-!
-    e = valres(1)
-    nu = valres(2)
-    rho = valres(3)
-    coef_amor = valres(4)
-!
-    usl0 = 0.d0    
-    if (icodre(5) .eq. 0) then
-        l0 = valres(5)
-        usl0=1.d0/l0
-    endif
-    lambda = e*nu/ (1.d0+nu)/ (1.d0-2.d0*nu)
-    mu = e/2.d0/ (1.d0+nu)
-    if (lDamp) then
-        rhocp = coef_amor*sqrt((lambda+2.d0*mu)*rho)
-        rhocs = coef_amor*sqrt(mu*rho)
-    else
-        rhocp = (lambda+2.d0*mu)*usl0
-        rhocs = mu*usl0
-    endif
-!
-! - Get output fields
-!
-    if (lMatr .or. lDamp) then
-        call jevech('PMATUUR', 'E', imatuu)
-    endif
-    if (lVect) then
-        call jevech('PVECTUR', 'E', ivectu)
-    endif
 !
 !     VITESSE UNITAIRE DANS LES 3 DIRECTIONS
 !
@@ -166,6 +121,48 @@ character(len=16), intent(in) :: option, nomte
 !     --- BOUCLE SUR LES POINTS DE GAUSS ---
 !
     do kpg = 1, npg
+!
+! - Get material properties
+!
+        idecpg = nno* (kpg-1) - 1
+! ----- Coordinates for current Gauss point
+        xyzgau(:) = 0.d0
+        do i = 1, nno
+            idecno = ndim2* (i-1) - 1
+            do j = 1, ndim2
+                xyzgau(j) = xyzgau(j) + zr(ivf+i+idecpg)*zr(igeom+j+idecno)
+            enddo
+        end do
+!
+        call rcvalb(fami, kpg, 1, poum, mater,&
+                    ' ', 'ELAS', 3, nompar, xyzgau,&
+                    4, nomres, valres, icodre, 1)
+!       appel LONG_CARA en iarret = 0
+        call rcvalb(fami, kpg, 1, poum, mater,&
+                    ' ', 'ELAS', 3, nompar, xyzgau,&
+                    1, nomres(5), valres(5), icodre(5), 0)
+!
+        e = valres(1)
+        nu = valres(2)
+        rho = valres(3)
+        coef_amor = valres(4)
+    !
+        usl0 = 0.d0    
+        if (icodre(5) .eq. 0) then
+            l0 = valres(5)
+            usl0=1.d0/l0
+        endif
+        lambda = e*nu/ (1.d0+nu)/ (1.d0-2.d0*nu)
+        mu = e/2.d0/ (1.d0+nu)
+        if (lDamp) then
+            rhocp = coef_amor*sqrt((lambda+2.d0*mu)*rho)
+            rhocs = coef_amor*sqrt(mu*rho)
+        else
+            rhocp = (lambda+2.d0*mu)*usl0
+            rhocs = mu*usl0
+        endif
+    !
+!
         kdec = (kpg-1)*nno*ndim
         ldec = (kpg-1)*nno
 !
@@ -240,6 +237,15 @@ character(len=16), intent(in) :: option, nomte
             end do
         end do
     end do
+!
+! - Get output fields
+!
+    if (lMatr .or. lDamp) then
+        call jevech('PMATUUR', 'E', imatuu)
+    endif
+    if (lVect) then
+        call jevech('PVECTUR', 'E', ivectu)
+    endif
 !
 !       --- PASSAGE AU STOCKAGE TRIANGULAIRE
 !

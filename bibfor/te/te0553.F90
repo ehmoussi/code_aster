@@ -27,6 +27,9 @@ implicit none
 #include "asterfort/vff2dn.h"
 #include "asterfort/writeMatrix.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/assert.h"
+!#include "asterc/r8vide.h"
+!#include "asterfort/rcvarc.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -34,7 +37,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! Elementary computation
 !
-! Elements: D_PLAN_GVNO
+! Elements: D_PLAN_ABSO
 !
 ! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
 !          AMOR_MECA
@@ -49,7 +52,7 @@ character(len=16), intent(in) :: option, nomte
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) ::  fami, poum
-    integer :: icodre(5), kpg, spt
+    integer :: icodre(5), kpg
     real(kind=8) :: poids, nx, ny, valres(5), e, nu, lambda, mu
     real(kind=8) :: rhocp, rhocs, l0, usl0, depla(6), coef_amor
     real(kind=8) :: rho, taux, tauy, nux, nuy, scal, vnx, vny, vtx, vty
@@ -57,7 +60,6 @@ character(len=16), intent(in) :: option, nomte
     integer :: nno, npg, ipoids, ivf, idfde, igeom
     integer :: ldec, i, l, mater, ndim2
     character(len=8) :: nompar(2)
-    real(kind=8) :: valpar(2)
     integer :: imate, j,  ll, ndim
     character(len=16), parameter :: nomres(5) = (/'E        ', 'NU       ',&
                                                   'RHO      ',&
@@ -65,6 +67,8 @@ character(len=16), intent(in) :: option, nomte
     integer :: ideplm, ideplp, ivectu
     integer :: nnos
     aster_logical :: lDamp, lMatr, lVect
+    real(kind=8) :: xygau(2)
+    integer :: idecpg, idecno
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,60 +78,17 @@ character(len=16), intent(in) :: option, nomte
     call jevech('PMATERC', 'L', imate)
 !
     mater = zi(imate)
-    fami='FPG1'
-    kpg=1
-    spt=1
+    fami='RIGI'
     poum='+'
-    ndim2 = 2
+    ASSERT(ndim .ne. 2)
+    ndim2=ndim+1
 !
     nompar(1) = 'X'
     nompar(2) = 'Y'
-!   coordonnées du barycentre de l'élément
-    valpar(:) = 0.d0
-    do i = 1, nnos
-        do j = 1, ndim2
-            valpar(j) = valpar(j) + zr(igeom-1+(i-1)*ndim2+j)/nnos
-        enddo
-    enddo
+!
     lDamp = option .eq. 'AMOR_MECA'
     lVect = L_VECT(option)
     lMatr = L_MATR(option)
-!
-! - Get material properties
-!
-    call rcvalb(fami, kpg, spt, poum, mater,&
-                ' ', 'ELAS', 3, nompar, valpar,&
-                4, nomres, valres, icodre, 1)
-!   appel LONG_CARA en iarret = 0
-    call rcvalb(fami, kpg, spt, poum, mater,&
-                ' ', 'ELAS', 3, nompar, valpar,&
-                1, nomres(5), valres(5), icodre(5), 0)
-!
-    e = valres(1)
-    nu = valres(2)
-    rho = valres(3)
-    coef_amor = valres(4)
-!
-    usl0 = 0.d0    
-    if (icodre(5) .eq. 0) then
-        l0 = valres(5)
-        usl0=1.d0/l0
-    endif
-    lambda = e*nu/ (1.d0+nu)/ (1.d0-2.d0*nu)
-    mu = e/2.d0/ (1.d0+nu)
-    if (lDamp) then
-        rhocp = coef_amor*sqrt((lambda+2.d0*mu)*rho)
-        rhocs = coef_amor*sqrt(mu*rho)
-    else
-        rhocp = (lambda+2.d0*mu)*usl0
-        rhocs = mu*usl0
-    endif
-!
-! - Get output fields
-!
-    if (lVect) then
-        call jevech('PVECTUR', 'E', ivectu)
-    endif
 !
 !     VITESSE UNITAIRE DANS LES 3 DIRECTIONS
 !
@@ -141,6 +102,47 @@ character(len=16), intent(in) :: option, nomte
 !    BOUCLE SUR LES POINTS DE GAUSS
 !
     do kpg = 1, npg
+!
+! - Get material properties
+!
+        idecpg = nno* (kpg-1) - 1
+        ! ----- Coordinates for current Gauss point
+        xygau(:) = 0.d0
+        do i = 1, nno
+            idecno = ndim2* (i-1) - 1
+            do j = 1, ndim2
+                xygau(j) = xygau(j) + zr(ivf+i+idecpg)*zr(igeom+j+idecno)
+            enddo
+        end do
+!
+        call rcvalb(fami, kpg, 1, poum, mater,&
+                    ' ', 'ELAS', 2, nompar, xygau,&
+                    4, nomres, valres, icodre, 1)
+!       appel LONG_CARA en iarret = 0
+        call rcvalb(fami, kpg, 1, poum, mater,&
+                    ' ', 'ELAS', 2, nompar, xygau,&
+                    1, nomres(5), valres(5), icodre(5), 0)
+!
+        e = valres(1)
+        nu = valres(2)
+        rho = valres(3)
+        coef_amor = valres(4)
+!
+        usl0 = 0.d0    
+        if (icodre(5) .eq. 0) then
+            l0 = valres(5)
+            usl0=1.d0/l0
+        endif
+        lambda = e*nu/ (1.d0+nu)/ (1.d0-2.d0*nu)
+        mu = e/2.d0/ (1.d0+nu)
+        if (lDamp) then
+            rhocp = coef_amor*sqrt((lambda+2.d0*mu)*rho)
+            rhocs = coef_amor*sqrt(mu*rho)
+        else
+            rhocp = (lambda+2.d0*mu)*usl0
+            rhocs = mu*usl0
+        endif
+!
         ldec = (kpg-1)*nno
         call vff2dn(ndim, nno, kpg, ipoids, idfde,&
                     zr(igeom), nx, ny, poids)
@@ -191,6 +193,12 @@ character(len=16), intent(in) :: option, nomte
             end do
         end do
     end do
+!
+! - Get output fields
+!
+    if (lVect) then
+        call jevech('PVECTUR', 'E', ivectu)
+    endif
 !
 !       --- PASSAGE AU STOCKAGE TRIANGULAIRE
 !

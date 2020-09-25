@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine veondp(modele, mate, sddyna, temps, vecelz)
+subroutine veondp(modele, mate, mateco, sddyna, temps, vecelz)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -38,9 +38,10 @@ subroutine veondp(modele, mate, sddyna, temps, vecelz)
 #include "asterfort/ndynin.h"
 #include "asterfort/ndynkk.h"
 #include "asterfort/reajre.h"
+#include "asterfort/vrcins.h"
     character(len=*) :: vecelz
     character(len=19) :: sddyna
-    character(len=24) :: modele, mate
+    character(len=24) :: modele, mate, mateco
     real(kind=8) :: temps
 !
 ! ----------------------------------------------------------------------
@@ -54,6 +55,7 @@ subroutine veondp(modele, mate, sddyna, temps, vecelz)
 !
 ! IN  MODELE : NOM DU MODELE
 ! IN  MATE   : CHAMP DE MATERIAU
+! IN  MATECO : CHAMP DE MATERIAU CODE
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IN  TEMPS  : INSTANT DE CALCUL
 ! OUT VECELE : NOM DU VECT_ELEM
@@ -63,7 +65,7 @@ subroutine veondp(modele, mate, sddyna, temps, vecelz)
 !
 !
     integer :: nbout, nbin
-    parameter    (nbout=1, nbin=5)
+    parameter    (nbout=1, nbin=6)
     character(len=8) :: lpaout(nbout), lpain(nbin)
     character(len=19) :: lchout(nbout), lchin(nbin)
 !
@@ -78,6 +80,8 @@ subroutine veondp(modele, mate, sddyna, temps, vecelz)
     character(len=16) :: option
     integer :: ifmdbg, nivdbg
     character(len=8), pointer :: lgrf(:) => null()
+    character(len=19) :: chvarc
+    character(len=2) :: codret
 !
 ! ----------------------------------------------------------------------
 !
@@ -106,16 +110,24 @@ subroutine veondp(modele, mate, sddyna, temps, vecelz)
     call mecact('V', chinst, 'MODELE', ligrmo, 'INST_R',&
                 ncmp=1, nomcmp='INST', sr=temps)
 !
+! --- CREATION CHAMP DE VARIABLES DE COMMANDE CORRESPONDANT
+!
+    chvarc = '&&CHME.ONDPL.CHVARC'
+    call vrcins(modele, mate, ' ', temps, chvarc,&
+                codret)
+!
 ! --- CHAMPS D'ENTREE
 !
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom(1:19)
     lpain(2) = 'PMATERC'
-    lchin(2) = mate(1:19)
+    lchin(2) = mateco(1:19)
     lpain(3) = 'PTEMPSR'
     lchin(3) = chinst(1:19)
     lpain(4) = 'PONDPLA'
     lpain(5) = 'PONDPLR'
+    lpain(6) = 'PVARCPR'
+    lchin(6) = chvarc
 !
 ! --- CHAMPS DE SORTIE
 !
@@ -128,7 +140,7 @@ subroutine veondp(modele, mate, sddyna, temps, vecelz)
 !
 ! -- CALCUL
 !
-    do 30 i = 1, nchond
+    do i = 1, nchond
         call exisd('CARTE', zk8(iondp+i-1)//'.CHME.ONDPL', iret)
         call exisd('CARTE', zk8(iondp+i-1)//'.CHME.ONDPR', ibid)
 !
@@ -150,7 +162,9 @@ subroutine veondp(modele, mate, sddyna, temps, vecelz)
 !
             call reajre(vecele, lchout(1), 'V')
         endif
- 30 end do
+    end do
+!
+    call detrsd('CHAMP_GD', chvarc)
 !
     call jedema()
 end subroutine
