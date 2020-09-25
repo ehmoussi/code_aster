@@ -184,7 +184,7 @@ RESU = STAT_NON_LINE (MODELE       = MODE,
                     RESI_GLOB_MAXI=1.E-3,
                     ),
                       NEWTON       = _F(MATRICE='TANGENTE',REAC_ITER=1),
-                      SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, MATR_DISTRIBUEE='OUI',),
+                      SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, POSTTRAITEMENTS="MINI"),
                       ARCHIVAGE    = _F(LIST_INST=REEL_ARC),
               )
 
