@@ -114,6 +114,12 @@ class MaterialPropertyClass : public GenericMaterialPropertyClass {
     };
 
     /**
+     * @brief Build ".RDEP"
+     * @return true
+     */
+    bool buildTractionFunction( FunctionPtr &doubleValues ) const;
+
+    /**
      * @brief Get name link to the class
      * @return name
      */
@@ -122,150 +128,6 @@ class MaterialPropertyClass : public GenericMaterialPropertyClass {
 
 /** @typedef Pointeur intelligent vers un comportement materiau */
 typedef boost::shared_ptr< MaterialPropertyClass > MaterialPropertyPtr;
-
-
-/**
- * @class MetaTractionMaterialPropertyClass
- * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau MetaTraction
- * @author Jean-Pierre Lefebvre
- */
-class MetaTractionMaterialPropertyClass : public GenericMaterialPropertyClass {
-  public:
-    /**
-     * @brief Constructeur
-     */
-    MetaTractionMaterialPropertyClass() {
-        // Mot cle "META_TRACTION" dans Aster
-        _asterName = "META_TRACTION";
-
-        // Parametres matériau
-        this->addFunctionProperty( "Sigm_f1",
-                                   ElementaryMaterialPropertyDataStructure( "SIGM_F1", false ) );
-        this->addFunctionProperty( "Sigm_f2",
-                                   ElementaryMaterialPropertyDataStructure( "SIGM_F2", false ) );
-        this->addFunctionProperty( "Sigm_f3",
-                                   ElementaryMaterialPropertyDataStructure( "SIGM_F3", false ) );
-        this->addFunctionProperty( "Sigm_f4",
-                                   ElementaryMaterialPropertyDataStructure( "SIGM_F4", false ) );
-        this->addFunctionProperty( "Sigm_c",
-                                   ElementaryMaterialPropertyDataStructure( "SIGM_C", false ) );
-    };
-
-    /**
-     * @brief Build ".RDEP"
-     * @return true
-     */
-    bool buildTractionFunction( FunctionPtr &doubleValues ) const;
-
-    /**
-     * @brief Get name link to the class
-     * @return name
-     */
-    static std::string getName() { return "META_TRACTION"; };
-
-    /**
-     * @brief Function to know if ".RDEP" is necessary
-     * @return true if ".RDEP" is necessary
-     */
-    bool hasTractionFunction() const { return true; };
-};
-
-/** @typedef Pointeur intelligent vers un comportement materiau MetaTraction */
-typedef boost::shared_ptr< MetaTractionMaterialPropertyClass > MetaTractionMaterialPropertyPtr;
-
-
-
-/**
- * @class TractionMaterialPropertyClass
- * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau Traction
- * @author Jean-Pierre Lefebvre
- */
-class TractionMaterialPropertyClass : public GenericMaterialPropertyClass {
-  public:
-    /**
-     * @brief Constructeur
-     */
-    TractionMaterialPropertyClass() {
-        // Mot cle "TRACTION" dans Aster
-        _asterName = "TRACTION";
-
-        // Parametres matériau
-        this->addFunctionProperty( "Sigm",
-                                   ElementaryMaterialPropertyDataStructure( "SIGM", true ) );
-    };
-
-    /**
-     * @brief Build ".RDEP"
-     * @return true
-     */
-    bool buildTractionFunction( FunctionPtr &doubleValues ) const;
-
-    /**
-     * @brief Get name link to the class
-     * @return name
-     */
-    static std::string getName() { return "TRACTION"; };
-
-    /**
-     * @brief Function to know if ".RDEP" is necessary
-     * @return true if ".RDEP" is necessary
-     */
-    bool hasTractionFunction() const { return true; };
-};
-
-/** @typedef Pointeur intelligent vers un comportement materiau Traction */
-typedef boost::shared_ptr< TractionMaterialPropertyClass > TractionMaterialPropertyPtr;
-
-/**
- * @class ThermalNlMaterialPropertyClass
- * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau TherNl
- * @author Jean-Pierre Lefebvre
- */
-class ThermalNlMaterialPropertyClass : public GenericMaterialPropertyClass {
-  private:
-    FunctionPtr _enthalpyFunction;
-
-  public:
-    /**
-     * @brief Constructeur
-     */
-    ThermalNlMaterialPropertyClass() : _enthalpyFunction( new FunctionClass() ) {
-        // Mot cle "THER_NL" dans Aster
-        _asterName = "THER_NL";
-
-        // Parametres matériau
-        this->addFunctionProperty( "Lambda",
-                                   ElementaryMaterialPropertyDataStructure( "LAMBDA", true ) );
-        this->addFunctionProperty( "Beta",
-                                   ElementaryMaterialPropertyDataStructure( "BETA", false ) );
-        this->addFunctionProperty( "Rho_cp",
-                                   ElementaryMaterialPropertyDataStructure( "RHO_CP", false ) );
-    };
-
-    /**
-     * @brief Get name link to the class
-     * @return name
-     */
-    static std::string getName() { return "THER_NL"; };
-
-    /**
-     * @brief Function to know if material own a function for enthalpy
-     */
-    bool hasEnthalpyFunction() { return true; };
-
-    /**
-     * @brief Construction du GenericMaterialPropertyClass
-     * @return Booleen valant true si la tache s'est bien deroulee
-     * @todo vérifier les valeurs réelles par défaut du .VALR
-     */
-    bool buildJeveuxVectors( JeveuxVectorComplex &complexValues, JeveuxVectorReal &doubleValues,
-                             JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr,
-                             JeveuxVectorLong &kOrdr, std::vector< JeveuxVectorReal > &,
-                             std::vector< JeveuxVectorChar8 > & );
-};
-
-/** @typedef Pointeur intelligent vers un comportement materiau TherNl */
-typedef boost::shared_ptr< ThermalNlMaterialPropertyClass > ThermalNlMaterialPropertyPtr;
 
 
 #endif

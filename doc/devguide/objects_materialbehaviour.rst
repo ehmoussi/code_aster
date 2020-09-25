@@ -27,31 +27,3 @@
 .. autoclass:: code_aster.Objects.MaterialProperty
    :show-inheritance:
    :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.MetaTractionMaterialProperty` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.MetaTractionMaterialProperty
-   :show-inheritance:
-   :members:
-
-
-
-================================================================================
-:py:class:`~code_aster.Objects.ThermalNlMaterialProperty` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.ThermalNlMaterialProperty
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.TractionMaterialProperty` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.TractionMaterialProperty
-   :show-inheritance:
-   :members:

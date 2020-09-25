@@ -60,30 +60,4 @@ void exportMaterialPropertyToPython() {
         .def( "addNewVectorOfFunctionProperty",
               &MaterialPropertyClass::addNewVectorOfFunctionProperty )
         .def( "getName", &MaterialPropertyClass::getName );
-
-    py::class_< MetaTractionMaterialPropertyClass, MetaTractionMaterialPropertyPtr,
-                py::bases< GenericMaterialPropertyClass > >( "MetaTractionMaterialProperty",
-                                                                 py::no_init )
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< MetaTractionMaterialPropertyClass >))
-        .def( "getName", &MetaTractionMaterialPropertyClass::getName )
-        .staticmethod( "getName" )
-        .def( "hasTractionFunction", &MetaTractionMaterialPropertyClass::hasTractionFunction );
-
-    py::class_< TractionMaterialPropertyClass, TractionMaterialPropertyPtr,
-                py::bases< GenericMaterialPropertyClass > >( "TractionMaterialProperty",
-                                                                 py::no_init )
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< TractionMaterialPropertyClass >))
-        .def( "getName", &TractionMaterialPropertyClass::getName )
-        .staticmethod( "getName" )
-        .def( "hasTractionFunction", &TractionMaterialPropertyClass::hasTractionFunction );
-
-    py::class_< ThermalNlMaterialPropertyClass, ThermalNlMaterialPropertyPtr,
-                py::bases< GenericMaterialPropertyClass > >( "ThermalNlMaterialProperty",
-                                                                 py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ThermalNlMaterialPropertyClass >))
-        .def( "getName", &ThermalNlMaterialPropertyClass::getName )
-        .staticmethod( "getName" )
-        .def( "hasEnthalpyFunction", &ThermalNlMaterialPropertyClass::hasEnthalpyFunction );
 };

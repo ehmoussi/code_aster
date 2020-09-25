@@ -340,19 +340,23 @@ class GenericMaterialPropertyClass {
     VectorString _vectOrdr;
     /** @brief Vector of ordered keywords */
     VectorString _vectKW;
+    /** @brief Has a traction function to build */
+    bool _hasTractionFunction;
+
 
   public:
     /**
      * @brief Constructeur
      */
-    GenericMaterialPropertyClass() : _asterNewName( "" ){};
+    GenericMaterialPropertyClass() : _asterNewName( "" ), _hasTractionFunction(false) {};
 
     /**
      * @brief Constructeur
      */
     GenericMaterialPropertyClass( const std::string asterName,
                                       const std::string asterNewName = "" )
-        : _asterName( asterName ), _asterNewName( asterNewName ){};
+        : _asterName( asterName ), _asterNewName( asterNewName ),
+          _hasTractionFunction(false){};
 
     /**
      * @brief Recuperation du nom Aster du GenericMaterialPropertyClass
@@ -646,12 +650,14 @@ class GenericMaterialPropertyClass {
      * @brief Function to know if ".RDEP" is necessary
      * @return true if ".RDEP" is necessary
      */
-    virtual bool hasTractionFunction() const { return false; };
+    bool hasTractionFunction() const { return _hasTractionFunction; };
 
     /**
-     * @brief Function to know if material own a function for enthalpy
+     * @brief Function to know if ".RDEP" is necessary
+     * @return true if ".RDEP" is necessary
      */
-    virtual bool hasEnthalpyFunction() const { return false; };
+    void hasTractionFunction(const bool has_traction)
+    { _hasTractionFunction = has_traction; };
 
     /**
      * @brief Function to know if behaviour own a list of double parameter

@@ -25,9 +25,11 @@ from .. import Objects as all_types
 from ..Cata.Language.SyntaxObjects import _F
 from ..Messages import UTMESS
 from ..Objects import (DataStructure, Formula, Function,
-                       GenericMaterialProperty, Material, MaterialProperty,
+                       Material, MaterialProperty,
                        Function2D, Table)
 from ..Supervis import ExecuteCommand, replace_enum
+
+from libaster import createEnthalpy
 
 
 class MaterialDefinition(ExecuteCommand):
@@ -56,52 +58,13 @@ class MaterialDefinition(ExecuteCommand):
             keywords (dict): User's keywords.
         """
 
-        # In this function, we can check the value of keywords
+        # In this function, we can check the value of keywords and add some properties
         check_keywords(keywords)
-        print("AVANT: ", keywords)
+        print("AVANT: ", keywords, flush=True)
 
-        #ne marche pas
         replace_enum(self._cata, keywords)
 
-        print("AVANT ENUM: ", keywords)
-
-        #provosire
-        if 'BETON_DOUBLE_DP' in keywords:
-            txt2real = {"LINEAIRE":0,"PARABOLE":1}
-            keywords['BETON_DOUBLE_DP']['ECRO_COMP_P_PIC'] = txt2real[keywords['BETON_DOUBLE_DP']['ECRO_COMP_P_PIC']]
-
-            txt2real = {"LINEAIRE":0,"EXPONENT":1}
-            keywords['BETON_DOUBLE_DP']['ECRO_TRAC_P_PIC'] = txt2real[keywords['BETON_DOUBLE_DP']['ECRO_TRAC_P_PIC']]
-        if 'BETON_RAG' in keywords:
-            txt2real = {"ENDO":1,"ENDO_FLUA":2,"ENDO_FLUA_RAG":3}
-            keywords['BETON_RAG']['COMP_BETON'] = txt2real[keywords['BETON_RAG']['COMP_BETON']]
-        if 'CABLE_GAINE_FROT' in keywords:
-            txt2real = {"FROTTANT":1,"GLISSANT":2,"ADHERENT":3}
-            keywords['CABLE_GAINE_FROT']['TYPE'] = txt2real[keywords['CABLE_GAINE_FROT']['TYPE']]
-        if 'DIS_ECRO_TRAC' in keywords:
-            txt2real = {'ISOTROPE':1,'CINEMATIQUE':2}
-            if 'ECROUISSAGE' in keywords['DIS_ECRO_TRAC']:
-                keywords['DIS_ECRO_TRAC']['ECROUISSAGE'] = txt2real[keywords['DIS_ECRO_TRAC']['ECROUISSAGE']]
-        if 'DIS_CHOC_ENDO' in keywords:
-            txt2real = {"INCLUS":1,"EXCLUS":2}
-            keywords['DIS_CHOC_ENDO']['CRIT_AMOR'] = txt2real[keywords['DIS_CHOC_ENDO']['CRIT_AMOR']]
-        if 'ELAS_META' in keywords:
-            txt2real = {"CHAUD":1,"FROID":0}
-            keywords['ELAS_META']['PHASE_REFE'] = txt2real[keywords['ELAS_META']['PHASE_REFE']]
-        if 'ELAS_META_FO' in keywords:
-            txt2real = {"CHAUD":1,"FROID":0}
-            keywords['ELAS_META_FO']['PHASE_REFE'] = txt2real[keywords['ELAS_META_FO']['PHASE_REFE']]
-        if 'RUPT_FRAG' in keywords:
-            txt2real = {"UNILATER":0,"GLIS_1D":1,"GLIS_2D":2}
-            keywords['RUPT_FRAG']['CINEMATIQUE'] = txt2real[keywords['RUPT_FRAG']['CINEMATIQUE']]
-        if 'RUPT_FRAG_FO' in keywords:
-            txt2real = {"UNILATER":0,"GLIS_1D":1,"GLIS_2D":2}
-            keywords['RUPT_FRAG_FO']['CINEMATIQUE'] = txt2real[keywords['RUPT_FRAG_FO']['CINEMATIQUE']]
-        if 'CZM_LAB_MIX' in keywords:
-            txt2real = {"UNILATER":0,"GLIS_1D":1,"GLIS_2D":2}
-            keywords['CZM_LAB_MIX']['CINEMATIQUE'] = txt2real[keywords['CZM_LAB_MIX']['CINEMATIQUE']]
-
-        print("APRES DICT: ", keywords)
+        print("APRES ENUM: ", keywords, flush=True)
 
         mater = keywords.get("MATER")
         if keywords.get("reuse"):
@@ -110,8 +73,7 @@ class MaterialDefinition(ExecuteCommand):
                 if mater.getName() != self._result.getName():
                     self._result.setReferenceMaterial(mater)
 
-        classByName = MaterialDefinition._byKeyword()
-        materByName = self._buildInstance(keywords, classByName)
+        materByName = self._buildInstance(keywords)
         for fkwName, fkw in keywords.items():
             if type(fkw) in (list, tuple):
                 assert len(fkw) == 1
@@ -123,12 +85,9 @@ class MaterialDefinition(ExecuteCommand):
                 matBehav = materByName[fkwName]
                 klassName = matBehav.getName()
             else:
-                klass = classByName.get(fkwName)
-                if not klass:
-                    raise NotImplementedError("Unsupported behaviour: '{0}'"
+                raise NotImplementedError("Unsupported behaviour: '{0}'"
                                               .format(fkwName))
-                matBehav = klass()
-                klassName = klass.__name__
+
             for skwName, skw in fkw.items():
                 if skwName == "ORDRE_PARAM":
                     matBehav.setSortedListParameters(list(skw))
@@ -186,7 +145,7 @@ class MaterialDefinition(ExecuteCommand):
 
         self._result.build()
 
-    def _buildInstance(self, keywords, dictClasses):
+    def _buildInstance(self, keywords):
         """Build a dict with MaterialProperty
 
         Returns:
@@ -194,18 +153,14 @@ class MaterialDefinition(ExecuteCommand):
         """
         objects = {}
         for materName, skws in keywords.items():
-            if materName in dictClasses:
-                materClass = dictClasses[materName]
-                if materClass().hasTractionFunction():
-                    objects[materName] = materClass()
-                    continue
-                if materClass().hasEnthalpyFunction():
-                    objects[materName] = materClass()
-                    continue
             asterNewName = ""
             if materName[-2:] == "FO":
                 asterNewName = materName[:-3]
             mater = MaterialProperty(materName, asterNewName)
+            # to build Traction function later
+            if materName in ("TRACTION", "META_TRACTION"):
+                mater.hasTractionFunction(True)
+
             if type(skws) in (list, tuple):
                 assert len(skws) == 1
                 skws = skws[0]
@@ -249,29 +204,6 @@ class MaterialDefinition(ExecuteCommand):
             objects[materName] = mater
         return objects
 
-    @staticmethod
-    def _byKeyword():
-        """Build a dict of all behaviours subclasses, indexed by keyword.
-
-        Returns:
-            dict: Behaviour classes by keyword in DEFI_MATERIAU.
-        """
-        objects = {}
-        for _, obj in list(all_types.__dict__.items()):
-            if not isinstance(obj, type):
-                continue
-            if not issubclass(obj, GenericMaterialProperty):
-                continue
-            if issubclass(obj, MaterialProperty):
-                continue
-            key = ""
-            try:
-                key = obj.getName()
-            except:
-                key = obj().getAsterName()
-            objects[key] = obj
-        return objects
-
 
 DEFI_MATERIAU = MaterialDefinition.run
 
@@ -287,6 +219,8 @@ def check_keywords(kwargs):
         kwargs['DIS_ECRO_TRAC'] = check_dis_ecro_trac(kwargs['DIS_ECRO_TRAC'])
     if 'DIS_CHOC_ENDO' in kwargs:
         kwargs['DIS_CHOC_ENDO'] = check_dis_choc_endo(kwargs['DIS_CHOC_ENDO'])
+    if 'THER_NL' in kwargs:
+        kwargs['THER_NL'] = add_enthalpy(kwargs['THER_NL'])
 
 
 def check_dis_ecro_trac(keywords):
@@ -514,3 +448,23 @@ def check_dis_choc_endo(keywords):
     Clefs['AMORP'] = newAm
     #
     return Clefs
+
+def add_enthalpy(keywords):
+    """Check for functions for THER_NL. Create "Beta" from "Rho_CP" if not given
+
+    Arguments:
+        keywords (dict): THER_NL keyword, changed in place.
+
+    Returns:
+        dict: THER_NL keyword changed in place. Raises '<F>' in case of
+        error.
+    """
+
+    # Create "Beta" from "Rho_CP" if not given
+    if keywords["BETA"] is None:
+        beta = Function()
+        createEnthalpy(keywords["RHO_CP"], beta)
+
+        keywords["BETA"] = beta
+
+    return keywords

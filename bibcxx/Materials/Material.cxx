@@ -136,10 +136,12 @@ bool MaterialClass::build() {
         JeveuxVectorLong &vec5 = _vectorKOrdr[num];
         auto &vec6 = _vectorOfUserRealValues[num];
         auto &vec7 = _vectorOfUserFunctionValues[num];
+
         const bool retour = curIter->buildJeveuxVectors( vec1, vec2, vec3, vec4, vec5, vec6, vec7 );
         const bool retour2 = curIter->buildTractionFunction( _doubleValues );
-        if ( !retour )
-            return false;
+
+        if ( !retour || !retour2 )
+            throw std::runtime_error( "Fail to build Material" );
         ++num;
     }
     return true;

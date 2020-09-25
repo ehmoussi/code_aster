@@ -29,13 +29,18 @@ namespace py = boost::python;
 
 void exportBaseMaterialPropertyToPython() {
 
+    bool ( GenericMaterialPropertyClass::*c1 )(  ) const =
+        &GenericMaterialPropertyClass::hasTractionFunction;
+    void ( GenericMaterialPropertyClass::*c2 )( const bool )=
+        &GenericMaterialPropertyClass::hasTractionFunction;
+
     py::class_< GenericMaterialPropertyClass, GenericMaterialPropertyPtr >(
         "GenericMaterialProperty", py::no_init )
         // fake initFactoryPtr: created by subclasses
         .def( "__init__", py::make_constructor(&initFactoryPtr< GenericMaterialPropertyClass >))
         .def( "getAsterName", &GenericMaterialPropertyClass::getAsterName )
-        .def( "hasTractionFunction", &GenericMaterialPropertyClass::hasTractionFunction )
-        .def( "hasEnthalpyFunction", &GenericMaterialPropertyClass::hasEnthalpyFunction )
+        .def( "hasTractionFunction", c1 )
+        .def( "hasTractionFunction", c2 )
         .def( "getComplexValue", &GenericMaterialPropertyClass::getComplexValue )
         .def( "getRealValue", &GenericMaterialPropertyClass::getRealValue )
         .def( "getStringValue", &GenericMaterialPropertyClass::getStringValue )

@@ -47,6 +47,7 @@
 #include "PythonBindings/CrackInterface.h"
 #include "PythonBindings/CrackShapeInterface.h"
 #include "PythonBindings/CrackTipInterface.h"
+#include "PythonBindings/CreateEnthalpyInterface.h"
 #include "PythonBindings/CyclicSymmetryModeInterface.h"
 #include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/DataFieldInterface.h"
@@ -307,4 +308,5 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportEmpiricalModeResultToPython();
     exportExternalVariablesResultToPython();
     exportMaterialFieldBuilderToPython();
+    exportCreateEnthalpyToPython();
 };

@@ -73,7 +73,7 @@ class MaterialClass: public DataStructure
         std::vector< VectorOfJeveuxVectorReal > _vectorOfUserRealValues;
         /** @brief Vector of JeveuxVectorChar8 named '.XXXXXXX.LISV_FO' */
         std::vector< VectorOfJeveuxVectorChar8 >  _vectorOfUserFunctionValues;
-        /** @brief Vector of JeveuxVectorReal named '.&&RDEP' */
+        /** @brief Function named '.&&RDEP' for traction function */
         FunctionPtr                        _doubleValues;
         MaterialPtr                        _mater;
 

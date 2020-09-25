@@ -206,7 +206,7 @@ bool GenericMaterialPropertyClass::buildJeveuxVectors(
 };
 
 bool GenericMaterialPropertyClass::buildTractionFunction( FunctionPtr &doubleValues ) const
-    {
+{
     return true;
 };
 
