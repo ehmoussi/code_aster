@@ -23,9 +23,6 @@ cata_msg = {
 
     2  : _("""Il ne peut y avoir qu'un seul matériau de type MFront dans DEFI_MATERIAU."""),
 
-    3  : _("""Propriétés définies dans le matériau: %(k1)s.
-"""),
-
     4  : _("""Paramètres des propriétés %(k1)s:"""),
 
     5  : _("""

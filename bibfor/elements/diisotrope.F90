@@ -189,7 +189,7 @@ real(kind=8)                 :: ulm(12), dul(12), pgl(3, 3)
     tecro = 0
     if ( iloi == 2 ) then
         call rcvala(jmat, ' ', 'DIS_ECRO_TRAC', 0, ' ',&
-                    [0.0d0], 1, ['ECRO'], valres, codret, 1)
+                    [0.0d0], 1, ['ECROUISSAGE'], valres, codret, 1)
         tecro = nint( valres(1) )
     endif
 !   Pour l'intégration

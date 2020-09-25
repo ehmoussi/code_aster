@@ -256,22 +256,21 @@ possible d'extrapoler la fonction au delà de %(r1)f
     62 : _("""
 Le Comportement %(k1)s est non valide.
 La définition de la fonction %(k2)s est incorrecte.
-    1)  Il manque la définition de ECROUISSAGE
-    2)  FX ou FTAN non définie
-    3)  Elle doit être définie avec DEFI_FONCTION
+    1)  FX ou FTAN non définie
+    2)  Elle doit être définie avec DEFI_FONCTION
         Le nom du paramètre est 'DX' pour 'FX' ou 'DTAN' pour 'FTAN'
         L'interpolation doit être linéaire entre les points
         Elle ne peut pas être :
             - une constante
             - une nappe
             - prolongée à gauche ou à droite
-    4)  Si FX  la fonction est définie par au moins 3 points
+    3)  Si FX  la fonction est définie par au moins 3 points
         Si FTAN la fonction est définie par :
             - au moins   3 points, dans le cas isotrope
             - exactement 3 points, dans le cas cinématique
-    5)  Le premier point doit être (0.0, 0.0)
-    6)  La fonction doit être monotone croissante
-    7)  La tangente à la fonction doit être toujours inférieure ou égale à la pente initiale
+    4)  Le premier point doit être (0.0, 0.0)
+    5)  La fonction doit être monotone croissante
+    6)  La tangente à la fonction doit être toujours inférieure ou égale à la pente initiale
 ----------------------------------------------------------
 Condition non respectée :: <%(i1)d>
     %(k3)s

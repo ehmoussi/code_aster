@@ -266,7 +266,7 @@ subroutine dichoc_endo_ldc(option, nomte, ndim, nbt, nno,&
 !   Paramètres de la loi de comportement
     valre1(:) = 0.0
     call rcvala(jmater, ' ', 'DIS_CHOC_ENDO', 0, ' ',&
-                [0.0d0], 3, ['DIST_1','DIST_2','AMORIN'], valre1, codre1, 1)
+                [0.0d0], 3, ['DIST_1   ','DIST_2   ','CRIT_AMOR'], valre1, codre1, 1)
 !   Calcul du jeu final
 !   Longueur du discret
     xd(1:3)   = xl(1+ndim:2*ndim) - xl(1:ndim)

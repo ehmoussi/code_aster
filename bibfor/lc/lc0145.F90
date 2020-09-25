@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -167,7 +167,7 @@ use tenseur_meca_module
         endif
     endif
     !
-    nomres(1) = 'TYPE_LOI'
+    nomres(1) = 'COMP_BETON'
     nomres(2) = 'ENDO_MC'
     nomres(3) = 'ENDO_SIGUC'
     nomres(4) = 'ENDO_MT'

@@ -366,11 +366,6 @@ Conseil:
   GROUP_MA : %(k1)s
 """),
 
-    84 : _("""
-Le nom du paramètre >>%(k1)s<< est trop long, il dépasse les 16 caractères autorisés,
-Le nom sera tronqué à 16 caractères.
-"""),
-
     94 : _("""
      On ne peut pas appliquer un cisaillement 2d sur une modélisation 3D
 """),

@@ -259,10 +259,6 @@ Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    70 : _("""
- erreur lors de la définition de la courbe de traction, il manque le paramètre : %(k1)s
-"""),
-
     71 : _("""
  erreur lors de la définition de la courbe de traction : %(k1)s  nombre de points < 2  !
 """),
@@ -290,13 +286,6 @@ Contactez le support technique.
     80 : _("""
  comportement TRACTION non trouvé
 """),
-
-    81 : _("""
-Erreur programmeur dans DEFI_MATERIAU :
-   Pour le mot clé facteur %(k1)s, la liste ordonnée des mots clés (ORDRE_PARAM)
-   ne contient pas le mot clé %(k2)s.
-"""),
-
 
     82 : _("""
  comportement META_TRACTION non trouvé
@@ -336,14 +325,6 @@ Erreur programmeur dans DEFI_MATERIAU :
 
     91 : _("""
  concept de type :  %(k1)s  interdit pour la courbe de traction %(k2)s
-"""),
-
-    92 : _("""
-Erreur utilisateur dans DEFI_MATERIAU :
-  Lorsque le coefficient de dilatation RHO est une fonction, il
-  ne peut être qu'une fonction de la géométrie (X,Y,Z).
-  La fonction %(k1)s dépend du paramètre %(k2)s.
-  C'est interdit.
 """),
 
     93 : _("""

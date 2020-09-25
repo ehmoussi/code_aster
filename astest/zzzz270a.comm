@@ -35,13 +35,12 @@ fmt_raison='-'*80+"""
 """+'-'*80+'\n'
 #
 # Les différents plantages
-# 1 : ECROUISSAGE non défini            <== pas possible cf catalogue
-# 2 : FX | FTAN non définie             <== pas possible cf catalogue
-# 3 : Paramètres de la fonction
-# 4 : nb points = %s" % len(absc)
-# 5 : 1er point doit être [ZERO,ZERO]
-# 6 : Ddx ou Dfx > 0
-# 7 : Raideur doit être décroissante
+# 1 : FX | FTAN non définie             <== pas possible cf catalogue
+# 2 : Paramètres de la fonction
+# 3 : nb points = %s" % len(absc)
+# 4 : 1er point doit être [ZERO,ZERO]
+# 5 : Ddx ou Dfx > 0
+# 6 : Raideur doit être décroissante
 #
 # --------------------------------------------------------------------------------------------------
 # 0 : Pas de plantage
@@ -65,7 +64,7 @@ except AsterError as err:
     zz = str(err)
     #print(fmt_raison % zz )
     if err.id_message == "DISCRETS_62":
-        is_ok = zz.find(":: <4>") != -1
+        is_ok = zz.find(":: <3>") != -1
 
 TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
                         _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
@@ -87,7 +86,7 @@ except AsterError as err:
     zz = str(err)
     #print(fmt_raison % zz )
     if err.id_message == "DISCRETS_62":
-        is_ok = zz.find(":: <3>") != -1
+        is_ok = zz.find(":: <2>") != -1
 
 TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
                         _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
@@ -109,7 +108,7 @@ except AsterError as err:
     zz = str(err)
     #print(fmt_raison % zz )
     if err.id_message == "DISCRETS_62":
-        is_ok = zz.find(":: <3>") != -1
+        is_ok = zz.find(":: <2>") != -1
 
 TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
                         _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
@@ -131,7 +130,7 @@ except AsterError as err:
     zz = str(err)
     #print(fmt_raison % zz )
     if err.id_message == "DISCRETS_62":
-        is_ok = zz.find(":: <3>") != -1
+        is_ok = zz.find(":: <2>") != -1
 
 TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
                         _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
@@ -153,7 +152,7 @@ except AsterError as err:
     zz = str(err)
     #print(fmt_raison % zz )
     if err.id_message == "DISCRETS_62":
-        is_ok = zz.find(":: <5>") != -1
+        is_ok = zz.find(":: <4>") != -1
 
 TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
                         _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
@@ -175,7 +174,7 @@ except AsterError as err:
     zz = str(err)
     #print(fmt_raison % zz )
     if err.id_message == "DISCRETS_62":
-        is_ok = zz.find(":: <6>") != -1
+        is_ok = zz.find(":: <5>") != -1
 
 TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
                         _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
@@ -197,7 +196,7 @@ except AsterError as err:
     zz = str(err)
     #print(fmt_raison % zz )
     if err.id_message == "DISCRETS_62":
-        is_ok = zz.find(":: <7>") != -1
+        is_ok = zz.find(":: <6>") != -1
 
 TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
                         _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)

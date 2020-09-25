@@ -97,9 +97,9 @@ aster_logical, pointer :: v_mate_func(:)
     nb_prop = - nb_prop
     ASSERT(nb_prop .ne. 0)
 !
-! - Add automatic BETA property for THER_NL / THER_NL_ORTH or ECRO for DIS_ECRO_TRAC
+! - Add automatic BETA property for THER_NL / THER_NL_ORTH
 !
-    if (nomrc .eq. 'THER_NL'.or. nomrc .eq. 'THER_NL_ORTH'.or. nomrc .eq. 'DIS_ECRO_TRAC') then
+    if (nomrc .eq. 'THER_NL'.or. nomrc .eq. 'THER_NL_ORTH') then
         nb_prop = nb_prop + 1
     endif
 !

@@ -55,8 +55,53 @@ class MaterialDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+
+        # In this function, we can check the value of keywords
         check_keywords(keywords)
+        print("AVANT: ", keywords)
+
+        #ne marche pas
         replace_enum(self._cata, keywords)
+
+        print("AVANT ENUM: ", keywords)
+
+        #provosire
+        if 'BETON_DOUBLE_DP' in keywords:
+            txt2real = {"LINEAIRE":0,"PARABOLE":1}
+            keywords['BETON_DOUBLE_DP']['ECRO_COMP_P_PIC'] = txt2real[keywords['BETON_DOUBLE_DP']['ECRO_COMP_P_PIC']]
+
+            txt2real = {"LINEAIRE":0,"EXPONENT":1}
+            keywords['BETON_DOUBLE_DP']['ECRO_TRAC_P_PIC'] = txt2real[keywords['BETON_DOUBLE_DP']['ECRO_TRAC_P_PIC']]
+        if 'BETON_RAG' in keywords:
+            txt2real = {"ENDO":1,"ENDO_FLUA":2,"ENDO_FLUA_RAG":3}
+            keywords['BETON_RAG']['COMP_BETON'] = txt2real[keywords['BETON_RAG']['COMP_BETON']]
+        if 'CABLE_GAINE_FROT' in keywords:
+            txt2real = {"FROTTANT":1,"GLISSANT":2,"ADHERENT":3}
+            keywords['CABLE_GAINE_FROT']['TYPE'] = txt2real[keywords['CABLE_GAINE_FROT']['TYPE']]
+        if 'DIS_ECRO_TRAC' in keywords:
+            txt2real = {'ISOTROPE':1,'CINEMATIQUE':2}
+            if 'ECROUISSAGE' in keywords['DIS_ECRO_TRAC']:
+                keywords['DIS_ECRO_TRAC']['ECROUISSAGE'] = txt2real[keywords['DIS_ECRO_TRAC']['ECROUISSAGE']]
+        if 'DIS_CHOC_ENDO' in keywords:
+            txt2real = {"INCLUS":1,"EXCLUS":2}
+            keywords['DIS_CHOC_ENDO']['CRIT_AMOR'] = txt2real[keywords['DIS_CHOC_ENDO']['CRIT_AMOR']]
+        if 'ELAS_META' in keywords:
+            txt2real = {"CHAUD":1,"FROID":0}
+            keywords['ELAS_META']['PHASE_REFE'] = txt2real[keywords['ELAS_META']['PHASE_REFE']]
+        if 'ELAS_META_FO' in keywords:
+            txt2real = {"CHAUD":1,"FROID":0}
+            keywords['ELAS_META_FO']['PHASE_REFE'] = txt2real[keywords['ELAS_META_FO']['PHASE_REFE']]
+        if 'RUPT_FRAG' in keywords:
+            txt2real = {"UNILATER":0,"GLIS_1D":1,"GLIS_2D":2}
+            keywords['RUPT_FRAG']['CINEMATIQUE'] = txt2real[keywords['RUPT_FRAG']['CINEMATIQUE']]
+        if 'RUPT_FRAG_FO' in keywords:
+            txt2real = {"UNILATER":0,"GLIS_1D":1,"GLIS_2D":2}
+            keywords['RUPT_FRAG_FO']['CINEMATIQUE'] = txt2real[keywords['RUPT_FRAG_FO']['CINEMATIQUE']]
+        if 'CZM_LAB_MIX' in keywords:
+            txt2real = {"UNILATER":0,"GLIS_1D":1,"GLIS_2D":2}
+            keywords['CZM_LAB_MIX']['CINEMATIQUE'] = txt2real[keywords['CZM_LAB_MIX']['CINEMATIQUE']]
+
+        print("APRES DICT: ", keywords)
 
         mater = keywords.get("MATER")
         if keywords.get("reuse"):
@@ -151,9 +196,6 @@ class MaterialDefinition(ExecuteCommand):
         for materName, skws in keywords.items():
             if materName in dictClasses:
                 materClass = dictClasses[materName]
-                if materClass.hasConvertibleValues():
-                    objects[materName] = materClass()
-                    continue
                 if materClass().hasTractionFunction():
                     objects[materName] = materClass()
                     continue
@@ -240,6 +282,7 @@ def check_keywords(kwargs):
     Arguments:
         kwargs (dict): User's keywords, changed in place.
     """
+
     if 'DIS_ECRO_TRAC' in kwargs:
         kwargs['DIS_ECRO_TRAC'] = check_dis_ecro_trac(kwargs['DIS_ECRO_TRAC'])
     if 'DIS_CHOC_ENDO' in kwargs:
@@ -260,7 +303,7 @@ def check_dis_ecro_trac(keywords):
     #
     # jean-luc.flejou@edf.fr
     #
-    def _message(num,mess=''):
+    def _message(num, mess=''):
         UTMESS('F', 'DISCRETS_62',
                valk=('DIS_ECRO_TRAC', 'FX=f(DX) | FTAN=f(DTAN)', mess),
                vali=num)
@@ -269,25 +312,14 @@ def check_dis_ecro_trac(keywords):
     #
     Clefs = keywords
     #
-    Clefs['ECRO'] = 0.0
     if 'FX' in Clefs:
         iffx = True
         fct = Clefs['FX']
     elif 'FTAN' in Clefs:
         iffx = False
         fct = Clefs['FTAN']
-        if 'ECROUISSAGE' in Clefs:
-            Ecro = Clefs['ECROUISSAGE']
-            if Ecro == 'ISOTROPE':
-                Clefs['ECRO'] = 1.0
-            elif Ecro == 'CINEMATIQUE':
-                Clefs['ECRO'] = 2.0
-            # Suppression de la Clef ECROUISSAGE
-            del Clefs['ECROUISSAGE']
-        else:
-            _message(1)
     else:
-        _message(2)
+        _message(1)
     # Les vérifications sur la fonction
     #       interpolation LIN LIN
     #       prolongée à gauche et à droite exclue
@@ -303,26 +335,28 @@ def check_dis_ecro_trac(keywords):
     else:
         OkFct = OkFct and param['NOM_PARA'] == 'DTAN'
     if not OkFct:
-        _message(3, "%s" % param)
+        _message(2, "%s" % param)
     # avoir 3 points minimum ou exactement
     absc, ordo = fct.Valeurs()
     if iffx:
         OkFct = OkFct and len(absc) >= 3
     else:
-        if Clefs['ECRO'] == 1:
+        if Clefs['ECROUISSAGE'] == 'ISOTROPE':
             OkFct = OkFct and len(absc) >= 3
-        elif Clefs['ECRO'] == 2:
+        elif Clefs['ECROUISSAGE'] == 'CINEMATIQUE':
             OkFct = OkFct and len(absc) == 3
+        else:
+            raise RuntimeError("Unknown value")
     #
     if not OkFct:
-        _message(4, "%s" % len(absc))
+        _message(3, "%s" % len(absc))
     # Point n°1: (DX=0, FX=0)
     dx = absc[0]
     fx = ordo[0]
     OkFct = OkFct and dx >= 0.0 and abs(dx) <= precis
     OkFct = OkFct and fx >= 0.0 and abs(fx) <= precis
     if not OkFct:
-        _message(5,"[%s %s]" % (dx, fx))
+        _message(4,"[%s %s]" % (dx, fx))
     # FX et DX sont strictement positifs, dFx >0 , dDx >0
     #   Au lieu de la boucle, on peut faire :
     #       xx=np.where(np.diff(absc) <= 0.0 or np.diff(ordo) <= 0.0)[0]
@@ -334,7 +368,7 @@ def check_dis_ecro_trac(keywords):
     #           message 7 : xx[0] dfx[xx[0]] dfx[xx[0]+1]
     for ii in range(1, len(absc)):
         if absc[ii] <= dx or ordo[ii] <= fx:
-            _message(6, "Ddx, Dfx > 0 : p(i)[%s %s]  "
+            _message(5, "Ddx, Dfx > 0 : p(i)[%s %s]  "
                      "p(i+1)[%s %s]" % (dx, fx, absc[ii], ordo[ii]))
         if ii == 1:
             dfx = (ordo[ii] - fx)/(absc[ii] - dx)
@@ -342,7 +376,7 @@ def check_dis_ecro_trac(keywords):
         else:
             dfx = (ordo[ii] - fx)/(absc[ii] - dx)
             if dfx > raidex:
-                _message(7, "(%d) : %s > %s" % (ii, dfx, raidex))
+                _message(6, "(%d) : %s > %s" % (ii, dfx, raidex))
 
         dx = absc[ii]
         fx = ordo[ii]
@@ -372,17 +406,6 @@ def check_dis_choc_endo(keywords):
     precis = 1.0e-08
     #
     Clefs = keywords
-    if 'CRIT_AMOR' in Clefs:
-        if Clefs['CRIT_AMOR'] == 'INCLUS':
-            Clefs['AMORIN'] = 1.0
-        elif Clefs['CRIT_AMOR'] == 'EXCLUS':
-            Clefs['AMORIN'] = 2.0
-        else:
-            Clefs['AMORIN'] = 0.0
-        # Supression de la Clef CRIT_AMOR
-        del Clefs['CRIT_AMOR']
-    else:
-        _message(1)
 
     # Conditions communes aux 3 fonctions
     #   paramètre 'DX'

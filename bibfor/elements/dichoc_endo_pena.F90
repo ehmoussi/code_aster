@@ -232,7 +232,7 @@ subroutine dichoc_endo_pena(option, nomte, ndim, nbt, nno,&
 !   Type d'amortissement inclus ou exclus
     tecro2 = 0
     call rcvala(zi(imat), ' ', 'DIS_CHOC_ENDO', 0, ' ', &
-                    [0.0d0], 1, ['AMORIN'], valres, codres, 1)
+                    [0.0d0], 1, ['CRIT_AMOR'], valres, codres, 1)
     tecro2 = nint( valres(1) )
 !   récupération de l'effort enveloppe, de la raideur et de l'amortissement
     nomres(1)= 'FX'; nomres(2)= 'RIGI_NOR'; nomres(3)= 'AMOR_NOR'

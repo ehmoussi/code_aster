@@ -94,7 +94,7 @@ subroutine verif_loi_mater(mater)
             else
                 ASSERT( .false. )
             endif
-            iecro  = indk16(matk,'ECRO', 1,nbk2)
+            iecro  = indk16(matk,'ECROUISSAGE', 1,nbk2)
             ASSERT( iecro .ne. 0 )
             tecro = nint(matr(iecro))
 !           Quelques vérifications sur la fonction
