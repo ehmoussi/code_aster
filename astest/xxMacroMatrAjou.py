@@ -90,6 +90,24 @@ MEL_MSTR=CALC_MATR_ELEM( MODELE=STRUCT,
 
 NUSTR=NUME_DDL(MATR_RIGI=MEL_KSTR)
 
+test.assertEqual( NUSTR.getComponents(), ['DX', 'DY'] )
+for row in NUSTR.getRowsAssociatedToLagrangeMultipliers():
+   test.assertEqual( NUSTR.getComponentAssociatedToRow(row), 'LAGR' )
+for row in NUSTR.getRowsAssociatedToPhysicalDofs():
+   test.assertTrue( NUSTR.getComponentAssociatedToRow(row) in ['DX','DY'])
+test.assertEqual( NUSTR.getNodeAssociatedToRow(1), 1 )
+test.assertEqual( NUSTR.getRowAssociatedToNodeComponent(1,'DX'), 2)
+test.assertEqual( len(NUSTR.getRowsAssociatedToLagrangeMultipliers()), 512)
+test.assertEqual( len(NUSTR.getRowsAssociatedToPhysicalDofs()), 514)
+test.assertTrue( NUSTR.useLagrangeMultipliers() )
+test.assertFalse( NUSTR.useSingleLagrangeMultipliers() )
+test.assertEqual( NUSTR.getPhysicalQuantity(), 'DEPL_R')
+
+test.assertRaises( RuntimeError, lambda: list(NUSTR.getComponentAssociatedToRow(0)) )
+test.assertRaises( RuntimeError, lambda: list(NUSTR.getComponentAssociatedToRow(999999)) )
+test.assertRaises( RuntimeError, lambda: list(NUSTR.getRowAssociatedToNodeComponent(1,'XXXXX') ))
+test.assertRaises( RuntimeError, lambda: list(NUSTR.getRowAssociatedToNodeComponent(999999,'DX') ))
+
 MATASKS=ASSE_MATRICE( MATR_ELEM=MEL_KSTR,  NUME_DDL=NUSTR)
 
 MATASMS=ASSE_MATRICE( MATR_ELEM=MEL_MSTR,  NUME_DDL=NUSTR)
@@ -116,5 +134,7 @@ MACRO_MATR_AJOU(MAILLAGE=MA,
                   NUME_DDL_GENE=NUMGEN)
 
 test.assertTrue( True )
+
+test.printSummary()
 
 FIN()

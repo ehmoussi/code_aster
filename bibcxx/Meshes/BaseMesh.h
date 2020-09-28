@@ -163,6 +163,12 @@ class BaseMeshClass : public DataStructure {
     int getNumberOfCells() const;
 
     /**
+     * @brief Get all the names of nodes
+     * @return NamesMapChar8 _nameOfNodes
+     */
+    const NamesMapChar8 &getNameOfNodesMap() const { return _nameOfNodes; };
+
+    /**
      * @brief Recuperation de la dimension du maillage
      */
     int getDimension() const;

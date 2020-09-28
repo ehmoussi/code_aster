@@ -91,6 +91,8 @@ class FieldOnNodesDescriptionClass : public DataStructure {
      * sd_resu)
      */
     FieldOnNodesDescriptionClass( const std::string name, const JeveuxMemory memType = Permanent );
+
+    friend class BaseDOFNumberingClass;
 };
 typedef boost::shared_ptr< FieldOnNodesDescriptionClass > FieldOnNodesDescriptionPtr;
 
@@ -193,7 +195,7 @@ class BaseDOFNumberingClass : public DataStructure {
         /** @brief Objet Jeveux '.NEQU' */
         JeveuxVectorLong _numberOfEquations;
         /** @brief Objet Jeveux '.REFN' */
-        JeveuxVectorLong _informations;
+        JeveuxVectorChar24 _informations;
         /** @brief Objet Jeveux '.DELG' */
         JeveuxVectorLong _lagrangianInformations;
 
@@ -213,9 +215,9 @@ class BaseDOFNumberingClass : public DataStructure {
         JeveuxCollectionLong _componentsOnNodes;
         /** @brief Objet Jeveux '.NUEQ' */
         JeveuxVectorLong _indexationVector;
-        /** @brief Objet Jeveux '.NEQU' */
+        /** @brief Objet Jeveux '.NULG' */
         JeveuxVectorLong _globalToLocal;
-        /** @brief Objet Jeveux '.DELG' */
+        /** @brief Objet Jeveux '.NUGL' */
         JeveuxVectorLong _LocalToGlobal;
 
         LocalEquationNumberingClass( const std::string &DOFNumName )
@@ -298,9 +300,64 @@ class BaseDOFNumberingClass : public DataStructure {
     };
 
     /**
-     * @brief Determination de la numerotation
+     * @brief Build the Numbering of DOFs
      */
     bool computeNumbering();
+
+    /**
+     * @brief Are Lagrange Multipliers used for BC or MPC
+     */
+    bool useLagrangeMultipliers();
+
+    /**
+     * @brief Are Single Lagrange Multipliers used for BC or MPC
+     */
+    bool useSingleLagrangeMultipliers();
+
+    /**
+     * @brief Get Physical Quantity
+     */
+    std::string getPhysicalQuantity();
+
+    /**
+     * @brief Get The Component Associated To A Given Row
+     */
+    std::string getComponentAssociatedToRow(const ASTERINTEGER row);
+
+    /**
+     * @brief Get The Components Associated To A Given Node
+     */
+    VectorString getComponentsAssociatedToNode(const ASTERINTEGER node);
+
+    /**
+     * @brief Get The Node Id Associated To A Given Row
+     */
+    ASTERINTEGER getNodeAssociatedToRow(const ASTERINTEGER row);
+
+    /**
+     * @brief Get The total number of Dofs
+     */
+    ASTERINTEGER getNumberOfDofs();
+
+    /**
+     * @brief get the Row index Associated To the Component of a Node
+     */
+    ASTERINTEGER getRowAssociatedToNodeComponent(const ASTERINTEGER node, const std::string comp);
+
+    /**
+     * @brief Get Rows Associated to all Physical Dof
+     */
+    VectorLong getRowsAssociatedToPhysicalDofs();
+
+    /**
+     * @brief Get Rows Associated to Lagrange Multipliers Dof
+     */
+    VectorLong getRowsAssociatedToLagrangeMultipliers();
+
+    /**
+     * @brief Get Assigned Components
+     */
+    VectorString getComponents();
 
     /**
      * @brief Get FieldOnNodesDescription

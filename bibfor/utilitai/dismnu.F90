@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -58,8 +58,10 @@ subroutine dismnu(questi, nomobz, repi, repkz, ierd)
 !         CE N'EST PAS LE NOM D'UN LIGREL
 !
 !-----------------------------------------------------------------------
-    integer ::  iarefe,imatd, iret
+    integer ::  iarefe,imatd, iret, neq, i
+    aster_logical :: isLagr, isDbLagr
     integer, pointer :: nequ(:) => null()
+    integer, pointer :: delg(:) => null()
 !-----------------------------------------------------------------------
     call jemarq()
     repk = ' '
@@ -86,7 +88,39 @@ subroutine dismnu(questi, nomobz, repi, repkz, ierd)
         call jeveuo(nomob//'.NUME.NEQU', 'L', vi=nequ)
         repi = nequ(1)
 !
-    else if (questi.eq.'PROF_CHNO') then
+    else if (questi.eq.'EXIS_LAGR') then
+        call jeveuo(nomob//'.NUME.DELG', 'L', vi=delg)
+        call jeveuo(nomob//'.NUME.NEQU', 'L', vi=nequ)
+        neq = nequ(1)
+        repk = 'NON'
+        do i = 1, neq
+            if (delg(i) .lt. 0) then
+                REPK = 'OUI'
+                goto 10
+            endif
+        end do
+10      continue
+!
+    else if (questi.eq.'SIMP_LAGR') then
+        call jeveuo(nomob//'.NUME.DELG', 'L', vi=delg)
+        call jeveuo(nomob//'.NUME.NEQU', 'L', vi=nequ)
+        neq = nequ(1)
+        isLagr=ASTER_FALSE
+        isDbLagr=ASTER_FALSE
+        do i = 1, neq
+            if (delg(i) .lt. 0) then
+                isLagr=ASTER_TRUE
+                if (delg(i) .eq. -2) then
+                    isDbLagr=ASTER_TRUE
+                    goto 20
+                endif
+            endif
+        end do
+20      continue
+        repk='NON'
+        if (isLagr.and..not.isDbLagr) repk='OUI'
+!
+else if (questi.eq.'PROF_CHNO') then
         repk = nomob//'.NUME'
 !
     else if (questi.eq.'NOM_MODELE') then
@@ -112,7 +146,7 @@ subroutine dismnu(questi, nomobz, repi, repkz, ierd)
         call jeexin(nomob//'.NUME.REFN', iret)
         if (iret .eq. 0) then
             repk = ' '
-        else     
+        else
             call jeveuo(nomob//'.NUME.REFN', 'L', iarefe)
             repk = zk24(iarefe) (1:8)
         endif
