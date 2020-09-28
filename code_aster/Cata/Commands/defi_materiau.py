@@ -28,7 +28,7 @@ from ..Language.Syntax import *
 # Il faut donc au moins un mot-clé obligatoire ou bien une des
 # règles UN_PARMI, AU_MOINS_UN ou NON_VIDE.
 
-DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=0,sd_prod=mater_sdaster,
+DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                    fr=tr("Définition des paramètres décrivant le comportement d un matériau"),
                    reentrant='f:MATER',
        regles=(EXCLUS('ELAS','ELAS_FO','ELAS_FLUI','ELAS_ISTR','ELAS_ISTR_FO','ELAS_ORTH',

@@ -21,8 +21,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Not DataStructures
-// aslint: disable=C3006
+
 #include "PythonBindings/MaterialPropertyInterface.h"
 #include "PythonBindings/BaseMaterialPropertyInterface.h"
 #include "PythonBindings/factory.h"

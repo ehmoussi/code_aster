@@ -19,7 +19,6 @@
    :members:
 
 
-
 ================================================================================
 :py:class:`~code_aster.Objects.MaterialProperty` object
 ================================================================================
@@ -27,3 +26,4 @@
 .. autoclass:: code_aster.Objects.MaterialProperty
    :show-inheritance:
    :members:
+
