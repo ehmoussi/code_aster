@@ -42,6 +42,7 @@ FLEX = CALC_MAC3COEUR(TYPE_COEUR  = 'MONO_FROID',
 POST_V=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                         INTITULE='DY',
                         RESULTAT =FLEX,
+                        PRECISION=1e-08,
                         NOM_CHAM ='DEPL',
                         NOM_CMP = ('DY','DZ'),
                         GROUP_NO=('LISPG',),
@@ -50,7 +51,8 @@ POST_V=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
 IMPR_TABLE(TABLE=POST_V)
 
 FLEX=CALC_CHAMP(reuse =FLEX,
-             RESULTAT=FLEX,
+                RESULTAT=FLEX,
+                PRECISION=1e-08,
              #GROUP_MA = (
                #'GC_A_A',
                #'GT_A_A',
@@ -86,6 +88,7 @@ for i in range(10) :
      ACTION=_F(INTITULE='FORCE',
                GROUP_NO=('GRIL_%d'%(i+1)),
                RESULTAT=FLEX,
+               PRECISION=1e-08,
                NOM_CHAM='FORC_NODA',
                RESULTANTE=('DX','DY','DZ'),
                REPERE='GLOBAL',
@@ -102,6 +105,7 @@ POSTC = POST_RELEVE_T(
      ACTION=_F(INTITULE='FORCE',
                GROUP_NO=('CR_A_A'),
                RESULTAT=FLEX,
+               PRECISION=1e-08,
                NOM_CHAM='FORC_NODA',
                RESULTANTE=('DX','DY','DZ'),
                REPERE='GLOBAL',
@@ -117,21 +121,21 @@ fgrille = CREA_TABLE(LISTE=(
 
 TEST_TABLE(
   CRITERE='RELATIF',
-  VALE_CALC=-263.4865715982741,
+  VALE_CALC=-262.96703680739347,
   NOM_PARA='EFFORT',
   TABLE=fgrille,
   FILTRE=_F(NOM_PARA='N_GRILLE',VALE_I=6),)
 
 TEST_TABLE(
   CRITERE='RELATIF',
-  VALE_CALC=-499.141696102546,
+  VALE_CALC=-499.1416965284867,
   NOM_PARA='EFFORT',
   TABLE=fgrille,
   TYPE_TEST='SOMM',)
 
 TEST_TABLE(
   CRITERE='RELATIF',
-  VALE_CALC=499.14169801901033,
+  VALE_CALC=499.1416980146889,  
   NOM_PARA='DY',
   TABLE=POSTC,
   TYPE_TEST='SOMM',)
