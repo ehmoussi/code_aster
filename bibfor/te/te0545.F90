@@ -53,12 +53,13 @@ subroutine te0545(option, nomte)
     integer :: imate, icontm, ivarim, iinstm, iinstp, ideplm, ideplp, icompo
     integer :: ivectu, icontp, ivarip, imatuu, icarcr, ivarix, igeom, icoret
     integer :: iret, nnos, jgano, jganob, itab(7)
-    integer :: i
+    integer :: i, codret
     real(kind=8) :: xyz(3), angmas(7)
     real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
 !
 
 ! - INITIALISATION
+    codret=0
     matsym=ASTER_FALSE
     xyz(:)=0.d0
 !
@@ -147,7 +148,7 @@ subroutine te0545(option, nomte)
                        zr(igeom),zk16(icompo), zi(imate), lgpg,&
                        zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
                        zr( ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
-                       zr( ivarip), zr(ivectu), zr(imatuu), zi(icoret))
+                       zr( ivarip), zr(ivectu), zr(imatuu), codret)
 
 
 
@@ -158,7 +159,7 @@ subroutine te0545(option, nomte)
                    zr(igeom),zk16(icompo), zi(imate), lgpg,&
                    zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
                    zr( ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
-                   zr( ivarip), zr(ivectu), zr(imatuu), zi(icoret))
+                   zr( ivarip), zr(ivectu), zr(imatuu), codret)
 
         endif
 
@@ -175,11 +176,15 @@ subroutine te0545(option, nomte)
                     zi(imate), angmas, lgpg, zr(icarcr), zr(iinstm),&
                     zr(iinstp), zr(ideplm), zr(ideplp), ni2ldc, zr(icontm),&
                     zr(ivarim), zr(icontp), zr(ivarip), zr(ivectu), zr(imatuu),&
-                    zi(icoret))
+                    codret)
 
         deallocate(b)
         deallocate(w)
         deallocate(ni2ldc)
      endif
+!
+     if(resi) then
+          zi(icoret) = codret
+     end if
 !
 end subroutine
