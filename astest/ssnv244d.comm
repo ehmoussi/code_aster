@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -264,7 +264,7 @@ TEST_RESU(RESU=(_F(INST=1,
                    NOM_CHAM='DEPL',
                    NOEUD='N7',
                    NOM_CMP='DZ',
-                   VALE_CALC=-3.65601932635E-05,
+                   VALE_CALC=-3.60453250864812E-05,
                    MAILLE='M1',),
                 #Instant 50 removed for different 
                 #convergence behavior in GAIA 
@@ -273,21 +273,21 @@ TEST_RESU(RESU=(_F(INST=1,
                 #   NOM_CHAM='DEPL',
                 #   NOEUD='N7',
                 #   NOM_CMP='DZ',
-                #   VALE_CALC=-1.526955918605063E-05,
+                #   VALE_CALC=8.20304582429925E-06,
                 #   MAILLE='M1',),
                 _F(INST=100,
                    RESULTAT=RESU,
                    NOM_CHAM='DEPL',
                    NOEUD='N7',
                    NOM_CMP='DZ',
-                   VALE_CALC=6.58257343733E-06,
+                   VALE_CALC=0.0003135053306727062,
                    MAILLE='M1',),
                 _F(INST=150,
                    RESULTAT=RESU,
                    NOM_CHAM='DEPL',
                    NOEUD='N7',
                    NOM_CMP='DZ',
-                   VALE_CALC=0.000151483938688,
+                   VALE_CALC=0.0005915310114589272, 
                    MAILLE='M1',),
                 ),
           )
