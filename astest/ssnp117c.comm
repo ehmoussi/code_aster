@@ -1,0 +1,230 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+# ESSAI TRACTION UNE MAILLE QUAD8
+# MODELISATION D_PLAN SI
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+MAIL=LIRE_MAILLAGE(FORMAT="ASTER",)
+
+MAIL=DEFI_GROUP(reuse =MAIL,
+                MAILLAGE=MAIL,
+                CREA_GROUP_NO=_F(GROUP_MA=('L14','L43','L32','L21'),),)
+
+MOD_MECA=AFFE_MODELE(AFFE=(
+                            _F(TOUT='OUI',
+                             PHENOMENE='MECANIQUE',
+                             MODELISATION=('D_PLAN',),),
+                            _F(TOUT='OUI',
+                             PHENOMENE='MECANIQUE',
+                             MODELISATION=('D_PLAN_SI'),),
+                                ),
+                     MAILLAGE=MAIL,)
+
+
+
+
+ECR=DEFI_FONCTION(PROL_GAUCHE='LINEAIRE',
+                  NOM_PARA='EPSI',
+                  VALE=(0.0001,27.3,0.00338,222.72,0.03,519.58,0.04,
+                  580.94,0.05,633.48,0.07,721.82,0.1,828.96,0.15,970.19,
+                  0.2,1084.75,0.3,1269.57,0.4,1419.48,0.5,1547.86,0.7,1763.72,
+                  1.0,2025.5,1.5,2370.5856,2.0,2650.525),
+                  PROL_DROITE='LINEAIRE',)
+
+ACIER=DEFI_MATERIAU(ELAS=_F(NU=0.3,
+                            E=2.E5,),
+                    ROUSSELIER=_F(PORO_INIT=1.E-4,
+                                  D_SIGM_EPSI_NORM=1.0,
+                                  PORO_CRIT=1.0,
+                                  D=2.0,
+                                  SIGM_1=600.0,
+                                  PORO_ACCE=1.0,),
+                    TRACTION=_F(SIGM=ECR,),)
+
+ACIER_N=DEFI_MATERIAU(ELAS=_F(NU=0.3,
+                            E=2.E5,),
+                    ROUSSELIER=_F(PORO_INIT=1.E-4,
+                                  D_SIGM_EPSI_NORM=1.0,
+                                  PORO_CRIT=1.0,
+                                  D=2.0,
+                                  SIGM_1=600.0,
+                                   AN =0.6,
+                                  PORO_ACCE=1.0,),
+                    TRACTION=_F(SIGM=ECR,),)
+
+ACIER_V=DEFI_MATERIAU(ELAS=_F(NU=0.3,
+                            E=2.E5,),
+                    ROUSSELIER=_F(PORO_INIT=1.E-4,
+                                  D_SIGM_EPSI_NORM=1.0,
+                                  PORO_CRIT=1.0,
+                                  D=2.0,
+                                  SIGM_1=600.0,
+                                  PORO_ACCE=1.0,),
+                    VISC_SINH=_F(SIGM_0=27.0,
+                                  EPSI_0=1.E-2,
+                                  M=2.,),
+                    TRACTION=_F(SIGM=ECR,),)
+
+CHMAT=AFFE_MATERIAU(AFFE=_F(MATER=ACIER,
+                               TOUT='OUI',),
+                       MAILLAGE=MAIL,)
+
+CHMAT_N=AFFE_MATERIAU(AFFE=_F(MATER=ACIER_N,
+                               TOUT='OUI',),
+                       MAILLAGE=MAIL,)
+
+CHMAT_V=AFFE_MATERIAU(AFFE=_F(MATER=ACIER_V,
+                               TOUT='OUI',),
+                       MAILLAGE=MAIL,)
+
+DY_T=DEFI_FONCTION(PROL_GAUCHE='CONSTANT',
+                   NOM_PARA='INST',
+                   VALE=(0.0,0.0,10.0,10.0),
+                   PROL_DROITE='CONSTANT',)
+
+LINST=DEFI_LIST_REEL(INTERVALLE=(_F(JUSQU_A=1.0,
+                                    NOMBRE=4,),
+                                 _F(JUSQU_A=5.0,
+                                    NOMBRE=40,),
+                                 _F(JUSQU_A=10.0,
+                                    NOMBRE=40,),),
+                     DEBUT=0.0,)
+
+LINST_N=DEFI_LIST_REEL(INTERVALLE=(_F(JUSQU_A=1.0,
+                                    NOMBRE=8,),
+                                 _F(JUSQU_A=5.0,
+                                    NOMBRE=40,),
+                                 _F(JUSQU_A=10.0,
+                                    NOMBRE=40,),),
+                     DEBUT=0.0,)
+
+LINST_V=DEFI_LIST_REEL(INTERVALLE=(_F(JUSQU_A=1.0,
+                                    NOMBRE=4,),
+                                 _F(JUSQU_A=5.0,
+                                    NOMBRE=80,),
+                                 _F(JUSQU_A=10.0,
+                                    NOMBRE=80,),),
+                     DEBUT=0.0,)
+
+COND_LIM=AFFE_CHAR_CINE(MODELE=MOD_MECA,
+                        MECA_IMPO=(_F(DX=0.0,
+                                     GROUP_NO='L21',),
+                                  _F(DY=0.0,
+                                     GROUP_NO='L14',),),)
+
+CHAR=AFFE_CHAR_CINE_F(MODELE=MOD_MECA,
+                      MECA_IMPO=_F(DY=DY_T,
+                                  GROUP_NO='L32',),)
+
+DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =LINST ),
+                        ECHEC=_F(ACTION='DECOUPE',
+                                 SUBD_METHODE='MANUEL',
+                                 SUBD_PAS     = 4,
+                                 SUBD_PAS_MINI=1.E-06,
+                                ),)
+
+DEFLISTN =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =LINST_N ),
+                        ECHEC=_F(ACTION='DECOUPE',
+                                 SUBD_METHODE='MANUEL',
+                                 SUBD_PAS     = 4,
+                                 SUBD_PAS_MINI=1.E-06,
+                                ),)
+
+RESU=STAT_NON_LINE(CHAM_MATER=CHMAT,
+                       MODELE=MOD_MECA,SOLVEUR=_F(METHODE='MUMPS'),
+                       CONVERGENCE=_F(ITER_GLOB_MAXI=400,
+                                      RESI_GLOB_RELA=1.E-06),
+                       COMPORTEMENT=_F(TOUT='OUI',
+                                    ITER_INTE_MAXI=500,
+                                    RELATION='ROUSS_PR',
+                                    DEFORMATION='GDEF_LOG',),
+                       INCREMENT=_F(
+                                    LIST_INST=DEFLIST,),
+                      RECH_LINEAIRE=_F(
+                                    ITER_LINE_MAXI=4,),
+                       NEWTON=_F(REAC_ITER=1,
+                                 MATRICE='ELASTIQUE',
+                                 REAC_INCR=1,),
+                       EXCIT=(_F(CHARGE=COND_LIM,),
+                              _F(CHARGE=CHAR,),),)
+
+RESU_N=STAT_NON_LINE(INFO=1,
+                       CHAM_MATER=CHMAT_N,
+                       MODELE=MOD_MECA, SOLVEUR=_F(METHODE='MUMPS'),
+                       CONVERGENCE=_F(ITER_GLOB_MAXI=300,
+                                      RESI_GLOB_MAXI=1.E-06),
+                       COMPORTEMENT=_F(TOUT='OUI',
+                                    ITER_INTE_MAXI=400,
+                                    RELATION='ROUSS_PR',
+                                    DEFORMATION='GDEF_LOG',),
+                       INCREMENT=_F(LIST_INST=DEFLIST,
+                                                ),
+                       NEWTON=_F(REAC_ITER=1,
+                                 MATRICE='ELASTIQUE',
+                                 REAC_INCR=1,),
+                       EXCIT=(_F(CHARGE=COND_LIM,),
+                              _F(CHARGE=CHAR,),),)
+
+RESU_V=STAT_NON_LINE(CHAM_MATER=CHMAT_V,
+                       MODELE=MOD_MECA,SOLVEUR=_F(METHODE='MUMPS'),
+                       CONVERGENCE=_F(ITER_GLOB_MAXI=30,
+                                      RESI_GLOB_MAXI=1.E-06),
+                       COMPORTEMENT=_F(TOUT='OUI',PARM_THETA=0.57,
+                                    ITER_INTE_MAXI=400,
+                                    RELATION='ROUSS_VISC',
+                                    DEFORMATION='GDEF_LOG',),
+                       INCREMENT=_F(
+                                    LIST_INST=DEFLIST,),
+                        RECH_LINEAIRE=_F(
+                                    ITER_LINE_MAXI=3,),
+                       NEWTON=_F(MATRICE='TANGENTE',),
+                       EXCIT=(_F(CHARGE=COND_LIM,),
+                              _F(CHARGE=CHAR,),),)
+
+TEST_RESU(RESU=_F(INST=10.0,
+                  POINT=1,
+                  RESULTAT=RESU,
+                  NOM_CHAM='VARI_ELGA',
+                  NOM_CMP='V2',
+                  VALE_CALC=0.033601415477662676,
+                  MAILLE='M1',),
+          )
+
+TEST_RESU(RESU=_F(INST=10.0,
+                  POINT=1,
+                  RESULTAT=RESU_N,
+                  NOM_CHAM='VARI_ELGA',
+                  NOM_CMP='V2',
+                  VALE_CALC=0.3926636127478796,
+                  MAILLE='M1',),
+          )
+
+TEST_RESU(RESU=_F(INST=10.0,
+                  POINT=1,
+                  RESULTAT=RESU_V,
+                  NOM_CHAM='VARI_ELGA',
+                  NOM_CMP='V2',
+                  VALE_CALC=0.03439977602064925,
+                  MAILLE='M1',),
+          )
+
+FIN()

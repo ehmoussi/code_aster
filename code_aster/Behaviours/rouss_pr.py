@@ -35,7 +35,7 @@ loi = LoiComportement(
         ),
     mc_mater       = ('ELAS','ROUSSELIER',),
     modelisation   = ('3D','AXIS','D_PLAN',),
-    deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
+    deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',"GDEF_LOG"),
     algo_inte      = ('NEWTON_1D',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
