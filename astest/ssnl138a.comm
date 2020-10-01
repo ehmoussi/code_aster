@@ -29,7 +29,7 @@ MA         = CREA_MAILLAGE( MAILLAGE = MAILLAGE,
 
 TEMPS1     = DEFI_LIST_REEL( DEBUT=1.10,
                              INTERVALLE=(_F(JUSQU_A=1.19,
-                             NOMBRE=4,),
+                             NOMBRE=6,),
                                          _F(JUSQU_A=1.28,
                              NOMBRE=1,),)
                            )
@@ -116,6 +116,7 @@ EVOL   = STAT_NON_LINE( MODELE     = MO,
                                          REAC_ITER_ELAS  = 1,
                                          REAC_ITER       = 1,),
                         CONVERGENCE= _F( RESI_GLOB_RELA  = 1.E-6,),
+                        SOLVEUR= _F(METHODE='MUMPS', PCENT_PIVOT=40, POSTTRAITEMENTS="FORCE"),
                         INCREMENT  = _F( LIST_INST       = TEMPS1,),
                         AFFICHAGE  = _F( INFO_RESIDU     = 'OUI',),
                      )
