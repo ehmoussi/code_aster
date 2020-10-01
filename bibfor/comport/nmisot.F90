@@ -98,13 +98,14 @@ real(kind=8) :: sigm(6), vim(*), sigp(6), vip(*), dsidep(6, 6)
     character(len=8) :: nompar(3), para_type
     character(len=32) :: phenom
     real(kind=8) :: valpam(3), valpap(3), para_vale, valrm(2)
-    real(kind=8) :: bendom, bendop, kdessm, kdessp, rac2, xm(6), xp(6)
+    real(kind=8) :: bendom, bendop, kdessm, kdessp, xm(6), xp(6)
 !-----------------------------------------------------------------------
     integer :: lgpg
     real(kind=8) :: alfafa, coco, dp0, precr, rprim0, tm
     real(kind=8) :: unsurn, xap
 !-----------------------------------------------------------------------
     real(kind=8), parameter :: kron(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
     character(len=6), parameter :: epsa(6) = (/'EPSAXX','EPSAYY','EPSAZZ','EPSAXY','EPSAXZ',&
                                             'EPSAYZ'/)
 ! DEB ------------------------------------------------------------------
@@ -128,7 +129,23 @@ real(kind=8) :: sigm(6), vim(*), sigp(6), vip(*), dsidep(6, 6)
     endif
     ndimsi = 2*ndim
     imate2 = imate
-    rac2 = sqrt(2.d0)
+!
+    defam = 0.d0
+    defap = 0.d0
+    valpam = 0.d0
+    valpap = 0.d0
+    valrm = 0.d0
+    valres = 0.d0
+    xm = 0.d0
+    xp = 0.d0
+    depsth = 0.d0
+    depsdv = 0.d0
+    sigmdv= 0.d0
+    sigpdv= 0.d0
+    sigdv= 0.d0
+    sigmp= 0.d0
+    sigel= 0.d0
+    nompar = "XXXXXXXX"
 !
 !
     if (.not.( compor(1:9) .eq. 'VMIS_ISOT' )) then
@@ -170,11 +187,6 @@ real(kind=8) :: sigm(6), vim(*), sigp(6), vip(*), dsidep(6, 6)
     call rcvarc(' ', 'SECH', 'REF', fami, kpg,&
                 ksp, sref, iret2)
     if (iret2 .ne. 0) sref=0.d0
-!
-    do k = 1, 6
-        defam(k) = 0.d0
-        defap(k) = 0.d0
-    end do
 !
     do k = 1, ndimsi
         call rcvarc(' ', epsa(k), '-', fami, kpg,&
@@ -398,22 +410,14 @@ real(kind=8) :: sigm(6), vim(*), sigp(6), vip(*), dsidep(6, 6)
 !
 !     -- 5 CALCUL DE SIGMP :
 !     ----------------------
-    sigmmo = 0.d0
-    do k = 1, 3
-        sigmmo = sigmmo + sigm(k)
-    end do
-    sigmmo = sigmmo /3.d0
+    sigmmo = (sigm(1) + sigm(2) + sigm(3))/ 3.d0
     do k = 1, ndimsi
         sigmp(k)=deuxmu/deumum*(sigm(k)-sigmmo*kron(k)) + troisk/troikm*sigmmo*kron(k)
     end do
 !
 !     -- 6-a CALCUL DE SIGMMO, SIGMDV, SIGEL, SIELEQ
 !     --------------------------------------------
-    sigmmo = 0.d0
-    do k = 1, 3
-        sigmmo = sigmmo + sigmp(k)
-    end do
-    sigmmo = sigmmo /3.d0
+    sigmmo = (sigmp(1) + sigmp(2) + sigmp(3))/ 3.d0
     sieleq = 0.d0
     do k = 1, ndimsi
         sigmdv(k) = sigmp(k)- sigmmo * kron(k)
