@@ -60,11 +60,7 @@ class MaterialDefinition(ExecuteCommand):
 
         # In this function, we can check the value of keywords and add some properties
         check_keywords(keywords)
-        print("AVANT: ", keywords, flush=True)
-
         replace_enum(self._cata, keywords)
-
-        print("APRES ENUM: ", keywords, flush=True)
 
         mater = keywords.get("MATER")
         if keywords.get("reuse"):
