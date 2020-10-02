@@ -18,6 +18,8 @@
 # --------------------------------------------------------------------
 
 import pprint
+import sys
+import traceback
 
 import numpy as NP
 
@@ -51,9 +53,11 @@ def pre_seisme_nonl_ops(self, **args):
     calcul = PreSeismeNonL.Factory(self, param)
     try:
         calcul.run()
-    except AsterError as err:
-        UTMESS('F', err.id_message, valk=err.valk,
-               vali=err.vali, valr=err.valr)
+    except AsterError:
+        raise
+    except Exception as err:
+        trace = ''.join(traceback.format_tb(sys.exc_info()[2]))
+        UTMESS('F', 'SUPERVIS2_5', valk=('PRE_SEISME_NONL', trace, str(err)))
 
 
 class PreSeismeNonL(object):

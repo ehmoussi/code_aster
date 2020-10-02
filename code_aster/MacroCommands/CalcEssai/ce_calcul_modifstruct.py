@@ -359,8 +359,7 @@ class CalcEssaiModifStruct:
                                         PARA_ORTHO_SOREN=-0.717,
                                         CALC_FREQ=calc_freq)
         except AsterError as err:
-            message = "ERREUR ASTER : " + \
-                mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
+            message = "ERREUR ASTER : " + err.message
             self.mess.disp_mess(message)
 
         clear_concept(self.x_resgen)
@@ -435,8 +434,7 @@ class CalcEssaiModifStruct:
                                     RESOLUTION=self.param_condens
                                     )
         except AsterError as err:
-            message = "ERREUR ASTER : " + \
-                mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
+            message = "ERREUR ASTER : " + err.message
             self.mess.disp_mess(message)
             return
         self.x_proj = _PROJ
@@ -458,8 +456,7 @@ class CalcEssaiModifStruct:
                                     AMOR_MECA=_F(),
                                     )
         except AsterError as err:
-            message = "ERREUR ASTER : " + \
-                mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
+            message = "ERREUR ASTER : " + err.message
             self.mess.disp_mess(message)
             return
         self.x_ssexp = _SSEXP
@@ -588,8 +585,7 @@ class CalcEssaiModifStruct:
                 RESOLUTION=self.param_condens
             )
         except AsterError as err:
-            message = "ERREUR ASTER : " + \
-                mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
+            message = "ERREUR ASTER : " + err.message
             self.mess.disp_mess(message)
             return
 
@@ -613,8 +609,7 @@ class CalcEssaiModifStruct:
                                   NUME_DDL=self.i_numint,
                                   )
         except AsterError as err:
-            message = "ERREUR ASTER : " + \
-                mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
+            message = "ERREUR ASTER : " + err.message
             self.mess.disp_mess(message)
             return
         self.i_deplint = ModeMeca(None, __DEPINT.nom, __DEPINT)
@@ -632,8 +627,7 @@ class CalcEssaiModifStruct:
                                   NUME_DDL=self.i_numint,
                                   )
         except AsterError as err:
-            message = "ERREUR ASTER : " + \
-                mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
+            message = "ERREUR ASTER : " + err.message
             self.mess.disp_mess(message)
             return
         self.i_deplxint = ModeMeca(None, __DPXINT.nom, __DPXINT)
@@ -705,9 +699,7 @@ class CalcEssaiModifStruct:
                                            PARA_ORTHO_SOREN=-0.717,
                                            CALC_FREQ=calc_freq,)
             except AsterError as err:
-                message = "ERREUR ASTER : " + \
-                    mess.GetText(
-                        'I', err.id_message, err.valk, err.vali, err.valr)
+                message = "ERREUR ASTER : " + err.message
                 self.mess.disp_mess(message)
 
         else:
@@ -717,9 +709,7 @@ class CalcEssaiModifStruct:
                                         CALC_FREQ=calc_freq,
                                         )
             except AsterError as err:
-                message = "ERREUR ASTER : " + \
-                    mess.GetText(
-                        'I', err.id_message, err.valk, err.vali, err.valr)
+                message = "ERREUR ASTER : " + err.message
                 self.mess.disp_mess(message)
 
         self.modes_couple = ModeMeca(
@@ -736,8 +726,7 @@ class CalcEssaiModifStruct:
             __MDRETR = DEPL_INTERNE(
                 DEPL_GLOBAL=_MODCPL, SUPER_MAILLE=self.sumail)
         except AsterError as err:
-            message = "ERREUR ASTER : " + \
-                mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
+            message = "ERREUR ASTER : " + err.message
             self.mess.disp_mess(message)
 
         self.modes_retr = ModeMeca(None, __MDRETR.nom, __MDRETR, self.mess)

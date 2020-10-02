@@ -328,9 +328,8 @@ def exec_logiciel_ops(self, **kwargs):
         action.configure( kwargs )
         action.execute()
         return action.post()
-    except AsterError as err:
-        UTMESS('F', err.id_message, valk=err.valk,
-               vali=err.vali, valr=err.valr)
+    except AsterError:
+        raise
     except Exception as err:
         trace = ''.join(traceback.format_tb(sys.exc_info()[2]))
         UTMESS('F', 'SUPERVIS2_5', valk=('EXEC_LOGICIEL', trace, str(err)))

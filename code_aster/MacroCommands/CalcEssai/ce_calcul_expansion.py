@@ -157,8 +157,7 @@ class CalcEssaiExpansion:
             )
 
         except AsterError as err:
-            message = "ERREUR ASTER : " + \
-                mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
+            message = "ERREUR ASTER : " + err.message
             self.mess.disp_mess(message)
             UTMESS('A', 'CALCESSAI0_7')
             return
@@ -175,8 +174,7 @@ class CalcEssaiExpansion:
                               MATR_ASSE=norme,
                               INFO=1)
         except AsterError as err:
-            message = "ERREUR ASTER : " + \
-                mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
+            message = "ERREUR ASTER : " + err.message
             self.mess.disp_mess(message)
             UTMESS('A', 'CALCESSAI0_3')
             return

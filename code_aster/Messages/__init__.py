@@ -18,4 +18,4 @@
 # --------------------------------------------------------------------
 
 from .Utmess import (ASSERT, UTMESS, MasquerAlarme, MessageLog, RetablirAlarme,
-                     message_exception, raise_UTMESS)
+                     message_exception)

@@ -619,28 +619,6 @@ def is_last_message(code):
     return len(code) < 2 or code[1] != '+'
 
 
-def raise_UTMESS(exc):
-    """Raise UTMESS if exception occurred.
-
-    Typical usage:
-        >>> try:
-        >>>     ... code with error ...
-        >>>     raise AsterError(id_message, valk, vali, valr)
-        >>>     ... or ...
-        >>>     lerr = [id_message1, valk1, vali1, valr1]
-        >>>     lerr.append([id_message2, valk2, vali2, valr2])
-        >>>     raise AsterError(lerr)
-        >>> except AsterError as exc:
-        >>>     raise_UTMESS(exc)
-
-    .. todo :: several messages is not yet supported ('related' attribute)
-    """
-    # for err in exc.related:
-    #     UTMESS('F+', err.id_message, valk=err.valk,
-    #            vali=err.vali, valr=err.valr)
-    UTMESS('F', exc.id_message, valk=exc.valk, vali=exc.vali, valr=exc.valr)
-
-
 # unique instance du MESSAGE_LOGGER
 MessageLog = MESSAGE_LOGGER()
 
