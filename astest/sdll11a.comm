@@ -24,8 +24,7 @@
 from code_aster import SolverError
 from code_aster.Commands import *
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      PAR_LOT='NON',MESURE_TEMPS=_F(NIVE_DETAIL=2))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),MESURE_TEMPS=_F(NIVE_DETAIL=2))
 
 ACIER=DEFI_MATERIAU(
                          ELAS=_F(  RHO = 2700.,

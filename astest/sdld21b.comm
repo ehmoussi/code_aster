@@ -23,8 +23,7 @@
 #                                                 REF: SFM.VPCS SDLD21
 # ----------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),
-      PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 MA0=LIRE_MAILLAGE(FORMAT="ASTER", )
 
@@ -223,12 +222,12 @@ DYNTPT2 = REST_SPEC_TEMP( RESU_GENE = DYNHAGA2 ,
                           SYMETRIE = 'NON' ,
                           TOUT_CHAM = 'OUI',
                           INFO=2,
-                          ACCELERATION_MPI='OUI', 
+                          ACCELERATION_MPI='OUI',
                           );
 DYNTPUA2 = REST_SPEC_TEMP( RESU_GENE = DYNHAGA2 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          NOM_CHAM = 'DEPL', 
+                          NOM_CHAM = 'DEPL',
                           );
 DYNTPSB2 = REST_SPEC_TEMP( RESU_GENE = DYNHAGB2 ,
                           METHODE = 'PROL_ZERO' ,
@@ -238,12 +237,12 @@ DYNTPSB2 = REST_SPEC_TEMP( RESU_GENE = DYNHAGB2 ,
 DYNTPVV2 = REST_SPEC_TEMP( RESU_GENE = DYNHAGA2 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          NOM_CHAM = 'VITE', 
+                          NOM_CHAM = 'VITE',
                           );
 DYNTPAA2 = REST_SPEC_TEMP( RESU_GENE = DYNHAGA2 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          NOM_CHAM = 'ACCE', 
+                          NOM_CHAM = 'ACCE',
                           );
 DYNTU2 = RECU_FONCTION(RESU_GENE=DYNTPT2,
                       NOEUD = 'P4',NOM_CMP = 'DX',NOM_CHAM = 'DEPL', )
@@ -349,7 +348,7 @@ DNTPSTP2 = REST_SPEC_TEMP( RESULTAT = DYNAHAR2 ,
                           SYMETRIE = 'NON' ,
                           TOUT_CHAM = 'OUI' ,
                           INFO=2,
-                          ACCELERATION_MPI='OUI', 
+                          ACCELERATION_MPI='OUI',
                           );
 DNTPSUP2 = REST_SPEC_TEMP( RESULTAT = DYNAHAR2 ,
                           METHODE = 'PROL_ZERO' ,
@@ -431,7 +430,7 @@ DYNTPST4 = REST_SPEC_TEMP( RESULTAT = DNAHARM4 ,
                           SYMETRIE = 'NON' ,
                           TOUT_CHAM = 'OUI',
                           INFO=2,
-                          ACCELERATION_MPI='OUI', 
+                          ACCELERATION_MPI='OUI',
                           );
 DYNTPSU4 = REST_SPEC_TEMP( RESULTAT = DNAHARM4 ,
                           METHODE = 'PROL_ZERO' ,

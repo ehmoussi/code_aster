@@ -490,7 +490,7 @@ depy=CALC_FONCTION( FFT=_F( FONCTION = dephy, METHODE='PROL_ZERO',SYME='NON',))
 tabx = CREA_TABLE( FONCTION = _F(FONCTION=depx,PARA=('INST','DX')))
 taby = CREA_TABLE( FONCTION = _F(FONCTION=depy,PARA=('INST','DY')))
 #
-# Si on accepte un PAR_LOT=NON, alors on peut avoir directement la valeur a tester ainsi :
+# On peut avoir directement la valeur a tester ainsi :
 #valx = tabx['DX',235]
 #valy = taby['DY',235]
 #Pour un instant valant :
@@ -498,9 +498,7 @@ taby = CREA_TABLE( FONCTION = _F(FONCTION=depy,PARA=('INST','DY')))
 #ty = taby['INST',235]
 #print 'VALX(',tx,')=',valx
 #print 'VALY(',ty,')=',valy
-#
-# Avec PAR_LOT=OUI, il faut faire ce qui suit :
-#
+
 tevolx=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                                RESULTAT=EVOLT,
                                NOM_CHAM='DEPL',

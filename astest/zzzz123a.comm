@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='NON'),PAR_LOT='NON',)
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='NON'),)
 
 # Liste des classes de béton de l'Eurocode 2
 lClasse = ['C12/15','C16/20','C20/25','C25/30','C30/37','C35/45','C40/50','C45/55','C50/60','C55/67','C60/75','C70/85','C80/95','C90/105']

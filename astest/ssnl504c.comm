@@ -23,8 +23,7 @@
 # MODELISATION POU_D_SQUE AVEC PMFS ET ASSEMBLAGE_FIBRE
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',))
 
 nbpmf = 10
 
@@ -1101,12 +1100,12 @@ EF0 = [0, 0, 0, 0, 0, 0, 0, 0, 0]*9
 U0 = [0, 0, 0]*9
 
 for npas in range(1, 10):
-    
+
     ipas = 20*(npas-1)
-    
+
     print('resus faisceau --pas=', npas)
     for i in range(10):
-        
+
         EF0[9*(npas-1)] = EF0[9*(npas-1)]+FX[ipas+i*2]
         EF0[9*(npas-1)+1] = EF0[9*(npas-1)+1]+FY[ipas+i*2]
         EF0[9*(npas-1)+2] = EF0[9*(npas-1)+2]+FZ[ipas+i*2]
@@ -1120,7 +1119,7 @@ for npas in range(1, 10):
     print('     forces :  FX =', EF0[9*(npas-1)], 'FY = ', EF0[9*(npas - 1)+1], 'FZ = ', EF0[9*(npas-1)+2])
     print('  moments p :  MX =', EF0[9*(npas-1)+3], 'MY = ', EF0[9*(npas-1)+4], 'MZ = ', EF0[9*(npas-1)+5])
     print('  moments g :  MGX =', EF0[9*(npas-1)+6], 'MGY = ', EF0[9*(npas-1)+7], 'MGZ = ', EF0[9*(npas-1)+8])
-    
+
 
 DX = tmpu2['DX']
 DY = tmpu2['DY']
@@ -1161,14 +1160,14 @@ for npas in range(1, 10):
     print('     forces :   FX =', EF02[0], 'FY = ', EF02[1], 'FZ = ', EF02[2])
     print('  moments p :   MX =', EF02[3], 'MY = ', EF02[4], 'MZ = ', EF02[5])
     print('  moments g :  MGX =', EF02[6], 'MGY = ', EF02[7], 'MGZ = ', EF02[8])
-    
+
     for npou in range(0, 10):
-        
+
         U02[3*10*(npas-1)+3*(npou)] = DX[ipas+3]-pos_pout[npou][0] * DRGZ[ipas+3]+pos_pout[npou][1]*DRGY[ipas+3]
         U02[3*10*(npas-1)+3*(npou)+1] = DY[ipas+3]-pos_pout[npou][1]*DRGX[ipas+3]
         U02[3*10*(npas-1)+3*(npou)+2] = DZ[ipas+3]+pos_pout[npou][0]*DRGX[ipas+3]
         print(' -- deplacement poutre DX =', npou+1, U02[3*10*(npas-1)+3*(npou)], ' DY=', U02[3*10*(npas-1)+3*(npou)+1], ' DZ=', U02[3*10*(npas-1)+3*(npou)+2])
-        
+
 
 ipas = 9
 ipou = 1

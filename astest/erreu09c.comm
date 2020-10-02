@@ -24,7 +24,6 @@ from code_aster.Commands import *
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',
               ),
       IGNORE_ALARM='SUPERVIS_1',
-      PAR_LOT='NON',
       DEBUG=_F(SDVERI='OUI'))
 
 # ------------------------------------------------------------------------

@@ -29,7 +29,7 @@
 from code_aster.Commands import *
 from code_aster import AsterError
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',), ERREUR=_F(ERREUR_F='EXCEPTION'), PAR_LOT='NON', DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',), ERREUR=_F(ERREUR_F='EXCEPTION'), DEBUG=_F(SDVERI='OUI'))
 
 fmt_raison='-'*80+"""
 
@@ -293,7 +293,7 @@ DETRUIRE(CONCEPT=_F(NOM=(TAB1),),)
 # 4) On verifie que les chargements cinématiques sont bien pris en compte par EXTR_MATR
 #***************************************************************************************************
 
-# 4.1) On compare les matrices pleine et creuse obtenues par EXTR_MATR 
+# 4.1) On compare les matrices pleine et creuse obtenues par EXTR_MATR
 #-------------------------------------------------------------------------------------------------
 
 nu4    = NUME_DDL(MATR_RIGI = rigiel);
@@ -323,7 +323,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',CRITERE='ABSOLU',
 DETRUIRE(CONCEPT=_F(NOM=(TAB2),),)
 
 
-# 4.2) On fait la même modélisation mais uniquement avec des conditions de Dirichlet 
+# 4.2) On fait la même modélisation mais uniquement avec des conditions de Dirichlet
 #      On compare la solution aster avec celle obtenue par Numpy
 #-------------------------------------------------------------------------------------------------
 
@@ -353,7 +353,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',CRITERE='ABSOLU',
            VALE_CALC=0.,
            VALE_REFE=0.,
            NOM_PARA='BOOLEEN',
-           ORDRE_GRANDEUR = 1.0,PRECISION=1.e-12, 
+           ORDRE_GRANDEUR = 1.0,PRECISION=1.e-12,
            TABLE=TAB2,
            FILTRE=_F(NOM_PARA='TEST',
                      VALE_K='VALEUR  ',),

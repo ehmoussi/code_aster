@@ -30,8 +30,6 @@ POURSUITE=MACRO(nom="POURSUITE",
                      "ou HDF de sa base globale"),
          FORMAT_HDF      =SIMP(fr=tr("sauvegarde de la base GLOBALE au format HDF"),statut='f',
                                typ='TXM',defaut="NON",into=("OUI","NON",) ),
-         PAR_LOT         =SIMP(fr=tr("mode de traitement des commandes"),statut='f',typ='TXM',
-                           into=("OUI","NON"),defaut="OUI"),
          IMPR_MACRO      =SIMP(fr=tr("affichage des sous-commandes produites par les macros dans le fichier mess"),
                            statut='f',typ='TXM',into=("OUI","NON"),defaut="NON"),
 

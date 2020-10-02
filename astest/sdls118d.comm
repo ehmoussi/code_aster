@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),
-      #PAR_LOT='NON',
       DEBUG=_F(SDVERI='OUI'),);
 
 MAIL0=LIRE_MAILLAGE(FORMAT='MED',VERI_MAIL=_F(VERIF='OUI',),);
@@ -27,7 +26,7 @@ MAIL0=LIRE_MAILLAGE(FORMAT='MED',VERI_MAIL=_F(VERIF='OUI',),);
 MAILLAGE=CREA_MAILLAGE(MAILLAGE=MAIL0,
                      CREA_POI1=_F(NOM_GROUP_MA='PRADIER',
                                   GROUP_MA=('RADIER',),),);
-                                  
+
 MAILLAGE=DEFI_GROUP(reuse =MAILLAGE,
                     MAILLAGE=MAILLAGE,
                     CREA_GROUP_NO=_F(GROUP_MA='RADIER',),);
@@ -50,7 +49,7 @@ STICKMOD=AFFE_MODELE(MAILLAGE=MAILLAGE,
                             PHENOMENE='MECANIQUE',
                             MODELISATION='DIS_TR',),
                             ),);
-                            
+
 # ----------------------------------------------------------------------
 #  DEFINITION DES MATERIAUX
 
@@ -68,7 +67,7 @@ CHAMPMA0=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                               MATER=MAT_0,),),);
 CHAMPMA2=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                      AFFE=(_F(GROUP_MA='RADIER',
-                              MATER=MAT_2,),),);  
+                              MATER=MAT_2,),),);
 
 # ----------------------------------------------------------------------
 # AFFECTATION DES CARACTERISTIQUES ELEMENTAIRES
@@ -84,7 +83,7 @@ CARA_EL2=AFFE_CARA_ELEM( MODELE=STICKMOD,
                       VALE=(0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),),
                    ),
              );
-             
+
 CARA_EL0=AFFE_CARA_ELEM( MODELE=STICKMOD,
           COQUE=_F( GROUP_MA = 'RADIER', EPAIS = 0.001),
           DISCRET=(
@@ -105,11 +104,11 @@ CARA_EL0=AFFE_CARA_ELEM( MODELE=STICKMOD,
                                        CARA=('K_TR_D_N',),
                                        GROUP_MA='RADIER',
                                        GROUP_MA_POI1='PRADIER',
-                                       GROUP_NO_CENTRE='P3'), 
+                                       GROUP_NO_CENTRE='P3'),
 
              );
-             
-# LA STRUCTURE EST RIGIDIFIEE A L INTERFACE 
+
+# LA STRUCTURE EST RIGIDIFIEE A L INTERFACE
 #------------------------------------------
 cond_li0 = AFFE_CHAR_MECA( MODELE=STICKMOD,
                      DDL_IMPO=(
@@ -125,7 +124,7 @@ cond_li0 = AFFE_CHAR_MECA( MODELE=STICKMOD,
                                     ),
                                            );
 
-cond_li2 = AFFE_CHAR_MECA( MODELE=STICKMOD, 
+cond_li2 = AFFE_CHAR_MECA( MODELE=STICKMOD,
                       DDL_IMPO=(
                               _F(GROUP_NO='L1',
                                  DX=0.0,
@@ -134,11 +133,11 @@ cond_li2 = AFFE_CHAR_MECA( MODELE=STICKMOD,
                                  DRX=0.0,
                                  DRY=0.0,
                                  DRZ=0.0,),),
-             
-                                    );
-                       
 
-# mode =CALC_MODES          
+                                    );
+
+
+# mode =CALC_MODES
 # CALCUL DE LA MASSE ET INERTIES DE LA STRUCTURE -----------------------
 
 MASSESTR=POST_ELEM(MASS_INER=_F(TOUT='OUI',),
@@ -222,23 +221,23 @@ MODE=CALC_MODES(MATR_RIGI=rigid2,
                 CALC_FREQ=_F(NMAX_FREQ=1,
                              ),
                 )
-                   
+
 MODESTA1=CALC_MODES(MATR_RIGI=rigid0,
                     MATR_MASS=masse0,
                     CALC_FREQ=_F(NMAX_FREQ=31,
                                  ),
                     )
-                       
-                            
+
+
 BAMO=DEFI_BASE_MODALE( RITZ=( _F( MODE_MECA = MODE, NMAX_MODE = 0),
                             _F( MODE_INTF = MODESTA1,
                                    NMAX_MODE = 30)),
-                       NUME_REF=NUME_DD0) 
-                                                                  
+                       NUME_REF=NUME_DD0)
+
 MAEL=MACR_ELEM_DYNA(BASE_MODALE=BAMO,
                   MATR_RIGI=rigid1,
                   MATR_MASS=masse1);
-                  
+
 
 
 TABSOL0 = DEFI_SOL_MISS(
@@ -260,7 +259,7 @@ TABSOL=DEFI_SOL_MISS(
     COUCHE_AUTO= _F(EPAIS_PHYS=40., HOMOGENE='OUI', SURF='OUI',),
     INFO=2,
 )
-                  
+
 CALC_MISS(
     TYPE_RESU='FICHIER',
     TABLE_SOL=TABSOL,
@@ -287,65 +286,65 @@ NDDLGEN=NUME_DDL_GENE(BASE=BAMO, STOCKAGE='PLEIN',);
 RIGIGEN=PROJ_MATR_BASE(BASE=BAMO,
                      NUME_DDL_GENE=NDDLGEN,
                      MATR_ASSE=rigid1,);
-                     
+
 MASSGEN=PROJ_MATR_BASE(BASE=BAMO,
                      NUME_DDL_GENE=NDDLGEN,
                      MATR_ASSE=masse1,);
 
 AMORT=COMB_MATR_ASSE(CALC_AMOR_GENE=_F(MASS_GENE = MASSGEN,
-                                       RIGI_GENE = RIGIGEN,                                       
+                                       RIGI_GENE = RIGIGEN,
                                        AMOR_REDUIT= (
                                         0.0,0.0,0.0,0.0,0.0,0.0,),
                                         ),
-                                        );                                  
+                                        );
 
 # #-------------------------------------
 # ACCELERO SISMIQUES
 # #---------------------------------------
-# # 
+# #
 # ACCELEROGRAMME SELON SPECTRE EUR POUR SOL DUR (ROCHER)
-# 
+#
 from sdls118b import F_FONC
 ACCE1, ACCE2 =F_FONC()
 
-ACCE_X=CALC_FONCTION(COMB=_F(FONCTION=ACCE1, 
+ACCE_X=CALC_FONCTION(COMB=_F(FONCTION=ACCE1,
                             COEF=9.8100000000000005,),);
-ACCE_X2=CALC_FONCTION(COMB=_F(FONCTION=ACCE2, 
-                            COEF=9.8100000000000005,),);                            
-#      
+ACCE_X2=CALC_FONCTION(COMB=_F(FONCTION=ACCE2,
+                            COEF=9.8100000000000005,),);
+#
 # tt, vale_s=ACCE_X.Valeurs()
-# 
+#
 # #DETRUIRE(CONCEPT=_F(NOM=(ACCE_X)),INFO=1)
-# 
+#
 # Nb_pas=int(2**6)
 # DT=tt[1]-tt[0]
 # Tfin=tt[-1]
 # print 'DISCRETISATION SIGNAL INITIAL: NB, DT, T', Nb_pas, DT, Tfin
 # # # print f_sig
-# OMF =1./(2*DT) 
-# 
+# OMF =1./(2*DT)
+#
 
-         
-#             
-#  -------------------------   -------------------------     ------------------------- ------------------------- 
-#  -------------------------   -------------------------     -------------------------   -------------------------                    
-#  -------------------------CALCULS DYNA_ISS_VARI--------------------------------------------- 
-#  -------------------------   -------------------------     ------------------------- ------------------------- 
-                                         
+
+#
+#  -------------------------   -------------------------     ------------------------- -------------------------
+#  -------------------------   -------------------------     -------------------------   -------------------------
+#  -------------------------CALCULS DYNA_ISS_VARI---------------------------------------------
+#  -------------------------   -------------------------     ------------------------- -------------------------
+
 
 #-----------------------------------------------------------------
 #------- CALCUL DE LA REPONSE TEMPORELLE
 #-----------------------------------------------------------------
 #ALPHA=0.0 : sans variabilite
-#-----------------------------------------------------------------                
+#-----------------------------------------------------------------
 fmax=100./2.
 #fmax=35.
 pas_f=2.5
 
 ssi_1_b = DYNA_ISS_VARI(
-                      FREQ_MAX  =fmax,  FREQ_PAS = pas_f ,     
+                      FREQ_MAX  =fmax,  FREQ_PAS = pas_f ,
                        PRECISION  =  0.9 ,
-                      EXCIT_SOL   =_F( ACCE_X = ACCE_X) ,       
+                      EXCIT_SOL   =_F( ACCE_X = ACCE_X) ,
                        INTERF =_F(
                                 GROUP_NO_INTERF='RADIER',
                                 MODE_INTERF ='QUELCONQUE',),
@@ -354,15 +353,15 @@ ssi_1_b = DYNA_ISS_VARI(
                                  VITE_ONDE = 200. ,
                                   PARA_ALPHA =0.0,),
                        UNITE_RESU_IMPE = 32,
-                     UNITE_RESU_FORC = 33,        
+                     UNITE_RESU_FORC = 33,
                        MATR_GENE = _F(
                                  MATR_MASS = MASSGEN,
                                  MATR_RIGI = RIGIGEN,
                                  MATR_AMOR = AMORT,
                            ),
-                       INFO   =1 ,);                        
-                                              
-ssi_1b=RECU_FONCTION(RESU_GENE=ssi_1_b,                           
+                       INFO   =1 ,);
+
+ssi_1b=RECU_FONCTION(RESU_GENE=ssi_1_b,
                        NOM_CHAM='ACCE',
                        NOM_CMP='DX',
                        NOEUD=( 'N11'  ),
@@ -373,9 +372,9 @@ DETRUIRE(CONCEPT=_F(NOM=(ssi_1_b)),INFO=1)
 
 #---------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------
-#ALPHA=0.7 
+#ALPHA=0.7
 from math import pi
-p_alpha = 0.7 / 2. / pi    
+p_alpha = 0.7 / 2. / pi
 # MITA et LUCO
 # test:  cas avec frequence de fin de calcul superieure a la frequence de coupure
 #---------------------------------------------------------------------------------------------------------------------------
@@ -384,72 +383,72 @@ fmax=100./2.
 #fmax=35.0
 pas_f=2.5
 ssi_2_a = DYNA_ISS_VARI(
-                        FREQ_MAX  =fmax,  FREQ_PAS = pas_f ,      
+                        FREQ_MAX  =fmax,  FREQ_PAS = pas_f ,
                        PRECISION  =  0.9 ,
                       EXCIT_SOL   =_F( ACCE_X = ACCE_X) ,
                        INTERF =_F(
                                 GROUP_NO_INTERF='RADIER',
                                 MODE_INTERF ='QUELCONQUE',),
                        MATR_COHE = _F(
-                                  TYPE =    'MITA_LUCO', 
+                                  TYPE =    'MITA_LUCO',
                                   VITE_ONDE = 200. ,
                                   PARA_ALPHA = p_alpha,),
                        UNITE_RESU_IMPE = 32,
-                       UNITE_RESU_FORC = 33,                
+                       UNITE_RESU_FORC = 33,
                        MATR_GENE = _F(
                                  MATR_MASS = MASSGEN,
                                  MATR_RIGI = RIGIGEN,
                                  MATR_AMOR = AMORT,
                            ),
-                       INFO   =1,);                        
-                       
-ssi_2a=RECU_FONCTION(RESU_GENE=ssi_2_a,                           
+                       INFO   =1,);
+
+ssi_2a=RECU_FONCTION(RESU_GENE=ssi_2_a,
                        NOM_CHAM='ACCE',
                        NOM_CMP='DX',
                        NOEUD=( 'N11'  ),
                        INTERPOL='LIN',
-                       TITRE='ACCELERATION AU CENTRE BAS DU RADIER',); 
-                       
- 
- 
+                       TITRE='ACCELERATION AU CENTRE BAS DU RADIER',);
 
-#ALPHA=0.7 
+
+
+
+#ALPHA=0.7
 # MITA et LUCO
 # test:  cas avec frequence de fin de calcul inferieure a la frequence de coupure (on complete par des zero)
-#-----------------------------------------------------------------                     
+#-----------------------------------------------------------------
 fmax=35.0
 pas_f=2.5
 ssi_2_b = DYNA_ISS_VARI(
-                        FREQ_MAX  =fmax,  FREQ_PAS = pas_f ,      
+                        FREQ_MAX  =fmax,  FREQ_PAS = pas_f ,
                        PRECISION  =  0.9 ,
                       EXCIT_SOL   =_F( ACCE_X = ACCE_X) ,
                        INTERF =_F(
                                 GROUP_NO_INTERF='RADIER',
                                 MODE_INTERF ='QUELCONQUE',),
                        MATR_COHE = _F(
-                                  TYPE =    'MITA_LUCO',    
+                                  TYPE =    'MITA_LUCO',
                                   VITE_ONDE = 200. ,
                                   PARA_ALPHA = p_alpha,),
                        UNITE_RESU_IMPE = 32,
-                       UNITE_RESU_FORC = 33,                
+                       UNITE_RESU_FORC = 33,
                        MATR_GENE = _F(
                                  MATR_MASS = MASSGEN,
                                  MATR_RIGI = RIGIGEN,
                                  MATR_AMOR = AMORT,
                            ),
-                       INFO   =1,);                        
-                       
-ssi_2b=RECU_FONCTION(RESU_GENE=ssi_2_b,                           
+                       INFO   =1,);
+
+ssi_2b=RECU_FONCTION(RESU_GENE=ssi_2_b,
                        NOM_CHAM='ACCE',
                        NOM_CMP='DX',
                        NOEUD=( 'N11'  ),
                        INTERPOL='LIN',
-                       TITRE='ACCELERATION AU CENTRE BAS DU RADIER',); 
-                       
+                       TITRE='ACCELERATION AU CENTRE BAS DU RADIER',);
+
 
 #----------------------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------- 
-  
+#-----------------------------------------------------------------
+
 L_FREQ = DEFI_LIST_REEL(DEBUT=0.1,
               INTERVALLE=(_F(JUSQU_A=3.0, PAS=0.01,),
                           _F(JUSQU_A=3.6, PAS=0.075,),
@@ -469,124 +468,124 @@ amo_sro=0.05
 #------------------------------------------------------------------------------------------------------------------------------
 
 SRADBX1=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ssi_1b, LIST_FREQ = L_FREQ,
-                      NORME=9.81, AMOR_REDUIT=amo_sro,  ),);        
-                                                                                                                                     
-SRADBX2=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ssi_2a, LIST_FREQ = L_FREQ,
-                      NORME=9.81, AMOR_REDUIT=amo_sro,  ),); 
-                                                                          
-                                                                          
-SRADBX3=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ssi_2b, LIST_FREQ = L_FREQ,
-                      NORME=9.81, AMOR_REDUIT=amo_sro,  ),);                                                                          
-                                                                          
+                      NORME=9.81, AMOR_REDUIT=amo_sro,  ),);
 
-# -------REFERENCE = 'NON_REGRESSION',  
+SRADBX2=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ssi_2a, LIST_FREQ = L_FREQ,
+                      NORME=9.81, AMOR_REDUIT=amo_sro,  ),);
+
+
+SRADBX3=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ssi_2b, LIST_FREQ = L_FREQ,
+                      NORME=9.81, AMOR_REDUIT=amo_sro,  ),);
+
+
+# -------REFERENCE = 'NON_REGRESSION',
 #        (valeurs du SRO du signal de sortie pour le cas sans variabilite)
 
 
-TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX1,  NOM_PARA= ('AMOR', 'FREQ',),  
-                            VALE_PARA = (amo_sro, 30.0), 
+TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX1,  NOM_PARA= ('AMOR', 'FREQ',),
+                            VALE_PARA = (amo_sro, 30.0),
                             VALE_REFE = 2.970E-01, VALE_CALC=0.29630040240994,
-                            CRITERE = 'RELATIF', 
+                            CRITERE = 'RELATIF',
                             PRECISION=1.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 
-TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX1,  NOM_PARA= ('AMOR', 'FREQ',),  
-                            VALE_PARA = (amo_sro, 10.0), 
+TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX1,  NOM_PARA= ('AMOR', 'FREQ',),
+                            VALE_PARA = (amo_sro, 10.0),
                             VALE_REFE =6.573E-01, VALE_CALC=0.65739266957609,
-                            CRITERE = 'RELATIF', 
+                            CRITERE = 'RELATIF',
                             PRECISION=1.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
-# -------REFERENCE = 'NON_REGRESSION',  
+# -------REFERENCE = 'NON_REGRESSION',
 #        (valeurs du SRO du signal de sortie pour le cas avec variabilite)
 
 
-TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX2,  NOM_PARA= ('AMOR', 'FREQ',),  
-                            VALE_PARA = (amo_sro, 30.0), 
+TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX2,  NOM_PARA= ('AMOR', 'FREQ',),
+                            VALE_PARA = (amo_sro, 30.0),
                             VALE_REFE = 2.386E-01 , VALE_CALC=0.23475027658042,
-                            CRITERE = 'RELATIF', 
+                            CRITERE = 'RELATIF',
                             PRECISION=2.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 
-TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX2,  NOM_PARA= ('AMOR', 'FREQ',),  
-                            VALE_PARA = (amo_sro, 10.0), 
+TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX2,  NOM_PARA= ('AMOR', 'FREQ',),
+                            VALE_PARA = (amo_sro, 10.0),
                             VALE_REFE =5.35E-01 , VALE_CALC=0.54177479245044,
-                            CRITERE = 'RELATIF', 
+                            CRITERE = 'RELATIF',
                             PRECISION=2.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 
-TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX3,  NOM_PARA= ('AMOR', 'FREQ',),  
-                            VALE_PARA = (amo_sro, 30.0), 
+TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX3,  NOM_PARA= ('AMOR', 'FREQ',),
+                            VALE_PARA = (amo_sro, 30.0),
                             VALE_REFE = 2.386E-01 , VALE_CALC=0.23327211382427,
-                            CRITERE = 'RELATIF', 
+                            CRITERE = 'RELATIF',
                             PRECISION=2.5E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 
-TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX3,  NOM_PARA= ('AMOR', 'FREQ',),  
+TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX3,  NOM_PARA= ('AMOR', 'FREQ',),
                             VALE_PARA = (amo_sro, 10.0),
                             VALE_REFE =5.35E-01 , VALE_CALC=0.54177802928060,
-                            CRITERE = 'RELATIF', 
+                            CRITERE = 'RELATIF',
                             PRECISION=2.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
- 
+
  #--------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------
-#ALPHA=0.7     
+#ALPHA=0.7
 # ABRAHAMSON
 # test:  cas avec frequence de fin de calcul superieure a la frequence de coupure
 #---------------------------------------------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------------------------------------------- 
+#---------------------------------------------------------------------------------------------------------------------------
 fmax=35.0
 pas_f=2.5
 ssi_4_a = DYNA_ISS_VARI(
-                        FREQ_MAX  =fmax,  FREQ_PAS = pas_f ,      
+                        FREQ_MAX  =fmax,  FREQ_PAS = pas_f ,
                        PRECISION  =  0.9 ,
-                      EXCIT_SOL   =_F( ACCE_X = ACCE_X) ,        
+                      EXCIT_SOL   =_F( ACCE_X = ACCE_X) ,
                        INTERF =_F(
                                 GROUP_NO_INTERF='RADIER',
                                 MODE_INTERF ='QUELCONQUE',),
                        MATR_COHE = _F(
-                                  TYPE =    'ABRAHAMSON',),    
+                                  TYPE =    'ABRAHAMSON',),
                        UNITE_RESU_IMPE = 32,
-                       UNITE_RESU_FORC = 33,                
+                       UNITE_RESU_FORC = 33,
                        MATR_GENE = _F(
                                  MATR_MASS = MASSGEN,
                                  MATR_RIGI = RIGIGEN,
                                  MATR_AMOR = AMORT,
                            ),
-                       INFO   =1,);                        
-                       
-ssi_4=RECU_FONCTION(RESU_GENE=ssi_4_a,                           
+                       INFO   =1,);
+
+ssi_4=RECU_FONCTION(RESU_GENE=ssi_4_a,
                        NOM_CHAM='ACCE',
                        NOM_CMP='DX',
                        NOEUD=( 'N11'  ),
                        INTERPOL='LIN',
-                       TITRE='ACCELERATION AU CENTRE BAS DU RADIER',); 
- 
+                       TITRE='ACCELERATION AU CENTRE BAS DU RADIER',);
+
 SRADBX4=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ssi_4, LIST_FREQ = L_FREQ,
-                      NORME=9.81, AMOR_REDUIT=amo_sro,  ),);  
-                                                                          
-                                           
-# -------REFERENCE = 'NON_REGRESSION',  
+                      NORME=9.81, AMOR_REDUIT=amo_sro,  ),);
+
+
+# -------REFERENCE = 'NON_REGRESSION',
 #        (valeurs du SRO du signal de sortie pour le cas avec variabilite)
 
 
-TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX4,  NOM_PARA= ('AMOR', 'FREQ',),  
-                            VALE_PARA = (amo_sro, 30.0), 
+TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX4,  NOM_PARA= ('AMOR', 'FREQ',),
+                            VALE_PARA = (amo_sro, 30.0),
                             VALE_REFE = 2.390E-01 , VALE_CALC=0.23877406255696,
-                            CRITERE = 'RELATIF', 
+                            CRITERE = 'RELATIF',
                             PRECISION=1.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 
-TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX4,  NOM_PARA= ('AMOR', 'FREQ',),  
-                            VALE_PARA = (amo_sro, 10.0), 
+TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX4,  NOM_PARA= ('AMOR', 'FREQ',),
+                            VALE_PARA = (amo_sro, 10.0),
                             VALE_REFE =5.723E-01 , VALE_CALC=0.57471072618139,
-                            CRITERE = 'RELATIF', 
+                            CRITERE = 'RELATIF',
                             PRECISION=1.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 

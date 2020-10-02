@@ -43,7 +43,6 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),)
 ################################################################################
 # DataAsterVersion
 #9.3
-# the PAR_LOT='NON' is mandatory if  python macro-commands are defined :
 #    defi_group=1  or/and  defi_orientation=1
 #    mail_libre=1 for a free mesh of the RVE (TETRA)
 

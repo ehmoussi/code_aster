@@ -22,7 +22,6 @@
 
 DEBUT(CODE =_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI'),
-#      PAR_LOT='NON'
       )
 
 type_cas = 'cas_test'
@@ -30,7 +29,6 @@ type_cas = 'cas_test'
 
 
 # REMARQUE 1 :
-# le PAR_LOT='NON' est necessaire pour :
 # - EXTR_TABLE, qui permet de s'arreter en cas dons multiples (facultatif pour le cas test)
 # - EXTR_TABLE, qui permet de recuperer les coordonnees des points du fond pour
 #               le calcul exact des DTAN (facultatif pour le cas test)

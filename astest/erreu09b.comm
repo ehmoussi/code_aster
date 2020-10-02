@@ -26,7 +26,6 @@ from code_aster.Utilities import ExecutionParameter
 params = ExecutionParameter()
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      PAR_LOT='NON',
       DEBUG=_F(SDVERI='OUI'))
 
 MA=LIRE_MAILLAGE(FORMAT='MED',);

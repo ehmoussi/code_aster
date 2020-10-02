@@ -25,7 +25,7 @@ from code_aster.MacroCommands.Utils.partition import *
 
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
-              ),PAR_LOT='NON',);
+              ),);
 
 
 

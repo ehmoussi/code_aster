@@ -19,13 +19,7 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-# .comm : en PAR_LOT='OUI'
-# .com1 : POURSUITE en PAR_LOT='OUI'
-# .com2 : en PAR_LOT='NON'
-# .com3 : POURSUITE en PAR_LOT='NON'
-
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      PAR_LOT='OUI')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),)
 
 a = 2.
 

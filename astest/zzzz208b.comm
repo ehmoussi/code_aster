@@ -45,7 +45,6 @@ def blkdiag(varargin):
 
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      PAR_LOT='NON',   # PAR_LOT = 'NON' a cause de EXTR_MATR...
       DEBUG=_F(SDVERI='OUI'))
 
 import aster

@@ -28,8 +28,6 @@ DEBUT=MACRO(nom="DEBUT",
             repetable='n',
             fr=tr("Ouverture d'une étude. Allocation des ressources mémoire et disque et fichiers"),
 
-         PAR_LOT         =SIMP(fr=tr("mode de traitement des commandes"),statut='f',typ='TXM',
-                           into=("OUI","NON"),defaut="OUI"),
          IMPR_MACRO      =SIMP(fr=tr("affichage des sous-commandes produites par les macros dans le fichier mess"),
                            statut='f',typ='TXM',into=("OUI","NON"),defaut="NON"),
 #         FORMAT_HDF      =SIMP(fr=tr("sauvegarde de la base GLOBALE au format HDF"),statut='f',

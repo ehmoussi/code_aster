@@ -116,7 +116,7 @@ def build_cata_ele(self, ojb, elem1, install_path):
             content = os.linesep.join([
                 "from code_aster.Commands import DEBUT, MAJ_CATA, FIN",
                 "DEBUT(CATALOGUE=_F(FICHIER='CATAELEM', UNITE=4), ",
-                "      ERREUR=_F(ERREUR_F='ABORT'), PAR_LOT='NON')",
+                "      ERREUR=_F(ERREUR_F='ABORT'))",
                 "MAJ_CATA(ELEMENT=_F())",
                 "FIN()", ""
             ])

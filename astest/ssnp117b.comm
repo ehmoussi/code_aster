@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -467,7 +467,6 @@ RESUTH=THER_LINEAIRE(MODELE=MOD_THER,
 #  6. DEBUT DE LA BOUCLE DE RESOLUTION MECANIQUE / THERMIQUE
 # ------------------------------------------------------------
 # recuperation automatique du nombre de pas de temps :
-# oblige a etre en PAR_LOT='NON' !!
 # ls = LINST.Valeurs();
 # NBPAS = len(ls)-1 ;
 NBPAS = 168

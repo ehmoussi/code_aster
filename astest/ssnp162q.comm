@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 # CE CAS TEST SORT LA COURBE DE CHARGEMENT TANGENTIEL (ALLER-RETOUR) DU JOINT FROTTANT FERME
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='OUI',IGNORE_ALARM=('MODELISA4_9',),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),IGNORE_ALARM=('MODELISA4_9',),DEBUG=_F(SDVERI='OUI'))
 
 from math import *
 
@@ -66,7 +66,7 @@ MA=DEFI_GROUP(reuse =MA,
 MO=AFFE_MODELE(
 
                 MAILLAGE=MA,
-                
+
 
                 AFFE= (
                 _F(

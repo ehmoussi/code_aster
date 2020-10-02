@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(PAR_LOT='NON', CODE=_F(NIV_PUB_WEB='INTERNET',),); #IMPR_MACRO='OUI');
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),); #IMPR_MACRO='OUI');
 
 #PRE_GIBI(UNITE_MAILLAGE=22);
 
@@ -320,10 +320,10 @@ fc0=0.05
 
 fc = 31.0*df
 
-'''                    
+'''
 accx0=CALC_FONCTION(CORR_ACCE=_F(  FONCTION = ACCEX, FREQ_FILTRE=fc0, METHODE="FILTRAGE") )
 accy0=CALC_FONCTION(CORR_ACCE=_F(  FONCTION = ACCEY, FREQ_FILTRE=fc0, METHODE="FILTRAGE") )
-                      
+
 XFF0=CALC_FONCTION( FFT=_F( FONCTION = accx0, METHODE='COMPLET',) );
 YFF0=CALC_FONCTION( FFT=_F( FONCTION = accy0, METHODE='COMPLET',) );
 
@@ -333,12 +333,12 @@ lfreq= DEFI_LIST_REEL ( DEBUT = 0.,
                         INTERVALLE = _F(JUSQU_A = FMAX-df,
                                         PAS = df,),
                       );
-                      
+
 lfreq1= DEFI_LIST_REEL ( DEBUT = df,
                         INTERVALLE = _F(JUSQU_A = FMAX-df,
                                         PAS = df,),
                       );
-                      
+
 pi=3.141592654
 
 invAF=FORMULE(NOM_PARA='FREQ',pi=pi,
@@ -347,12 +347,12 @@ invAF=FORMULE(NOM_PARA='FREQ',pi=pi,
 invA=CALC_FONC_INTERP(FONCTION=invAF, NOM_PARA = 'FREQ',
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
-                        LIST_PARA=lfreq1); 
-                      
+                        LIST_PARA=lfreq1);
+
 FILTRE = DEFI_FONCTION(NOM_PARA='FREQ',
                        VALE_C=(0., 0., 0., df, 1., 0., fc, 1., 0., (fc+df), 0., 0.),
-                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',) 
-                       
+                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',)
+
 XFF = CALC_FONCTION(MULT=(_F(FONCTION=XFF0,), _F(FONCTION=invA), _F(FONCTION=FILTRE,)), LIST_PARA=lfreq, NOM_PARA='FREQ',)
 
 YFF = CALC_FONCTION(MULT=(_F(FONCTION=YFF0,), _F(FONCTION=invA), _F(FONCTION=FILTRE,)), LIST_PARA=lfreq, NOM_PARA='FREQ',)
@@ -372,7 +372,7 @@ deplx = CALC_FONCTION(COMB=(
                             LIST_PARA=linst, NOM_PARA='INST',
                             PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
                          )
-                         
+
 deply = CALC_FONCTION(COMB=(
                             _F(FONCTION=deply1, COEF=1.0,),
                             _F(FONCTION=fTCy, COEF=-1.0,)
@@ -436,7 +436,7 @@ freqspec = DEFI_LIST_REEL ( DEBUT = 0.1,
                                        ),
                                        ),
                            );
-                           
+
 
 tabsol= DEFI_SOL_EQUI(#MAILLAGE=mailcol,
                        GROUP_MA_DROITE='DR8',GROUP_MA_GAUCHE='GA8',
@@ -556,27 +556,27 @@ tabsol= DEFI_SOL_EQUI(#MAILLAGE=mailcol,
                        INTEGRATION='FREQUENCE',
                        FREQ_FILTRE=fc0,
                        COEF_AMPL_ACCE=1.);
-                       
+
 IMPR_TABLE(TABLE=tabsol);
 
-tmatel0=LIRE_TABLE(UNITE=24); 
+tmatel0=LIRE_TABLE(UNITE=24);
 
 tmatel1 = CALC_TABLE( TABLE=tmatel0,
          ACTION=_F(OPERATION='EXTR',NOM_PARA=('Y','M','RHO','Efin','NU','AHfin',))); #'GDgam')));
-         
+
 tmatel1 = CALC_TABLE( reuse=tmatel1, TABLE=tmatel1,
          ACTION=_F(OPERATION='FILTRE',NOM_PARA='Y',CRIT_COMP='GT',VALE=0.));
-         
+
 tmatel1 = CALC_TABLE( reuse=tmatel1, TABLE=tmatel1,
          ACTION=_F(OPERATION='RENOMME',NOM_PARA=('AHfin','AH')));
-         
+
 tmatel1 = CALC_TABLE( reuse=tmatel1, TABLE=tmatel1,
          ACTION=_F(OPERATION='AJOUT_COLONNE',NOM_PARA='GDgam',VALE=4));
-         
+
 
 tmatel1 = CALC_TABLE( reuse=tmatel1, TABLE=tmatel1,
          ACTION=_F(OPERATION='RENOMME',NOM_PARA=('Efin','Emax')));
-         
+
 IMPR_TABLE(TABLE=tmatel1);
 
 accexRA=LIRE_FONCTION(UNITE=40,NOM_PARA='INST',
@@ -665,7 +665,7 @@ tabsol3= DEFI_SOL_EQUI(#MAILLAGE=mailcol,
                        #NIVE_COUCH_ENFO=32,
                        FREQ_COUP=9.5,
                        COEF_AMPL_ACCE=1.);
-                       
+
 IMPR_TABLE(TABLE=tabsol3);
 
 '''
@@ -980,7 +980,7 @@ FSEISX=CALC_MISS(MODELE=MODELB, TYPE_RESU='CHARGE',
                         UNITE_RESU_IMPE = 25,
                         NOEUD_AFFE=('N257',),
                         );
-                        
+
 FSEISY=CALC_MISS(MODELE=MODELB, TYPE_RESU='CHARGE',
                         FONC_SIGNAL=deply,
                         NOM_CMP='DY',

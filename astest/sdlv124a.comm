@@ -20,8 +20,7 @@
 import numpy as NP
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      DEBUG=_F(SDVERI='OUI'),
-      PAR_LOT='NON');
+      DEBUG=_F(SDVERI='OUI'));
 
 # Definition des parametres de l'excitation sinusoidale
 freq=1500.0

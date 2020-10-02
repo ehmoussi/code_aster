@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 POURSUITE(CODE='OUI',
       DEBUG=_F(SDVERI='OUI'),
-      PAR_LOT='NON',
       IGNORE_ALARM=('MODELE1_63','SUPERVIS_1'))
 
 import math

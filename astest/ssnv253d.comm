@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 # GROUPES DE NOEUDS: AXE, SPECIMEN, LATERAL, FIXE, SYME, TOP, DEPL, FIXE2
 # GROUPES DE MAILLES:  TOP, SYME, LATERAL, AXE, SPECIMEN
 # ----------------------------------------------------------------------
-DEBUT(PAR_LOT='NON',CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 import math
 import numpy as np

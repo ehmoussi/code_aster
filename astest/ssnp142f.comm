@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='OUI',DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
 ######## PARAMETRES #############
 tfin=4
@@ -435,49 +435,49 @@ TEST_TABLE(
                      VALE=4.4,),
            )
 
-######## tester crea_champ à partir d'une table 
+######## tester crea_champ à partir d'une table
 #--------pour l'option sief_elga + elements de joint
 
 ch_sief = CREA_CHAMP(
-  INST=tfin_SNL, 
-  NOM_CHAM='SIEF_ELGA', 
-  OPERATION='EXTR', 
-  RESULTAT=U_HM, 
+  INST=tfin_SNL,
+  NOM_CHAM='SIEF_ELGA',
+  OPERATION='EXTR',
+  RESULTAT=U_HM,
   TYPE_CHAM='ELGA_SIEF_R'
-) 
+)
 
 tab_ch0 = CREA_TABLE(
     RESU=_F(
-    CHAM_GD=ch_sief, 
-    TOUT='OUI', 
+    CHAM_GD=ch_sief,
+    TOUT='OUI',
     TOUT_CMP='OUI'
   )
-) 
+)
 
 tab_ch1 = CALC_TABLE(
   ACTION=_F(
-    NOM_PARA=('CHAM_GD', 'COOR_X', 'COOR_Y', 'COOR_Z'), 
+    NOM_PARA=('CHAM_GD', 'COOR_X', 'COOR_Y', 'COOR_Z'),
     OPERATION='SUPPRIME'
-  ), 
+  ),
   TABLE=tab_ch0
-) 
+)
 
 ch_tab = CREA_CHAMP(
-  MODELE=MO, 
-  OPERATION='EXTR', 
-  OPTION='SIEF_ELGA', 
-  PROL_ZERO='OUI', 
-  TABLE=tab_ch1, 
+  MODELE=MO,
+  OPERATION='EXTR',
+  OPTION='SIEF_ELGA',
+  PROL_ZERO='OUI',
+  TABLE=tab_ch1,
   TYPE_CHAM='ELGA_SIEF_R'
-) 
+)
 
 tab_ch2 = CREA_TABLE(
   RESU=_F(
-    CHAM_GD=ch_tab, 
-    TOUT='OUI', 
+    CHAM_GD=ch_tab,
+    TOUT='OUI',
     TOUT_CMP='OUI'
   )
-) 
+)
 
 TEST_TABLE(
            VALE_CALC=-537498.3671,

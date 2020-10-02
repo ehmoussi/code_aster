@@ -29,7 +29,6 @@ from code_aster.Commands import *
 from code_aster.MacroCommands.Contrib.essai_triaxial import Triaxial_DR
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      PAR_LOT='NON',
       DEBUG=_F(SDVERI='OUI'),);
 
 # modules mecaniques [kPa]

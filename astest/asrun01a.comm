@@ -39,8 +39,7 @@ Le fichier de paramètres contient les variables suivantes :
 import code_aster
 from code_aster.Commands import *
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
 
 import os
 

@@ -25,8 +25,7 @@
 from code_aster import AsterError
 from code_aster.Commands import *
 
-POURSUITE(CODE='OUI',
-          PAR_LOT='OUI',);
+POURSUITE(CODE='OUI')
 
 is_ok = int(isinstance(err, AsterError))
 

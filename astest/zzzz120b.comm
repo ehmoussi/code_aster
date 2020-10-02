@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET',), PAR_LOT='NON',
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET',),
       DEBUG=_F(SDVERI='OUI'))
 
 from zzzz120a_geom import *

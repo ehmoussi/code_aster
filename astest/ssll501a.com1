@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2016  EDF R2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020  EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#
-
-POURSUITE(CODE='OUI', PAR_LOT='NON')
-# PAR_LOT='NON' uniquement pour le post-traitement .Absc()/.Ordo()
+POURSUITE(CODE='OUI')
 
 # POUR COMPARER LES DEUX COURBES IL FAUT FAIRE
 # DANS LA COURBE ASTER ABSC = 57766.1-ABSC

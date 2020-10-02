@@ -63,7 +63,7 @@ def lissGbar(TAB_G, absc='ABSC_CURV', val='G'):
 
 
 
-##Dans le fichier de commande aster avec DEBUT(PAR_LOT='NON') : 
+##Dans le fichier de commande aster avec DEBUT() :
 
 #from sslv154a import lissGchap, lissGbar
 #CG=CALC_TABLE(TABLE=CG,

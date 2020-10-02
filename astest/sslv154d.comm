@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from sslv154a import lissGchap, lissGbar
-
-DEBUT(PAR_LOT='NON', CODE=_F(NIV_PUB_WEB='INTERNET',
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',
               ),
       DEBUG=_F(SDVERI='OUI'))
+
+from sslv154a import lissGchap, lissGbar
 
 # MODELISATION D : FEM, ZCRACKS, MAILLAGE QUADRATIQUE
 
@@ -148,7 +148,7 @@ CG3=CALC_G(THETA=_F(FOND_FISS=FISS,
           LISSAGE=_F(LISSAGE_THETA='LAGRANGE',
                      LISSAGE_G='LAGRANGE',),
           RESULTAT=RESU,)
-          
+
 CG4=CALC_G(THETA=_F(FOND_FISS=FISS,
                    R_INF=RINF,
                    R_SUP=RSUP,
@@ -157,7 +157,7 @@ CG4=CALC_G(THETA=_F(FOND_FISS=FISS,
                      LISSAGE_G='LAGRANGE',),
           RESULTAT=RESU,
           OPTION='CALC_K_G')
-                
+
 # formule pour le calcul de l'angle en degre
 ANGLE = FORMULE(VALE='ABSC_CURV/a * 180./pi',
                 a=a,
@@ -223,7 +223,7 @@ CG3=CALC_TABLE(TABLE=CG3,
                       _F(OPERATION='OPER',FORMULE=GREF ,NOM_PARA='GREF'),
                       )
               )
-              
+
 CG4=CALC_TABLE(TABLE=CG4,
               reuse=CG4,
               ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
@@ -264,7 +264,7 @@ IMPR_TABLE(TABLE=CG4)
 # test de KI sur tout le fond de fissure
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
-           PRECISION=0.1,           
+           PRECISION=0.1,
            VALE_CALC=861158.1627702345,
            VALE_REFE=K1REF(0),
            NOM_PARA='K1',
@@ -273,16 +273,16 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
-           PRECISION=0.1,           
+           PRECISION=0.1,
            VALE_CALC=842450.8909102601,
            VALE_REFE=K1REF(0),
            NOM_PARA='K1',
            TYPE_TEST='MIN',
            TABLE=CG,)
-           
+
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
-           PRECISION=0.1,           
+           PRECISION=0.1,
            VALE_CALC=876991.6466437593,
            VALE_REFE=K1REF(0),
            NOM_PARA='K1',
@@ -291,20 +291,20 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
-           PRECISION=0.1,           
+           PRECISION=0.1,
            VALE_CALC=824895.8206638684,
            VALE_REFE=K1REF(0),
            NOM_PARA='K1',
            TYPE_TEST='MIN',
-           TABLE=CG2,)           
-           
+           TABLE=CG2,)
+
 
 # test de KII au premier point du fond (angle = 0)
 # le signe n'est pas important, mais on ne peut pas tester |K2|
 # il se trouve que le K2 de CALC_G est de signe oppose a celui de POST_K
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
-           PRECISION=0.1,           
+           PRECISION=0.1,
            VALE_CALC=948497.0678279632,
            VALE_REFE=K2REF(0),
            NOM_PARA='K2',
@@ -315,7 +315,7 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
-           PRECISION=0.1,           
+           PRECISION=0.1,
            VALE_CALC=907667.7313999156,
            VALE_REFE=K2REF(0),
            NOM_PARA='K2',
@@ -329,7 +329,7 @@ TEST_TABLE(CRITERE='RELATIF',
 # il se trouve que le K3 de CALC_G est de signe oppose a celui de POST_K
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
-           PRECISION=0.1,           
+           PRECISION=0.1,
            VALE_CALC=708064.738481917,
            VALE_REFE=K3REF(90),
            NOM_PARA='K3',
@@ -342,7 +342,7 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
-           PRECISION=0.1,           
+           PRECISION=0.1,
            VALE_CALC=672703.2048949589 ,
            VALE_REFE=K3REF(90),
            NOM_PARA='K3',
@@ -483,7 +483,7 @@ C_G_CG=RECU_FONCTION(TABLE=CG,
 C_G_CG1=RECU_FONCTION(TABLE=CG1,
                      PARA_X='ANGLE',
                      PARA_Y='G',)
-                     
+
 C_G_CG2=RECU_FONCTION(TABLE=CG2,
                      PARA_X='ANGLE',
                      PARA_Y='G',)
@@ -514,7 +514,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
                       _F(FONCTION=C_G_CG1,
                          LEGENDE='G CALC_G LEGENDRE',
                          MARQUEUR=0,
-                         COULEUR=3),  
+                         COULEUR=3),
                       _F(FONCTION=C_G_CG2,
                          LEGENDE='G CALC_K_G 21 PTS',
                          MARQUEUR=0,
@@ -606,15 +606,15 @@ C_K2_REF=RECU_FONCTION(TABLE=CG,
 C_K2_CG=RECU_FONCTION(TABLE=CG,
                       PARA_X='ANGLE',
                       PARA_Y='K2',)
-                      
+
 C_K2_CG2=RECU_FONCTION(TABLE=CG2,
                       PARA_X='ANGLE',
                       PARA_Y='K2',)
-                      
+
 C_K2_CGC=RECU_FONCTION(TABLE=CG4,
                       PARA_X='ANGLE',
                       PARA_Y='K2_CHAP',)
-                      
+
 C_K2_CGB=RECU_FONCTION(TABLE=CG4,
                       PARA_X='ANGLE',
                       PARA_Y='K2_BAR',)
@@ -663,11 +663,11 @@ C_K3_CG=RECU_FONCTION(TABLE=CG,
 C_K3_CG2=RECU_FONCTION(TABLE=CG2,
                       PARA_X='ANGLE',
                       PARA_Y='K3',)
-                      
+
 C_K3_CGC=RECU_FONCTION(TABLE=CG4,
                       PARA_X='ANGLE',
                       PARA_Y='K3_CHAP',)
-                      
+
 C_K3_CGB=RECU_FONCTION(TABLE=CG4,
                       PARA_X='ANGLE',
                       PARA_Y='K3_BAR',)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -293,27 +293,26 @@ TEST_RESU(RESU=(_F(RESULTAT=DYNA0,
 # la syntaxe à utiliser si on devait calculer la réponse du système
 # en de nombreuses fréquences, grâce à une boucle Python,
 # et visualiser l'amplitude de la réponse harmonique
-# Rq : il faut mettre PAR_LOT='NON' dans DEBUT
 ###################################################################
 calcul_complet = False
 
 if calcul_complet == True:
     from math import exp, log
-    
+
     # DEFINITION DE LA DEPENDANCE EN FREQUENCE DES PROPRIETES DES MATERIAUX VISCOELASTIQUES
-    
+
     list_f=DEFI_LIST_REEL(VALE=(1.,10.,50.,100.,500.,1000.,1500.),);
-    
+
     list_E=DEFI_LIST_REEL(VALE=(23.2E6,58.E6,145.E6,203.E6,348.E6,435.E6,464.E6),);
-    
-    list_eta=DEFI_LIST_REEL(VALE=(1.1,0.85,0.7,0.6,0.4,0.35,0.34),);                            
-    
+
+    list_eta=DEFI_LIST_REEL(VALE=(1.1,0.85,0.7,0.6,0.4,0.35,0.34),);
+
     # DEFINITION DES FREQUENCES DE CALCUL DE LA REPONSE HARMONIQUE
     listfr=DEFI_LIST_REEL(DEBUT=1.,
                           INTERVALLE=(_F(JUSQU_A=500.,
                                          PAS=1.,),),);
-    
-    
+
+
     # CALC DE LA REPONSE POUR LA PREMIERE FREQUENCE
     dyna=DYNA_VIBRA(TYPE_CALCUL='HARM',
                     BASE_CALCUL='PHYS',
@@ -323,31 +322,31 @@ if calcul_complet == True:
                     TOUT_CHAM='OUI',
                     EXCIT=_F(VECT_ASSE=ASSEF,
                              COEF_MULT=1.0,),);
-    
+
     # BOUCLE SUR LES FREQUENCES DEMANDEES (A PARTIR DE LA DEUXIEME)
     for i in range (1,len(listfr.Valeurs())):
-    
+
         f = listfr.Valeurs()[i]   # fréquence courante
-    
+
         ind_i = list_f.Valeurs().index(next(x for x in list_f.Valeurs() if x>f))-1
-    
+
         x1 = list_f.Valeurs()[ind_i]     # valeur inférieure la plus proche
         x2 = list_f.Valeurs()[ind_i+1]   # valeur inférieure la plus proche
-        
+
         y1 = list_E.Valeurs()[ind_i]
         y2 = list_E.Valeurs()[ind_i+1]
         E = exp(log(y1)+(log(f)-log(x1))*(log(y2)-log(y1)) / (log(x2)-log(x1)))
-    
+
         y1 = list_eta.Valeurs()[ind_i]
         y2 = list_eta.Valeurs()[ind_i+1]
         eta = exp(log(y1)+(log(f)-log(x1))*(log(y2)-log(y1)) / (log(x2)-log(x1)))
-    
-    
+
+
         mat_visc=DEFI_MATERIAU(ELAS=_F(E=E,
                                        NU=0.45,
                                        RHO=1200,
                                        AMOR_HYST=eta,),);
-    
+
         chmat=AFFE_MATERIAU(MAILLAGE=MAIL,
                              AFFE=(_F(GROUP_MA='DESSOUS',
                                       MATER=ACIER,),
@@ -355,9 +354,9 @@ if calcul_complet == True:
                                       MATER=ALU,),
                                    _F(GROUP_MA='VOLUME',
                                       MATER=mat_visc,),),);
-        
+
         # CALCUL DES MATRICES ASSEMBLEES K ET M ET DU VECTEUR CHARGEMENT ASSEMBLE
-        
+
         # Rq : ici, il n'est pas nécessaire de recalculer la matrice de masse à chaque fréquence
         # car la masse volumique est indépendante de la fréquence.
         # On le fait pour présenter un cas plus général
@@ -366,40 +365,40 @@ if calcul_complet == True:
                               CHAM_MATER=chmat,
                               CARA_ELEM=CARAPLAQ,
                               CHARGE=CONDLIM,);
-        
+
         K_elem=CALC_MATR_ELEM(OPTION='RIGI_MECA',
                               MODELE=MODELE,
                               CHAM_MATER=chmat,
                               CARA_ELEM=CARAPLAQ,
                               CHARGE=CONDLIM,);
-        
+
         Kh_elem=CALC_MATR_ELEM(OPTION='RIGI_MECA_HYST',
                                MODELE=MODELE,
                                CHARGE=CONDLIM,
                                CHAM_MATER=chmat,
                                CARA_ELEM=CARAPLAQ,
                                RIGI_MECA=K_elem,);
-        
+
         for_elem=CALC_VECT_ELEM(OPTION='CHAR_MECA',
                                 CHARGE=EXCIT,);
-        
+
         num_ddl=NUME_DDL(MATR_RIGI=K_elem,);
-        
+
         M_asse=ASSE_MATRICE(MATR_ELEM=M_elem,
                             NUME_DDL=num_ddl,);
-        
+
         K_asse=ASSE_MATRICE(MATR_ELEM=K_elem,
                             NUME_DDL=num_ddl,);
-        
+
         Kh_asse=ASSE_MATRICE(MATR_ELEM=Kh_elem,
                              NUME_DDL=num_ddl,);
-        
+
         for_asse=ASSE_VECTEUR(VECT_ELEM=for_elem,
                             NUME_DDL=num_ddl,);
-        
+
 
         # CALCUL DE LA REPONSE DU SYSTEME A LA FREQUENCE f
-        
+
         dyna=DYNA_VIBRA(reuse=dyna,
                         RESULTAT=dyna,
                         TYPE_CALCUL='HARM',
@@ -410,11 +409,11 @@ if calcul_complet == True:
                         TOUT_CHAM='OUI',
                         EXCIT=_F(VECT_ASSE=for_asse,
                                  COEF_MULT=1.0,),);
-    
+
         DETRUIRE(CONCEPT=_F(NOM=(mat_visc, chmat, M_elem, K_elem, Kh_elem, for_elem, M_asse, K_asse, Kh_asse, for_asse)));
         if i != len(listfr.Valeurs())-1:
             DETRUIRE(CONCEPT=_F(NOM=num_ddl));
-    
+
     TEST_RESU(RESU=(
                     _F(RESULTAT=dyna,
                        NUME_ORDRE=1,
@@ -435,15 +434,15 @@ if calcul_complet == True:
                        NOM_CMP='DZ',
                        VALE_CALC_C=-1.302768494e-05 - 1.65977932083e-06j ),
                     ),);
-    
+
     dz_A=RECU_FONCTION(RESULTAT=dyna,
                        NOM_CHAM='DEPL',
                        NOM_CMP='DZ',
                        GROUP_NO='A')
-    
+
     dz_A_abs=CALC_FONCTION(EXTRACTION=_F(FONCTION=dz_A,
                                          PARTIE='MODULE'),);
-    
+
     IMPR_FONCTION(FORMAT='XMGRACE',
                   UNITE=29,
                   COURBE=_F(FONCTION=dz_A_abs))

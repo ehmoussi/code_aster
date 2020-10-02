@@ -20,7 +20,7 @@
 # UTILISATION : COMPARAISON DE LA SIMULATION NUMERIQUE D'UN ASSEMBLAGE
 #               COMBUSTIBLE EN COMPRESSION AVEC LES RESULTATS EXPERIMENTAUX
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'), IMPR_MACRO='NON', PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'), IMPR_MACRO='NON', )
 import numpy as np
 
 tabn = LIRE_TABLE(UNITE      = 38,
@@ -70,8 +70,8 @@ POST2 = POST_RELEVE_T(ACTION = _F(OPERATION = 'EXTRACTION',
                                   GROUP_NO = ('PMNT_S'),
                                   RESULTANTE = ('DX','DY','DZ'),
                                   REPERE = 'GLOBAL'))
-                        
-                        
+
+
 
 POST3= POST_RELEVE_T(ACTION = _F(OPERATION = 'MOYENNE',
                                  INTITULE = 'DX',

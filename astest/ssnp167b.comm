@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 
 import math
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='OUI',DEBUG=_F(JXVERI='OUI',JEVEUX='OUI'),)
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(JXVERI='OUI',JEVEUX='OUI'),)
 
 MA=LIRE_MAILLAGE(FORMAT='MED',VERI_MAIL=_F(VERIF='OUI'),);
 
@@ -66,10 +66,10 @@ MO=AFFE_MODELE(MAILLAGE=MA,AFFE=_F(TOUT = 'OUI',PHENOMENE = 'MECANIQUE',MODELISA
 #=================================================
 def radius(x,y):
     return (x**2+y**2)**0.5
-    
+
 def theta(x,y):
     return atan2(y,x)
-    
+
 #=================================================
 #  Calcul des coefficients de Lame
 #=================================================
@@ -99,14 +99,14 @@ p=1.e7;
 #  et par '_v' la contribution du chargement variable fonction de theta        |
 #================================================================================
 
-    
+
 #=================================================
 #|       pour le chargement constant         |
 #=================================================
 
 #pression de contact
 
-pres_cont_c = 2*p*((R1*R1*(1-nu1)/(R1*R1-R2*R2))/((R1*R1+R2*R2*(1-2*nu1))/(R1*R1-R2*R2)+(E1*(1+nu2)*(R2*R2*(1-2*nu2)+R3*R3))/(E2*(1+nu1)*(R2*R2-R3*R3)))) 
+pres_cont_c = 2*p*((R1*R1*(1-nu1)/(R1*R1-R2*R2))/((R1*R1+R2*R2*(1-2*nu1))/(R1*R1-R2*R2)+(E1*(1+nu2)*(R2*R2*(1-2*nu2)+R3*R3))/(E2*(1+nu1)*(R2*R2-R3*R3))))
 
 def press_c(x,y):
     return pres_cont_c
@@ -158,7 +158,7 @@ def EPSI_YY_1(x,y):
     r=radius(x,y)
     th=theta(x,y)
     return eps_r_11 + eps_r_12*cos(2*th)/(r**2)
-    
+
 def EPSI_XY_1(x,y):
     r=radius(x,y)
     th=theta(x,y)
@@ -175,7 +175,7 @@ def EPSI_YY_2(x,y):
     r=radius(x,y)
     th=theta(x,y)
     return eps_r_21 + eps_r_22*cos(2*th)/(r**2)
-    
+
 def EPSI_XY_2(x,y):
     r=radius(x,y)
     th=theta(x,y)
@@ -186,56 +186,56 @@ def EPSI_XY_2(x,y):
 
 def SIGMA_XX_1_c(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return lambda1*( EPSI_XX_1(x,y)+EPSI_YY_1(x,y) ) + 2*mu1*EPSI_XX_1(x,y)
-    
+
 def SIGMA_YY_1_c(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return lambda1*( EPSI_XX_1(x,y)+EPSI_YY_1(x,y) ) + 2*mu1*EPSI_YY_1(x,y)
 
-def SIGMA_ZZ_1_c(x,y):    
+def SIGMA_ZZ_1_c(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     return nu1*( SIGMA_XX_1_c(x,y) + SIGMA_YY_1_c(x,y) )
 
 def SIGMA_XY_1_c(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return 2*mu1*EPSI_XY_1(x,y)
 
 # contraintes couronnes interne
 
 def SIGMA_XX_2_c(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return lambda2*( EPSI_XX_2(x,y)+EPSI_YY_2(x,y) ) + 2*mu2*EPSI_XX_2(x,y)
-    
+
 def SIGMA_YY_2_c(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return lambda2*( EPSI_XX_2(x,y)+EPSI_YY_2(x,y) ) + 2*mu2*EPSI_YY_2(x,y)
 
-def SIGMA_ZZ_2_c(x,y):    
+def SIGMA_ZZ_2_c(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     return nu2*( SIGMA_XX_2_c(x,y) + SIGMA_YY_2_c(x,y) )
 
 def SIGMA_XY_2_c(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return 2*mu1*EPSI_XY_1(x,y)
 
 
@@ -298,30 +298,30 @@ A2,B2,C2,D2=calc(pc,0.,R2,R3)
 
 def press_v(x,y):
     r=radius(x,y)
-    th=theta(x,y)    
+    th=theta(x,y)
     return ( 2*A2 + 6*C2/r**4 + 4*D2/r**2 )*cos(2*th)
 
 
 # deplacements polaires couronne externe
 def Ur1(x,y):
     r=radius(x,y)
-    th=theta(x,y)    
+    th=theta(x,y)
     return (1+nu1)/E1 * ( (-2*A1*r + 2*C1/r**3 + 4*D1/r) - nu1*(4*B1*r**3 + 4*D1/r) ) * cos(2*th)
 
 def Uth1(x,y):
     r=radius(x,y)
-    th=theta(x,y)    
+    th=theta(x,y)
     return (1+nu1)/E1 * ( (2*A1*r + 6*B1*r**3 + 2*C1/r**3 - 2*D1/r) - nu1*(4*B1*r**3 - 4*D1/r) ) * sin(2*th)
 
 # deplacements polaires couronne interne
 def Ur2(x,y):
     r=radius(x,y)
-    th=theta(x,y)    
+    th=theta(x,y)
     return (1+nu2)/E2 * ( (-2*A2*r + 2*C2/r**3 + 4*D2/r) - nu2*(4*B2*r**3 + 4*D2/r) ) * cos(2*th)
 
 def Uth2(x,y):
     r=radius(x,y)
-    th=theta(x,y)    
+    th=theta(x,y)
     return (1+nu2)/E2 * ( (2*A2*r + 6*B2*r**3 + 2*C2/r**3 - 2*D2/r) - nu2*(4*B2*r**3 - 4*D2/r) ) * sin(2*th)
 
 
@@ -352,90 +352,90 @@ def uy2_v(x,y):
 # contraintes polaires couronne externe
 def SIGMA_rr_1(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     return ( -2*A1 - 6*C1/r**4 - 4*D1/r**2 )*cos(2*th)
-    
+
 def SIGMA_thth_1(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     return ( 2*A1 + 12*B1*r**2 + 6*C1/r**4 )*cos(2*th)
 
 def SIGMA_rth_1(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     return 2*( A1 + 3*B1*r**2 - 3*C1/r**4 - D1/r**2 )*sin(2*th)
-    
-    
+
+
 # contraintes polaires couronne interne
 def SIGMA_rr_2(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     return ( -2*A2 - 6*C2/r**4 - 4*D2/r**2 )*cos(2*th)
-    
+
 def SIGMA_thth_2(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     return ( 2*A2 + 12*B2*r**2 + 6*C2/r**4 )*cos(2*th)
 
 def SIGMA_rth_2(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     return 2*( A2 + 3*B2*r**2 - 3*C2/r**4 - D2/r**2 )*sin(2*th)
 
 
 # contrainte couronne externe
 def SIGMA_XX_1_v(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return SIGMA_rr_1(x,y)*c*c + SIGMA_thth_1(x,y)*s*s - SIGMA_rth_1(x,y)*2*s*c
-    
+
 def SIGMA_YY_1_v(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return SIGMA_rr_1(x,y)*s*s + SIGMA_thth_1(x,y)*c*c + SIGMA_rth_1(x,y)*2*s*c
-    
-def SIGMA_ZZ_1_v(x,y):    
+
+def SIGMA_ZZ_1_v(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     return nu1*( SIGMA_XX_1_v(x,y) + SIGMA_YY_1_v(x,y) )
 
 def SIGMA_XY_1_v(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return SIGMA_rr_1(x,y)*s*c - SIGMA_thth_1(x,y)*s*c + SIGMA_rth_1(x,y)*(c*c - s*s)
 
 # contrainte couronne interne
 
 def SIGMA_XX_2_v(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return SIGMA_rr_2(x,y)*c*c + SIGMA_thth_2(x,y)*s*s - SIGMA_rth_2(x,y)*2*s*c
-    
+
 def SIGMA_YY_2_v(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return SIGMA_rr_2(x,y)*s*s + SIGMA_thth_2(x,y)*c*c + SIGMA_rth_2(x,y)*2*s*c
 
-def SIGMA_ZZ_2_v(x,y):    
+def SIGMA_ZZ_2_v(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     return nu2*( SIGMA_XX_2_v(x,y) + SIGMA_YY_2_v(x,y) )
 
 def SIGMA_XY_2_v(x,y):
     r=radius(x,y)
-    th=theta(x,y) 
+    th=theta(x,y)
     c=cos(th)
-    s=sin(th)     
+    s=sin(th)
     return SIGMA_rr_2(x,y)*s*c - SIGMA_thth_2(x,y)*s*c + SIGMA_rth_2(x,y)*(c*c - s*s)
 
 
@@ -516,14 +516,14 @@ pression = FORMULE(VALE=' -press_c(X,Y)-press_v(X,Y)',
 # fusion des deux declarations de chargement en un seul
 #=======================================================
 CH=AFFE_CHAR_MECA_F(MODELE=MO,
-                    DDL_IMPO=(_F(GROUP_MA='S1R1',DX=ux1s,DY=uy1s,),      
-                              _F(GROUP_MA='S2R3',DX=ux2s,DY=uy2s,),  
+                    DDL_IMPO=(_F(GROUP_MA='S1R1',DX=ux1s,DY=uy1s,),
+                              _F(GROUP_MA='S2R3',DX=ux2s,DY=uy2s,),
                              ),
                    );
 #+----------------------------------------+
 #|               contact                  |
 #+----------------------------------------+
- 
+
 CONT_S  = DEFI_CONTACT(MODELE = MO,
                        FORMULATION    = 'CONTINUE',
                        REAC_GEOM      = 'SANS',
@@ -542,8 +542,8 @@ CONT_S  = DEFI_CONTACT(MODELE = MO,
                               ALGO_CONT     = 'STANDARD',
                               COEF_CONT     = E1,
                               CONTACT_INIT  = 'OUI',
-                              GLISSIERE     = 'NON',),),);         
-                                                          
+                              GLISSIERE     = 'NON',),),);
+
 #+----------------------------------------+
 #|               calcul                   |
 #+----------------------------------------+
@@ -558,7 +558,7 @@ RESU=STAT_NON_LINE(MODELE=MO,
                     EXCIT       = _F(CHARGE = CH),
                     CONTACT     = CONT_S,
                     COMPORTEMENT   = (_F(RELATION    = 'ELAS',
-                                         DEFORMATION = 'PETIT',),),                  
+                                         DEFORMATION = 'PETIT',),),
                     NEWTON      = _F(REAC_INCR=1,REAC_ITER=1),
                     INCREMENT   = _F(LIST_INST=INSTS,),
                     CONVERGENCE = _F(ITER_GLOB_MAXI = 30,
@@ -576,8 +576,8 @@ IMPR_RESU(FORMAT='MED',
 #|          tests de validation           |
 #+----------------------------------------+
 
-## noeud 9  
-    
+## noeud 9
+
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_ABS='OUI',
                   REFERENCE='ANALYTIQUE',
@@ -589,7 +589,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_REFE=-0.00549832972041, # ux2s(X9,Y9)
                   PRECISION=0.02,),
           );
-          
+
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_ABS='OUI',
                   REFERENCE='ANALYTIQUE',
@@ -615,7 +615,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
           );
 
 ## noeud 10
-      
+
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_ABS='OUI',
                   REFERENCE='ANALYTIQUE',
@@ -653,7 +653,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
           );
 
 ## noeud 11
-       
+
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_ABS='OUI',
                   REFERENCE='ANALYTIQUE',
@@ -691,7 +691,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
           );
 
 ## noeud 12
-       
+
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_ABS='OUI',
                   REFERENCE='ANALYTIQUE',
@@ -729,7 +729,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
           );
 
 ## noeud 303
-     
+
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_ABS='OUI',
                   REFERENCE='ANALYTIQUE',
@@ -767,7 +767,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
           );
 
 ## noeud 371
-      
+
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_ABS='OUI',
                   REFERENCE='ANALYTIQUE',
@@ -805,7 +805,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
           );
 
 ## noeud 439
-       
+
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_ABS='OUI',
                   REFERENCE='ANALYTIQUE',
@@ -843,7 +843,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
           );
 
 ## noeud 507
-       
+
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_ABS='OUI',
                   REFERENCE='ANALYTIQUE',

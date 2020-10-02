@@ -21,11 +21,7 @@ from code_aster.Commands import *
 from code_aster.Messages import MessageLog
 
 DEBUT(CODE=_F( NIV_PUB_WEB='INTERNET', ),
-      ERREUR=_F(ERREUR_F='EXCEPTION',), DEBUG=_F(SDVERI='OUI'),
-      IGNORE_ALARM='SUPERVIS_1',
-      PAR_LOT='NON')
-# ALARME 'SUPERVIS_1' : PAR_LOT='NON' necessaire pour verifier l'emission
-# d'une alarme
+      ERREUR=_F(ERREUR_F='EXCEPTION',), DEBUG=_F(SDVERI='OUI'))
 
 
 M=LIRE_MAILLAGE(FORMAT="ASTER",);

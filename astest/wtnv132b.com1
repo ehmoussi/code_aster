@@ -29,7 +29,7 @@
 # a un autre maillage.
 
 
-POURSUITE(CODE='OUI',PAR_LOT='NON')
+POURSUITE(CODE='OUI',)
 
 #       ---------------
 # FIN-  Post-traitement

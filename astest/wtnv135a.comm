@@ -20,7 +20,7 @@
 # person_in_charge: simon.raude at edf.fr
 #                AVEC COUPLAGE HYDRAULIQUE  CONFINEMENT DE 5 MPa
 # ======================================================================
-DEBUT(   CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='OUI'  )
+DEBUT(   CODE=_F(NIV_PUB_WEB='INTERNET',))
 #
 BIDON=DEFI_CONSTANTE(    VALE=1.)
 

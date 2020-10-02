@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),IGNORE_ALARM=('MODELISA4_9',),PAR_LOT='OUI')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),IGNORE_ALARM=('MODELISA4_9',),)
 
 from math import *
 
@@ -59,7 +59,7 @@ sigma_min = sigma_max/3.
 angle=30./180*pi
 L_cube=1.
 
-# FLUX_MIN (FLUX DU JOINT FERME) 
+# FLUX_MIN (FLUX DU JOINT FERME)
 # flux_min = rho_fluide/12/visc_fluide*ouv_min**3*grad(p)
 flux_min =  rho_fluide/12/visc_fluide*ouv_min**3*press/L_cube
 # FLUX_MAX (JOINT_OUVERT)
@@ -103,7 +103,7 @@ MA=MODI_MAILLAGE(reuse =MA,
 MO=AFFE_MODELE(
 
                 MAILLAGE=MA,
-                
+
 
                 AFFE= (
                 _F(
@@ -427,7 +427,7 @@ TEST_RESU (
       RESULTAT  = U_F,
       NOM_CHAM  = 'VARI_NOEU',
       NOM_CMP   = 'V15',
-      VALE_CALC = 0.0588099274448, 
+      VALE_CALC = 0.0588099274448,
       NOEUD     = 'NS17',
       INST      = linst[2],
       ),
@@ -435,7 +435,7 @@ TEST_RESU (
       RESULTAT  = U_F,
       NOM_CHAM  = 'VARI_NOEU',
       NOM_CMP   = 'V16',
-      VALE_CALC = -0.101861782324, 
+      VALE_CALC = -0.101861782324,
       NOEUD     = 'NS17',
       INST      = linst[2],
       ),
@@ -443,7 +443,7 @@ TEST_RESU (
       RESULTAT  = U_F,
       NOM_CHAM  = 'VARI_NOEU',
       NOM_CMP   = 'V17',
-      VALE_CALC = -0.0543233967518, 
+      VALE_CALC = -0.0543233967518,
       NOEUD     = 'NS17',
       INST      = linst[2],
       ),
@@ -686,7 +686,7 @@ TEST_RESU (
       RESULTAT  = U_2,
       NOM_CHAM  = 'VARI_NOEU',
       NOM_CMP   = 'V15',
-      VALE_CALC = 1.56160780633E-13, 
+      VALE_CALC = 1.56160780633E-13,
       NOEUD     = 'NS12',
       INST      = linst2[1],
       ),

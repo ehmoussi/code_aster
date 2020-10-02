@@ -30,7 +30,7 @@ poisson = 0.3
 # Comportement materiau
 relation = 'ELAS_MEMBRANE_NH'
 
-# Nombre de pas de temps 
+# Nombre de pas de temps
 nbPasPress = 10
 
 # --------------------------------------------------------------------------- #
@@ -38,8 +38,7 @@ nbPasPress = 10
 # --------------------------------------------------------------------------- #
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      DEBUG=_F(SDVERI='OUI',),
-      PAR_LOT='OUI',);
+      DEBUG=_F(SDVERI='OUI',),);
 
 MAIL=LIRE_MAILLAGE(FORMAT='MED',);
 
@@ -264,13 +263,13 @@ TEST_FONCTION(VALEUR=_F(
 #DEFI_FICHIER( UNITE = 85, FICHIER = '~/ssns115f.resu')
 #IMPR_FONCTION(FORMAT='TABLEAU',
 #              COURBE=_F(FONCTION=ETA_PILO,),
-#              UNITE=85,);                  
+#              UNITE=85,);
 #DEFI_FICHIER( UNITE = 85, ACTION = 'LIBERER')
 #
 #TAB = CREA_TABLE(RESU=_F(RESULTAT=RES1,NOM_CHAM='DEPL',NOM_CMP='DZ', GROUP_NO='point_O',)
 #)
 #DEFI_FICHIER( UNITE = 85, FICHIER = '~/ssns115f_depl.resu')
-#IMPR_TABLE(TABLE=TAB,UNITE=85,);                  
+#IMPR_TABLE(TABLE=TAB,UNITE=85,);
 #DEFI_FICHIER( UNITE = 85, ACTION = 'LIBERER')
 
 FIN();

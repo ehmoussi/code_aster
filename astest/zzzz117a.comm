@@ -28,7 +28,7 @@
 # ********************************************************************
 # ********************************************************************
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 M=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='MED',   )
 
@@ -83,7 +83,7 @@ for i in range(0,len(baseloc0)//6):
               VALE_REFE=4.,
               CRITERE='ABSOLU',
               REFERENCE='ANALYTIQUE' )
-              
+
    TEST_TABLE(TABLE=TABL0,
               FILTRE=_F(  NOM_PARA = 'ND_FOND',
                           VALE_I = i+1),
@@ -92,7 +92,7 @@ for i in range(0,len(baseloc0)//6):
               VALE_REFE=0.,
               CRITERE='ABSOLU',
               REFERENCE='ANALYTIQUE' )
-              
+
    TEST_TABLE(TABLE=TABL0,
               FILTRE=_F(  NOM_PARA = 'ND_FOND',
                           VALE_I = i+1),

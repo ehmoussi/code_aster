@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# On verifie le fonctionnement de la membrane sous gravite en recreant le cas 
-# de la chainette sous pesanteur. On compare le resultat avec le cas ou on 
+# On verifie le fonctionnement de la membrane sous gravite en recreant le cas
+# de la chainette sous pesanteur. On compare le resultat avec le cas ou on
 # applique une pression non suiveuse equivalente.
 
 # --------------------------------------------------------------------------- #
@@ -35,13 +35,13 @@ tensInit = 10000000*epais
 # Comportement materiau
 relation = 'ELAS_MEMBRANE_SV'
 
-# Gravite 
+# Gravite
 gravite = 9.81
 
 # Pression
 press = rho*epais*gravite
 
-# Nombre de pas de temps 
+# Nombre de pas de temps
 nbPasGrav = 10
 nbPasPres = 10
 
@@ -51,8 +51,7 @@ nbPasPres = 10
 #
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      DEBUG=_F(SDVERI='OUI',),
-      PAR_LOT='OUI',);
+      DEBUG=_F(SDVERI='OUI',),);
 
 MAIL=LIRE_MAILLAGE(FORMAT='MED',)
 
@@ -104,7 +103,7 @@ CHARGT=AFFE_CHAR_MECA(MODELE=MODELE,
 
 PRESS=AFFE_CHAR_MECA(MODELE=MODELE,
                      PRES_REP=_F(GROUP_MA='membrane',
-                                 PRES=press,),); 
+                                 PRES=press,),);
 
 # CALCULS
 FONCCB=DEFI_FONCTION(
@@ -158,7 +157,7 @@ RES1 = STAT_NON_LINE(CARA_ELEM=CARA,
                                   CRITERE='RELATIF',),
                      MESURE=_F(TABLE='NON',),
                      )
-                        
+
 # Pression non suiveuse
 LINST2=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=_F(JUSQU_A=1.0,
@@ -202,7 +201,7 @@ RES2 = STAT_NON_LINE(CARA_ELEM=CARA,
                                   CRITERE='RELATIF',),
                      MESURE=_F(TABLE='NON',),
                      )
-       
+
 # --------------------------------------------------------------------------- #
 # * * * * * * * * * * * * * * * Post Traitement * * * * * * * * * * * * * * * #
 # --------------------------------------------------------------------------- #
@@ -242,7 +241,7 @@ TEST_RESU(RESU=_F(LEGENDE='Depl point O',
                   VALE_REFE=-6.352,
                   PRECISION = 5E-4,),);
 
-# Comparaison pesanteur et pression (non régression sur pression)               
+# Comparaison pesanteur et pression (non régression sur pression)
 TEST_RESU(RESU=_F(LEGENDE='Depl point O',
                   RESULTAT=RES2,
                   INST=1.,

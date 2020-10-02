@@ -27,7 +27,7 @@
 #            REMARQUE 1   : LES PARAMETRES GLRC_DM ONT ETE IDENTIFIES
 #                           PAR CE TEST
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI',),PAR_LOT='NON');
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI',),);
 
 #PRE_GIBI();
 EP = 0.1;
@@ -135,9 +135,9 @@ MAT_G=DEFI_MATERIAU(ELAS_GLRC=_F(E_M=EGM,
                                  NU_F=0.17,),
                     GLRC_DM=_F(GAMMA_T=0.02,
                                GAMMA_F=0.32,
-                               GAMMA_C=1.,  
+                               GAMMA_C=1.,
                                NYT=3.7E5,
-                               NYC= 0., # NYC non utilise si GAMMA_C = 1 sauf pour la variable interne V17 
+                               NYC= 0., # NYC non utilise si GAMMA_C = 1 sauf pour la variable interne V17
                                MYF=9.0E3,
                                ALPHA_C = 1.,
                                ),);

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 DEBUT(CODE=_F(
-              NIV_PUB_WEB='INTERNET',),PAR_LOT='NON');
+              NIV_PUB_WEB='INTERNET',),);
 
 MA=LIRE_MAILLAGE(FORMAT='MED',);
 
@@ -89,7 +89,7 @@ TEST_RESU(RESU=(_F(RESULTAT=VECAS,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DZ',
                    NOEUD='NO2958',
-                   VALE_CALC=0.000102958231064, 
+                   VALE_CALC=0.000102958231064,
                    VALE_REFE=TREF['DZ',1],
                    PRECISION=1.E-06,
                    REFERENCE='AUTRE_ASTER',),

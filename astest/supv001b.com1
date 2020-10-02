@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 #
-POURSUITE(CODE='OUI', PAR_LOT='OUI')
+POURSUITE(CODE='OUI', )
 
 print('COUCHE INIT = ', COUCHE)
 

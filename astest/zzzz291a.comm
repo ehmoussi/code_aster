@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 import math
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),PAR_LOT='NON',);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),);
 #=======================================================================
 #
 # Ce test purement informatique sert a valider la programmation relative
@@ -373,7 +373,7 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
 # champ DEPL (2D et 3D) : TOUT='OUI'
 TEST_TABLE(
            VALE_CALC=2.4263499999999998,
-           
+
            NOM_PARA='VALE_NORM',
            TABLE=TB3,
            )
@@ -381,7 +381,7 @@ TEST_TABLE(
 # champ DEPL (2D et 3D) : GROUP_MA='CUBE'
 TEST_TABLE(
            VALE_CALC=2.4263499999999998,
-           
+
            NOM_PARA='VALE_NORM',
            TABLE=TB4,
            )
@@ -416,7 +416,7 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
 # apres interpolation aux noeuds
 TEST_TABLE(
            VALE_CALC=2.6616249434387E11,
-           
+
            NOM_PARA='VALE_NORM',
            TABLE=TBA3,
            )
@@ -425,7 +425,7 @@ TEST_TABLE(
 # apres interpolation aux noeuds
 TEST_TABLE(
            VALE_CALC=2.6616249434387E11,
-           
+
            NOM_PARA='VALE_NORM',
            TABLE=TBA4,
            )
@@ -452,7 +452,7 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
 # apres interpolation aux noeuds
 TEST_TABLE(
            VALE_CALC=2.6616249434387E11,
-           
+
            NOM_PARA='VALE_NORM',
            TABLE=TBB3,
            )
@@ -461,7 +461,7 @@ TEST_TABLE(
 # apres interpolation aux noeuds
 TEST_TABLE(
            VALE_CALC=2.6616249434387E11,
-           
+
            NOM_PARA='VALE_NORM',
            TABLE=TBB4,
            )
@@ -470,7 +470,7 @@ TEST_TABLE(
 # apres interpolation aux noeuds
 TEST_TABLE(
            VALE_CALC=2.5926081379162E11,
-           
+
            NOM_PARA='VALE_NORM',
            TABLE=TBB6,
            )

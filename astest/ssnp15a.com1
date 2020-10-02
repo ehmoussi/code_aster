@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 #
-POURSUITE(CODE='OUI', PAR_LOT='NON')
+POURSUITE(CODE='OUI', )
 
 # TEST de l'utilisation des methodes LIST_xxx sur les concepts resultat
 

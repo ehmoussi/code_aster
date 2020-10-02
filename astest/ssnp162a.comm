@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='OUI',DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
 from math import *
 
@@ -90,7 +90,7 @@ IMPR_RESU(FORMAT  = 'GMSH',RESU=_F(MAILLAGE=MA),UNITE=19)
 MO=AFFE_MODELE(
 
                 MAILLAGE=MA,
-                
+
 
                 AFFE= (
                 _F(
@@ -548,7 +548,7 @@ TEST_RESU (
       RESULTAT  = U_2,
       NOM_CHAM  = 'VARI_ELGA',
       NOM_CMP   = 'V9',
-      VALE_REFE = 0.,      
+      VALE_REFE = 0.,
       ORDRE_GRANDEUR=delta_max,
       CRITERE   = 'ABSOLU',
       MAILLE    = 'CUBEDEG',

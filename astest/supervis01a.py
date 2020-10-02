@@ -95,9 +95,9 @@ test.assertSequenceEqual(types, ["IS", "R8"])
 
 kws, types = syntax.getmjm(" ", 0, 99)
 test.assertEqual(len(kws), len(types))
-test.assertEqual(len(kws), 4)
-test.assertSequenceEqual(kws, ["IGNORE_ALARM", "IMPR_MACRO", "INFO", "PAR_LOT"])
-test.assertSequenceEqual(types, ["TX", "TX", "IS", "TX"])
+test.assertEqual(len(kws), 3)
+test.assertSequenceEqual(kws, ["IGNORE_ALARM", "IMPR_MACRO", "INFO"])
+test.assertSequenceEqual(types, ["TX", "TX", "IS"])
 
 rand = syntax.getran()
 test.assertGreaterEqual(rand[0], 0.)

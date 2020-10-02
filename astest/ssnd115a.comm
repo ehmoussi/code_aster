@@ -19,7 +19,7 @@
 
 # person_in_charge: david.haboussa at edf.fr
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='OUI');
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
 
 pilote=''
 #pilote='INTERACTIF'

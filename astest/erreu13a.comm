@@ -21,14 +21,8 @@ from code_aster.Commands import *
 # on souhaite verifier que l'alarme MECANONLINE10_25 a ete emise
 from code_aster.Messages import MessageLog
 
-DEBUT(CODE=_F(
-              NIV_PUB_WEB='INTERNET',
-              ),
-      ERREUR=_F(ERREUR_F='EXCEPTION',),
-      IGNORE_ALARM='SUPERVIS_1',
-      PAR_LOT='NON')
-# ALARME 'SUPERVIS_1' : PAR_LOT='NON' necessaire pour verifier l'emission
-# d'une alarme
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
+      ERREUR=_F(ERREUR_F='EXCEPTION'))
 
 # donnes similaires a hsnv125g
 MA=LIRE_MAILLAGE(FORMAT="ASTER",);

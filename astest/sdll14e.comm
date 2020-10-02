@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 #  - CALCUL DE LA PLUS GRANDE FREQUENCE PROPRE
 #    EN ECHANGEANT A LA MAIN LES ROLES DES MATRICES DE RIGIDITE ET MASSE
 #---------------------------------------------------------------------
-DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'), PAR_LOT='NON',
+DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),
        IGNORE_ALARM=('SUPERVIS_1','ALGELINE3_58'),)
 
 #
@@ -146,7 +146,7 @@ MODE_PG=CALC_MODES(VERI_MODE=_F(STOP_ERREUR='NON',
 
 TA_FREQ = RECU_TABLE( CO=MODE_PG,
                       NOM_PARA='CHAR_CRIT')
-                      
+
 
 FO_FREQ = RECU_FONCTION( TABLE=TA_FREQ,
                          PARA_X='NUME_ORDRE',

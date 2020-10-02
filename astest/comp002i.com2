@@ -24,7 +24,7 @@ from code_aster.MacroCommands.Utils.testcomp_utils import rename_components
 from comp002i import TEST_ECART
 
 
-POURSUITE(PAR_LOT='NON', CODE='OUI')
+POURSUITE(CODE='OUI')
 
 #Discretisation du calcul
 # 10 calculs en tout : changement d'unite, thermique, symetrie, rotation, N1, N5, ... , N3125

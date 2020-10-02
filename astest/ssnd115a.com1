@@ -17,14 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-POURSUITE(CODE='OUI',PAR_LOT='OUI');
+POURSUITE(CODE='OUI',);
 #######################################################################
 
 # definition du trajet de chargement 3D "FRI"  en traction torsion
-        
+
 #######################################################################
 
-# increment d'angle de gamma 
+# increment d'angle de gamma
 deltagamma=15.
 
 # deformations maximum suivant Fatemi
@@ -71,7 +71,7 @@ def epsgamma(deltagamma,nbcycle1,nbcycle2,npas0,pas,eps0,gamma0):
            lt1=[t0+t for t in lt]
            ltime=ltime+lt1
    return lepsxx,lgamma,ltime
-      
+
 
 lepsxx,lgamma,ltime=  epsgamma(deltagamma,nbcycle1,nbcycle2,npas0,pas,eps0,gamma0)
 
@@ -89,8 +89,8 @@ IMPR_FONCTION(FORMAT='XMGRACE',PILOTE=pilote,
               COURBE=(_F(FONCTION=eps_xx,MARQUEUR=0),
                       _F(FONCTION=gamma3,MARQUEUR=0),
                       ),);
-              
-# trace de gamma en fonction de epsxx              
+
+# trace de gamma en fonction de epsxx
 IMPR_FONCTION(FORMAT='XMGRACE',PILOTE=pilote,
               COURBE=(_F(FONC_X=eps_xx,FONC_Y=gamma3,MARQUEUR=0),
                       ),);

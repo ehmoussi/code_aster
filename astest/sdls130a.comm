@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 #
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),)
 
 
 import os
@@ -30,8 +30,8 @@ MAIL=LIRE_MAILLAGE(UNITE=20,FORMAT='MED',
 );
 
 MAIL=DEFI_GROUP(reuse =MAIL,
-                MAILLAGE=MAIL,                                
-                                  
+                MAILLAGE=MAIL,
+
                 CREA_GROUP_NO=(_F(GROUP_MA='L1',
                                   NOM='GAUCHE',),
                                _F(GROUP_MA='L3',
@@ -57,13 +57,13 @@ GRAP_EPO=DEFI_MATERIAU(ELAS_ORTH=_F(E_L=134400E6,
                                    ),
                                    );
 
-                                   
+
 #GRAP_EPO=DEFI_MATERIAU(ELAS=_F(E=134400E6,NU=0.33,
 #                                   RHO = 1477,
 #                                   ),
 #                                   );
-                                   
-nb_cou=8                                 
+
+nb_cou=8
 epais = 1.016E-3
 epcou = epais/nb_cou
 
@@ -77,50 +77,50 @@ CARA=AFFE_CARA_ELEM(MODELE=MOD,
                              ANGL_REP=(0.0,0.0,),),);
 
 
-                             
+
 COMPO=DEFI_COMPOSITE(COUCHE=(
 
                              _F(EPAIS=epcou,
                                MATER=GRAP_EPO,
                                ORIENTATION=90.0,),
-                               
-                             _F(EPAIS=epcou,
-                               MATER=GRAP_EPO,
-                               ORIENTATION=0.0,),           
-                               
-                             _F(EPAIS=epcou,
-                               MATER=GRAP_EPO,
-                               ORIENTATION=90.0,),                           
-                                     
-                               
-                             _F(EPAIS=epcou,
-                               MATER=GRAP_EPO,
-                               ORIENTATION=0.0,),                           
-                               
-                               
 
                              _F(EPAIS=epcou,
                                MATER=GRAP_EPO,
                                ORIENTATION=0.0,),
-                               
+
                              _F(EPAIS=epcou,
                                MATER=GRAP_EPO,
-                               ORIENTATION=90.0,),           
-                               
+                               ORIENTATION=90.0,),
+
+
                              _F(EPAIS=epcou,
                                MATER=GRAP_EPO,
-                               ORIENTATION=0.0,),                           
-                                     
-                               
+                               ORIENTATION=0.0,),
+
+
+
                              _F(EPAIS=epcou,
                                MATER=GRAP_EPO,
-                               ORIENTATION=90.0,), 
-                               
+                               ORIENTATION=0.0,),
+
+                             _F(EPAIS=epcou,
+                               MATER=GRAP_EPO,
+                               ORIENTATION=90.0,),
+
+                             _F(EPAIS=epcou,
+                               MATER=GRAP_EPO,
+                               ORIENTATION=0.0,),
+
+
+                             _F(EPAIS=epcou,
+                               MATER=GRAP_EPO,
+                               ORIENTATION=90.0,),
+
                                ),
-                               
+
                     IMPRESSION=_F(UNITE=8),);
-                     
-                     
+
+
 
 CHAMPMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
                        AFFE=_F(TOUT='OUI',
@@ -137,7 +137,7 @@ CONDLIM=AFFE_CHAR_MECA(MODELE=MOD,
                                     ),
                                     ),);
 
-                                    
+
 
 # ------------------------------------------------------------------
 # MODELISATION
@@ -183,8 +183,8 @@ FREQ1 = CALC_MODES(INFO=1,
                                   PREC_SHIFT=5.E-3,
                                   SEUIL=1.E-02,
                                   STOP_ERREUR='OUI',),
-                     TYPE_RESU='DYNAMIQUE',)   
-                 
+                     TYPE_RESU='DYNAMIQUE',)
+
 
 TEST_RESU(RESU=_F(RESULTAT=FREQ1,REFERENCE='SOURCE_EXTERNE',VALE_REFE=79.81,
                   PRECISION = 0.15, NUME_MODE=1, PARA='FREQ', VALE_CALC= 82.1355860467, ))

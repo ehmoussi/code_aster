@@ -26,7 +26,7 @@ import numpy as NP
 from math import atan
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+DEBUG=_F(SDVERI='OUI'))
 
 import aster
 

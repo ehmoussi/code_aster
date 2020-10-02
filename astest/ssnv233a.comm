@@ -31,7 +31,6 @@ from code_aster.MacroCommands.Utils.veri_matr_tang import VERI_MATR_TANG
 #                                                      ------------
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      PAR_LOT='OUI',
       DEBUG=_F(SDVERI='OUI'))
 #
 # REMARQUE IMPORTANTE:

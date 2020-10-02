@@ -101,6 +101,15 @@ class Starter(ExecuteCommand):
     command_name = "DEBUT"
     restart = False
 
+    def adapt_syntax(self, keywords):
+        """Adapt keywords.
+
+        Arguments:
+            keywords (dict): User's keywords, changed in place.
+        """
+        # silently ignored
+        keywords.pop("PAR_LOT", None)
+
     @classmethod
     def run(cls, **keywords):
         """Run the Command.

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 # REPRISE DU CAS TEST SSLS139a AVEC PASSAGE DE LA MEMBRANE EN NON LINEAIRE
 # COMPARAISON DES RESULTATS ENTRE MECA_STATIQUE ET STAT_NON_LINE
 #
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'), PAR_LOT='OUI')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'), )
 #
 # -------------------------------------------------
 # MISE EN DONNEES
@@ -202,7 +202,7 @@ RESU2 = CALC_CHAMP(RESULTAT    = RESU2,
 # TESTS SUR LES RESULTATS
 # ----------------------------------------------
 
-# Deplacements et contraintes de la membrane 
+# Deplacements et contraintes de la membrane
 # Comparaison entre non linéaire et linéaire (non régression sur non linéaire)
 TEST_RESU(RESU=(_F(LEGENDE='Depl point 1',
                    NUME_ORDRE=1,

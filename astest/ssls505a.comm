@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 #
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),PAR_LOT='NON');
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),);
 
 Mail=LIRE_MAILLAGE(FORMAT="ASTER",);
 
@@ -53,7 +53,7 @@ Alu=DEFI_MATERIAU(ELAS_ORTH=_F(E_L=E,
                                ALPHA_L=l1,
                                ALPHA_T=l2,
                                ALPHA_N=l3,),);
-                               
+
 
 Char=AFFE_CHAR_MECA(MODELE=Mod,
                     DDL_IMPO=(_F(NOEUD=('N1', 'N2', 'N3', 'N4',), DZ=0,),

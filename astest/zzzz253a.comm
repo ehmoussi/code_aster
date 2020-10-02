@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),PAR_LOT='OUI')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),)
 #===============================================================================================================
 #
 # La structure est un barreau de longueur 10.
@@ -230,7 +230,7 @@ FIN()
 
 
 #===============================================================================================================
-# Post-traitement graphique pour visualiser l'erreur de projection (en mode PAR_LOT='NON') :
+# Post-traitement graphique pour visualiser l'erreur de projection (en mode ) :
 # -------------------------------------------------------------------------------------------
 if 0 :
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -137,10 +137,7 @@ def LIST_CARA_CIRCONF(GROUP_MA,VECT_2,MAILLAGE,**args):
 # ==================================================================================================
 
 
-# ATTENTION : PAR_LOT='NON' est necessaire car ce test
-# utilise des commandes Python
-DEBUT(CODE=_F(
-NIV_PUB_WEB='INTERNET',),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 #
 
 MATER=DEFI_MATERIAU(ELAS=_F(E=200000.0,
@@ -164,7 +161,7 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MAILL,
                             MATER=MATER,),);
 
 MODEL=AFFE_MODELE(MAILLAGE=MAILL,
-                  
+
                   AFFE=(_F(GROUP_MA='PLAQUE',
                            PHENOMENE='MECANIQUE',
                            MODELISATION='DKT',),

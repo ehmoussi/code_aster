@@ -55,18 +55,18 @@ K3       =   1.E5  #[N/m]
 om       = 2.*pi*freq
 #################################################
 
-DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'), PAR_LOT='NON')
+DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'), )
 
 MESH     = LIRE_MAILLAGE (FORMAT="ASTER")
 
 MODEL    = AFFE_MODELE   (MAILLAGE = MESH,
-                          AFFE     = _F(TOUT         = 'OUI', 
+                          AFFE     = _F(TOUT         = 'OUI',
                                         PHENOMENE    = 'MECANIQUE',
                                         MODELISATION = 'DIS_T'))
 
 ELEM_CH  = AFFE_CARA_ELEM(MODELE  = MODEL,
                           DISCRET = (_F(GROUP_MA = 'CENTER',
-                                        CARA     = 'M_T_D_N', 
+                                        CARA     = 'M_T_D_N',
                                         VALE     = (M_center)),
                                      _F(GROUP_MA = 'LEFT',
                                         CARA     = 'M_T_D_N',
@@ -75,25 +75,25 @@ ELEM_CH  = AFFE_CARA_ELEM(MODELE  = MODEL,
                                         CARA     = 'M_T_D_N',
                                         VALE     =  M_right),
                                      _F(GROUP_MA = 'OUTER',
-                                        CARA     = 'K_T_D_L', 
+                                        CARA     = 'K_T_D_L',
                                         VALE     = (K1, 0., 0.)),
                                      _F(GROUP_MA = 'DUMMY',
-                                        CARA     = 'M_T_D_L', 
+                                        CARA     = 'M_T_D_L',
                                         VALE     = (0.)),
                                      _F(GROUP_MA = 'DUMMY',
-                                        CARA     = 'K_T_D_L', 
+                                        CARA     = 'K_T_D_L',
                                         VALE     = (K2, 0., 0.)),
                                      _F(GROUP_MA = 'DUMMY',
-                                        CARA     = 'M_T_D_L', 
+                                        CARA     = 'M_T_D_L',
                                         VALE     = (0.))))
 
 COND_2D  = AFFE_CHAR_MECA(MODELE   = MODEL,
                           DDL_IMPO = (_F(TOUT     = 'OUI',
-                                         DY       = 0.,  
+                                         DY       = 0.,
                                          DZ       = 0.)))
 
 BND_COND = AFFE_CHAR_MECA(MODELE   = MODEL,
-                          DDL_IMPO = (_F(GROUP_NO = 'BOUND',  
+                          DDL_IMPO = (_F(GROUP_NO = 'BOUND',
                                          DX       = 0.)))
 
 ##########################################################
@@ -121,7 +121,7 @@ FX_TFUNC = CALC_FONC_INTERP(FONCTION  = SINE_FOR,
 
 FX_REL   = DEFI_FONCTION(NOM_RESU = 'FORC',
                          NOM_PARA = 'DX', PROL_GAUCHE='LINEAIRE',  PROL_DROITE='LINEAIRE',
-                         VALE     = ( 0. ,  0., 
+                         VALE     = ( 0. ,  0.,
                                       1. , -K3))
 
 DYN_LIN = DYNA_LINE(TYPE_CALCUL   = 'TRAN',
@@ -156,7 +156,7 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC  = -1.203031272384,
                          VALE_PARA  = 0.5,
                          FONCTION   = FX_RELA3)))
 
-IMPR_FONCTION(FORMAT='XMGRACE', 
+IMPR_FONCTION(FORMAT='XMGRACE',
               # PILOTE='INTERACTIF',
               COURBE=(_F(FONCTION=FX_RELA3)))
 
@@ -190,7 +190,7 @@ DYN_LINA = DYNA_LINE(TYPE_CALCUL   = 'TRAN',
                                        NOM_CMP     = 'DX')),
                     ARCHIVAGE     = _F(PAS_ARCH = 10000),
                     )
-                    
+
 FX_RELAA  = RECU_FONCTION(RESU_GENE=INTEGR3A, GROUP_NO_CHOC='CENTER', INTITULE='N03     DX      0000000c', PARA_X='INST', PARA_Y='VINT2')
 
 TEST_FONCTION(VALEUR=(_F(VALE_CALC  = -1.203031272384,
@@ -205,10 +205,10 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC  = -1.203031272384,
 #
 ELEM_CH2 = AFFE_CARA_ELEM(MODELE  = MODEL,
                           DISCRET = (_F(GROUP_MA = 'CENTER',
-                                        CARA     = 'M_T_D_N', 
+                                        CARA     = 'M_T_D_N',
                                         VALE     = (M_center)),
                                      _F(GROUP_MA = 'CENTER',  # This is equivalent to the FX relationship used previously
-                                        CARA     = 'K_T_D_N', 
+                                        CARA     = 'K_T_D_N',
                                         VALE     = (K3, 0., 0.)),
                                      _F(GROUP_MA = 'LEFT',
                                         CARA     = 'M_T_D_N',
@@ -217,16 +217,16 @@ ELEM_CH2 = AFFE_CARA_ELEM(MODELE  = MODEL,
                                         CARA     = 'M_T_D_N',
                                         VALE     =  M_right),
                                      _F(GROUP_MA = 'OUTER',
-                                        CARA     = 'K_T_D_L', 
+                                        CARA     = 'K_T_D_L',
                                         VALE     = (K1, 0., 0.)),
                                      _F(GROUP_MA = 'DUMMY',
-                                        CARA     = 'M_T_D_L', 
+                                        CARA     = 'M_T_D_L',
                                         VALE     = (0.)),
                                      _F(GROUP_MA = 'DUMMY',
-                                        CARA     = 'K_T_D_L', 
+                                        CARA     = 'K_T_D_L',
                                         VALE     = (K2, 0., 0.)),
                                      _F(GROUP_MA = 'DUMMY',
-                                        CARA     = 'M_T_D_L', 
+                                        CARA     = 'M_T_D_L',
                                         VALE     = (0.))))
 
 K_ELEM2  = CALC_MATR_ELEM(MODELE    = MODEL,
@@ -288,7 +288,7 @@ INTEGR2  = DYNA_VIBRA    (TYPE_CALCUL   =  'TRAN',
 DX_CENT  = RECU_FONCTION(RESU_GENE=INTEGR3A, GROUP_NO     ='CENTER', NOM_CHAM='DEPL', NOM_CMP='DX')
 DX_CENT2 = RECU_FONCTION(RESU_GENE=INTEGR2, GROUP_NO     ='CENTER', NOM_CHAM='DEPL', NOM_CMP='DX')
 
-IMPR_FONCTION(FORMAT='XMGRACE', 
+IMPR_FONCTION(FORMAT='XMGRACE',
               # PILOTE='INTERACTIF',
               COURBE=(_F(FONCTION=DX_CENT), _F(FONCTION=DX_CENT2)))
 

@@ -25,7 +25,6 @@
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
               ),
-              PAR_LOT='OUI',
               DEBUG=_F(SDVERI='OUI'),);
 
 import numpy as NP

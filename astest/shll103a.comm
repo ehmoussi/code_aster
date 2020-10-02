@@ -23,7 +23,7 @@
 import numpy as NP
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      DEBUG=_F(SDVERI='OUI'),PAR_LOT='OUI',);
+      DEBUG=_F(SDVERI='OUI'),);
 
 mail=LIRE_MAILLAGE(FORMAT="ASTER",);
 

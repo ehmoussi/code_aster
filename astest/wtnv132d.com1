@@ -31,7 +31,7 @@ T0 =1.
 
 from numpy import array
 
-POURSUITE(CODE='OUI',PAR_LOT='NON')
+POURSUITE(CODE='OUI',)
 
 #       ---------------
 # FIN-  Post-traitement
@@ -174,15 +174,15 @@ for n in range(n_pas_temps):
   IMPR_FONCTION(FORMAT ='TABLEAU',
                 UNITE  =8,
                 COURBE =_F(FONCTION=tass[n]));
-                
-                
+
+
   absc =def_courbe['ABSCISSE']
   ordo =def_courbe['ORDONNEE']
-  
+
   impr ='# TASSEMENT NO %d \n\n'
   file.write(impr %(n));
-  
-  
+
+
   impr =' %16.12e'*(2)+'\n'
   for i,z in enumerate(ordo):
     file.write(impr %(z,absc[i]));

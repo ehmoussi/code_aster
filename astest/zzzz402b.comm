@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,53 +17,53 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(PAR_LOT='NON', CODE=_F(NIV_PUB_WEB='INTERNET',),);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
 
 from numpy import array,shape,reshape,real
 from cmath import *
 
 #
 # --------
-# RECALAGE DES VALEURS D'AMORTISSEMENT DE RAYLEIGH 
+# RECALAGE DES VALEURS D'AMORTISSEMENT DE RAYLEIGH
 # PAR RAPPORT A L'AMORTISSEMENT REDUIT
 # ========================================================
 def recal_rayleigh(amor_reduit, f1, f2,):
   """
   Calcule les coefficients d''amortissement de Rayleigh ALPHA et BETA
   a partir des hypotheses suivantes:
-  
+
   + 2*amor_reduit = 1/(w2-w1) * integral(w1,w2){alpha*w+beta/w}
-  
+
   + alpha*w1+beta/w1 = alpha*w2+beta/w2
-  
+
   avec w = 2*pi*f
-  
+
   DONNEES D''ENTREE:
   -----------------
   * amortissement reduit
   * la plage de frequences [f1, f2]
-  
+
   """
 
   from numpy import linalg
   from math  import log, pi
-  
+
   w1,w2, = 2.*pi*f1,2.*pi*f2,
-  
+
   T = [[.5*(w1+w2), log(w2/w1)/(w2-w1),],
        [w1-w2     , 1./w1-1./w2       ,],]
   V = [2.*amor_reduit,0.,]
-  
+
   coef =linalg.solve(T,V); # list
-  
+
   return tuple(coef);
-  
+
 
 MA = LIRE_MAILLAGE(FORMAT = 'MED',);
-                                
+
 MA = DEFI_GROUP(reuse=MA, MAILLAGE=MA, CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',),);
-                                
-                                                                                
+
+
 # Orientation des mailles surfaciques
 MA = MODI_MAILLAGE(reuse        = MA,
                    MAILLAGE     = MA,
@@ -92,9 +92,9 @@ MODYN = AFFE_MODELE(MAILLAGE = MA,
                     VERI_JACOBIEN = 'NON',);
 
 #================================================================================
-#     MATERIAUX 
+#     MATERIAUX
 #================================================================================
-# ROCHER 
+# ROCHER
 YOUNG_1 =50000.E06 ;
 NU_1    =0.48 ;
 
@@ -105,8 +105,8 @@ alpha,beta, = recal_rayleigh(amor_reduit, f1, f2,);
 
 #############################################
 ROCHER= DEFI_MATERIAU (ELAS=_F(E=YOUNG_1,NU=NU_1,RHO =RHO_1,
-                              AMOR_ALPHA = alpha, #AMOR RAYLEIGH  
-                              AMOR_BETA  = beta,    
+                              AMOR_ALPHA = alpha, #AMOR RAYLEIGH
+                              AMOR_BETA  = beta,
                               ALPHA=0.,
 ),)
 
@@ -119,8 +119,8 @@ GamRef_2 = GammaRef
 n_2 = n_iwan
 
 BARRAGE= DEFI_MATERIAU (ELAS=_F(E=YOUNG_2,NU=NU_2,RHO =RHO_2,
-                              AMOR_ALPHA = alpha, #AMOR RAYLEIGH  
-                              AMOR_BETA  = beta,    
+                              AMOR_ALPHA = alpha, #AMOR RAYLEIGH
+                              AMOR_BETA  = beta,
                               ALPHA=0.,
 ),
                         Iwan=_F(YoungModulus = YOUNG_2,
@@ -136,9 +136,9 @@ Tout = ('Fondation','BAS','DRO','GAU','ENR','ENRW','ENROC','ENROCW','TRANS','TRA
 
 MATDYN=AFFE_MATERIAU(INFO=1,MAILLAGE=MA,
                            AFFE = affe_materiau);
-                      
-### ===============================================================  
-###                    
+
+### ===============================================================
+###
 ###                  Calcul DYNAMIQUE
 ###
 ### ===============================================================
@@ -183,7 +183,7 @@ ONDELATE=AFFE_CHAR_MECA_F(MODELE      =MODYN,
 
 TEMPS=DEFI_LIST_REEL(DEBUT=0.,
                 INTERVALLE=_F(JUSQU_A=1.0, PAS=0.01,),);
-             
+
 DEFLIST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =TEMPS,),
 #                                  METHODE='MANUEL', ),
                    ECHEC=_F(SUBD_METHODE='MANUEL',
@@ -221,7 +221,7 @@ CHA_ON=CREA_RESU(OPERATION='CONV_CHAR',
 CHA_ON2=CREA_RESU(OPERATION='CONV_RESU',
                   TYPE_RESU='EVOL_CHAR',
                   CONV_RESU=_F(
-                          MATR_RIGI=MATRRIGI, 
+                          MATR_RIGI=MATRRIGI,
                           NOM_CHAM_INIT='DEPL',
                           COEF=1.0,
                           PRECISION=1.E-6,CRITERE='RELATIF',

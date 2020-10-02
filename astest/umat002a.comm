@@ -28,7 +28,7 @@
 import os
 from run_aster.toolbox import make_shared
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',), PAR_LOT='OUI', IMPR_MACRO='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),  IMPR_MACRO='NON')
 
 make_shared("libumat1.so", "umat001a.f")
 make_shared("libumat2.so", "umat002a.f")

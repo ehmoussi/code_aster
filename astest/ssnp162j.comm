@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='OUI')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),)
 
 from math import *
 
@@ -56,7 +56,7 @@ sigma_min = sigma_max/3.
 # PARAMETRE DE L'INCLINAISON DE JOINT (NE PAS MODIFIER, LIE AU MAILLAGE)
 angle=30./180*pi
 L_cube=1.
-# FLUX_MIN (FLUX DU JOINT FERME) 
+# FLUX_MIN (FLUX DU JOINT FERME)
 # flux_min = rho_fluide/12/visc_fluide*ouv_min**3*grad(p)
 flux_min =  rho_fluide/12/visc_fluide*ouv_min**3*press/L_cube
 # FLUX_MAX (JOINT_OUVERT)
@@ -99,7 +99,7 @@ MA=MODI_MAILLAGE(reuse =MA,
 MO=AFFE_MODELE(
 
                 MAILLAGE=MA,
-                
+
 
                 AFFE= (
                 _F(
@@ -377,7 +377,7 @@ TEST_RESU (
       RESULTAT  = U_F,
       NOM_CHAM  = 'VARI_NOEU',
       NOM_CMP   = 'V15',
-      VALE_CALC = -0.076219051747, 
+      VALE_CALC = -0.076219051747,
       NOEUD     = 'NS7',
       INST      = linst[2],
       ),
@@ -618,7 +618,7 @@ TEST_RESU (
       RESULTAT  = U_2,
       NOM_CHAM  = 'VARI_NOEU',
       NOM_CMP   = 'V15',
-      VALE_CALC = 5.95238E-27, 
+      VALE_CALC = 5.95238E-27,
       NOEUD     = 'NS5',
       INST      = insfin,
       ),

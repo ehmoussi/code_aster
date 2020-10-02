@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'), PAR_LOT='NON',
-      # SUPERVIS_1 : a cause de PAR_LOT='NON' necessaire pour recuperer la valeur de reference.
-      IGNORE_ALARM=('SUPERVIS_1'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 MATER=DEFI_MATERIAU(ELAS=_F(E=200000.0,
                             NU=0.0,),);
@@ -61,7 +59,7 @@ TN1=POST_RELEVE_T(  ACTION=_F(  INTITULE = 'XX1', GROUP_NO = 'B', OPERATION = 'E
 DXREF=TN1['DX',1]
 DYREF=TN1['DY',1]
 
-# CALCUL AVEC ELIMINATION DES LAGRANGES 
+# CALCUL AVEC ELIMINATION DES LAGRANGES
 
 MES1=MECA_STATIQUE(MODELE=MOD1,
                    CHAM_MATER=CHMAT_2D,
@@ -72,10 +70,10 @@ MES1=MECA_STATIQUE(MODELE=MOD1,
 #                  NOM_CHAM='DEPL',
 #                  GROUP_NO=('B',),),);
 
-# TESTS 
-                  
+# TESTS
+
 TEST_RESU(RESU=_F(NUME_ORDRE=1, GROUP_NO='B', RESULTAT=MES1,  NOM_CHAM='DEPL', NOM_CMP='DX',
-                                  REFERENCE='AUTRE_ASTER', VALE_REFE=DXREF, VALE_CALC= -8.53964377759386E-01,)) 
+                                  REFERENCE='AUTRE_ASTER', VALE_REFE=DXREF, VALE_CALC= -8.53964377759386E-01,))
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1, GROUP_NO='B', RESULTAT=MES1,  NOM_CHAM='DEPL', NOM_CMP='DY',
                                   REFERENCE='AUTRE_ASTER', VALE_REFE=DYREF , VALE_CALC = 2.16974908826082E+00,))

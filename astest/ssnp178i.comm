@@ -24,7 +24,7 @@
 #                       MEMBRANE DE COOK                               #
 ########################################################################
 
-DEBUT(PAR_LOT='OUI', CODE=_F(NIV_PUB_WEB='INTERNET'),
+DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),
       DEBUG=_F(SDVERI='OUI'))
 
 

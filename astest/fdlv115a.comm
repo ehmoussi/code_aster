@@ -20,7 +20,7 @@
 from code_aster.Commands import *
 from code_aster.MacroCommands.Contrib.calc_matr_ifs import CALC_MATR_IFS
 
-DEBUT(PAR_LOT='OUI',CODE=_F(NIV_PUB_WEB='INTERNET'),);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),);
 
 # --------------------------------
 # Donnees physiques des parametres

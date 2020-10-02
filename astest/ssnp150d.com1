@@ -277,7 +277,6 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
 
 POURSUITE(CODE='OUI',
       DEBUG=_F(SDVERI='OUI'),
-      PAR_LOT='NON',
       IGNORE_ALARM = ( 'SUPERVIS_1','MODELE1_63'),
       )
 
@@ -556,11 +555,11 @@ DETRUIRE(CONCEPT=(_F(NOM=modl,),
                   _F(NOM=dicResu['DIFFPG']),
                   _F(NOM=RAMPE),
                   _F(NOM=LINST),
-                  _F(NOM=acier),  
+                  _F(NOM=acier),
                   ),
            INFO=1,);
 for n in range(0,Nb_Raffinement):
-    
+
     DETRUIRE(CONCEPT=(_F(NOM=MA0[n],),
                       _F(NOM=MA[n]),
                       ),

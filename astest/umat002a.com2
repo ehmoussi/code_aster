@@ -21,7 +21,7 @@ from code_aster.Commands import *
 from code_aster.MacroCommands.Utils.veri_matr_tang import VERI_MATR_TANG
 from comp002i import TEST_ECART
 
-POURSUITE(PAR_LOT='NON', CODE='OUI')
+POURSUITE(CODE='OUI')
 
 ch_param=['V1','VMIS','TRACE','SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ']
 

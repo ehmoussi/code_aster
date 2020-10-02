@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 # UTILISATION : COMPARAISON DE LA SIMULATION NUMERIQUE D'UN ASSEMBLAGE
 #               COMBUSTIBLE EN FLEXION AVEC LES RESULTATS EXPERIMENTAUX
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='NON',PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='NON',)
 
 tabn = LIRE_TABLE(UNITE      = 38,
                   FORMAT     = 'LIBRE',
@@ -52,8 +52,8 @@ FLEX_DCH = LIRE_FONCTION(UNITE=22,
                     NOM_PARA='DX',
                     PROL_DROITE='CONSTANT',
                     PROL_GAUCHE = 'CONSTANT',);
-# 
-# 
+#
+#
 FLEX=CALC_CHAMP(reuse =FLEX,
              RESULTAT=FLEX,
              FORCE=('FORC_NODA',),)
@@ -64,8 +64,8 @@ POST1=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                         NOM_CHAM ='DEPL',
                         NOM_CMP = 'DY',
                         GROUP_NO='P_A_A_6',),)
-                        
-                        
+
+
 
 DEPLF=RECU_FONCTION(TABLE=POST1,PARA_X='INST',PARA_Y='DY',)
 
@@ -77,10 +77,10 @@ POST2=POST_RELEVE_T(
              RESULTANTE=('DX','DY','DZ'),
              REPERE='GLOBAL',
              OPERATION='EXTRACTION',),)
-             
-             
+
+
 FORCF=RECU_FONCTION(TABLE=POST2,PARA_X='INST',PARA_Y='DY',)
-# 
+#
 # #l'activation des commandes suivantes permet
 # #de tracer la courbe force-deplacement
 IMPR_FONCTION(FORMAT='XMGRACE',UNITE=29,
@@ -90,7 +90,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',UNITE=29,
                       ),
               BORNE_X=(0.,0.022),BORNE_Y=(0.,1150.),ECHELLE_X='LIN',ECHELLE_Y='LIN',GRILLE_X=0.002,GRILLE_Y=200.,LEGENDE_X='DY(m)',LEGENDE_Y='effort (N)',
               TITRE='Recalage essai de flexion AFA3GLRAA_1300',)
-# 
+#
 
 TEST_TABLE(CRITERE='RELATIF',REFERENCE='SOURCE_EXTERNE',PRECISION=0.175,VALE_CALC=0.00311000404312,  VALE_REFE=0.00303831016996,NOM_PARA='DY',TABLE=POST1,FILTRE=_F(NOM_PARA='INST',VALE=0.0026,),)
 TEST_TABLE(CRITERE='RELATIF',REFERENCE='SOURCE_EXTERNE',PRECISION=0.175,VALE_CALC=0.00515647263904,  VALE_REFE=0.0046027502761 ,NOM_PARA='DY',TABLE=POST1,FILTRE=_F(NOM_PARA='INST',VALE=0.0028,),)

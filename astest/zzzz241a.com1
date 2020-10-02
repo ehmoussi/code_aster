@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 #
 import numpy as NP
 
-POURSUITE(CODE='OUI', PAR_LOT='NON')
+POURSUITE(CODE='OUI', )
 
 REF=FRF_REF.convert('complex');
 H1=FRF_H1_i.convert('complex');
@@ -43,9 +43,9 @@ d_ref_H1=NP.sum(NP.divide(n_ref_H1,(n_ref)))/len(n_ref)*100;
 d_ref_H2=NP.sum(NP.divide(n_ref_H2,(n_ref)))/len(n_ref)*100;
 d_ref_IM=NP.sum(NP.divide(n_ref_IM,(n_ref)))/len(n_ref)*100;
 
-#-- On estime la variance de l'effort a partir de l'autospectre. 
+#-- On estime la variance de l'effort a partir de l'autospectre.
 #-- Elle doit valoir 1/3, ce qui correspond a la variance du bruit uniforme
-#-- sur l'intervalle[-1 1] 
+#-- sur l'intervalle[-1 1]
 #-- sur l'intervalle [a,b], on a var=(b-a)^2/12
 #-- le facteur 2 est la puisqu'on ne conserve que la moitie de l'autospectre
 

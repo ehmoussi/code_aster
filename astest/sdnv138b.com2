@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-POURSUITE (CODE='OUI',PAR_LOT='OUI',DEBUG=_F(SDVERI='OUI'))
+POURSUITE (CODE='OUI',DEBUG=_F(SDVERI='OUI'))
 
 
 DEP=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
@@ -90,8 +90,8 @@ f_flud = FORMULE(NOM_PARA=('X','Y'),
 MAT_JFD=DEFI_MATERIAU(
                   JOINT_MECA_FROT=_F(K_N=k_n,
                                      K_T=k_t,
-                                     AMOR_NOR=1.e-3*k_n, AMOR_TAN=1.e-3*k_t, 
-                                     #AMOR_NOR=5.e-4*k_n, AMOR_TAN=5.e-4*k_t, 
+                                     AMOR_NOR=1.e-3*k_n, AMOR_TAN=1.e-3*k_t,
+                                     #AMOR_NOR=5.e-4*k_n, AMOR_TAN=5.e-4*k_t,
                                      ##COEF_AMOR=0.0, #0.01,
                                      PENA_TANG=ecrouissage,
                                      MU=mu,
@@ -118,7 +118,7 @@ ACCB=CALC_FONCTION(LIST_PARA=L_COMBI,
 
 ACCF=FORMULE(NOM_PARA='INST',ACCB=ACCB,
              VALE='ACCB(INST+3.01)')
-            
+
 ACCELE0=CALC_FONC_INTERP(FONCTION=ACCF, NOM_PARA = 'INST',
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',

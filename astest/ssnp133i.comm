@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT = 'OUI')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',))
 
 # NB DE PAS DE TEMPS DE CALCUL ET NOMBRE DE PAS DE TEMPS ARCHIVE
 tfin=149
@@ -112,7 +112,7 @@ CTXFEM = DEFI_CONTACT(
             FROTTEMENT     = 'SANS',#ELIM_ARETE     = 'ELIM',
             ZONE=(
                   _F(INTEGRATION='GAUSS',
-                     ORDRE_INT=3,                                   
+                     ORDRE_INT=3,
                      ALGO_CONT='CZM',
                      FISS_MAIT = FISS,
                      RELATION='CZM_OUV_MIX',

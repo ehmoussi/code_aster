@@ -19,7 +19,7 @@
 
 # person_in_charge: david.haboussa at edf.fr
 
-POURSUITE(CODE='OUI',PAR_LOT='OUI');
+POURSUITE(CODE='OUI',);
 
 #Discretisation du calcul
 Ncal = ncal

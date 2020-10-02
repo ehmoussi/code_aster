@@ -21,19 +21,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-    1 : _("""
- L'utilisation du mot-clé PAR_LOT='NON' permet d'accéder en lecture et en écriture
- au contenu des concepts Aster. De ce fait, votre étude est exclue du périmètre
- qualifié de Code_Aster puisque toutes ses étapes ne peuvent être certifiées.
-
- Conseils :
-   - Il n'y a pas particulièrement de risque de résultat faux... sauf si votre
-     programmation l'introduit.
-   - Distinguez le calcul lui-même (qui doit sans doute passer en PAR_LOT='OUI')
-     des post-traitements (qui nécessiteraient le mode PAR_LOT='NON') qui peuvent
-     être réalisés en POURSUITE.
-"""),
-
     2 : _("""
 Les commandes DEBUT et POURSUITE doivent être appelées une fois et une seule.
 """),

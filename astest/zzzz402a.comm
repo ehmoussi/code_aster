@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(PAR_LOT='NON', CODE=_F(NIV_PUB_WEB='INTERNET',),)
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),)
 
 from numpy import array,shape,reshape,real
 from cmath import *

@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 POURSUITE(CODE='OUI',
-          PAR_LOT='OUI',
           DEBUG=_F(SDVERI='OUI'),)
 
 #MA1=LIRE_MAILLAGE(UNITE=22);

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,9 +31,9 @@ poisson = 0.3
 relation = 'ELAS_MEMBRANE_SV'
 
 ## Pression suiveuse
-#Pression finale 
+#Pression finale
 pressfinale = -0.025
-# Nombre de pas de temps 
+# Nombre de pas de temps
 nbPasPress = 2
 
 # --------------------------------------------------------------------------- #
@@ -41,8 +41,7 @@ nbPasPress = 2
 # --------------------------------------------------------------------------- #
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      DEBUG=_F(SDVERI='OUI',),
-      PAR_LOT='OUI',);
+      DEBUG=_F(SDVERI='OUI',),);
 
 MAIL=LIRE_MAILLAGE(FORMAT='MED',);
 

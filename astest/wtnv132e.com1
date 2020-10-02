@@ -31,7 +31,7 @@ T0 =1.
 
 from numpy import array
 
-POURSUITE(CODE='OUI',PAR_LOT='NON')
+POURSUITE(CODE='OUI',)
 
 #       ---------------
 # FIN-  Post-traitement

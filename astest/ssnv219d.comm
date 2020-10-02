@@ -31,7 +31,6 @@ except ImportError:
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI'),
-      PAR_LOT='NON',
       IGNORE_ALARM=('MODELE1_63','SUPERVIS_1'))
 
 #================================================================================================
@@ -41,4 +40,3 @@ E=1;
 NU=0.15;
 
 FIN()
-

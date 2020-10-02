@@ -19,7 +19,7 @@
 
 # person_in_charge: pierre.badel at edf.fr
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='OUI',PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='OUI',)
 
 DAMAC1=LIRE_TABLE(UNITE=38,
                   SEPARATEUR = '\t'
@@ -31,9 +31,9 @@ MA1=LIRE_MAILLAGE(FORMAT='MED',UNITE=20);
 
 RESU_C1D = CALC_MAC3COEUR(TYPE_COEUR  = 'TEST',
                           TABLE_N     =  DAMAC1,
-                          MAILLAGE_N  =  MA1, 
+                          MAILLAGE_N  =  MA1,
                           ETAT_INITIAL = _F(
-                                           UNITE_THYC   = 32, 
+                                           UNITE_THYC   = 32,
                                            NIVE_FLUENCE = 33))
 
 
@@ -46,10 +46,10 @@ TAB_C1D = CREA_TABLE(RESU=_F(RESULTAT=RESU_C1D,
 
 RESU_C2D = CALC_MAC3COEUR(TYPE_COEUR  = 'TEST',
                           TABLE_N     =  DAMAC1,
-                          MAILLAGE_N  =  MA1, 
+                          MAILLAGE_N  =  MA1,
                           ETAT_INITIAL = _F(
                               MAINTIEN_GRILLE='OUI',
-                              UNITE_THYC   = 32, 
+                              UNITE_THYC   = 32,
                               NIVE_FLUENCE = 33))
 
 TAB_C2D = CREA_TABLE(RESU=_F(RESULTAT=RESU_C2D,

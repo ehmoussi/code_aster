@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 # CAS_TEST__:SDND120A
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'), PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'), )
 
 #
 MAILLAG0=LIRE_MAILLAGE(FORMAT="ASTER", )
@@ -201,7 +201,7 @@ TRAN_GE1=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO11',
                        VITE = VITESSE2,  DEPL = DEPLACE2)),
                     ARCHIVAGE=_F(  PAS_ARCH = 80),
-                    COMPORTEMENT=_F(RELATION='ANTI_SISM',  
+                    COMPORTEMENT=_F(RELATION='ANTI_SISM',
                             NOEUD_1 = 'NO2',
                             NOEUD_2 = 'NO12',
                             RIGI_K1 = 6.E+06,
@@ -231,7 +231,7 @@ TRAN_GE2=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO11',
                        VITE = VITESSE2,  DEPL = DEPLACE2)),
                     ARCHIVAGE=_F(  PAS_ARCH = 80),
-                    COMPORTEMENT=_F(RELATION='ANTI_SISM', 
+                    COMPORTEMENT=_F(RELATION='ANTI_SISM',
                             GROUP_NO_1 = 'GROUP_NO_GN2',
                             GROUP_NO_2 = 'GROUP_NO_GN12',
                             RIGI_K1 = 6.E+06,

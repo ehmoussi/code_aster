@@ -26,8 +26,7 @@ DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
               ),
       ERREUR=_F(ERREUR_F='EXCEPTION'),
-PAR_LOT='NON',IGNORE_ALARM='SUPERVIS_1',DEBUG=_F(SDVERI='OUI'))
-# ALARME 'SUPERVIS_1' : PAR_LOT necessaire pour intercepter l'exception
+      DEBUG=_F(SDVERI='OUI'))
 
 
 # fonctions valides sur l'intervalle t=[0 C, 5 C]

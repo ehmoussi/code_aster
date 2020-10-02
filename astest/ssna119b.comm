@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -270,7 +270,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
           )
 
 ################## IMPRESSION DANS LE FICHIER (visualisation avec xmgrace)########
-## visu xmgrace possible avec  DEBUT(PAR_LOT='NON'); seulement
+## visu xmgrace possible avec  DEBUT(); seulement
 ##################################################################################
 
 ## nom du fichier ou on imprime les resultats

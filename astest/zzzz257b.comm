@@ -32,8 +32,7 @@ from code_aster.Messages import MessageLog
 
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',),
-      DEBUG=_F(SDVERI='OUI',), PAR_LOT='NON');
-# PAR_LOT='NON' pour pouvoir tester l'emission d'une alarme importante
+      DEBUG=_F(SDVERI='OUI',), );
 
 
 #####################################

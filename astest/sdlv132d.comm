@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# MODELISATION D : 
+# MODELISATION D :
 # CALCUL SANS SOUS-STRUCTURATION
 # PALIERS NON SYMETRIQUES
 # EFFET GYROSCOPIQUE
@@ -25,7 +25,6 @@
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
               ),
-              PAR_LOT='OUI',
               DEBUG=_F(SDVERI='OUI'),);
 
 import numpy as NP
@@ -284,7 +283,7 @@ for i, nbTour in enumerate(tours):
                                       _F(GROUP_MA='MASSIF',
                                          SECTION='CERCLE',
                                          CARA=('R',),
-                                         VALE=(0.4,),                   ),      
+                                         VALE=(0.4,),                   ),
                                       ),
 
                               DISCRET=(_F(CARA='K_TR_L',
@@ -343,7 +342,7 @@ for i, nbTour in enumerate(tours):
                                                 0,0,0,0,0,0,0,0,0,0,0,0
                                                 ),
                                           ),
-                
+
                                        _F(CARA='K_TR_L',
                                           MAILLE='SP2',
                                           SYME='NON',
@@ -402,12 +401,12 @@ for i, nbTour in enumerate(tours):
                                           ),
 
 # Palier de torsion
-        
+
 # Butée
-                                        
+
 # Supports simplifiés
 
-                                      ),                                        
+                                      ),
                               );
 
 
@@ -427,12 +426,12 @@ BCR=AFFE_CHAR_MECA(MODELE=MODELE,
                                 DZ=0.0,
                                 DRX=0.0,
                                 DRY=0.0,
-                                DRZ=0.0,),                   
+                                DRZ=0.0,),
 #                            _F(GROUP_NO='NO_AR',
 #                                 DX=0.0,
-#                                 DRX=0.0,),                   
-                             ), 
-                              
+#                                 DRX=0.0,),
+                             ),
+
                    );
 
 
@@ -530,7 +529,7 @@ for j,NTRIM in enumerate(tours):
                                 MODELE=MODELE,
                                 CHAM_MATER=CHMAT,
                                 CARA_ELEM=CEK[j],);
-        
+
         RG[j]=ASSE_MATRICE(MATR_ELEM=RGe[j],NUME_DDL=NDDL[j]);
 
         GOM[j]=COMB_MATR_ASSE(COMB_R=(
@@ -549,14 +548,14 @@ for j,NTRIM in enumerate(tours):
                              SOLVEUR_MODAL=_F(METHODE='QZ',),
                              MATR_RIGI=K[j],
                              MATR_MASS=M[j],
-                            
+
                              MATR_AMOR=GOM[j],
-                            
+
                              VERI_MODE=_F(STOP_ERREUR='NON',SEUIL=1.E-5),
-                        
+
                              OPTION='PLUS_PETITE',
                              CALC_FREQ=_F(NMAX_FREQ=13,),
-                        
+
                               );
 
 

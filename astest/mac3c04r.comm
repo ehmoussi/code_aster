@@ -20,7 +20,7 @@
 # UTILISATION : COMPARAISON DE LA SIMULATION NUMERIQUE D'UN ASSEMBLAGE
 #               COMBUSTIBLE EN FLEXION AVEC LES RESULTATS EXPERIMENTAUX
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'), IMPR_MACRO='NON', PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'), IMPR_MACRO='NON', )
 import numpy as np
 
 tabn = LIRE_TABLE(UNITE      = 38,
@@ -55,8 +55,8 @@ FLEX_DCH = LIRE_FONCTION(UNITE=22,
                     NOM_PARA='DX',
                     PROL_DROITE='CONSTANT',
                     PROL_GAUCHE = 'CONSTANT',);
- 
- 
+
+
 POST1 = POST_RELEVE_T(ACTION = _F(OPERATION = 'EXTRACTION',
                                   INTITULE = 'DY',
                                   RESULTAT  = FLEX,
@@ -71,8 +71,8 @@ POST2 = POST_RELEVE_T(ACTION = _F(OPERATION = 'EXTRACTION',
                                   GROUP_NO = ('GRIL_5'),
                                   RESULTANTE = ('DX','DY','DZ'),
                                   REPERE = 'GLOBAL'))
-                        
-                        
+
+
 
 dy_exp_ch, force_exp_ch = FLEX_CH.Valeurs()
 dy_exp_dch, force_exp_dch = FLEX_DCH.Valeurs()

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 DEBUT(CODE=_F(
-              NIV_PUB_WEB='INTERNET',),PAR_LOT='NON');
+              NIV_PUB_WEB='INTERNET',),);
 
 MA=LIRE_MAILLAGE(FORMAT='MED',);
 
@@ -49,13 +49,13 @@ TREF=POST_RELEVE_T(  ACTION=_F(  INTITULE = 'UREF', NOEUD =('NO2958','NO2974'), 
                      RESULTAT = RESREF, NUME_ORDRE=1, NOM_CHAM='DEPL', NOM_CMP = 'DY', ));
 
 DETRUIRE(CONCEPT=_F(NOM=(MO,CHA1,CHA2,)),INFO=1,);
-# VALEURS DE NON-REGRESSION 
-vcalc=[ 0.01,   0.00928897503835, 
+# VALEURS DE NON-REGRESSION
+vcalc=[ 0.01,   0.00928897503835,
         0.00999999999995, 0.00928897503615,
         0.01,       0.00928897503593,
-        0.00999999999999,  0.00928897503686, 
+        0.00999999999999,  0.00928897503686,
         0.00999999999999, 0.00928897503879,
-        0.01,    0.00928897503775, 
+        0.01,    0.00928897503775,
         0.00999999999999, 0.00928897503765,
         0.01,  0.00928897503746 ]
 ico=-2
@@ -102,7 +102,7 @@ for matr_distribuee in ('OUI', 'NON') :
                                         ALGORITHME='GCR',
                                         PRE_COND='LDLT_SP',
                                         GESTION_MEMOIRE='AUTO',
-                                        RESI_RELA=1.E-06, 
+                                        RESI_RELA=1.E-06,
                                         ),
                              );
 

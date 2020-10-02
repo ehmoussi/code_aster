@@ -18,10 +18,6 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-# .comm : en PAR_LOT='OUI'
-# .com1 : en PAR_LOT='NON'
-# .com2 : THER_LINEAIRE en PAR_LOT='NON'
-# .com3 : THER_LINEAIRE en PAR_LOT='OUI'
 
 from code_aster.Cata.DataStructure import CO as typCO
 from code_aster.Cata.DataStructure import table_sdaster
@@ -31,7 +27,6 @@ from code_aster.Supervis import UserMacro
 
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      PAR_LOT='OUI',
       IMPR_MACRO='OUI',)
 
 def ma_macro_ops(self, TABLE=None, **kwargs):

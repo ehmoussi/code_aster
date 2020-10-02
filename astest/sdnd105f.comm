@@ -19,7 +19,7 @@
 
 # ----------------------------------------------------------------------
 #
-DEBUT(PAR_LOT = 'NON',CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 
 import numpy as np

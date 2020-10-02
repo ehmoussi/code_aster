@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'), PAR_LOT='NON',
-      # SUPERVIS_1 : a cause de PAR_LOT='NON' necessaire pour recuperer la valeur de reference.
-      IGNORE_ALARM=('SUPERVIS_1'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI')))
 
 MAILL=LIRE_MAILLAGE(FORMAT="ASTER",)
 
@@ -43,7 +41,7 @@ for czero in (False, True,) :
          c3=0.
          c4=0.
 # valeur de non-regression
-         vcalc=2.45714285714; 
+         vcalc=2.45714285714;
       else :
          c1=1.1
          c2=2.2

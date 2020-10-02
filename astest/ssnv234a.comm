@@ -17,8 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      PAR_LOT = 'OUI')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
 
 from math import *
 
@@ -64,7 +63,7 @@ sig = Ec*Aa*eps
 # ----------------------------------------------------
 
 eps_comp = - 2*sc/Ec
-gam = -E/fc/log(0.9) 
+gam = -E/fc/log(0.9)
 Sprim    = (2*eps_comp-1/gam)*exp(1/(gam*eps_comp))
 sig_comp = Ec*(Aa*eps_comp+0.5*(1-Aa)*Sprim)
 
@@ -108,7 +107,7 @@ BETON = DEFI_MATER_GC(
     LARG_BANDE = 2*D,
     ),
   )
-    
+
 CHMAT = AFFE_MATERIAU(
   MAILLAGE = MA,
   AFFE = _F(
@@ -130,7 +129,7 @@ for i in [0,1,2]:
     dx[i*10+j] = eps*(nx*i+ny*j)*nx
     dy[i*10+j] = eps*(nx*i+ny*j)*ny
 
-      
+
 TRACTION = AFFE_CHAR_MECA(
   MODELE = MO,
   DDL_IMPO = (
@@ -146,13 +145,13 @@ TRACTION = AFFE_CHAR_MECA(
   )
 
 
-INSTANTS = DEFI_LIST_REEL(  
-  DEBUT = 0,                
-  INTERVALLE = (            
+INSTANTS = DEFI_LIST_REEL(
+  DEBUT = 0,
+  INTERVALLE = (
     _F(JUSQU_A = 100, NOMBRE = 100)
-    )                       
-  )                         
-                            
+    )
+  )
+
 EVOL = STAT_NON_LINE(
   MODELE     = MO,
   CHAM_MATER = CHMAT,
@@ -178,9 +177,9 @@ EVOL = STAT_NON_LINE(
     ),
   SOLVEUR   = _F(
     METHODE     = 'MUMPS',
-   
+
     ),
-  ) 
+  )
 
 tfin_pilo = 2.
 
@@ -279,7 +278,7 @@ EPEQ = POST_RELEVE_T(
     ),
   )
 
-  
+
 SIEQ = POST_RELEVE_T(
   ACTION = _F(
     INTITULE  = 'RESULTAT',
@@ -291,7 +290,7 @@ SIEQ = POST_RELEVE_T(
     INST      = tfin_pilo,
     ),
   )
-  
+
 EPSG = POST_RELEVE_T(
   ACTION = _F(
     INTITULE  = 'RESULTAT',
@@ -303,7 +302,7 @@ EPSG = POST_RELEVE_T(
     INST      = tfin_pilo,
     ),
   )
-  
+
 epeq = eps
 sieq = 2*mu*Aa*eps
 epsg = (eps+0.5*eps**2)*nx*nx
@@ -343,17 +342,17 @@ RAMPE = DEFI_FONCTION(
   VALE     = (0,1, 1,eps_comp/eps),
   )
 
-  
-INSTANT2 = DEFI_LIST_REEL(  
-  DEBUT = 0,                
-  INTERVALLE = (            
+
+INSTANT2 = DEFI_LIST_REEL(
+  DEBUT = 0,
+  INTERVALLE = (
     _F(JUSQU_A = 0.2,  NOMBRE = 1),
     _F(JUSQU_A = 0.4,  NOMBRE = 2),
     _F(JUSQU_A = 1,    NOMBRE = 3),
-    )                       
-  )                         
+    )
+  )
 
-                            
+
 EVOL2 = STAT_NON_LINE(
   ETAT_INIT  = _F(EVOL_NOLI=EVOL, INST=tfin_pilo),
   MODELE     = MO,
@@ -371,9 +370,9 @@ EVOL2 = STAT_NON_LINE(
     ),
   SOLVEUR   = _F(
     METHODE     = 'MUMPS',
-   
+
     ),
-  ) 
+  )
 
 CALC_CHAMP(reuse = EVOL2,
   RESULTAT = EVOL2,
@@ -384,7 +383,7 @@ ENER = POST_ELEM(
   RESULTAT = EVOL2,
   TRAV_EXT = _F(),
   )
-  
+
 
 # -----------------------------------------------------
 #      COMPARAISON AVEC LES VALEURS DE REFERENCE
@@ -403,5 +402,5 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE =_F(NOM_PARA='INST', VALE=1),
            )
 
-  
+
 FIN()

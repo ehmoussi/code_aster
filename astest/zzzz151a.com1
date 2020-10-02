@@ -25,7 +25,6 @@ from code_aster.Commands import *
 from code_aster.Utilities import ExecutionParameter
 
 POURSUITE(CODE='OUI',
-          PAR_LOT='NON',
           DEBUG=_F(SDVERI='OUI'),)
 
 fic = tempfile.NamedTemporaryFile(dir='.')

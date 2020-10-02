@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 #=====================================================================
 
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='NON',IMPR_MACRO='NON',DEBUG=_F(SDVERI='NON'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),IMPR_MACRO='NON',DEBUG=_F(SDVERI='NON'))
 # SDVERI='NON' car la verification est trop couteuse en CPU
 
 #=====================================================================
@@ -169,7 +169,6 @@ for i in range(NCAL):
           # correction eventuelle des valeurs initiales du temps ti
 
           if i > 0 :
-             # Cette actualisation de la contrainte force l'utilisation de PAR_LOT='NON'
              SXM = SXM *(YOUN(Ti)/YOUN(Tm))
 
           MATER[i]=DEFI_MATERIAU(ELAS =_F(E=YOUN(Ti),

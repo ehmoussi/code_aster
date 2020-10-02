@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 # UTILISATION : COMPARAISON DE LA SIMULATION NUMERIQUE D'UN ASSEMBLAGE
 #               COMBUSTIBLE EN COMPRESSION AVEC LES RESULTATS EXPERIMENTAUX
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='NON',PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='NON',)
 
 tabn = LIRE_TABLE(UNITE      = 38,
                   FORMAT     = 'LIBRE',
@@ -54,8 +54,8 @@ COMP_DCH = LIRE_FONCTION(UNITE=22,
                     NOM_PARA='DX',
                     PROL_DROITE='CONSTANT',
                     PROL_GAUCHE = 'CONSTANT',);
-# 
-# 
+#
+#
 COMPR=CALC_CHAMP(reuse =COMPR,
                  RESULTAT=COMPR,
                  FORCE=('FORC_NODA',),)
@@ -99,7 +99,7 @@ FORC2=RECU_FONCTION(
              PROL_GAUCHE='CONSTANT',)
 
 FORCC=CALC_FONCTION(COMB=_F(FONCTION=FORC2, COEF=-1.,),)
-# 
+#
 # # l'activation des commandes suivantes permet
 # # de tracer la courbe force-deplacement
 IMPR_FONCTION(FORMAT='XMGRACE',UNITE=29,

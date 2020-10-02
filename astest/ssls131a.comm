@@ -42,8 +42,7 @@ from math import pi
 from code_aster.Utilities import ExecutionParameter
 from code_aster.Commands import *
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'),
-      PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
 
 MAIL=[None]*10

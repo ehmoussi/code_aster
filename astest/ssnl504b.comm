@@ -24,7 +24,7 @@
 # --------------------------------------------------------------------
 
 DEBUT(CODE = _F(NIV_PUB_WEB = 'INTERNET',),
-      PAR_LOT = 'NON')
+      )
 
 #DOFs (master-like) applied for the test
 DOFm = [1.0,1.0,1.0, # Ux, Uy Uz
@@ -49,8 +49,8 @@ pos_pout = [
 
 #Computing DOFs on all beams considering beam kinematics
 # u = u0 - Y*omega_z + Z*omega_y
-# v = v0 - Z*omega_x 
-# w = w0 + Y*omega_x 
+# v = v0 - Z*omega_x
+# w = w0 + Y*omega_x
 
 dX = []
 dY = []
@@ -88,7 +88,7 @@ COMPF = DEFI_COMPOR(GEOM_FIBRE = GF,
 GF2 = DEFI_GEOM_FIBRE(FIBRE = (_F(GROUP_FIBRE = 'FPM1',
                                   CARA = 'DIAMETRE',
                                   VALE = (0.1,0.0,0.02,0.0,0.1,0.02,-0.1,0.0,0.02,0.0,-0.1,0.02,),
-                                  COOR_AXE_POUTRE = (0.0,0.0,))),                 
+                                  COOR_AXE_POUTRE = (0.0,0.0,))),
 
                       ASSEMBLAGE_FIBRE = _F(GROUP_ASSE_FIBRE = 'ASSE',
                                             GROUP_FIBRE =  ['FPM1']*nbpmf,
@@ -123,7 +123,7 @@ CAREL = AFFE_CARA_ELEM(MODELE = MODELE,
                                     CARA = ('A','IY','IZ','JX',),
                                     VALE = (0.00125664,6.28319e-06,6.28319E-06,1.0,))
                                  for i in range(nbpmf)],
-                       
+
                        MULTIFIBRE = [_F(GROUP_MA = 'P%d'%(i+1),
                                         GROUP_FIBRE = 'FP%d'%(i+1),
                                         PREC_AIRE = 0.01,
@@ -268,7 +268,7 @@ TABL2 = CREA_TABLE(RESU = _F(RESULTAT = U2,
                              NOM_CHAM = 'FORC_NODA',
                              TOUT_CMP = 'OUI',
                              TOUT = 'OUI',),)
-                
+
 tmp = TABL.EXTR_TABLE().values()
 tmp2 = TABL2.EXTR_TABLE().values()
 

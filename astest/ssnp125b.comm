@@ -27,7 +27,7 @@ from code_aster import ConvergenceError
 from code_aster.Commands import *
 
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'),
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'),
       ERREUR=_F(ERREUR_F='EXCEPTION'))
 
 MAILLAGE=LIRE_MAILLAGE(FORMAT='MED', );

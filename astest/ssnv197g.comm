@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 # PRESSION DE CONSOLITDATION P0 = 200KPA
 
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ), DEBUG=_F(SDVERI='OUI'),PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ), DEBUG=_F(SDVERI='OUI'),)
 
 # modules mecaniques [kPa]
 K=516.2E6
@@ -186,7 +186,7 @@ ZERO      = 0.0   ;
 vari = [ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,
         ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,
         ZERO,ZERO,ZERO,ZERO,ZERO,
-        ] ;   
+        ] ;
 
 CART = CREA_CHAMP(INFO = 1,
        TYPE_CHAM='ELGA_NEUT_R',
@@ -198,13 +198,13 @@ CART = CREA_CHAMP(INFO = 1,
                          'X11','X12','X13','X14','X15','X16','X17','X18','X19','X20',
                          'X21','X22','X23','X24','X25',),
                VALE    =vari),);
-                 
-VARI0=CREA_CHAMP(OPERATION='ASSE', 
+
+VARI0=CREA_CHAMP(OPERATION='ASSE',
                   TYPE_CHAM='ELGA_VARI_R',
                   MODELE=MODELE,
                   PROL_ZERO='OUI',
-                  ASSE=(_F(TOUT='OUI', 
-                            CHAM_GD=CART, 
+                  ASSE=(_F(TOUT='OUI',
+                            CHAM_GD=CART,
                             NOM_CMP=('X1','X2','X3','X4','X5','X6','X7','X8','X9','X10',
                                      'X11','X12','X13','X14','X15','X16','X17','X18','X19','X20',
                                      'X21','X22','X23','X24','X25',),
@@ -213,8 +213,8 @@ VARI0=CREA_CHAMP(OPERATION='ASSE',
                                      'V21','V22','V23','V24','V25',),
                             CUMUL='OUI',
                             COEF_R=1.0),
-                        _F(TOUT='OUI', 
-                            CHAM_GD=CART, 
+                        _F(TOUT='OUI',
+                            CHAM_GD=CART,
                             NOM_CMP=('X1','X2','X3','X4','X5','X6','X7','X8','X9','X10',
                                      'X11','X12','X13','X14','X15','X16','X17','X18','X19','X20',
                                      'X21','X22','X23','X24','X25',),
@@ -223,14 +223,14 @@ VARI0=CREA_CHAMP(OPERATION='ASSE',
                                      'V41','V42','V43','V44','V45','V46','V47','V48','V49','V50',),
                             CUMUL='OUI',
                             COEF_R=1.0),
-                        _F(TOUT='OUI', 
-                            CHAM_GD=SIG0, 
-                            NOM_CMP=('SIXX','SIYY','SIZZ'), 
+                        _F(TOUT='OUI',
+                            CHAM_GD=SIG0,
+                            NOM_CMP=('SIXX','SIYY','SIZZ'),
                             NOM_CMP_RESU=('V51','V52','V53'),
                             CUMUL='OUI'),
-                        _F(TOUT='OUI', 
-                            CHAM_GD=CART, 
-                            NOM_CMP=('X1','X2','X3'), 
+                        _F(TOUT='OUI',
+                            CHAM_GD=CART,
+                            NOM_CMP=('X1','X2','X3'),
                             NOM_CMP_RESU=('V54','V55','V56'),
                             CUMUL='OUI'),
                   ),)

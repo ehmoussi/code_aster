@@ -55,12 +55,6 @@ subroutine debut()
 ! --- LECTURE DU MOT CLE FACTEUR DEBUG OU DE GESTION MEMOIRE DEMANDE
     call ibdbgs()
 !
-! --- ALARME GENERIQUE
-    call getvtx(' ', 'PAR_LOT', scal=repons, nbret=n)
-    if (repons .eq. 'NON') then
-        call utmess('A', 'SUPERVIS_1')
-    endif
-!
 ! --- LECTURE DU MOT CLEF TEMPS_CPU
     call ibtcpu(ier)
 !

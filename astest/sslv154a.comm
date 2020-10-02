@@ -17,12 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from sslv154a import lissGchap, lissGbar
-
-DEBUT(PAR_LOT='NON', CODE=_F(
+DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
               ),
       DEBUG=_F(SDVERI='OUI'))
+
+from sslv154a import lissGchap, lissGbar
 
 # MODELISATION A : FEM, MAILLAGE QUADRATIQUE
 

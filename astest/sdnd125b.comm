@@ -58,18 +58,18 @@ Fn_buck  = 0.25   #[N]
 om       = 2.*pi*freq
 #################################################
 
-DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'), PAR_LOT='NON')
+DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'), )
 
 MESH     = LIRE_MAILLAGE (FORMAT="ASTER")
 
 MODEL    = AFFE_MODELE   (MAILLAGE = MESH,
-                          AFFE     = _F(TOUT         = 'OUI', 
+                          AFFE     = _F(TOUT         = 'OUI',
                                         PHENOMENE    = 'MECANIQUE',
                                         MODELISATION = 'DIS_T'))
 
 ELEM_CH  = AFFE_CARA_ELEM(MODELE  = MODEL,
                           DISCRET = (_F(GROUP_MA = 'CENTER',
-                                        CARA     = 'M_T_D_N', 
+                                        CARA     = 'M_T_D_N',
                                         VALE     = (M_center)),
                                      _F(GROUP_MA = 'LEFT',
                                         CARA     = 'M_T_D_N',
@@ -78,25 +78,25 @@ ELEM_CH  = AFFE_CARA_ELEM(MODELE  = MODEL,
                                         CARA     = 'M_T_D_N',
                                         VALE     =  M_right),
                                      _F(GROUP_MA = 'OUTER',
-                                        CARA     = 'K_T_D_L', 
+                                        CARA     = 'K_T_D_L',
                                         VALE     = (K_outer, 0., 0.)),
                                      _F(GROUP_MA = 'DUMMY',
-                                        CARA     = 'M_T_D_L', 
+                                        CARA     = 'M_T_D_L',
                                         VALE     = (0.)),
                                      _F(GROUP_MA = 'DUMMY',
-                                        CARA     = 'K_T_D_L', 
+                                        CARA     = 'K_T_D_L',
                                         VALE     = (1.E-12, 0., 0.)), # fictional springs, used for constructing the dynamics basis
                                      _F(GROUP_MA = 'DUMMY',
-                                        CARA     = 'M_T_D_L', 
+                                        CARA     = 'M_T_D_L',
                                         VALE     = (0.))))
 
 COND_2D  = AFFE_CHAR_MECA(MODELE   = MODEL,
                           DDL_IMPO = (_F(TOUT     = 'OUI',
-                                         DY       = 0.,  
+                                         DY       = 0.,
                                          DZ       = 0.)))
 
 BND_COND = AFFE_CHAR_MECA(MODELE   = MODEL,
-                          DDL_IMPO = (_F(GROUP_NO = 'BOUND',  
+                          DDL_IMPO = (_F(GROUP_NO = 'BOUND',
                                          DX       = 0.)))
 
 ##########################################################
@@ -209,7 +209,7 @@ DEF_PLAS = VINT_CH2[-1,8] # Cumulated plastic deformation (VINT8 at the final in
 
 TEST_F = DEFI_FONCTION(NOM_RESU = 'DEFO_PLAS',
                        NOM_PARA = 'INST', PROL_GAUCHE='CONSTANT',  PROL_DROITE='CONSTANT', INTERPOL='LIN',
-                       VALE     = ( t1    , DEF_PLAS, 
+                       VALE     = ( t1    , DEF_PLAS,
                                     t1+dt , DEF_PLAS))
 
 TEST_FONCTION(VALEUR=(_F(VALE_CALC  = 3.768582449313,

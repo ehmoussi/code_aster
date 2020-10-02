@@ -22,23 +22,21 @@
 
 DEBUT(CODE =_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI'),
-#      PAR_LOT='NON'
       )
 
 type_cas = 'cas_test'
 
 
-# REMARQUE 1 : 
-# le PAR_LOT='NON' est necessaire pour :
+# REMARQUE 1 :
 # - EXTR_TABLE, qui permet de s'arreter en cas dons multiples (facultatif pour le cas test)
 # - EXTR_TABLE, qui permet de recuperer les coordonnees des points du fond pour
 #               le calcul exact des DTAN (facultatif pour le cas test)
 #
 #
-# REMARQUE 2 : 
+# REMARQUE 2 :
 # POUR LE CAS TEST : ON BLOQUE LES POINTS A B C QUI SE TROUVE DANS LE PLAN MILIEU (PLAN DE PROPA)
 # CELA N'EST PAS GENANT CAR ON PROPAGE JUSTE UN PAS
-# SI ON VEUT SIMULER LA PROPA COMPLETE ALORS IL VAUT MIEUX BLOQUER LES POINTS D E F 
+# SI ON VEUT SIMULER LA PROPA COMPLETE ALORS IL VAUT MIEUX BLOQUER LES POINTS D E F
 # QUI SE TROUVENT SUR LA SURFACE INFERIEURE
 
 
@@ -308,7 +306,7 @@ for i in range(nb_pas) :
 #
     COHE[i]= CREA_CHAMP(OPERATION= 'EXTR',
                         TYPE_CHAM='ELNO_NEUT_R',
-                        RESULTAT= RESU[i], 
+                        RESULTAT= RESU[i],
                         NOM_CHAM= 'COHE_ELEM',
                         INST = L_INS1[i+1]);
 #
@@ -341,7 +339,7 @@ for i in range(nb_pas) :
 
 # en fait on peut recuperer direct le front
 # extraction des coordonnees max du fond de fissure
-TB_FOND=RECU_TABLE(CO=FISS[nb_pas],NOM_TABLE='FOND_FISS')   
+TB_FOND=RECU_TABLE(CO=FISS[nb_pas],NOM_TABLE='FOND_FISS')
 
 # test
 TEST_TABLE(CRITERE='RELATIF',

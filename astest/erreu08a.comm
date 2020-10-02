@@ -23,14 +23,9 @@
 from code_aster import AsterError
 from code_aster.Commands import *
 
-DEBUT(CODE=_F(
-              NIV_PUB_WEB='INTERNET',
-              ),
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       ERREUR=_F(ERREUR_F='EXCEPTION'),
-      IGNORE_ALARM='SUPERVIS_1',
-      PAR_LOT='NON',
       DEBUG=_F(SDVERI='OUI'))
-# ALARME 'SUPERVIS_1' : PAR_LOT='NON' necessaire pour intercepter l'exception
 
 import re
 fmt_raison='-'*80+"""

@@ -33,7 +33,6 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       DEBUG=_F(SDVERI='OUI',),
       ERREUR=_F(ERREUR_F='EXCEPTION'),
-      PAR_LOT='NON',
       IGNORE_ALARM=(
         'SUPERVIS_1',
         'CALCULEL6_77',

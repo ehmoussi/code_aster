@@ -28,8 +28,7 @@ from code_aster import AsterError
 from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),DEBUG=_F(SDVERI='OUI'),
-      ERREUR=_F(ERREUR_F='EXCEPTION',),
-      PAR_LOT='NON',)
+      ERREUR=_F(ERREUR_F='EXCEPTION',),)
 
 import re
 fmt_raison='-'*80+"""

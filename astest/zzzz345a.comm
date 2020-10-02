@@ -19,7 +19,7 @@
 
 import numpy as np
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='OUI');
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),);
 
 nx=12;
 freq=1;

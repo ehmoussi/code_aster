@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,14 +24,14 @@
 # MODELISATION        : 3D_GRAD_INCO
 # MAILLAGE            : MED (ISSU DE SALOME)
 # CL ET CHARGEMENT    : TRACTION UNIAXIAL
-# LOI D'ENDOMMAGEMENT : GTN 
+# LOI D'ENDOMMAGEMENT : GTN
 # ----------------------------------------------------------------------
 # i = [|0,20|], j = [|0,9|]
 # GROUPES DE NOEUDS: F_Couche_i, F_Element_j, Fixe, V_Bar3D
 # GROUPES DE MAILLES: V_Element_j, V_Bar3D
 # ----------------------------------------------------------------------
 
-DEBUT(PAR_LOT='NON',CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 import math
 import numpy as np
@@ -42,7 +42,7 @@ import numpy as np
 # NOMBRE DU PAS DE CALCUL
 nb_pas = 1000
 
-# NOMBRE DU PAS D'ARCHIVAGE 
+# NOMBRE DU PAS D'ARCHIVAGE
 nb_arch = 100
 
 # INSTANT DE FIN <= DERNIER INSTANT DE CALCUL
@@ -64,9 +64,9 @@ lx = 1
 ly = 1
 lz = nbc
 
- 
+
 # LISTE
-ACIER = nbc*[None] 
+ACIER = nbc*[None]
 
 # -------------------------------------------------------------------------
 # OBJET ASTER
@@ -80,10 +80,10 @@ MODE=AFFE_MODELE(MAILLAGE = MAIL,
                    PHENOMENE    = 'MECANIQUE',
                           MODELISATION = '3D_GRAD_INCO',
                                ),
-                 )                   
+                 )
 
-# MODELISATION DU MATERIAU 20 MnMoNi 5-5  (MAQUETTE)  
-f_0 = 2e-4; 
+# MODELISATION DU MATERIAU 20 MnMoNi 5-5  (MAQUETTE)
+f_0 = 2e-4;
 for i in range(nbc):
     f0 = f_0 + i*f_0
     ACIER[i] = DEFI_MATERIAU(ELAS       = _F(E=190000, NU=0.3),
@@ -97,19 +97,19 @@ for i in range(nbc):
                                GTN = _F(Q1 = 1.5,
                                               Q2 = 1.07,
                                              PORO_INIT = f0,
-                                              COAL_PORO = 0.05, 
+                                              COAL_PORO = 0.05,
                                              COAL_ACCE = 3,
                                              NUCL_PORO = 0.0,
                                              NUCL_PLAS = 0.6,
                                              NUCL_DEV = 0.01,
-                             ), 
+                             ),
                      NON_LOCAL = _F(C_GRAD_VARI = 1,
-                            PENA_LAGR   =5000,),  
+                            PENA_LAGR   =5000,),
                                )
- 
+
 
 #-----------------------------------------------------------
-# AFFECTATION DES MATERIAUX 
+# AFFECTATION DES MATERIAUX
 #-----------------------------------------------------------
 
 affe_mater = []
@@ -125,9 +125,9 @@ MATE = AFFE_MATERIAU (MAILLAGE = MAIL,
 
 
 #-----------------------------------------------------------
-# CONDITIONS AUX LIMITES ET CHARGEMENT 
+# CONDITIONS AUX LIMITES ET CHARGEMENT
 #-------------------------------------------------------------
-#Liste_Couche = ['F_Couche_' + str(i) for i in range(0,2*nbc+1)] 
+#Liste_Couche = ['F_Couche_' + str(i) for i in range(0,2*nbc+1)]
 Liaison_uni = []
 for i in range (2*nbc+1):
   mon_dico = {}
@@ -139,7 +139,7 @@ for i in range (2*nbc+1):
 CL = AFFE_CHAR_MECA(MODELE    = MODE,
                     DDL_IMPO = _F(GROUP_NO = 'Fixe',  DZ = 0), # eviter le mouvement rigid
                     LIAISON_UNIF = Liaison_uni,)
-    
+
 
 DEFX = DEFI_FONCTION(NOM_PARA = 'X',
                      VALE = (0,0,lx,beta),)
@@ -154,7 +154,7 @@ CHARGE = AFFE_CHAR_MECA_F(MODELE    = MODE,
 # LISTE DES INSTANTS DE CALCUL
 REEL_CAL = DEFI_LIST_REEL(DEBUT      = 0,
                           INTERVALLE = _F(JUSQU_A=inst_total, NOMBRE=nb_pas),)
-                          
+
 INST_CAL = DEFI_LIST_INST(DEFI_LIST = _F(LIST_INST=REEL_CAL),METHODE='AUTO')
 
 REEL_ARC = DEFI_LIST_REEL(DEBUT      = 0,
@@ -184,7 +184,7 @@ RESU = STAT_NON_LINE (MODELE       = MODE,
                       NEWTON       = _F(MATRICE='TANGENTE',REAC_ITER=1),
                       SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, MATR_DISTRIBUEE='OUI',),
                       ARCHIVAGE    = _F(LIST_INST=REEL_ARC),
-              ) 
+              )
 # COORDONNEES DES POINTS DE GAUSS
 
 COOR = CALC_CHAM_ELEM(MODELE = MODE,
@@ -196,17 +196,17 @@ COORZ = COOR.EXTR_COMP('Z',['V_Bar3D']).valeurs
 
     # PREMIER POINT A TESTER: PG LE PLUS ELOIGNE DE L'ORIGINE j
     # DEUXIEME POINT A TESTER: PG LE PLUS PROCHE DE L'ORIGINE k
-for i in range (len(COORX)): 
+for i in range (len(COORX)):
     if(COORX[i]>0.5 and COORY[i]>0.5 and COORZ[i]>9.5):
         j = i
     if(COORX[i]<0.5 and COORY[i]<0.5 and COORZ[i]<0.5):
         k = i
-    
 
-#--------------------------------------------------------------------------------------------------------------- 
+
+#---------------------------------------------------------------------------------------------------------------
 #------------------------------------------ TEST SUR SIXX-------------------------------------------------------
-#--------------------------------------------------------------------------------------------------------------- 
-# ATTENTION: LA DISTRIBUTION DE SIXX N'EST PAS DU TOUT HOMOGENE!!! 
+#---------------------------------------------------------------------------------------------------------------
+# ATTENTION: LA DISTRIBUTION DE SIXX N'EST PAS DU TOUT HOMOGENE!!!
 
 # INST1 = 0.50     (INST_TOTAL = 1.00)
 SIGMA1 = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
@@ -269,9 +269,9 @@ TEST_TABLE(TABLE = SXX22,
            )
 
 
-#--------------------------------------------------------------------------------------------------------------- 
+#---------------------------------------------------------------------------------------------------------------
 #------------------------------------- TEST SUR VARIABLE INTERNE : k et f---------------------------------------
-#--------------------------------------------------------------------------------------------------------------- 
+#---------------------------------------------------------------------------------------------------------------
 
 ###
 ### INST1 = 0.50     (INST_TOTAL = 1.00)
@@ -332,14 +332,14 @@ TEST_TABLE(TABLE = V122,
 ###
 ### INST1 = 0.80     (INST_TOTAL = 1.00)
 ###
-         
+
 VI2 = CREA_CHAMP(TYPE_CHAM = 'ELGA_VARI_R',
                OPERATION = 'EXTR',
                  RESULTAT  = RESU,
                  NOM_CHAM  = 'VARI_ELGA',
                  INST      = 0.80,
                  )
-    
+
 #   VARIABLE D'ECROUISSAGE
 V21 = VI2.EXTR_COMP('V1',['V_Bar3D']).valeurs
 V211 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[j])))
@@ -384,4 +384,3 @@ TEST_TABLE(TABLE = V222,
        PRECISION = 0.01,
            )
 FIN()
-      

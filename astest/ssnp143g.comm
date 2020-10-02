@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='OUI',DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
 ######## PARAMETRES #############
 tfin   = 3
@@ -84,7 +84,7 @@ MA=MODI_MAILLAGE(reuse =MA,
 
 
 MO=AFFE_MODELE(MAILLAGE=MA,
-               
+
                INFO=1,
                AFFE=(_F(GROUP_MA=('BARRAGE',),
                         PHENOMENE='MECANIQUE',
@@ -304,6 +304,6 @@ TEST_TABLE(
            TABLE=SIGT_AP,
            FILTRE=_F(NOM_PARA='COOR_Y',
                      VALE=8.5,),
-           )           
-          
+           )
+
 FIN()
