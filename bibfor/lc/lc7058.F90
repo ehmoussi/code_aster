@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -159,7 +159,7 @@ integer, intent(out) :: codret
     else if ( typmod(1)(1:2).eq.'3D' ) then
         nummod = 3
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Prepare strains
@@ -168,13 +168,9 @@ integer, intent(out) :: codret
                              neps       , epsm      , deps  ,&
                              stran      , dstran)
 !
-! - Modify number of internal state variables: GDEF_LOG
+! - Number of internal state variables
 !
-    if (defo_comp .eq. 'GDEF_LOG') then
-        nstatv = nvi-6
-    else
-        nstatv = nvi
-    endif
+    nstatv = nvi
 !
 ! - Time parameters
 !

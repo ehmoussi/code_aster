@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -130,7 +130,7 @@ integer, intent(out) :: codret
     real(kind=8) :: ddsdde(36), dfgrd0(3, 3), dfgrd1(3, 3)
     real(kind=8) :: ddsddt(6), drplde(6), drpldt
     real(kind=8) :: coords(3), celent
-    character(len=16) :: defo_comp, rela_comp
+    character(len=16) :: rela_comp
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     real(kind=8), parameter :: usrac2 = sqrt(2.d0)*0.5d0
     character(len=80) :: cmname
@@ -147,7 +147,6 @@ integer, intent(out) :: codret
     codret    = 0
     nprops    = npropmax
     rela_comp = compor(RELA_NAME)
-    defo_comp = compor(DEFO)
 !
 ! - Pointer to UMAT function
 !
@@ -189,13 +188,9 @@ integer, intent(out) :: codret
     call umatPrepareStrain(neps , epsm , deps ,&
                            stran , dstran, dfgrd0, dfgrd1)
 !
-! - Modify number of internal state variables: GDEF_LOG
+! - Number of internal state variables
 !
-    if (defo_comp .eq. 'GDEF_LOG') then
-        nstatv = nvi - 6
-    else
-        nstatv = nvi
-    endif
+    nstatv = nvi
 !
 ! - Get time
 !
