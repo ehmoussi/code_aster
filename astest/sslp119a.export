@@ -1,0 +1,10 @@
+P time_limit 120
+P memory_limit 512
+P ncpus 1
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist verification sequential
+
+F comm sslp119a.comm D 1
+F mmed sslp119a.med D 20
+F mmed sslp119a.21 D 21

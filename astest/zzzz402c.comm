@@ -1,0 +1,659 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),)
+
+from numpy import array,shape,reshape,real
+from cmath import *
+
+#
+# --------
+# RECALAGE DES VALEURS D'AMORTISSEMENT DE RAYLEIGH
+# PAR RAPPORT A L'AMORTISSEMENT REDUIT
+# ========================================================
+def recal_rayleigh(amor_reduit, f1, f2,):
+  """
+  Calcule les coefficients d''amortissement de Rayleigh ALPHA et BETA
+  a partir des hypotheses suivantes:
+
+  + 2*amor_reduit = 1/(w2-w1) * integral(w1,w2){alpha*w+beta/w}
+
+  + alpha*w1+beta/w1 = alpha*w2+beta/w2
+
+  avec w = 2*pi*f
+
+  DONNEES D''ENTREE:
+  -----------------
+  * amortissement reduit
+  * la plage de frequences [f1, f2]
+
+  """
+
+  from numpy import linalg
+  from math  import log, pi
+
+  w1,w2, = 2.*pi*f1,2.*pi*f2,
+
+  T = [[.5*(w1+w2), log(w2/w1)/(w2-w1),],
+       [w1-w2     , 1./w1-1./w2       ,],]
+  V = [2.*amor_reduit,0.,]
+
+  coef =linalg.solve(T,V) # list
+
+  return tuple(coef)
+
+
+MA = LIRE_MAILLAGE(FORMAT = 'MED',)
+
+MA_PATCH = LIRE_MAILLAGE(FORMAT = 'MED',UNITE=21)
+
+MA = DEFI_GROUP(reuse=MA, MAILLAGE=MA, CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',),)
+
+
+# Orientation des mailles surfaciques
+MA = MODI_MAILLAGE(reuse        = MA,
+                   MAILLAGE     = MA,
+                   ORIE_PEAU_2D =_F(GROUP_MA=('SLATD','SLATG', 'SFREEDRO','SFREEGAU',),),)
+
+mail_barrage = ('ENR','ENRW','ENROC','ENROCW','TRANS','TRANSW','NOYAU','FILTRE')
+Cotes     = ('DRO', 'GAU')
+Paraxiaux = ('BAS',)
+
+#Orientation des mailles surfaciques
+MA = MODI_MAILLAGE(reuse        = MA,
+                   MAILLAGE     = MA,
+                   ORIE_PEAU_2D = _F(GROUP_MA=Paraxiaux+Cotes,
+                                     GROUP_MA_SURF=('Fondation'),),)
+
+MODSTAT = AFFE_MODELE(MAILLAGE = MA,
+                    AFFE  = (_F(GROUP_MA     = mail_barrage,
+                                PHENOMENE    = 'MECANIQUE',
+                                MODELISATION = 'D_PLAN',),
+                             _F(GROUP_MA     = ('Fondation'),
+                                PHENOMENE    = 'MECANIQUE',
+                                MODELISATION = 'D_PLAN',),
+                             _F(GROUP_MA     = Paraxiaux+Cotes,
+                                PHENOMENE    ='MECANIQUE',
+                                MODELISATION ='D_PLAN',),),
+                    VERI_JACOBIEN = 'NON',)
+
+MODYN = AFFE_MODELE(MAILLAGE = MA,
+                    AFFE  = (_F(GROUP_MA     = mail_barrage,
+                                PHENOMENE    = 'MECANIQUE',
+                                MODELISATION = 'D_PLAN',),
+                             _F(GROUP_MA     = ('Fondation'),
+                                PHENOMENE    = 'MECANIQUE',
+                                MODELISATION = 'D_PLAN',),
+                             _F(GROUP_MA     = Paraxiaux+Cotes,
+                                PHENOMENE    ='MECANIQUE',
+                                MODELISATION ='D_PLAN_ABSO',),),
+                    VERI_JACOBIEN = 'NON',)
+
+#================================================================================
+#     MATERIAUX
+#================================================================================
+# ROCHER
+YOUNG_1 =50000.E06
+NU_1    =0.48
+
+RHO_1   = 2300
+
+f1,f2,amor_reduit,=4.,22.,.02,
+alpha,beta, = recal_rayleigh(amor_reduit, f1, f2,)
+
+#############################################
+ROCHER= DEFI_MATERIAU (ELAS=_F(E=YOUNG_1,NU=NU_1,RHO =RHO_1,
+                              AMOR_ALPHA = alpha, #AMOR RAYLEIGH
+                              AMOR_BETA  = beta,
+                              ALPHA=0.,
+),)
+
+YOUNG_2 =500.E06
+NU_2    =0.49
+RHO_2   = 1800    # Valeur Sèche
+GammaRef=1.25e-4
+n_iwan=0.78
+GamRef_2 = GammaRef
+n_2 = n_iwan
+
+BARRAGE= DEFI_MATERIAU (ELAS=_F(E=YOUNG_2,NU=NU_2,RHO =RHO_2,
+                              AMOR_ALPHA = alpha, #AMOR RAYLEIGH
+                              AMOR_BETA  = beta,
+                              ALPHA=0.,
+),
+                        Iwan=_F(YoungModulus = YOUNG_2,
+                               PoissonRatio = NU_2,
+                               GammaRef = GamRef_2,
+                               n = n_2,),
+)
+
+affe_materiau =[_F(GROUP_MA=('Fondation','BAS','DRO','GAU',),MATER=ROCHER,),
+                _F(GROUP_MA=mail_barrage,MATER=BARRAGE,),]
+
+Tout = ('Fondation','BAS','DRO','GAU','ENR','ENRW','ENROC','ENROCW','TRANS','TRANSW','NOYAU','FILTRE')
+
+MATSTAT=AFFE_MATERIAU(INFO=1,MAILLAGE=MA,
+                           AFFE = affe_materiau)
+
+MATDYN=AFFE_MATERIAU(INFO=1,MAILLAGE=MA,
+                           AFFE = affe_materiau)
+
+### ===============================================================
+###
+###                  Calcul STATIQUE
+###
+### ===============================================================
+
+###################################################################
+### CALCUL STATIQUE
+###################################################################
+
+G =9.81
+PES=AFFE_CHAR_MECA(MODELE=MODSTAT,
+                   PESANTEUR=_F(GRAVITE=G,
+                                DIRECTION=(0.0,-1.0,0.0),),);
+
+CL = AFFE_CHAR_MECA(MODELE = MODSTAT,
+                    DDL_IMPO=(_F(GROUP_MA = ('GAU','DRO'),
+                                DX=0.),
+                              _F(GROUP_MA = 'BAS',
+                                DY=0.),
+                            ),
+                    )
+
+STATIC = MECA_STATIQUE(MODELE=MODSTAT,
+                   CHAM_MATER=MATSTAT,
+                   EXCIT=(_F(CHARGE=PES,),
+                          _F(CHARGE = CL),
+                        ),
+                    );
+
+STATIC = CALC_CHAMP(reuse = STATIC,
+           RESULTAT = STATIC,
+           MODELE = MODSTAT,
+           CHAM_MATER = MATSTAT,
+           EXCIT=(_F(CHARGE=PES,),
+                  _F(CHARGE = CL),),
+           CONTRAINTE = ('SIEF_ELGA',),
+           );
+
+### ===============================================================
+###
+###                  Calcul DYNAMIQUE
+###
+### ===============================================================
+ACCEX_1=LIRE_FONCTION(UNITE=31,
+           NOM_PARA='INST',
+           INDIC_PARA=[1,1],
+           NOM_RESU='ACCE',
+           INDIC_RESU=[1,2],
+           SEPAR=',',
+           )
+
+###############################################
+
+ACCEX1=CALC_FONCTION(COMB=_F(FONCTION=ACCEX_1,COEF=0.5))
+
+ACCEXX1=CALC_FONCTION(CORR_ACCE=_F(FONCTION=ACCEX1,METHODE='FILTRAGE',FREQ_FILTRE=0.05))
+
+ao1=ACCEXX1.Ordo()[:10300]
+ab1=ACCEXX1.Absc()[:10300]
+
+ACCEX11=DEFI_FONCTION(NOM_PARA='INST',ORDONNEE=ao1,ABSCISSE=ab1)
+VITX1=CALC_FONCTION(INTEGRE=_F(FONCTION=ACCEX11),PROL_DROITE='CONSTANT',)
+
+CHARGX=AFFE_CHAR_MECA_F(MODELE=MODYN,
+                     VERI_NORM='OUI',
+                     ONDE_PLANE=_F(GROUP_MA=('BAS'),
+                                   TYPE_ONDE='S',
+                                   DIST        =72.,
+                                   DIRECTION=(0,1,0),
+                                    FONC_SIGNAL=VITX1,),)
+
+ONDELATE=AFFE_CHAR_MECA_F(MODELE      =MODYN,
+                      ONDE_PLANE  =_F(DIRECTION = (0.,1.,0.),
+                                      TYPE_ONDE   ='S',
+                                      GROUP_MA    =Cotes,
+                                      DIST        =72.,
+                                      DIST_REFLECHI=146.,
+                                      FONC_SIGNAL =VITX1,
+),)
+
+
+##################################################""
+
+ASSEMBLAGE(MODELE    =MODYN,
+           CHAM_MATER=MATDYN,
+           CHARGE    =(CHARGX,ONDELATE),
+           NUME_DDL  =CO('NUMEROTA'),
+           MATR_ASSE=(_F(MATRICE=CO('MATRRIGI'),
+                         OPTION='RIGI_MECA',),
+                      _F(MATRICE=CO('MATRMASS'),
+                         OPTION='MASS_MECA',),
+                      _F(MATRICE=CO('MATRAMOR'),
+                         OPTION='AMOR_MECA',),),)
+
+
+###############################################
+# Etape de calcul dynamique####################
+###############################################
+
+morime=CALC_MODES(OPTION='PLUS_PETITE',
+                SOLVEUR_MODAL=_F(METHODE='SORENSEN',
+                             NMAX_ITER_SOREN =50,
+                             PREC_SOREN      =0.0,
+                             PARA_ORTHO_SOREN=0.717,),
+          MATR_RIGI       =MATRRIGI,
+          MATR_MASS       =MATRMASS,
+          CALC_FREQ=_F(NMAX_FREQ =5,
+                       PREC_SHIFT=0.05,
+                       SEUIL_FREQ=0.01,
+                       NMAX_ITER_SHIFT=3,),
+            SOLVEUR=_F(RENUM='METIS',
+                NPREC=8,
+                 METHODE='MUMPS',),
+            VERI_MODE=_F(STOP_ERREUR='NON',
+                 PREC_SHIFT=5.E-3,
+                 STURM='OUI',
+                 SEUIL=1.E-06,),)
+
+TEMPSC=DEFI_LIST_REEL(DEBUT=0.,
+                INTERVALLE=_F(JUSQU_A=0.01, PAS=0.01,),)
+
+CHA_ON=CREA_RESU(OPERATION='CONV_CHAR',
+                  TYPE_RESU='DYNA_TRANS',
+                  CONV_CHAR=_F(MATR_RIGI=MATRRIGI,
+                          CHARGE=(CHARGX,ONDELATE),
+                          PRECISION=1.E-6,CRITERE='RELATIF',
+                          LIST_INST=TEMPSC,),
+                )
+
+CHA_ON2=CREA_RESU(OPERATION='CONV_RESU',
+                  TYPE_RESU='EVOL_CHAR',
+                  CONV_RESU=_F(
+                          MATR_RIGI=MATRRIGI,
+                          NOM_CHAM_INIT='DEPL',
+                          COEF=1.0,
+                          PRECISION=1.E-6,CRITERE='RELATIF',
+                          LIST_INST=TEMPSC,
+                          RESU_INIT=CHA_ON),
+                )
+
+EVOL_CH=AFFE_CHAR_MECA(MODELE=MODYN,
+                        EVOL_CHAR=CHA_ON2,)
+
+
+
+## POINTS POUR CERCLE DE RUPTURE PAR YASUDA
+### Values from :
+### " Application of nonlinear constitutive models to three-dimensional simulation
+### analysis of ARatozawa dam", S. Tsukuni, H. Ogino, N. yasuda & N. Matsumoto
+
+#### CERCLE 1
+#### FS 0.839
+#### coordonnes cercle :
+#Ox1 = -135.467
+#Oy1 = 194.91
+
+##calcul rayon
+#Oxr = -142.012
+#Oyr = 168.003
+#r1 = sqrt((Ox1-Oxr)**2 + (Oy1-Oyr)**2)
+
+#### CERCLE 2
+#### FS 2.027
+#Ox2 = -155.703
+#Oy2 = 372.35
+
+##calcul rayon
+#Oxr = -172.905
+#Oyr = 156.795
+#r2 = sqrt((Ox2-Oxr)**2 + (Oy2-Oyr)**2)
+
+#### CERCLE 3
+#### FS 2.395
+#Ox3 = -113.225
+#Oy3 = 341.696
+
+##calcul rayon
+#Oxr = -158.057
+#Oyr = 162.155
+#r3 = sqrt((Ox3-Oxr)**2 + (Oy3-Oyr)**2)
+
+#### CERCLE 4
+#### FS 2.581
+#Ox4 = 114.459
+#Oy4 = 257.893
+
+##calcul rayon
+#Oxr = 139.477
+#Oyr = 153.61
+#r4 = sqrt((Ox4-Oxr)**2 + (Oy4-Oyr)**2)
+
+#### CERCLE 5
+#### FS 2.090
+#Ox5 = 52.7182
+#Oy5 = 249.181
+
+##calcul rayon
+#Oxr = 72.1312
+#Oyr = 186.996
+#r5 = sqrt((Ox5-Oxr)**2 + (Oy5-Oyr)**2)
+
+#### CERCLE 6
+#### FS 2.135
+#Ox6 = 89.2218
+#Oy6 = 294.149
+
+##calcul rayon
+#Oxr = 127.06
+#Oyr = 160.237
+#r6 = sqrt((Ox6-Oxr)**2 + (Oy6-Oyr)**2)
+
+import numpy as np
+
+
+####### NOYAU 
+phi = 33.2
+cohesion = 49e3
+cohesion=0.
+
+CHAPHINO= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('NOYAU',),
+                                   NOM_CMP  = 'X1',
+                                   VALE   = phi,),);
+
+CHACNO= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('NOYAU',),
+                                   NOM_CMP  = 'X2',
+                                   VALE   = cohesion,),);
+
+####### FILTRE 
+
+phi = 42.2
+cohesion = 78e3
+cohesion=0.
+
+CHAPHIFI= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('FILTRE',),
+                                   NOM_CMP  = 'X1',
+                                   VALE   = phi,),);
+
+CHACFI= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('FILTRE',),
+                                   NOM_CMP  = 'X2',
+                                   VALE   = cohesion,),);
+
+
+####### TRANSITION 
+
+phi = 39.9
+cohesion = 39e3
+cohesion=0.
+
+CHAPHITR= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('TRANS','TRANSW'),
+                                   NOM_CMP  = 'X1',
+                                   VALE   = phi,),);
+
+CHACTR = CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('TRANS','TRANSW'),
+                                   NOM_CMP  = 'X2',
+                                   VALE   = cohesion,),);
+
+
+####### ENROCHEMENT INTERNE AMONT 
+
+phi = 42.7
+cohesion = 49e3
+cohesion=0.
+
+CHAPHIEW= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('ENROCW'),
+                                   NOM_CMP  = 'X1',
+                                   VALE   = phi,),);
+
+CHACEW= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('ENROCW'),
+                                   NOM_CMP  = 'X2',
+                                   VALE   = cohesion,),);
+
+
+####### ENROCHEMENT EXTERNE
+
+phi = 43.4
+cohesion = 49e3
+cohesion=0.
+
+CHAPHIEN= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('ENR','ENRW'),
+                                   NOM_CMP  = 'X1',
+                                   VALE   = phi,),);
+
+CHACEN= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('ENR','ENRW'),
+                                   NOM_CMP  = 'X2',
+                                   VALE   = cohesion,),);
+
+
+####### ENROCHEMENT INTERNE AVAL 
+
+phi = 40.2
+cohesion = 49e3
+cohesion=0.
+
+CHAPHIE= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('ENROC'),
+                                   NOM_CMP  = 'X1',
+                                   VALE   = phi,),);
+
+CHACE= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('ENROC'),
+                                   NOM_CMP  = 'X2',
+                                   VALE   = cohesion,),);
+
+####### BEDROCK 
+
+phi = 30.
+cohesion =0.
+    
+CHAPHIRK= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('Fondation'),
+                                   NOM_CMP  = 'X1',
+                                   VALE   = phi,),);
+
+CHACRK= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODYN,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('Fondation'),
+                                   NOM_CMP  = 'X2',
+                                   VALE   = cohesion,),);
+
+
+CHAPHI = CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                     OPERATION = 'ASSE', 
+                     MODELE    = MODYN, 
+                     #PROL_ZERO='OUI',
+                     ASSE      = (_F(CHAM_GD = CHAPHINO,
+                                   GROUP_MA= ('NOYAU'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHAPHIFI,
+                                   GROUP_MA= ('FILTRE',),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHAPHITR,
+                                   GROUP_MA= ('TRANS','TRANSW'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHAPHIEW,
+                                   GROUP_MA= ('ENROCW'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHAPHIEN,
+                                   GROUP_MA= ('ENR','ENRW'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHAPHIE,
+                                   GROUP_MA= ('ENROC'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHAPHIRK,
+                                   GROUP_MA= ('Fondation'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                ),
+                   INFO =1,);
+
+
+CHAC = CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                     OPERATION = 'ASSE', 
+                     MODELE    = MODYN, 
+                     #PROL_ZERO='OUI',
+                     ASSE      = (_F(CHAM_GD = CHACNO,
+                                   GROUP_MA= ('NOYAU'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHACFI,
+                                   GROUP_MA= ('FILTRE',),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHACTR,
+                                   GROUP_MA= ('TRANS','TRANSW'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHACEW,
+                                   GROUP_MA= ('ENROCW'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHACEN,
+                                   GROUP_MA= ('ENR','ENRW'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHACE,
+                                   GROUP_MA= ('ENROC'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                _F(CHAM_GD = CHACRK,
+                                   GROUP_MA= ('Fondation'),
+                                   CUMUL   = 'OUI',
+                                   COEF_R  = 1.),
+                                ),
+                   INFO =1,);
+
+
+DYNA_VC=DYNA_VIBRA(BASE_CALCUL='PHYS',
+                TYPE_CALCUL='TRAN',
+                MODELE=MODYN,
+                MATR_MASS=MATRMASS,
+                MATR_RIGI=MATRRIGI,
+                MATR_AMOR=MATRAMOR,
+                AMOR_MODAL =_F(AMOR_REDUIT=0.0001,MODE_MECA=morime),
+                SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
+                                BETA=0.25,
+                                GAMMA=0.5),
+                INCREMENT=_F(LIST_INST=TEMPSC),
+                EXCIT=(_F(CHARGE=EVOL_CH,),),
+)
+
+
+# calcul nécessaire car dyna_trans ne possède en sortie du champ des contraintes
+# aux points de gauss nécessaire dans le post-traitement
+DYNA_VC = CALC_CHAMP(reuse = DYNA_VC,
+           RESULTAT = DYNA_VC,
+           MODELE = MODYN,
+           CHAM_MATER = MATDYN,
+           EXCIT=(_F(CHARGE=CHARGX,),
+                  _F(CHARGE=ONDELATE,),),
+           CONTRAINTE = ('SIEF_ELGA',),
+           )
+
+ky=0.001
+posx=80.
+posy=220.
+r=50.
+
+TAB_RES3 = POST_NEWMARK(RESULTAT=DYNA_VC,
+                 KY=ky,
+                 MAILLAGE_GLIS = MA_PATCH,
+                 GROUP_MA_CALC=Tout,
+                 RESULTAT_PESANTEUR=STATIC,
+                 CHAM_PHI = CHAPHI,
+                 CHAM_COHESION = CHAC,
+                 CHAM_FS=CO('CHAM_FS'),
+                )
+
+IMPR_TABLE(TABLE=TAB_RES3,UNITE=6)
+
+
+#### TEST SUR FS
+TEST_TABLE(  TABLE=TAB_RES3,
+              NOM_PARA='FS',
+              FILTRE=_F(NOM_PARA='INST',
+                        VALE= 1.00000E-02,
+                        CRITERE='RELATIF',
+                        ),
+              REFERENCE='NON_DEFINI',
+              VALE_REFE=2.6623585372660767,
+              VALE_CALC=2.6623585372660767,
+              PRECISION=0.00001,
+              CRITERE='RELATIF',
+              VALE_ABS='NON',)
+
+FIN()

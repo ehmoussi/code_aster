@@ -1,0 +1,166 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),IMPR_MACRO='OUI');
+
+MA = LIRE_MAILLAGE(FORMAT = 'MED',);
+
+MA_PATCH = LIRE_MAILLAGE(FORMAT = 'MED',UNITE=21);
+
+                                
+MA = DEFI_GROUP(reuse=MA, MAILLAGE=MA, CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',),);
+
+MA = DEFI_GROUP(reuse=MA, MAILLAGE=MA, CREA_GROUP_NO=_F(NOM = 'ENCAST',
+                                                        UNION=('BAS','LEFT','RIGHT'),),);
+                                
+                                                                                
+
+mail_barrage = ('SLOPE')
+Cotes     = ('LEFT', 'RIGHT')
+Paraxiaux = ('BAS',)
+
+#Orientation des mailles surfaciques
+MA = MODI_MAILLAGE(reuse        = MA,
+                   MAILLAGE     = MA,
+                   ORIE_PEAU_2D = _F(GROUP_MA=Paraxiaux+Cotes,
+                                     GROUP_MA_SURF=('SLOPE'),),);
+
+MODST = AFFE_MODELE(MAILLAGE = MA,
+                    AFFE  = (_F(GROUP_MA     = mail_barrage,
+                                PHENOMENE    = 'MECANIQUE',
+                                MODELISATION = 'D_PLAN',),
+                             _F(GROUP_MA     = Paraxiaux+Cotes,
+                                PHENOMENE    ='MECANIQUE',
+                                MODELISATION ='D_PLAN',),
+                            ),
+                    VERI_JACOBIEN = 'NON',);
+
+#================================================================================
+#     MATERIAUX 
+#================================================================================
+
+SLOPE = DEFI_MATERIAU (ELAS=_F(E=90e6,NU=0.3,RHO =1936.,
+                            ),
+                        )
+
+affe_materiau =[
+                _F(GROUP_MA=('BAS','LEFT','RIGHT',),MATER=SLOPE,),
+                _F(GROUP_MA='SLOPE',MATER=SLOPE,),
+                ]
+
+MATSTAT = AFFE_MATERIAU(INFO=1,MAILLAGE=MA,
+                           AFFE = affe_materiau),
+
+                     
+
+
+G =9.81
+PES=AFFE_CHAR_MECA(MODELE=MODST,
+                   PESANTEUR=_F(GRAVITE=G,
+                                DIRECTION=(0.0,-1.0,0.0),),);
+
+
+###################################################################
+### CALCUL STATIQUE
+###################################################################
+
+
+CL = AFFE_CHAR_MECA(MODELE = MODST,
+                    DDL_IMPO=(_F(GROUP_MA = ('LEFT','RIGHT'),
+                                DX=0.),
+                              _F(GROUP_MA = 'BAS',
+                                DY=0.),
+                            ),
+                    )
+
+STATIC = MECA_STATIQUE(MODELE=MODST,
+                   CHAM_MATER=MATSTAT,
+                   EXCIT=(_F(CHARGE=PES,),
+                          _F(CHARGE = CL),
+                        ),
+                    );
+
+STATIC = CALC_CHAMP(reuse = STATIC,
+           RESULTAT = STATIC,
+           MODELE = MODST,
+           CHAM_MATER = MATSTAT,
+           EXCIT=(_F(CHARGE=PES,),
+                  _F(CHARGE = CL),),
+           CONTRAINTE = ('SIEF_ELGA',),
+           );
+
+import numpy as np
+
+phi = 36.
+cohesion = 3e3
+
+#### LES CHAMPS PHI DOIT ETRE STOCKE DANS LA VARIABLE X1
+CHAPHI= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODST,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('SLOPE',),
+                                   NOM_CMP  = 'X1',
+                                   VALE   = phi,),);
+
+#### LE CHAMP COHESION DOIT ETRE STOCKE DANS LA VARIABLE X2
+CHACO= CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODST,
+                    #PROL_ZERO='OUI',
+                    AFFE      = _F(GROUP_MA = ('SLOPE',),
+                                   NOM_CMP  = 'X2',
+                                   VALE   = cohesion,),);
+
+
+posx=6.08
+posy=49.6
+r=50.
+
+TAB_RES = POST_NEWMARK(RESULTAT_PESANTEUR=STATIC,
+                 MAILLAGE_GLIS = MA_PATCH,
+                 GROUP_MA_GLIS = 'CIRCLE',
+                 GROUP_MA_LIGNE = 'LIGNE',
+#                RAYON = r,
+#                CENTRE_X = posx,
+#                CENTRE_Y = posy,
+                 GROUP_MA_CALC='SLOPE',
+                 CHAM_PHI = CHAPHI,
+                 CHAM_COHESION = CHACO,
+                 CHAM_FS=CO('CHAM_FS'))
+
+IMPR_TABLE(UNITE=38,TABLE=TAB_RES)
+
+IMPR_RESU(FORMAT='MED',RESU=_F(CHAM_GD = CHAM_FS),UNITE=80)
+
+TEST_TABLE(  TABLE=TAB_RES,
+              NOM_PARA='FS',
+              FILTRE=_F(NOM_PARA='INST',
+                        VALE= 0.0,
+                        CRITERE='RELATIF',
+                        ),
+              REFERENCE='SOURCE_EXTERNE',
+              VALE_REFE=1.82,
+              VALE_CALC=1.8101360825610746,
+              PRECISION=0.01,
+              CRITERE='RELATIF',
+              VALE_ABS='NON',)
+
+
+FIN()

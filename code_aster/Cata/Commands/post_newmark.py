@@ -21,13 +21,16 @@ from ..Commons import *
 from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
-POST_NEWMARK=MACRO(nom="POST_NEWMARK",
-                        op=OPS("code_aster.MacroCommands.post_newmark_ops.post_newmark_ops"),
+
+POST_NEWMARK = MACRO(nom="POST_NEWMARK",
+                        op=OPS('code_aster.MacroCommands.post_newmark_ops.post_newmark_ops'),
                         fr=tr("Calcul des déplacements résiduels des ouvrages en remblai par méthode de Newmark"),
                         sd_prod=table_sdaster,
                         reentrant='n',
                         regles=(UN_PARMI('RAYON','MAILLAGE_GLIS'),
-#                                ENSEMBLE('RAYON', 'CENTRE_X','CENTRE_Y'),
+                                AU_MOINS_UN('RESULTAT','RESULTAT_PESANTEUR'),
+                                ENSEMBLE('RESULTAT', 'KY'),
+                                EXCLUS('RESULTAT_PESANTEUR', 'RAYON'),
                                 ),
                         MAILLAGE_GLIS = SIMP(statut='f',typ=maillage_sdaster,fr='Maillage de la zone de glissement'),
                         RAYON      = SIMP(statut='f',typ='R',fr="Rayon du cercle de glissement" ),
@@ -38,8 +41,16 @@ POST_NEWMARK=MACRO(nom="POST_NEWMARK",
                         b_MAIL_GLIS =BLOC ( condition = """exists("MAILLAGE_GLIS")""",
                             GROUP_MA_GLIS = SIMP(statut='f',typ=grma,max='**',fr="GROUP_MA associé à la zone de glissement"),
                             GROUP_MA_LIGNE = SIMP(statut='f',typ=grma,max='**',fr="GROUP_MA associé à la ligne de glissement"),
+
                         ),
-                        RESULTAT = SIMP(statut='o',typ=(dyna_trans,evol_noli),fr="Concept résultat du calcul dynamique"),
-                        KY = SIMP(statut='o',typ='R',fr="Valeur de ky pour le calcul de l'accélération critique"),
+                        RESULTAT = SIMP(statut='f',typ=(dyna_trans,evol_noli,),fr="Concept résultat du calcul dynamique"),
+                        RESULTAT_PESANTEUR = SIMP(statut='f',typ=(evol_noli,evol_elas),fr="Champ des contraintes issu du résultat du calcul à la pesanteur"),
+                        b_RESULTAT_PESANTEUR = BLOC ( condition ="""exists("RESULTAT_PESANTEUR")""",
+                                CHAM_PHI = SIMP(statut='o',typ=cham_no_sdaster,fr="Champ de phi en dégrées" ),
+                                CHAM_COHESION = SIMP(statut='o',typ=cham_no_sdaster,fr="Champ de cohesion" ),
+                                CHAM_FS = SIMP(statut='f',typ=CO,fr="Champ du facteur de sécurité local"),
+                            ),
+                        KY = SIMP(statut='f',typ='R',fr="Valeur de ky pour le calcul de l'accélération critique"),
                         GROUP_MA_CALC = SIMP(statut='o',typ=grma,max='**',fr="GROUP_MA associé au modèle utilisé"),
+                        INFO  = SIMP(statut='f', typ='I', defaut=1, into=(1,2)),
 ) ;
