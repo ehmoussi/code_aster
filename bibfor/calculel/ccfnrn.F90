@@ -16,18 +16,19 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! aslint: disable=W1501
-! person_in_charge: nicolas.sellenet at edf.fr
 !
 subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
                   chtype, typesd)
-    implicit none
-!     --- ARGUMENTS ---
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "blas/dcopy.h"
 #include "blas/daxpy.h"
 #include "blas/zcopy.h"
 #include "blas/zaxpy.h"
+#include "asterc/r8vide.h"
 #include "asterfort/asasve.h"
 #include "asterfort/ascova.h"
 #include "asterfort/assert.h"
@@ -38,6 +39,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 #include "asterfort/dismoi.h"
 #include "asterfort/exlima.h"
 #include "asterfort/infniv.h"
+#include "asterfort/ischar.h"
 #include "asterfort/jeimpo.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -83,7 +85,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 ! ----------------------------------------------------------------------
     mpi_int :: mpicou, mpibid
     integer :: jordr, iret, iordr, i, jinfc, nbchar, ic, jref, ifm, niv, ibid
-    integer :: iachar, ichar, ii, nuord, nh, jnmo, nbddl, lmat, iad, ind, iordk
+    integer :: iachar, ichar, ii, nuord, nh, jnmo, nbddl, lmat, jvPara, ind, iordk
     integer :: neq, jfo, lonch, lonnew, jfr, jfi, rang, nbproc, nbpas, nbordi
     integer :: lonc2, ltrav, j, inume, jddl, jddr, lacce, p, irelat, jordi
     integer :: cret, jldist, iaux1, k, jcnoch, ideb, ifin, ipas, jvcham, iaux2
@@ -92,7 +94,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
     character(len=6) :: nompro
     character(len=8) :: k8bid, kiord, ctyp, nomcmp(3), para, sd_partition
     character(len=16) :: typmo, optio2, motfac
-    character(len=19) :: ligrel, chdep2, infcha, list_load, vebid, k19bid
+    character(len=19) :: ligrel, chdep2, vebid, k19bid, listLoad
     character(len=24) :: numref, fomult, charge, infoch, vechmp, vachmp, cnchmp
     character(len=24) :: vecgmp, vacgmp, cncgmp, vefpip, vafpip, cnfpip, vfono(2)
     character(len=24) :: carac, cnchmpc
@@ -102,6 +104,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
     character(len=24) :: strx, vldist, vcnoch, vcham, lisori
     character(len=24) :: bidon, chacce, modele, kstr, modnew
     aster_logical :: exitim, lstr, lstr2, ldist, dbg_ob, dbgv_ob, ltest, lsdpar, lcpu, lbid
+    aster_logical :: lPilo1, lPilo2
     real(kind=8) :: etan, time, partps(3), omega2, coef(3), raux
     real(kind=8) :: rctfin, rctdeb, rctfini, rctdebi
     real(kind=8), pointer :: cgmp(:) => null()
@@ -121,7 +124,6 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
     complex(kind=8), pointer :: pcbid(:) => null()
     parameter(nompro='CCFNRN')
     data chvarc/'&&CCFNRN.CHVARC'/
-    data infcha/'&&INFCHA.INFCHA'/
     data k24bid/' '/
     data nomcmp/'DX','DY','DZ'/
 !
@@ -136,20 +138,23 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
                 k24b, ibid, ibid, kbid, k24b, prbid, pcbid)
     call jeveuo(vldist,'L',jldist)
     if (lcpu) call cpu_time(rctdeb)
+    
     lonch=-999
     ci=dcmplx(0.D0,1.D0)
     cun=dcmplx(1.D0,0.D0)
     cmun=dcmplx(-1.D0,0.D0)
 !
     bidon='&&'//nompro//'.BIDON'
-    list_load = '&&CCFNRN.LIST_LOAD'
+
+
+    listLoad = '&&CCFNRN.LISTLOAD'
 !
     call jeveuo(lisord, 'L', jordr)
 !
 ! ----ON VERIFIE SI DERRIERE UN CONCEPT MODE_MECA SE TROUVE UN MODE_DYN
     if (typesd(1:9) .eq. 'MODE_MECA') then
-        call rsadpa(resuin, 'L', 1, 'TYPE_MODE', 1, 0, sjv=iad, styp=k8bid)
-        typmo=zk16(iad)
+        call rsadpa(resuin, 'L', 1, 'TYPE_MODE', 1, 0, sjv=jvPara, styp=k8bid)
+        typmo=zk16(jvPara)
     else
         typmo=' '
     endif
@@ -159,7 +164,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
     if (option .eq. 'REAC_NODA' .and. &
         (typesd .eq. 'EVOL_ELAS' .or. typesd .eq. 'EVOL_NOLI')) then
         call jeveuo(lisord, 'L', vi = v_list_store)
-        call medome_once(resuin, v_list_store, nbordr, list_load_ = list_load)
+        call medome_once(resuin, v_list_store, nbordr)
     endif
 
 !
@@ -199,10 +204,10 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
     nuord=zi(jordr)
     k24b=' '
     if (typesd .eq. 'EVOL_THER') then
-        call ntdoth(k24b, mater, mateco, carac, infcha,&
+        call ntdoth(k24b, mater, mateco, carac, listLoad,&
                     result = resuou, nume_store = nuord)
     else
-        call nmdome(k24b, mater, mateco, carac, infcha, resuou(1:8),&
+        call nmdome(k24b, mater, mateco, carac, listLoad, resuou(1:8),&
                     nuord)
     endif
     modele=' '
@@ -229,9 +234,9 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
       endif
     endif
 !
-    fomult=infcha//'.FCHA'
-    charge=infcha//'.LCHA'
-    infoch=infcha//'.INFC'
+    fomult=listLoad//'.FCHA'
+    charge=listLoad//'.LCHA'
+    infoch=listLoad//'.INFC'
     call jeexin(infoch, iret)
     if (iret .ne. 0) then
         call jeveuo(infoch, 'L', jinfc)
@@ -408,8 +413,8 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
         endif
 !
         if (exitim) then
-            call rsadpa(resuin, 'L', 1, 'INST', iordr,0, sjv=iad, styp=ctyp)
-            time=zr(iad)
+            call rsadpa(resuin, 'L', 1, 'INST', iordr,0, sjv=jvPara, styp=ctyp)
+            time=zr(jvPara)
         endif
 !
         call vrcins(modele, mater, carac, time, chvarc(1:19), codret)
@@ -584,7 +589,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
                 endif
                 motfac = 'EXCIT'
                 if ((.not.ldist.and.(i.eq.1)).or.(ldist.and.(ipas.eq.1))) then
-                  call lislec(motfac, 'MECANIQUE', 'V', infcha)
+                  call lislec(motfac, 'MECANIQUE', 'V', listLoad)
                 else
                   call jedetr(cnchmpc(1:19)//'.REFE')
                   call jedetr(cnchmpc(1:19)//'.DESC')
@@ -592,12 +597,15 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
                 endif
                 vebid = '&&VEBIDON'
                 vechmp = '&&VECHMP'
-                call dylach(modele, mater, mateco, carac, infcha, nume, vebid, vechmp, vebid, vebid)
+                call dylach(modele, mater, mateco, carac,&
+                            listLoad, nume, vebid, vechmp, vebid, vebid)
                 para = 'FREQ'
                 cnchmpc='&&'//nompro//'.CHARGE'
                 call vtcreb(cnchmpc, 'V', 'C', nume_ddlz = nume, nb_equa_outz = neq)
-                call ascomb(infcha, vechmp, 'C', para, time, cnchmpc)
+                call ascomb(listLoad, vechmp, 'C', para, time, cnchmpc)
             endif
+
+
 !
 ! --- POUR UN EVOL_NOLI, PRISE EN COMPTE DES FORCES PILOTEES
             if (typesd .eq. 'EVOL_NOLI') then
@@ -606,9 +614,19 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
                             partps, k24bid, vefpip, ligrel, chdepl, bidon)
                 call asasve(vefpip, nume, 'R', vafpip)
                 call ascova('D', vafpip, fomult, 'INST', time, 'R', cnfpip)
-! - RECUPERATION DU PARAMETRE DE CHARGE ETAN DANS LA SD EVOL_NOLI
-                call rsadpa(resuin, 'L', 1, 'ETA_PILOTAGE', iordr, 0, sjv=iad, styp=ctyp)
-                etan=zr(iad)
+
+! ------------- Loads with continuation method
+                lPilo1 = ischar(listLoad, 'DIRI', 'PILO')
+                lPilo2 = ischar(listLoad, 'NEUM', 'PILO')
+                if (lPilo1 .or. lPilo2) then
+                    call rsadpa(resuin, 'L', 1, 'ETA_PILOTAGE', iordr, 0, sjv=jvPara, istop=0)
+                    etan = zr(jvPara)
+                    if (etan .eq. r8vide()) then
+                        call utmess('F', 'CALCCHAMP_8')
+                    endif
+                else
+                    etan = 0.d0
+                endif
             endif
 !
 ! --- CALCUL DU CHAMNO DE REACTION PAR DIFFERENCE DES FORCES NODALES
@@ -642,8 +660,8 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 !
 !       --- TRAITEMENT DES MODE_MECA ---
         if (typesd .eq. 'MODE_MECA' .and. typmo(1:8) .eq. 'MODE_DYN') then
-            call rsadpa(resuin, 'L', 1, 'OMEGA2', iordr, 0, sjv=iad, styp=ctyp)
-            omega2=zr(iad)
+            call rsadpa(resuin, 'L', 1, 'OMEGA2', iordr, 0, sjv=jvPara, styp=ctyp)
+            omega2=zr(jvPara)
             call jeveuo(chdepl(1:19)//'.VALE', 'L', vr=nldepl)
             call jelira(chdepl(1:19)//'.VALE', 'LONMAX', lonc2)
             call wkvect('&&'//nompro//'.TRAV', 'V V R', lonc2, ltrav)
@@ -654,19 +672,19 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 !
 !       --- TRAITEMENT DES MODE_STAT ---
         elseif (typesd.eq.'MODE_MECA' .and. typmo(1:8).eq.'MODE_STA') then
-            call rsadpa(resuin, 'L', 1, 'TYPE_DEFO', iordr, 0, sjv=iad, styp=ctyp)
-            if (zk16(iad)(1:9) .eq. 'FORC_IMPO') then
-                call rsadpa(resuin, 'L', 1, 'NUME_DDL', iordr, 0, sjv=iad, styp=ctyp)
-                inume=zi(iad)
+            call rsadpa(resuin, 'L', 1, 'TYPE_DEFO', iordr, 0, sjv=jvPara, styp=ctyp)
+            if (zk16(jvPara)(1:9) .eq. 'FORC_IMPO') then
+                call rsadpa(resuin, 'L', 1, 'NUME_DDL', iordr, 0, sjv=jvPara, styp=ctyp)
+                inume=zi(jvPara)
                 noch(inume)=noch(inume)-1.d0
-            else if (zk16(iad)(1:9).eq.'ACCE_IMPO') then
+            else if (zk16(jvPara)(1:9).eq.'ACCE_IMPO') then
                 call jelira(chdepl(1:19)//'.VALE', 'LONMAX', lonc2)
-                call rsadpa(resuin, 'L', 1, 'COEF_X', iordr, 0, sjv=iad, styp=ctyp)
-                coef(1)=zr(iad)
-                call rsadpa(resuin, 'L', 1, 'COEF_Y', iordr, 0, sjv=iad, styp=ctyp)
-                coef(2)=zr(iad)
-                call rsadpa(resuin, 'L', 1, 'COEF_Z', iordr, 0, sjv=iad, styp=ctyp)
-                coef(3)=zr(iad)
+                call rsadpa(resuin, 'L', 1, 'COEF_X', iordr, 0, sjv=jvPara, styp=ctyp)
+                coef(1)=zr(jvPara)
+                call rsadpa(resuin, 'L', 1, 'COEF_Y', iordr, 0, sjv=jvPara, styp=ctyp)
+                coef(2)=zr(jvPara)
+                call rsadpa(resuin, 'L', 1, 'COEF_Z', iordr, 0, sjv=jvPara, styp=ctyp)
+                coef(3)=zr(jvPara)
                 call wkvect('&&'//nompro//'.POSI_DDL', 'V V I', 3*lonc2, jddl)
                 call pteddl('NUME_DDL', nume, 3, nomcmp, lonc2, tabl_equa = zi(jddl))
                 call wkvect('&&'//nompro//'.POSI_DDR', 'V V R', lonc2, jddr)
@@ -772,9 +790,9 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
             call rsnoch(resuou, option, iordk)
             k24b=' '
             if (typesd .eq. 'EVOL_THER') then
-              call ntdoth(k24b,mater,mateco,carac,infcha,result=resuou,nume_store =iordk)
+              call ntdoth(k24b,mater,mateco,carac,listLoad,result=resuou,nume_store =iordk)
             else
-              call nmdome(k24b,mater,mateco,carac,infcha,resuou(1:8),iordk)
+              call nmdome(k24b,mater,mateco,carac,listLoad,resuou(1:8),iordk)
             endif
             modnew=' '
             modnew=trim(adjustl(k24b))
@@ -793,9 +811,9 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
           call rsnoch(resuou, option, iordr)
           k24b=' '
           if (typesd .eq. 'EVOL_THER') then
-            call ntdoth(k24b,mater,mateco,carac,infcha,result=resuou,nume_store=iordr)
+            call ntdoth(k24b,mater,mateco,carac,listLoad,result=resuou,nume_store=iordr)
           else
-            call nmdome(k24b,mater,mateco,carac,infcha,resuou(1:8),iordr)
+            call nmdome(k24b,mater,mateco,carac,listLoad,resuou(1:8),iordr)
           endif
           modnew=' '
           modnew=trim(adjustl(k24b))
