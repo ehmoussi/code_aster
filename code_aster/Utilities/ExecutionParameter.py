@@ -82,7 +82,7 @@ class ExecutionParameter(metaclass=Singleton):
             Fortran operator.
     """
     _singleton_id = 'Utilities.ExecutionParameter'
-    _args = _bool = None
+    _argv = _args = _bool = None
     _timer = _export = _command_counter = None
     _catalc = _unit = _syntax = None
     _print_header = _checksd = _testresu_print = None
@@ -91,6 +91,7 @@ class ExecutionParameter(metaclass=Singleton):
 
     def __init__(self):
         """Initialization of attributes"""
+        self._argv = None
         self._args = {}
         # options also used in F90
         self._args['dbgjeveux'] = 0
@@ -147,6 +148,17 @@ class ExecutionParameter(metaclass=Singleton):
 
         self._timer = None
         self._command_counter = 0
+
+    def set_argv(self, argv):
+        """Store command line arguments.
+
+        Useful for interactive execution with IPython that "executes and exits"
+        to remember the arguments passed to the code_aster script.
+
+        Arguments:
+            argv (list[str]): Arguments passed to code_aster script.
+        """
+        self._argv = (argv or [])[:]
 
     def set_option(self, option, value):
         """Set the value of an execution parameter.
@@ -250,7 +262,12 @@ class ExecutionParameter(metaclass=Singleton):
         return self._export
 
     def parse_args(self, argv=None):
-        """Parse the command line arguments to set the execution parameters"""
+        """Parse the command line arguments to set the execution parameters.
+
+        Arguments:
+            argv (list[str]): List of arguments inserted before those set with
+                `set_argv()` or `sys.argv`.
+        """
         # command arguments parser
         parser = ArgumentParser(description='execute a Code_Aster study',
                                 prog="Code_Aster{called by Python}")
@@ -344,7 +361,9 @@ class ExecutionParameter(metaclass=Singleton):
             action='append', default=[],
             help="define a new link to an input or output file")
 
-        args, ignored = parser.parse_known_args(argv or sys.argv)
+        if not self._argv:
+            self.set_argv(sys.argv)
+        args, ignored = parser.parse_known_args(list(argv or []) + self._argv)
 
         logger.debug(f"Ignored arguments: {ignored!r}")
         logger.debug(f"Read options: {vars(args)!r}")

@@ -60,6 +60,9 @@ See ``bin/run_aster --help`` for the available options.
 
 """
 
+# aslint: disable=C4009
+# C4009: in a string, imported here
+
 import argparse
 import os
 import os.path as osp
@@ -89,6 +92,15 @@ EPILOG = """
 The time limit is automatically increased to 24 hours for "interactive" usages
 as '--interactive', '--env', '--no-comm'.
 """
+
+# for interactive executions (using IPython)
+SAVE_ARGV = """
+import sys
+
+from code_aster.Utilities import ExecutionParameter
+ExecutionParameter().set_argv(sys.argv)
+"""
+
 
 def parse_args(argv):
     """Parse command line arguments.
@@ -202,7 +214,7 @@ def main(argv=None):
     if not args.export or args.no_comm:
         args.interactive = True
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as fobj:
-            fobj.write(AUTO_IMPORT.format(starter=""))
+            fobj.write(AUTO_IMPORT.format(starter=SAVE_ARGV))
             export.add_file(File(fobj.name, filetype="comm", unit=1))
             tmpf = fobj.name
     if args.ctest:

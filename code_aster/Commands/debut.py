@@ -67,7 +67,7 @@ class ExecutionStarter:
     params = _is_initialized = None
 
     @classmethod
-    def init(cls, argv):
+    def init(cls, argv=None):
         """Initialization of class attributes.
 
         Attributes:
@@ -108,7 +108,7 @@ class Starter(ExecuteCommand):
         Arguments:
             keywords (dict): User keywords
         """
-        if not ExecutionStarter.init(sys.argv):
+        if not ExecutionStarter.init():
             return
 
         super(Starter, cls).run(**keywords)
@@ -234,10 +234,10 @@ def init(*argv, **kwargs):
         argv (list): List of command line arguments.
         kwargs (dict): Keywords arguments passed to 'DEBUT'/'POURSUITE' +
             'debug' same as -g/--debug,
-            'noargv' to ignore ``sys.argv``.
+            'noargv' to ignore previously passed arguments.
     """
-    if not kwargs.get('noargv'):
-        argv = list(argv) + list(sys.argv)
+    if kwargs.get('noargv'):
+        ExecutionParameter().set_argv([])
     kwargs.pop('noargv', None)
     if not ExecutionStarter.init(argv):
         return

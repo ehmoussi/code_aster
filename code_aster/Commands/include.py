@@ -33,6 +33,7 @@ from ..Utilities import ExecutionParameter, Options
 AUTO_IMPORT = """
 # added for compatibility with code_aster legacy
 from math import *
+
 import code_aster
 from code_aster.Commands import *
 """
