@@ -262,6 +262,17 @@ set_tests_properties(${{TEST_NAME}} PROPERTIES
                      PROCESSORS {processors})
 """
 
+TEST_FILES_INTEGR = """
+forma02a
+forma01c
+mumps01a
+mfron01a
+zzzz151a
+zzzz200b
+zzzz218a
+zzzz401a
+"""
+
 def _build_def(bindir, datadir, lexport):
     re_list = re.compile("P +testlist +(.*)$", re.M)
     re_nod = re.compile("P +mpi_nbnoeud +([0-9]+)", re.M)
@@ -292,6 +303,8 @@ def _build_def(bindir, datadir, lexport):
         if mat:
             thr = int(mat.group(1))
         lab.append(f"nodes={nod:02d}")
+        if testname in TEST_FILES_INTEGR:
+            lab.append("SMECA_INTEGR")
         text.append(CTEST_DEF.format(testname=testname,
                                      labels=" ".join(sorted(lab)),
                                      processors=mpi * thr,
