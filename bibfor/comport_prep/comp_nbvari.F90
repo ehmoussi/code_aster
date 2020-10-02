@@ -20,7 +20,7 @@
 subroutine comp_nbvari(rela_comp    , defo_comp , type_cpla    , kit_comp_ ,&
                        post_iter_   , mult_comp_, libr_name_   ,&
                        subr_name_   , model_dim_, model_mfront_, nb_vari_  ,&
-                       nb_vari_umat_, l_implex_ ,&
+                       nb_vari_umat_, l_implex_ , regu_visc_   ,&
                        nb_vari_comp_, nume_comp_)
 !
 implicit none
@@ -37,7 +37,7 @@ character(len=16), intent(in) :: defo_comp
 character(len=16), intent(in) :: type_cpla
 character(len=16), optional, intent(in) :: kit_comp_(4)
 character(len=16), optional, intent(in) :: post_iter_
-character(len=16), optional, intent(in) :: mult_comp_
+character(len=16), optional, intent(in) :: mult_comp_, regu_visc_
 character(len=255), optional, intent(in) :: libr_name_
 character(len=255), optional, intent(in) :: subr_name_
 integer, optional, intent(in) :: model_dim_
@@ -78,7 +78,7 @@ integer, optional, intent(out) :: nume_comp_(4)
     aster_logical :: l_cristal, l_kit_meta, l_kit_thm, l_kit_ddi, l_kit_cg, l_exte_comp
     aster_logical :: l_kit, l_meca_mfront
     aster_logical :: l_mfront_proto, l_mfront_offi, l_umat, l_implex
-    character(len=16) :: kit_comp(4), post_iter, mult_comp, rela_meca
+    character(len=16) :: kit_comp(4), post_iter, mult_comp, rela_meca, regu_visc
     integer :: nb_vari_exte, nume_comp(4), nb_vari_comp(4)
     integer :: nb_vari_umat, model_dim
     character(len=255) :: libr_name, subr_name
@@ -89,6 +89,7 @@ integer, optional, intent(out) :: nume_comp_(4)
     kit_comp(1:4) = 'VIDE'
     post_iter     = 'VIDE'
     mult_comp     = 'VIDE'
+    regu_visc     = 'VIDE'
     nb_vari_umat  = 0
     nb_vari_exte  = 0
     nb_vari       = 0
@@ -123,6 +124,9 @@ integer, optional, intent(out) :: nume_comp_(4)
     if (present(l_implex_)) then
         l_implex = l_implex_
     endif
+    if (present(regu_visc_)) then
+        regu_visc = regu_visc_
+    endif
 !
 ! - Detection of specific cases
 !
@@ -141,7 +145,7 @@ integer, optional, intent(out) :: nume_comp_(4)
 !
     call comp_nbvari_std(rela_comp, defo_comp   , type_cpla  , nb_vari  ,&
                          kit_comp , post_iter   , mult_comp,&
-                         l_cristal, l_implex    , &
+                         l_cristal, l_implex    , regu_visc,&
                          nume_comp, nb_vari_rela)
 !
 ! - Get number of internal variables for KIT

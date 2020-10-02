@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
     integer :: i_comp, nb_comp
     character(len=16) :: keywordfact
     character(len=16) :: post_iter
-    character(len=16) :: rela_comp, defo_comp, mult_comp, kit_comp(4), type_cpla
+    character(len=16) :: rela_comp, defo_comp, mult_comp, kit_comp(4), type_cpla, regu_visc
     integer :: nume_comp(4), nb_vari, nb_vari_comp(4), nb_vari_umat, model_dim
     character(len=255) :: libr_name, subr_name
     character(len=16) :: model_mfront
@@ -68,6 +68,7 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
         kit_comp(:)  = ds_compor_prep%v_para(i_comp)%kit_comp(:)
         mult_comp    = ds_compor_prep%v_para(i_comp)%mult_comp
         post_iter    = ds_compor_prep%v_para(i_comp)%post_iter
+        regu_visc    = ds_compor_prep%v_para(i_comp)%regu_visc
         libr_name    = ds_compor_prep%v_paraExte(i_comp)%libr_name
         subr_name    = ds_compor_prep%v_paraExte(i_comp)%subr_name
         nb_vari_umat = ds_compor_prep%v_paraExte(i_comp)%nb_vari_umat
@@ -78,7 +79,7 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
         call comp_nbvari(rela_comp   , defo_comp, type_cpla   , kit_comp ,&
                          post_iter   , mult_comp, libr_name,&
                          subr_name   , model_dim, model_mfront, nb_vari  ,&
-                         nb_vari_umat, l_implex ,&
+                         nb_vari_umat, l_implex , regu_visc,&
                          nb_vari_comp, nume_comp)
 ! ----- Save informations
         ds_compor_prep%v_para(i_comp)%nb_vari         = nb_vari

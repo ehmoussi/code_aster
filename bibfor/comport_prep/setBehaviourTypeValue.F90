@@ -80,6 +80,7 @@ character(len=16), pointer, optional :: v_compor_(:)
         v_compor_(POSTITER) = v_para(i_comp)%post_iter
         v_compor_(DEFO_LDC) = v_para(i_comp)%defo_ldc
         v_compor_(RIGI_GEOM) = v_para(i_comp)%rigi_geom
+        v_compor_(REGUVISC) = v_para(i_comp)%regu_visc
         if (l_kit_thm) then
             v_compor_(THMC_NAME) = v_para(i_comp)%kit_comp(1)
             v_compor_(THER_NAME) = v_para(i_comp)%kit_comp(2)
@@ -127,6 +128,7 @@ character(len=16), pointer, optional :: v_compor_(:)
         l_compor_(POSTITER) = v_para(i_comp)%post_iter
         l_compor_(DEFO_LDC) = v_para(i_comp)%defo_ldc
         l_compor_(RIGI_GEOM) = v_para(i_comp)%rigi_geom
+        l_compor_(REGUVISC) = v_para(i_comp)%regu_visc
         if (l_kit_ddi) then
             l_compor_(CREEP_NAME) = v_para(i_comp)%kit_comp(1)
             l_compor_(PLAS_NAME)  = v_para(i_comp)%kit_comp(2)

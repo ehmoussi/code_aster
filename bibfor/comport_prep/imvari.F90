@@ -52,7 +52,7 @@ character(len=19), intent(in) :: compor_info
     integer :: i_vari, i_zone, c_pmf
     integer :: nb_vari, nb_zone, nb_elem_zone, nt_vari
     character(len=16) :: vari_excl
-    character(len=16) :: rela_comp, defo_comp, type_cpla
+    character(len=16) :: rela_comp, defo_comp, type_cpla, regu_visc
     aster_logical :: l_excl
     integer, pointer :: v_info(:) => null()
     integer, pointer :: v_zone(:) => null()
@@ -97,9 +97,10 @@ character(len=19), intent(in) :: compor_info
 !
 ! --------- Get names of relation
 !
-            rela_comp   = v_rela(3*(i_zone-1) + 1)
-            defo_comp   = v_rela(3*(i_zone-1) + 2)
-            type_cpla   = v_rela(3*(i_zone-1) + 3)
+            rela_comp   = v_rela(4*(i_zone-1) + 1)
+            defo_comp   = v_rela(4*(i_zone-1) + 2)
+            type_cpla   = v_rela(4*(i_zone-1) + 3)
+            regu_visc   = v_rela(4*(i_zone-1) + 4)
 !
 ! --------- Print name of internal variables
 !
@@ -107,12 +108,22 @@ character(len=19), intent(in) :: compor_info
                if (vari_excl.eq.'&&MULT_COMP') then
                     call utmess('I', 'COMPOR4_4', si = nb_elem_zone)
                     call utmess('I', 'COMPOR4_11')
+                    if (regu_visc .eq. 'VIDE') then
+                        call utmess('I', 'COMPOR4_18')
+                    else
+                        call utmess('I', 'COMPOR4_7', sk = regu_visc)
+                    endif
                     call utmess('I', 'COMPOR4_9' , si = nb_vari)
                     call utmess('I', 'COMPOR4_15')
                 else if (vari_excl.eq.'&&PROT_COMP') then
                     call utmess('I', 'COMPOR4_4', si = nb_elem_zone)
                     call utmess('I', 'COMPOR4_10')
                     call utmess('I', 'COMPOR4_6', sk = defo_comp)
+                    if (regu_visc .eq. 'VIDE') then
+                        call utmess('I', 'COMPOR4_18')
+                    else
+                        call utmess('I', 'COMPOR4_7', sk = regu_visc)
+                    endif
                     call utmess('I', 'COMPOR4_9', si = nb_vari)
                     call utmess('I', 'COMPOR4_16')
                 else if (vari_excl.eq.'&&MULT_PMF') then
@@ -124,6 +135,11 @@ character(len=19), intent(in) :: compor_info
                 call utmess('I', 'COMPOR4_4', si = nb_elem_zone)
                 call utmess('I', 'COMPOR4_5', sk = rela_comp)
                 call utmess('I', 'COMPOR4_6', sk = defo_comp)
+                if (regu_visc .eq. 'VIDE') then
+                    call utmess('I', 'COMPOR4_18')
+                else
+                    call utmess('I', 'COMPOR4_7', sk = regu_visc)
+                endif
                 if (type_cpla .eq. 'DEBORST') then
                     call utmess('I', 'COMPOR4_8')
                 endif

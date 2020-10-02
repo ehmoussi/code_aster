@@ -179,6 +179,8 @@ implicit none
         integer           :: nume_comp(4)    = 0
 ! ----- Keyword RIGI_GEOM
         character(len=16) :: rigi_geom       = ' '
+! ----- Keyword REGU_VISC
+        character(len=16) :: regu_visc       = ' '
     end type Behaviour_Para
 !
 ! - Behaviour - Preparation - Criteria for behaviour

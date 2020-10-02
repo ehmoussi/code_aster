@@ -60,8 +60,8 @@ character(len=8), intent(in), optional :: model
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp, model_dim, iret
     character(len=16) :: defo_comp, rela_comp, type_cpla, mult_comp, type_comp
-    character(len=16) :: post_iter, model_mfront, defo_ldc, rigi_geom
-    character(len=16) :: kit_comp(4)
+    character(len=16) :: post_iter, model_mfront, defo_ldc, rigi_geom, regu_visc
+    character(len=16) :: kit_comp(4), answer
     character(len=255) :: libr_name, subr_name
     integer :: unit_comp, nb_vari_umat
     aster_logical :: l_cristal, l_kit, lNonIncr
@@ -100,6 +100,7 @@ character(len=8), intent(in), optional :: model
         defo_ldc       = ' '
         kit_comp(1:4)  = 'VIDE'
         rigi_geom      = ' '
+        regu_visc      = 'VIDE'
 ! ----- Get RELATION from command file
         call getvtx(keywordfact, 'RELATION', iocc = i_comp, scal = rela_comp)
         call deprecated_behavior(rela_comp)
@@ -129,6 +130,17 @@ character(len=8), intent(in), optional :: model
             call getvtx(keywordfact, 'POST_ITER', iocc = i_comp, scal=post_iter, nbret=iret)
             if (iret .eq. 0) then
                 post_iter = ' '
+            endif
+        endif
+! ----- Viscuous regularization
+        if (getexm(keywordfact,'REGU_VISC') .eq. 1) then
+            call getvtx(keywordfact, 'REGU_VISC', iocc = i_comp, scal=answer)
+            if (answer .eq. 'OUI') then
+                regu_visc = 'REGU_VISC_ELAS'
+            elseif (answer .eq. 'NON') then
+                regu_visc = 'VIDE'
+            else
+                ASSERT(ASTER_FALSE)
             endif
         endif
 ! ----- For KIT
@@ -161,6 +173,7 @@ character(len=8), intent(in), optional :: model
         ds_compor_prep%v_para(i_comp)%post_iter   = post_iter
         ds_compor_prep%v_para(i_comp)%defo_ldc    = defo_ldc
         ds_compor_prep%v_para(i_comp)%rigi_geom   = rigi_geom
+        ds_compor_prep%v_para(i_comp)%regu_visc   = regu_visc
     end do
 !
 ! - Is at least ONE behaviour is not incremental ?

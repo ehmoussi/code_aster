@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,8 +19,9 @@
 !
 subroutine comp_meca_name(nb_vari    , nb_vari_meca,&
                           l_excl     , vari_excl   ,&
-                          l_kit_meta , l_kit_thm   , l_mfront_offi, &
-                          rela_comp  , defo_comp   , kit_comp     , type_cpla, post_iter,&
+                          l_kit_meta , l_kit_thm   , l_mfront_offi,&
+                          rela_comp  , defo_comp   , kit_comp     ,&
+                          type_cpla  , post_iter   , regu_visc    ,&
                           libr_name  , subr_name   , model_mfront , model_dim,&
                           v_vari_name)
 !
@@ -39,7 +40,7 @@ aster_logical, intent(in) :: l_excl
 character(len=16), intent(in) :: vari_excl
 aster_logical, intent(in) :: l_kit_meta, l_kit_thm, l_mfront_offi
 character(len=16), intent(in) :: rela_comp, defo_comp, kit_comp(4)
-character(len=16), intent(in) :: type_cpla, post_iter
+character(len=16), intent(in) :: type_cpla, post_iter, regu_visc
 character(len=255), intent(in) :: libr_name, subr_name
 character(len=16), intent(in) :: model_mfront
 integer, intent(in) :: model_dim
@@ -65,6 +66,7 @@ character(len=16), pointer :: v_vari_name(:)
 ! In  kit_comp         : KIT comportment
 ! In  type_cpla        : plane stress method
 ! In  post_iter        : type of post_treatment
+! In  regu_visc        : keyword for viscuous regularization
 ! In  libr_name        : name of library if UMAT or MFront
 ! In  subr_name        : name of comportement in library if UMAT or MFront
 ! In  model_mfront     : type of modelisation MFront
@@ -87,6 +89,7 @@ character(len=16), pointer :: v_vari_name(:)
         call comp_meca_code(rela_comp_  = rela_comp , defo_comp_  = defo_comp ,&
                             type_cpla_  = type_cpla , kit_comp_   = kit_comp,&
                             post_iter_  = post_iter , l_implex_   = .false._1,&
+                            regu_visc_  = regu_visc ,&
                             comp_code_py_ = comp_code_py, rela_code_py_ = rela_code_py,&
                             meta_code_py_ = meta_code_py)
         if (l_kit_meta) then

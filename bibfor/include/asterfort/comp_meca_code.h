@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine comp_meca_code(rela_comp_   , defo_comp_   , type_cpla_   , kit_comp_    ,&
-                              meca_comp_   , post_iter_   , l_implex_    , &
+                              meca_comp_   , post_iter_   , l_implex_    , regu_visc_   ,&
                               comp_code_py_, rela_code_py_, defo_code_py_, meta_code_py_,&
                               meca_code_py_)
         character(len=16), optional, intent(in) :: rela_comp_
@@ -29,6 +29,7 @@ interface
         character(len=16), optional, intent(in) :: kit_comp_(4)
         character(len=16), optional, intent(in) :: meca_comp_
         character(len=16), optional, intent(in) :: post_iter_
+        character(len=16), optional, intent(in) :: regu_visc_
         aster_logical, optional, intent(in) :: l_implex_
         character(len=16), optional, intent(out) :: comp_code_py_
         character(len=16), optional, intent(out) :: rela_code_py_

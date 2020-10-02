@@ -33,6 +33,8 @@ Comportement - Occurrence  %(i1)d"""),
 
     6: _("""     Déformation                          : %(k1)s"""),
 
+    7: _("""     Régularisation visqueuse             : %(k1)s"""),
+
     8: _("""     Algorithme contraintes planes (ou 1D): Deborst"""),
 
     9: _("""     Nombre total de variables internes   : %(i1)d"""),
@@ -43,7 +45,7 @@ Comportement - Occurrence  %(i1)d"""),
 
    12: _("""   Relation MULTIFIBRE (définie par DEFI_COMPOR) affectée sur %(i1)d éléments"""),
 
- 13: _("""
+   13: _("""
   Il y a deux types de modélisations différents pour une même affectation du comportement MFRONT.
   Chaque occurrence de COMPORTEMENT avec relation MFRONT doit contenir un seul type de modélisation.
   Par exemple, une occurrence pour les groupes de mailles contenant des éléments 3D (et comportement MFRONT),
@@ -53,21 +55,22 @@ Comportement - Occurrence  %(i1)d"""),
 """),
 
 
-    14: _("""
+   14: _("""
   La modélisation %(k1)s dans le modèle n'est pas utilisable avec MFront.
   S'il s'agit d'éléments de type TUYAU ou PMF et que vous êtes en mode prototypage, vous devez activer ALGO_CPLAN='DEBORST' pour pouvoir l'utiliser.
 """),
 
-    15: _("""
+   15: _("""
   Pour les comportements multiples (définis par DEFI_COMPOR), on n'a pas d'informations sur le nom des variables internes.
 """),
 
-    16: _("""
+   16: _("""
   Pour les comportements externes prototypes (MFRONT ou UMAT), on n'a pas d'informations sur le nom des variables internes.
 """),
 
-    17: _("""Il y a au moins un comportement qui sera traité en mode total or vous avez des variables de commande. Référez-vous à la documentation pour comprendre la manière dont seront prises en comptes les variables de commande dans cette situation."""),
+   17: _("""Il y a au moins un comportement qui sera traité en mode total or vous avez des variables de commande. Référez-vous à la documentation pour comprendre la manière dont seront prises en comptes les variables de commande dans cette situation."""),
 
+   18: _("""     Pas de régularisation visqueuse"""),
 
     20: _("""            V%(i1)d : %(k1)s"""),
 

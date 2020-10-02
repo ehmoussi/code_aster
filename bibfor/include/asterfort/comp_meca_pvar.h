@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
-!
+#include "asterfort/Behaviour_type.h"
 interface
     subroutine comp_meca_pvar(model_      , compor_cart_, compor_list_, compor_info)
         character(len=8), optional, intent(in) :: model_
         character(len=19), optional, intent(in) :: compor_cart_
-        character(len=16), optional, intent(in) :: compor_list_(20)
+        character(len=16), optional, intent(in) :: compor_list_(COMPOR_SIZE)
         character(len=19), intent(in) :: compor_info
     end subroutine comp_meca_pvar
 end interface

@@ -55,7 +55,7 @@ implicit none
     integer :: ibid, iret
     aster_logical :: lcumu(2)
     aster_logical :: lcoc
-    character(len=8), parameter :: licmp(3) = (/'DEFORM  ', 'DEFO_LDC', 'RIGIGEOM'/)
+    character(len=8), parameter :: licmp(4) = (/'DEFORM  ', 'DEFO_LDC', 'RIGIGEOM', 'REGUVISC'/)
     character(len=19) :: chs(2), chs3, chsx
     real(kind=8) :: lcoer(2)
     complex(kind=8) :: lcoec(2)
@@ -93,7 +93,7 @@ implicit none
                 'A', ibid)
 !
 !   ON ENLEVE LA CARTE LES COMPOSANTES DE COMPOR A CONSERVER
-    call cesred(chsx, 0, [ibid], -3, licmp,&
+    call cesred(chsx, 0, [ibid], -4, licmp,&
                 'V', chs(2))
 !
 !     FUSION DES CHAM_ELEM_S + COPIE DANS "COMPOR"

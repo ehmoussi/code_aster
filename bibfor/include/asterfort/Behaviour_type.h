@@ -47,7 +47,7 @@
 !
 ! Size
 !
-#define COMPOR_SIZE 22
+#define COMPOR_SIZE 23
 !
 ! Slots: general
 !
@@ -61,6 +61,7 @@
 #define POSTITER     8
 #define DEFO_LDC     21
 #define RIGI_GEOM    22
+#define REGUVISC     23
 !
 ! Slots: for KIT
 !

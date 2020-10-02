@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,8 @@ interface
     subroutine comp_meca_name(nb_vari    , nb_vari_meca,&
                               l_excl     , vari_excl   ,&
                               l_kit_meta , l_kit_thm   , l_mfront_offi, &
-                              rela_comp  , defo_comp   , kit_comp     , type_cpla, post_iter,&
+                              rela_comp  , defo_comp   , kit_comp     ,&
+                              type_cpla  , post_iter   , regu_visc    ,&
                               libr_name  , subr_name   , model_mfront , model_dim,&
                               v_vari_name)
         integer, intent(in) :: nb_vari, nb_vari_meca
@@ -30,7 +31,7 @@ interface
         character(len=16), intent(in) :: vari_excl
         aster_logical, intent(in) :: l_kit_meta, l_kit_thm, l_mfront_offi
         character(len=16), intent(in) :: rela_comp, defo_comp, kit_comp(4)
-        character(len=16), intent(in) :: type_cpla, post_iter
+        character(len=16), intent(in) :: type_cpla, post_iter, regu_visc
         character(len=255), intent(in) :: libr_name, subr_name
         character(len=16), intent(in) :: model_mfront
         integer, intent(in) :: model_dim

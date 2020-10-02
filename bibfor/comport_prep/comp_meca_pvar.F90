@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ implicit none
 !
 character(len=8), optional, intent(in) :: model_
 character(len=19), optional, intent(in) :: compor_cart_
-character(len=16), optional, intent(in) :: compor_list_(20)
+character(len=16), optional, intent(in) :: compor_list_(COMPOR_SIZE)
 character(len=19), intent(in) :: compor_info
 !
 ! --------------------------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ character(len=19), intent(in) :: compor_info
     integer, pointer :: v_compor_ptma(:) => null()
     integer :: nb_vale, nb_cmp_max, nb_zone, nb_vari, nt_vari, nb_vari_maxi, nb_zone_acti, nb_zone2
     integer :: i_zone, i_elem, nb_elem_mesh, iret, nutyel, nb_vari_meca
-    character(len=16) :: post_iter, vari_excl
+    character(len=16) :: post_iter, vari_excl, regu_visc
     character(len=16) :: rela_comp, defo_comp, kit_comp(4), type_cpla, type_comp
     character(len=255) :: libr_name, subr_name
     character(len=16) :: model_mfront, notype
@@ -184,7 +184,7 @@ character(len=19), intent(in) :: compor_info
 !
 ! - Create list of comportment information (RELATION, DEFORMATION, etc.)
 !
-    call wkvect(compor_info(1:19)//'.RELA', 'V V K16', 3*nb_zone, vk16 = v_rela)
+    call wkvect(compor_info(1:19)//'.RELA', 'V V K16', 4*nb_zone, vk16 = v_rela)
 !
 ! - Create list of internal variables names
 !
@@ -224,6 +224,7 @@ character(len=19), intent(in) :: compor_info
                 if (v_compor_vale(nb_cmp_max*(i_zone-1)+MECA_NVAR) .ne. 'VIDE') then
                     read (v_compor_vale(nb_cmp_max*(i_zone-1)+MECA_NVAR),'(I16)') nb_vari_meca
                 endif
+                regu_visc    = v_compor_vale(nb_cmp_max*(i_zone-1)+REGUVISC)
             else
                 rela_comp    = compor_list_(RELA_NAME)
                 defo_comp    = compor_list_(DEFO)
@@ -239,6 +240,7 @@ character(len=19), intent(in) :: compor_info
                 if (compor_list_(MECA_NVAR) .ne. 'VIDE') then
                     read (compor_list_(MECA_NVAR),'(I16)') nb_vari_meca
                 endif
+                regu_visc    = compor_list_(REGUVISC)
             endif
 ! --------- Detection of specific cases
             call comp_meca_l(rela_comp, 'KIT_THM' , l_kit_thm)
@@ -268,16 +270,18 @@ character(len=19), intent(in) :: compor_info
             call comp_meca_exc2(l_cristal, l_prot_comp, l_pmf, &
                                 l_excl   , vari_excl)
 ! --------- Save names of relation
-            v_rela(3*(i_zone-1) + 1) = rela_comp
-            v_rela(3*(i_zone-1) + 2) = defo_comp
-            v_rela(3*(i_zone-1) + 3) = type_cpla
+            v_rela(4*(i_zone-1) + 1) = rela_comp
+            v_rela(4*(i_zone-1) + 2) = defo_comp
+            v_rela(4*(i_zone-1) + 3) = type_cpla
+            v_rela(4*(i_zone-1) + 4) = regu_visc
 ! --------- Save name of internal variables
             call jeecra(jexnum(compor_info(1:19)//'.VARI', i_zone), 'LONMAX', nb_vari)
             call jeveuo(jexnum(compor_info(1:19)//'.VARI', i_zone), 'E', vk16 = v_vari)
             call comp_meca_name(nb_vari   , nb_vari_meca,&
                                 l_excl    , vari_excl   ,&
-                                l_kit_meta, l_kit_thm   , l_mfront_offi, &
-                                rela_comp , defo_comp   , kit_comp     , type_cpla, post_iter,&
+                                l_kit_meta, l_kit_thm   , l_mfront_offi,&
+                                rela_comp , defo_comp   , kit_comp     ,&
+                                type_cpla , post_iter   , regu_visc    ,&
                                 libr_name , subr_name   , model_mfront , model_dim,&
                                 v_vari)
 ! --------- Save current zone

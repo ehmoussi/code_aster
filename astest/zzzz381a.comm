@@ -210,11 +210,11 @@ IMPR_CO(CONCEPT=_F(NOM=CHMAT), ATTRIBUT='OUI', NIVEAU=2, UNITE=unite)
 DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
 
 TEST_FICHIER(FICHIER="./REPE_OUT/CHMAT.concept",
-             NB_VALE_I=228,
-             VALE_CALC_I=25177786,
+             NB_VALE_I=229,
+             VALE_CALC_I=50343706,
              NB_VALE=0,
              VALE_CALC=0.00000000000,
-             VALE_CALC_K="87255e1b8f2f77d8d47356ffacc78c3f",
+             VALE_CALC_K="09cecc01a49955005fa1d85f56d3e380",
              EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
 )
 
