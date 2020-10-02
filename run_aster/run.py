@@ -267,8 +267,12 @@ class RunAster:
         tmpf = "cmd_gdb.sh"
         with open(tmpf, "w") as fobj:
             fobj.write(os.linesep.join(["where", "quit", ""]))
+        # may be required if gdb is linked against a different libpython
+        bck = os.environ.pop("PYTHONHOME", None)
         cmd = ["gdb", "-batch", "-x", tmpf, "-e", python3, "-c", core[0]]
         run_command(cmd)
+        if bck:
+            os.environ["PYTHONHOME"] = bck
 
     def _get_cmdline(self, idx, commfile, timeout):
         """Build the command line.
