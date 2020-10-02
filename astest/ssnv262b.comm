@@ -1,0 +1,208 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+#  TEST DE LA REGULARISATION VISQUEUSE (D_PLAN)
+# ---------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+import math
+
+
+young = 200.e9 
+nu    = 0.30
+tau   = 10.0
+k     = 0.5*young
+rate  = 1.e-3
+tbar  = 2.0
+tend  = tbar*tau
+
+
+# Solution analytique
+
+lbd = young*nu/(1+nu)/(1-2*nu)
+mu  = 0.5*young/(1+nu)
+ec  = lbd + 2*mu
+
+epsend = tend*rate
+sigcb  = ec*epsend
+siv    = k*rate*tau*(1-math.exp(-tend/tau))
+sigend = sigcb + siv
+sigtrv = lbd*epsend
+
+wdiss = k*tau**2*rate**2*(tbar+2*math.exp(-tbar)-0.5*math.exp(-2*tbar)-1.5)
+welas = siv**2/(2*k)
+ 
+
+MATE = DEFI_MATERIAU( 
+    ELAS = _F(
+        E  = young, 
+        NU = nu,
+        ),
+    ECRO_LINE = _F(
+        SY = 10*young*epsend,
+        D_SIGM_EPSI = 0.5*young,
+        ),
+    VISC_ELAS = _F(
+        K   = k,
+        TAU = tau,
+        ),
+    )
+    
+ 
+TEMPS1 = DEFI_LIST_REEL( 
+    DEBUT      = 0.0,
+    INTERVALLE = _F(JUSQU_A = tend, NOMBRE  = 100),
+    )
+
+
+DEFLIST1 = DEFI_LIST_INST( 
+    DEFI_LIST = _F( LIST_INST=TEMPS1),
+    ECHEC     = _F( ACTION='DECOUPE', SUBD_PAS=4, SUBD_NIVEAU=2),
+    )
+
+
+HISTORY = DEFI_FONCTION(
+    NOM_PARA    = 'INST',
+    VALE        = (0.,0., tend, rate*tend),
+    )
+
+
+ZERO  = DEFI_CONSTANTE( VALE =  0.0 )
+
+
+EVOL_DP = SIMU_POINT_MAT( 
+    SUPPORT       = 'ELEMENT',
+    MODELISATION  = 'D_PLAN',
+    COMPORTEMENT  = _F( 
+        RELATION       = 'VMIS_ISOT_LINE',
+        REGU_VISC      = 'OUI',
+        ),
+    MATER      = MATE,
+    INCREMENT  = _F( LIST_INST=DEFLIST1,),
+    NEWTON     = _F( MATRICE='TANGENTE', REAC_ITER=1),
+    CONVERGENCE= _F( RESI_GLOB_MAXI = 1.E-6, ITER_GLOB_MAXI = 10),
+    ARCHIVAGE  = _F(LIST_INST = TEMPS1),
+    EPSI_IMPOSE= _F( 
+        EPXX = HISTORY,
+        EPYY = ZERO,
+        EPZZ = ZERO,
+        EPXY = ZERO,
+        ),
+    )
+
+
+#----------------------------------------------------------------#
+# TESTS PAR RAPPORT AUX RESULTAT ANALYTIQUE                      #
+#----------------------------------------------------------------#
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = 1.E-6,
+    VALE_CALC = sigend,
+    VALE_REFE = sigend,
+    NOM_PARA  = 'SIXX',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = tend,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = 1.E-6,
+    VALE_CALC = sigtrv,
+    VALE_REFE = sigtrv,
+    NOM_PARA  = 'SIYY',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = tend,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = 1.E-6,
+    VALE_CALC = siv,
+    VALE_REFE = siv,
+    NOM_PARA  = 'V3',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = tend,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = 1.E-6,
+    VALE_CALC = welas,
+    VALE_REFE = welas,
+    NOM_PARA  = 'V9',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = tend,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = 1.e-4,
+    VALE_CALC = 7614714.643956427,
+    VALE_REFE = wdiss,
+    NOM_PARA  = 'V10',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = tend,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-8,
+        ),
+    )
+
+
+
+FIN()

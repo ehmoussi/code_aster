@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -78,6 +78,7 @@ METAL2 = DEFI_MATERIAU(
                   ALPHA=1.E-5
                   ),
   BETON_ECRO_LINE  = _F(SYT= 100., D_SIGM_EPSI = -1.E4),
+  VISC_ELAS        = _F(K=1.e4 , TAU=0.10),
   NON_LOCAL  = _F(C_GRAD_VARI = 2.8e-02,PENA_LAGR=1000.*2.8e-02)
   )
 
@@ -145,7 +146,7 @@ for i in range(0,len(modelisation)):
                      FONC_MULT=U_COMP),
                    _F(CHARGE=C_RIG[i]),
                    ),
-            COMPORTEMENT=_F(RELATION='ENDO_ISOT_BETON'),
+            COMPORTEMENT=_F(RELATION='ENDO_ISOT_BETON', REGU_VISC='OUI'),
             INCREMENT=_F(LIST_INST=L_INST,
                          INST_FIN=2.,
                          ),

@@ -17,26 +17,25 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# person_in_charge: eric.lorentz at edf.fr
 
 from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
-    nom            = 'ENDO_FISS_EXP',
-    lc_type        = ('MECANIQUE',),
-    doc            =   """Comportement élastique-fragile, à endommagement scalaire, seuil exponentiel et
-   non local à gradient d'endommagement - R5.03.25"""              ,
-    num_lc         = 57,
-    nb_vari        = 9,
-    nom_vari       = ('ENDO','INDIENDO','ENDORIGI','EPSEXX','EPSEYY',
-        'EPSEZZ','EPSEXY','EPSEXZ','EPSEYZ',),
-    mc_mater       = ('ELAS','ENDO_SCALAIRE','NON_LOCAL',),
-    modelisation   = ('3D','AXIS','D_PLAN','GRADVARI',),
-    deformation    = ('PETIT',),
-    algo_inte      = ('NEWTON',),
-    type_matr_tang = ('PERTURBATION','VERIFICATION',),
+    nom            = 'REGU_VISC_ELAS',
+    lc_type        = ('UTILITAIRE',),
+    doc            =   """Algo pour régularisation."""              ,
+    num_lc         = 0,
+    nb_vari        = 8,
+    nom_vari       = ('SIVXX','SIVYY','SIVZZ','SIVXY','SIVXZ','SIVYZ','VISCELAS','VISCDISS'),
+    mc_mater       = None,
+    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN',),
+    deformation    = None,
+    algo_inte      = None,
+    type_matr_tang = None,
     proprietes     = None,
-    syme_matr_tang = ('No',),
+    syme_matr_tang = ('Yes',),
     exte_vari      = None,
-    deform_ldc     = ('OLD',),
-    regu_visc      = ('REGU_VISC_ELAS',),
+    deform_ldc     = None,
+    regu_visc      = ('No',),
 )

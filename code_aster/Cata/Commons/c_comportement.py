@@ -244,7 +244,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
             GROUP_MA    = SIMP( statut='f',typ=grma,validators=NoRepeat(),max='**'),
             MAILLE      = SIMP( statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
             RELATION    = SIMP( statut='f',typ='TXM',defaut="ELAS",into=C_RELATION(COMMAND)),
-            REGU_VISC   = SIMP( statut='f',typ='TXM', into = ('NON',), defaut = 'NON') ,
+            REGU_VISC   = SIMP( statut='f',typ='TXM', into = ('NON', 'OUI',), defaut = 'NON') ,
             b_monox     = BLOC( condition = """equal_to("RELATION", 'MONOCRISTAL') """,
                                 fr=tr("SD issue de DEFI_COMPOR"),
                                 COMPOR =SIMP(statut='o',typ=compor_sdaster,max=1),

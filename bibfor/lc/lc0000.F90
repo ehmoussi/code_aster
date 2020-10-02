@@ -15,16 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1501,W1504
+! aslint: disable=W1501,W1504,W1306
 !
 subroutine lc0000(BEHinteg,&
                   fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                   imate, compor, mult_comp, carcri,&
                   instam, instap,&
-                  neps, epsm, deps, nsig, sigm,&
+                  neps, epsm, deps, nsig, sigm_all,&
                   vim, option, angmas, cp, numlc, &
                   sigp, vip, ndsde, dsidep, icomp,&
-                  nvi, codret)
+                  nvi_all, codret)
 !
 use calcul_module, only : calcul_status
 use Behaviour_type
@@ -156,19 +156,20 @@ implicit none
 #include "asterfort/lc30015.h"
 #include "asterfort/lc31015.h"
 #include "asterfort/lc9999.h"
+#include "asterfort/lcvisc.h"
 #include "asterfort/utmess.h"
 #include "asterfort/assert.h"
 !
 type(Behaviour_Integ), intent(inout) :: BEHinteg
-integer :: imate, ndim, nvi, kpg, ksp
+integer :: imate, ndim, nvi_all, kpg, ksp
 aster_logical, intent(in) :: l_epsi_varc
 integer :: neps, nsig, ndsde
 real(kind=8) :: carcri(*), angmas(3)
 real(kind=8) :: instam, instap
 real(kind=8) :: epsm(neps), deps(neps)
-real(kind=8) :: sigm(nsig), sigp(nsig)
-real(kind=8) :: vim(nvi), vip(nvi)
-real(kind=8) :: dsidep(ndsde)
+real(kind=8) :: sigm_all(nsig), sigp(nsig)
+real(kind=8) :: vim(nvi_all), vip(nvi_all)
+real(kind=8) :: dsidep(nsig,neps)
 character(len=16) :: compor(*), option
 character(len=16), intent(in) :: mult_comp
 character(len=8) :: typmod(*)
@@ -203,7 +204,7 @@ integer :: codret
 !     DEPS    : INCREMENT DE DEFORMATION TOTALE :
 !                DEPS(T) = DEPS(MECANIQUE(T)) + DEPS(DILATATION(T))
 !     NSIG    : NOMBRE DE CMP DE SIGM ET SIGP (SUIVANT MODELISATION)
-!     SIGM    : CONTRAINTES A L'INSTANT DU CALCUL PRECEDENT
+!     SIGM_ALL: CONTRAINTES A L'INSTANT DU CALCUL PRECEDENT
 !     VIM     : VARIABLES INTERNES A L'INSTANT DU CALCUL PRECEDENT
 !     OPTION  : OPTION DEMANDEE : RIGI_MECA_TANG , FULL_MECA , RAPH_MECA
 !     ANGMAS  : LES TROIS ANGLES DU MOT_CLEF MASSIF (AFFE_CARA_ELEM),
@@ -212,7 +213,7 @@ integer :: codret
 !     CP      : LOGIQUE = VRAI EN CONTRAINTES PLANES DEBORST
 !     NUMLC   : NUMERO DE LOI DE COMPORTEMENT ISSUE DU CATALOGUE DE LC
 !     ICOMP   : COMPTEUR DE REDECOUPAGE PRODUIT PAR REDECE
-!     NVI     : NOMBRE DE VARIABLES INTERNES DU POINT D'INTEGRATION
+!     NVI_ALL : NOMBRE DE VARIABLES INTERNES DU POINT D'INTEGRATION
 !
 ! OUT SIGP    : CONTRAINTES A L'INSTANT ACTUEL
 ! VAR VIP     : VARIABLES INTERNES
@@ -265,17 +266,28 @@ integer :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: defo_ldc, defo_comp
+    real(kind=8),parameter             :: rac2 = sqrt(2.d0)
+    real(kind=8),dimension(6),parameter:: r2   = [1.d0,1.d0,1.d0,rac2,rac2,rac2]
+    integer, parameter                 :: nvi_regu_visc = 8
+    integer, parameter                 :: nvi_gdef_log  = 6
+    character(len=16) :: defo_ldc, defo_comp, regu_visc
     aster_logical :: l_pred, l_czm, l_defo_meca, l_large
+    aster_logical :: l_regu_visc, l_gdef_log
+    integer:: nvi, idx_regu_visc, ndimsi
+    real(kind=8):: sigm(nsig)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    !ASSERT(nsig*neps .eq. ndsde)
     read (compor(DEFO_LDC),'(A16)') defo_ldc
     read (compor(DEFO),'(A16)') defo_comp
+    read (compor(REGUVISC),'(A16)') regu_visc
     l_pred      = option(1:9) .eq. 'RIGI_MECA'
     l_czm       = typmod(2) .eq. 'ELEMJOIN'
     l_large     = defo_comp .eq. 'SIMO_MIEHE' .or. defo_comp .eq. 'GROT_GDEP'
+    l_gdef_log  = defo_comp .eq. 'GDEF_LOG'
     l_defo_meca = defo_ldc .eq. 'MECANIQUE'
+    l_regu_visc = regu_visc .eq. 'REGU_VISC_ELAS'
 !
 ! - Prepare parameters at Gauss point
 !
@@ -310,6 +322,26 @@ integer :: codret
         typmod(2) .eq. 'ELEMJOIN'.or. typmod(2) .eq. 'INTERFAC') then
         numlc = numlc + 7000
     endif
+!
+! - How many internal variables really for the constitutive law
+!
+    nvi = nvi_all
+    if (l_gdef_log) then
+        nvi = nvi - nvi_gdef_log
+    end if
+    if (l_regu_visc) then
+        nvi = nvi - nvi_regu_visc
+        idx_regu_visc = nvi + 1
+    end if
+    ASSERT(nvi.ge.1)
+!
+! - What is the stress at t- for the constitutive law
+!
+    sigm(1:nsig) = sigm_all(1:nsig)
+    if (l_regu_visc) then
+        ASSERT(nsig .ge. 2*ndim)
+        sigm(1:2*ndim) = sigm(1:2*ndim) - vim(idx_regu_visc:idx_regu_visc-1+2*ndim)*r2(1:2*ndim)
+    end if
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -1193,6 +1225,21 @@ integer :: codret
     end select
 !
 ! --------------------------------------------------------------------------------------------------
+
+!
+! - Viscous regularisation
+!
+    if (l_regu_visc) then
+        ndimsi = 2*ndim
+        ASSERT(.not. l_large)
+        ASSERT (typmod(2).eq.' ' .or. typmod(2).eq.'GRADVARI') 
+        ASSERT(neps.ge.ndimsi)
+        ASSERT(nsig.ge.ndimsi)
+        call lcvisc(fami, kpg, ksp, ndim, imate,&
+            instam, instap, deps(1:ndimsi), vim(idx_regu_visc:idx_regu_visc+nvi_regu_visc-1), &
+            option, sigp(1:ndimsi), vip(idx_regu_visc:idx_regu_visc+nvi_regu_visc-1), &
+            dsidep(1:ndimsi,1:ndimsi))
+    end if
 !
 ! - Restore total strain
 !
