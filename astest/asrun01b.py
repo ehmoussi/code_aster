@@ -579,7 +579,7 @@ class TestStatus(unittest.TestCase):
         self.assertTrue(status.state & SO.Completed)
         self.assertFalse(status.state & SO.Error)
 
-        status = get_status(0, "! <A> SUPERVIS_1 !", test=True)
+        status = get_status(0, "! <A> SUPERVIS_22 !", test=True)
         self.assertEqual(status.state, SO.NoTest | SO.Warn)
         self.assertEqual(SO.name(status.state), "NO_TEST_RESU")
         self.assertFalse(status.state & SO.Ok)
@@ -587,7 +587,7 @@ class TestStatus(unittest.TestCase):
         self.assertFalse(status.state & SO.Error)
 
         output = "\n".join([
-            "! <A> SUPERVIS_1 !",
+            "! <A> SUPERVIS_22 !",
             "NOOK 1. 0....",
         ])
         status = get_status(0, output)

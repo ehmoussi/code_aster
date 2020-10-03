@@ -20,8 +20,7 @@
 #
 # person_in_charge: mathieu.courtois at edf.fr
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      IGNORE_ALARM='SUPERVIS_1',)
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
 
 a = 2.
 

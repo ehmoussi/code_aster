@@ -23,10 +23,7 @@
 from code_aster import AsterError
 from code_aster.Commands import *
 import aster
-POURSUITE(CODE='OUI',
-              IGNORE_ALARM='SUPERVIS_1')
-# ALARME 'SUPERVIS_1' : Pour pouvoir vérifier que le calcul initial
-#                       a bien été interrompu après un pas de temps.
+POURSUITE(CODE='OUI')
 
 # 1. On verifie qu'un seul pas de temps est présent dans le concept 'resu'.
 l_para = resu.LIST_VARI_ACCES()

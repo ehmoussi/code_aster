@@ -27,7 +27,6 @@ from code_aster.Supervis import UserMacro
 
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      IGNORE_ALARM='SUPERVIS_1',
       IMPR_MACRO='OUI',)
 
 def ma_macro_ops(self, TABLE=None, **kwargs):

@@ -291,7 +291,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI'),
-      IGNORE_ALARM = ('MODELISA4_1', 'SUPERVIS_1', 'MODELE1_63', 'SUPERVIS_25'),
+      IGNORE_ALARM = ('MODELISA4_1', 'MODELE1_63', 'SUPERVIS_25'),
       )
 
 #================================================================================================

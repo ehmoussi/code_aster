@@ -147,8 +147,7 @@ def NormeAster(RESULTAT, Sol_Ana, MAIL, MODELE, GROUP_MA):
 
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      DEBUG=_F(SDVERI='OUI',),
-      IGNORE_ALARM='SUPERVIS_1',)
+      DEBUG=_F(SDVERI='OUI',))
 
 # Conductivite thermique du milieu
 Lambda=15;

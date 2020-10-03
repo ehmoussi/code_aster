@@ -24,7 +24,7 @@ use calcul_module, only : calcul_status
 !
 ! All messages (informations, warnings, errors) should be printed through this subroutine.
 ! Only the first two arguments are compulsory.
-! Example: call utmess('A', 'SUPERVIS_1')
+! Example: call utmess('A', 'SUPERVIS_22')
 !
 ! To pass a single value, just use sk/si/sr=value.
 ! To pass more values, use nk/ni/nr=<number of values> + valk/vali/valr=<array of values>.

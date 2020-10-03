@@ -276,9 +276,8 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
 # ================================================================================================================================================================================
 
 POURSUITE(CODE='OUI',
-      DEBUG=_F(SDVERI='OUI'),
-      IGNORE_ALARM = ( 'SUPERVIS_1','MODELE1_63'),
-      )
+          DEBUG=_F(SDVERI='OUI'),
+          IGNORE_ALARM='MODELE1_63')
 
 #================================================================================================
 # Debut de l'etude de la convergence

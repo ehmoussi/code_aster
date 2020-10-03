@@ -21,8 +21,7 @@
 # FLUIDES INCOMPRESSIBLES - MASSES AJOUTEES - CALCUL FREQUENTIEL - HARM GENE
 
 
-POURSUITE(CODE='OUI',DEBUG=_F(SDVERI='OUI'),
-      IGNORE_ALARM='SUPERVIS_1')
+POURSUITE(CODE='OUI',DEBUG=_F(SDVERI='OUI'))
 
 
 #On passe les signaux en frequentiel pour tester la macro en frequentiel

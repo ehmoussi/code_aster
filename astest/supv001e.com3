@@ -18,8 +18,7 @@
 # --------------------------------------------------------------------
 
 #
-POURSUITE(CODE='OUI',
-          IGNORE_ALARM='SUPERVIS_1',)
+POURSUITE(CODE='OUI')
 
 assert a == 2.
 

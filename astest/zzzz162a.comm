@@ -18,8 +18,7 @@
 # --------------------------------------------------------------------
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      DEBUG=_F(SDVERI='OUI'),
-      IGNORE_ALARM='SUPERVIS_1',)
+      DEBUG=_F(SDVERI='OUI'))
 #......................................................................
 # CECI EST UN TEST DE L ECRITURE ET LA RELECTURE DES CHAMPS
 # AU FORMAT MED - C EST LA RECOPIE DE HSNV100A
