@@ -6,8 +6,6 @@ P mpi_nbnoeud 1
 P testlist ci verification sequential
 
 F comm supv001c.comm D 1
-F comm supv001c.com1 D 1
-F comm supv001c.com2 D 1
 F comm supv001c.com3 D 1
 F mmed supv001c.mmed D 20
 F libr supv001c.33 D 33
