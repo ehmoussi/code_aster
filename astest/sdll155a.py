@@ -128,6 +128,32 @@ deplacement_impose = CALC_CHAMP(reuse=deplacement_impose,
                                 RESULTAT=deplacement_impose,
                                 CONTRAINTE='EFGE_ELNO')
 
+
+
+# IMPR_RESU(UNITE=6, FORMAT='RESULTAT', RESU=_F(RESULTAT=deplacement_impose, NOM_CHAM='EFGE_ELNO'))
+
+
+tabInteg = POST_ELEM(MODELE=modele,
+                     RESULTAT=deplacement_impose,
+                     NUME_ORDRE=1, 
+                     INTEGRALE=_F(NOM_CHAM = 'EFGE_ELNO',
+                                  NOM_CMP='MT',
+                                  TYPE_MAILLE = '1D',
+                                  TOUT='OUI',
+                                  ))
+
+# IMPR_TABLE(UNITE=6, TABLE= tabInteg)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=4.85479633968203,
+           VALE_REFE=2*2.42739816984101E+00,
+           NOM_PARA='INTE_MT',
+           TABLE=tabInteg,
+           FILTRE=_F(NOM_PARA='NUME_ORDRE',
+                     VALE_I=1,),
+           )
+
+
 dilatation_thermique = MECA_STATIQUE(MODELE=modele,
                                      CHAM_MATER=ch_mater,
                                      CARA_ELEM=cara_elem,
