@@ -25,35 +25,66 @@ subroutine lc6075(fami, kpg, ksp, ndim, imate,&
 !
 !
 ! aslint: disable=W1504,W0104
+    use lcgtn_module, only: CONSTITUTIVE_LAW, Init, InitGradVari, InitViscoPlasticity, &
+                                    Integrate 
 
     implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/lcgtn_wrap.h"
+#include "asterfort/lcgrad.h"
     
     
-    integer      :: imate, ndim, kpg, ksp, codret, icomp
-    integer      :: nvi,neps,nsig,ndsde
-    real(kind=8) :: carcri(*), angmas(*)
-    real(kind=8) :: instam, instap
-    real(kind=8) :: epsm(*), deps(*)
-    real(kind=8) :: sigm(*), sigp(*)
-    real(kind=8) :: vim(*), vip(*)
-    real(kind=8) :: dsidep(*)
-    character(len=16) :: compor(*), option
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
+    integer             :: imate, ndim, kpg, ksp, codret, icomp
+    integer             :: nvi,neps,nsig,ndsde
+    real(kind=8)        :: carcri(*), angmas(*)
+    real(kind=8)        :: instam, instap
+    real(kind=8)        :: epsm(neps), deps(neps)
+    real(kind=8)        :: sigm(nsig), sigp(nsig)
+    real(kind=8)        :: vim(nvi), vip(nvi)
+    real(kind=8)        :: dsidep(nsig,neps)
+    character(len=16)   :: compor(*), option
+    character(len=8)    :: typmod(*)
+    character(len=*)    :: fami
 ! ----------------------------------------------------------------------
 !  Loi de comportement GTN
 ! ----------------------------------------------------------------------
-    aster_logical,parameter:: grvi=.true.
-! ----------------------------------------------------------------------
-        ASSERT (neps .eq. nint(sqrt(float(ndsde))))
-        ASSERT (neps .eq. nsig)
+    integer     :: ndimsi
+    real(kind=8):: sig(2*ndim),vi(nvi),ka
+    real(kind=8):: deps_sig(2*ndim,2*ndim),deps_vi(2*ndim),dphi_sig(2*ndim),dphi_vi
+    real(kind=8):: apg,lag,grad(ndim),eps(neps)
+    type(CONSTITUTIVE_LAW):: cl
+! --------------------------------------------------------------------------------------------------
+    ASSERT (neps*nsig .eq. ndsde)
+    ASSERT (neps .eq. nsig)
+    ASSERT (neps .ge. 2*ndim)
+    ASSERT (neps .ge. 3*ndim+2)
+! --------------------------------------------------------------------------------------------------
+    ndimsi = 2*ndim
+    eps    = epsm(1:neps)+deps(1:neps)
+    apg    = eps(ndimsi+1)
+    lag    = eps(ndimsi+2)
+    grad   = eps(ndimsi+3:ndimsi+2+ndim)
 
-        call lcgtn_wrap(fami, kpg, ksp, ndim, imate,&
-                    carcri, instam, instap, neps, epsm, &
-                    deps, vim, option, sigp, vip, &
-                    grvi, dsidep, codret)
+    cl = Init(ndimsi, option, fami, kpg, ksp, imate, nint(carcri(1)), &
+            carcri(3))
+
+    call InitGradVari(cl,fami,kpg,ksp,imate,lag,apg)
+
+    if (compor(1)(1:4) .eq. 'VISC') &
+        call InitViscoPlasticity(cl,fami,kpg,ksp,imate,instap-instam)
+        
+    call Integrate(cl, eps(1:ndimsi), vim(1:nvi), sig, &
+            vi, deps_sig, dphi_sig, deps_vi, dphi_vi)
+
+    codret = cl%exception
+    if (codret.ne.0) goto 999
+
+    if (cl%vari) vip(1:nvi) = vi
+
+    ka = merge(vi(1),vim(1),cl%vari)
+    call lcgrad(cl%resi, cl%rigi, sig, apg, lag, grad, ka, &
+              cl%mat%r, cl%mat%c, deps_sig, dphi_sig, deps_vi, dphi_vi, sigp, dsidep)
+
+999 continue    
 
 end subroutine

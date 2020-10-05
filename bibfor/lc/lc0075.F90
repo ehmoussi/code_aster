@@ -25,35 +25,54 @@ subroutine lc0075(fami, kpg, ksp, ndim, imate,&
 !
 !
 ! aslint: disable=W1504,W0104
-
+    use lcgtn_module, only: CONSTITUTIVE_LAW, Init, InitViscoPlasticity, Integrate 
     implicit none
+
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/lcgtn_wrap.h"
     
     
     integer      :: imate, ndim, kpg, ksp, codret, icomp
     integer      :: nvi,neps,nsig,ndsde
     real(kind=8) :: carcri(*), angmas(*)
     real(kind=8) :: instam, instap
-    real(kind=8) :: epsm(*), deps(*)
-    real(kind=8) :: sigm(*), sigp(*)
-    real(kind=8) :: vim(*), vip(*)
-    real(kind=8) :: dsidep(*)
+    real(kind=8) :: epsm(neps), deps(neps)
+    real(kind=8) :: sigm(nsig), sigp(nsig)
+    real(kind=8) :: vim(nvi), vip(nvi)
+    real(kind=8) :: dsidep(nsig,neps)
     character(len=16) :: compor(*), option
     character(len=8) :: typmod(*)
     character(len=*) :: fami
 ! ----------------------------------------------------------------------
 !  Loi de comportement GTN
 ! ----------------------------------------------------------------------
-    aster_logical,parameter:: grvi=.false.
+    integer     :: ndimsi
+    real(kind=8):: eps(2*ndim), sig(2*ndim),dsde(2*ndim,2*ndim),vi(nvi)
+    type(CONSTITUTIVE_LAW):: cl
 ! ----------------------------------------------------------------------
-        ASSERT (neps .eq. nint(sqrt(float(ndsde))))
-        ASSERT (neps .eq. nsig)
+    ASSERT (neps*nsig .eq. ndsde)
+    ASSERT (neps .eq. nsig)
+    ASSERT (neps .ge. 2*ndim)
+! --------------------------------------------------------------------------------------------------
 
-        call lcgtn_wrap(fami, kpg, ksp, ndim, imate,&
-                    carcri, instam, instap, neps, epsm,&
-                    deps, vim, option, sigp, vip, &
-                    grvi, dsidep, codret)
+    ndimsi = 2*ndim
+    eps    = epsm(1:ndimsi) + deps(1:ndimsi)
+    
+    cl = Init(ndimsi, option, fami, kpg, ksp, imate, nint(carcri(1)), &
+            carcri(3))
+            
+    if (compor(1)(1:4) .eq. 'VISC') &
+        call InitViscoPlasticity(cl,fami,kpg,ksp,imate,instap-instam)
+        
+    call Integrate(cl, eps, vim(1:nvi), sig, vi, dsde)
 
+    codret = cl%exception
+    if (codret.ne.0) goto 999
+
+    if (cl%resi) sigp(1:ndimsi) = sig
+    if (cl%vari) vip(1:nvi) = vi
+    if (cl%rigi) dsidep(1:ndimsi,1:ndimsi) = dsde
+
+999 continue                      
 end subroutine
+

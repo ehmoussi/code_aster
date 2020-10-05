@@ -1,0 +1,230 @@
+# ---------------------------------------------------------------------
+#  Evolution de la porosite sous germination pure dans GTN
+#  Germination fonction de la variable d'ecrouissage
+# ---------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+import math
+
+r0 = 500.0
+rh = 1000.0
+
+q1 = 1.5
+f0 = 1.e-3
+
+fn = 0.10
+pn = 0.20
+sn = 0.03
+
+c0 = 0.03
+ki = 0.10
+kf = 0.20
+
+
+# Resultats de la solution analytique
+ka  =  0.147878
+fk  =  0.0194789295674
+rk  =  647.878
+te  =  499.25
+teq =  628.948045105
+ep  =  0.223054746403
+eps =  0.227142908697
+
+
+
+MATE = DEFI_MATERIAU(
+    ELAS    = _F(E=200000.0, NU=0.3),
+    ECRO_NL = _F(
+        R0 = r0,
+        RH = rh,
+        ),
+    GTN = _F(
+        Q1 = q1,
+        Q2 = 1.0,
+        PORO_INIT = f0,
+        COAL_PORO = 1.0, 
+        COAL_ACCE = 1,
+        NUCL_GAUSS_PORO = fn,
+        NUCL_GAUSS_PLAS = pn,
+        NUCL_GAUSS_DEV  = sn,
+        NUCL_CRAN_PORO  = c0,
+        NUCL_CRAN_INIT  = ki,
+        NUCL_CRAN_FIN   = kf,
+        ),              
+    ) 
+
+ 
+TEMPS1 = DEFI_LIST_REEL( 
+    DEBUT      = 0.0,
+    INTERVALLE = (
+        _F(JUSQU_A = 1.0, NOMBRE  = 1),
+        _F(JUSQU_A = 2.0, NOMBRE  = 500),
+        ),
+    )
+
+
+DEFLIST1 = DEFI_LIST_INST( 
+    DEFI_LIST = _F( LIST_INST=TEMPS1),
+    ECHEC     = _F( ACTION='DECOUPE', SUBD_PAS=4, SUBD_NIVEAU=2),
+    )
+
+
+#----------------------------------------------------------------#
+# ESSAI DE TRACRION A DEFORMATIONS IMPOSEES                    #
+#----------------------------------------------------------------#
+
+
+SXX = DEFI_FONCTION(
+    NOM_PARA    = 'INST',
+    VALE        = (0.0, 0.0, 1.0, 2.0/3.0*te, 2.0, 2.0/3.0*teq),
+    )
+
+
+SYY = DEFI_FONCTION(
+    NOM_PARA    = 'INST',
+    VALE        = (0.0, 0.0, 1.0, -1.0/3.0*te, 2.0, -1.0/3.0*teq),
+    )
+
+
+ZERO  = DEFI_CONSTANTE( VALE =  0.0 )
+
+
+EVOL_3D = SIMU_POINT_MAT( 
+    SUPPORT       = 'ELEMENT',
+    MODELISATION  = '3D',
+    COMPORTEMENT  = _F( 
+        RELATION       = 'GTN',
+        ITER_INTE_MAXI = 15,
+        RESI_INTE_RELA = 1.E-6,
+        ),
+    MATER      = MATE,
+    INCREMENT  = _F( LIST_INST=DEFLIST1,),
+    NEWTON     = _F( MATRICE='TANGENTE', REAC_ITER=1),
+    CONVERGENCE= _F( RESI_GLOB_MAXI = 1.E-6, ITER_GLOB_MAXI = 10),
+    ARCHIVAGE  = _F(LIST_INST = TEMPS1,),
+    SIGM_IMPOSE= _F( 
+        SIXX = SXX,
+        SIYY = SYY,
+        SIZZ = SYY,
+        ),
+    )
+
+
+
+#----------------------------------------------------------------#
+# TESTS PAR RAPPORT AUX RESULTAT ANALYTIQUE                      #
+#----------------------------------------------------------------#
+
+
+TEST_TABLE(
+    TABLE     = EVOL_3D,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = 0.05,
+    VALE_CALC = 0.15056795396586212,
+    VALE_REFE = eps*2.0/3.0,
+    NOM_PARA  = 'EPXX',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 2.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_3D,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = 0.05,
+    VALE_CALC = 0.1470479603591232,
+    VALE_REFE = ka,
+    NOM_PARA  = 'V1',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 2.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_3D,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = 0.05,
+    VALE_CALC = 0.018992005106860502,
+    VALE_REFE = fk,
+    NOM_PARA  = 'V2',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 2.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_3D,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = 0.05,
+    VALE_CALC = 0.14784251243426838,
+    VALE_REFE = ep*2.0/3.0,
+    NOM_PARA  = 'V10',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 2.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_3D,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = 0.05,
+    VALE_CALC = 0.017992005105603136,
+    VALE_REFE = fk-f0,
+    NOM_PARA  = 'V11',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 2.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_3D,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = 0.05,
+    VALE_CALC = 2.9440181067626265,
+    VALE_REFE = math.log(fk) - math.log(f0),
+    NOM_PARA  = 'V12',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 2.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+
+
+FIN()

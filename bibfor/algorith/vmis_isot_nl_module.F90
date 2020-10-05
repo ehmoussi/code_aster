@@ -293,6 +293,7 @@ subroutine Integrate(self, eps, vim, sig, vip, deps_sig, dphi_sig, deps_vi, dphi
     if (self%vari) then
         vip(1) = ka
         vip(2) = state
+        vip(7:8) = 0
         vip(3:2+self%ndimsi) = ep/rac2
     end if
 
