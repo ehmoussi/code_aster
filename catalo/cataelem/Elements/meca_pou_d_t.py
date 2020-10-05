@@ -39,7 +39,7 @@ CCAARPO = LocatedComponents(phys=PHY.CAARPO, type='ELEM',
 
 
 CCAGEPO = LocatedComponents(phys=PHY.CAGEPO, type='ELEM',
-                            components=('R1', 'EP1',))
+                            components=('R1', 'EP1','R2','EP2'))
 
 
 CCAGNPO = LocatedComponents(phys=PHY.CAGNPO, type='ELEM',
@@ -49,6 +49,8 @@ CCAGNPO = LocatedComponents(phys=PHY.CAGNPO, type='ELEM',
                                         'AY2', 'AZ2', 'EY2', 'EZ2', 'JX2',
                                         'RY2', 'RZ2', 'RT2', 'JG2', 'TVAR',))
 
+ENROCH_R = LocatedComponents(phys=PHY.ROCH_R, type='ELNO',
+                             components=('E','K_FACT','N_EXPO','A','I','R','EP','I2','R2','EP2'))
 
 CCAORIE = LocatedComponents(phys=PHY.CAORIE, type='ELEM',
                             components=('ALPHA', 'BETA', 'GAMMA',))
@@ -532,6 +534,11 @@ class MECA_POU_D_T(Element):
                        (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),),
         ),
 
+        OP.ROCH_ELNO(te=113,
+            para_in=((SP.PMATERC, LC.CMATERC),(SP.PCAGNPO, CCAGNPO),(SP.PCAGEPO, CCAGEPO),),
+            para_out=((OP.ROCH_ELNO.PROCHRR, ENROCH_R), ),
+        ),
+        
         OP.SIEF_ELGA(te=144,
             para_in =( (SP.PCAARPO, CCAARPO), (SP.PCAGNPO, CCAGNPO),
                        (OP.SIEF_ELGA.PCAORIE, CCAORIE), (SP.PDEPLAR, DDL_MECA),

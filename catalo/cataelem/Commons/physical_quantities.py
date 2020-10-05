@@ -425,7 +425,6 @@ CAPOUF   = PhysicalQuantity(type='R',
        COEF_ECH:  par rapport a la periode reelle de la cellule de reference
 """)
 
-
 CARCRI   = PhysicalQuantity(type='R',
     components=(
        'ITECREL',
@@ -2715,6 +2714,31 @@ RICE_TRA = PhysicalQuantity(type='R',
       DEPSEQ : variation de la deformation plastique equivalente
 """)
 
+ROCH_R   = PhysicalQuantity(type='R',
+    components=(
+       'E',
+       'K_FACT',
+       'N_EXPO',
+       'A',
+       'I',
+       'R',
+       'EP',
+       'I2',
+       'R2',
+       'EP2',
+    ),
+    comment="""  ROCH_R Type:R Paramètres matériaux et de poutre pour POST_ROCHE
+       E   : module d'Young
+       K_FACT : Mot-clé FACTEUR de RAMBERG_OSGOOD
+       N_EXPO : Mot-clé EXPOSANT de RAMBERG_OSGOOD
+       A : aire de la section
+       I : Inertie de la section
+       R : Rayon extérieur de la section
+       EP : Epaisseur de la section
+       I2 : Inertie de la section de l'autre noeud de la maille
+       R2 : Rayon extérieur de la section de l'autre noeud de la maille
+       EP2 : Epaisseur de la section de l'autre noeud de la maille
+""")
 
 ROTA_R   = PhysicalQuantity(type='R',
     components=(

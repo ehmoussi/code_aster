@@ -183,6 +183,22 @@ subroutine op0038()
         call calcul('S', option, ligrel, 6, lchin,&
                     lpain, 1, lchout, lpaout, base,&
                     'OUI')
+!        ---------------------------
+!        -- OPTION ROCH_ELNO :
+!        ---------------------------
+    else if (option.eq.'ROCH_ELNO') then
+        lchin(1)=mateco
+        lpain(1)='PMATERC'
+        lchin(2)=chcara(6)
+        lpain(2)='PCAGNPO'
+        lchin(3)=chcara(5)
+        lpain(3)='PCAGEPO'
+        lchout(1)=chelem
+        lpaout(1)='PROCHRR'
+!
+        call calcul('S', option, ligrel, 3, lchin,&
+                    lpain, 1, lchout, lpaout, base,&
+                    'OUI')
 !        ------------------------
 !        -- OPTIONS ACOUSTIQUES :
 !        ------------------------
