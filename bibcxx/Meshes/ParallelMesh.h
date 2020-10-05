@@ -123,25 +123,16 @@ class ParallelMeshClass : public BaseMeshClass {
     };
 
     /**
-     * @brief Return lisr of nodes
+     * @brief Return list of nodes
      * @param name name of group (if empty all the nodes)
      * @param local node id in local or global numbering
      * @param same_rank keep or not the nodes owned by the current domain
      * @return list of Nodes
      */
-    const VectorLong getNodes( const std::string name, const bool local,
-                                                        const bool same_rank ) const; // 1
 
-    const VectorLong getNodes( const bool local, const bool same_rank ) const
-    {
-        return getNodes( std::string(), local, same_rank); // ->1
-    };
-    /**
-     * @brief Return lisr of nodes
-     * @param name name of group (if empty all the nodes)
-     * @param local node id in local or global numbering
-     * @return list of Nodes
-     */
+    const VectorLong getNodes( const std::string name, const bool local,
+                               const bool same_rank) const; // 0
+
     const VectorLong getNodes( const std::string name, const bool local) const; // 0
 
     const VectorLong getNodes(  ) const
@@ -159,6 +150,11 @@ class ParallelMeshClass : public BaseMeshClass {
         return getNodes(std::string(), local); // ->0
     };
 
+    const VectorLong getNodes( const bool local, const bool same_rank) const
+    {
+        return getNodes(std::string(), local, same_rank); // ->0
+    };
+
     // const VectorLong getNodes( const bool same_rank ) const; //not possible
 
     // const VectorLong getNodes( const std::string name, const bool same_rank )
@@ -172,15 +168,11 @@ class ParallelMeshClass : public BaseMeshClass {
     virtual bool isParallel() const { return true; };
 
     /**
-     * @brief Read a MED ParallelMesh file
+     * @brief Read a MED ParallelMesh file (already partitioned mesh)
      * @return retourne true si tout est ok
      */
-    bool readMedFile( const std::string &fileName );
+    bool readPartitionedMedFile( const std::string &fileName );
 
-    /**
-     * @brief Read a MED ParallelMesh file
-     * @return retourne true si tout est ok
-     */
     bool updateGlobalGroupOfNodes( void );
 
     bool updateGlobalGroupOfCells( void );

@@ -31,7 +31,7 @@ parallel=True
 
 if (parallel):
     monMaillage = code_aster.ParallelMesh()
-    monMaillage.readMedFile( "xxParallelNonlinearMechanics001a" )
+    monMaillage.readMedFile( "xxParallelNonlinearMechanics001a/%d.med"%rank, True )
 else:
     monMaillage = code_aster.Mesh()
     monMaillage.readMedFile("xxParallelNonlinearMechanics001a.med")

@@ -30,7 +30,7 @@ parallel= (nProc>1)
 
 if parallel:
     pMesh2 = code_aster.ParallelMesh()
-    pMesh2.readMedFile("xxParallelMechanicalLoad001b")
+    pMesh2.readMedFile("xxParallelMechanicalLoad001b/%d.med"%rank, True)
 else:
     pMesh2 = code_aster.Mesh()
     pMesh2.readMedFile("xxNotParallelMechanicalLoad001b.med")

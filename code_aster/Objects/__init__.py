@@ -71,12 +71,14 @@ from .transientgeneralizedresultscontainer_ext import \
     TransientGeneralizedResult
 from .xfemcrack_ext import XfemCrack
 
-# Define unusable objects
+# Define unusable import
 try:
-    ParallelMesh
-except NameError:
+    from .parallelmesh_ext import ParallelMesh
+except ImportError:
     class ParallelMesh(OnlyParallelObject):
         pass
+
+# Define unusable objects
 try:
     ConnectionMesh
 except NameError:

@@ -1,0 +1,9 @@
+P time_limit 60
+P memory_limit 128
+P ncpus 1
+P mpi_nbcpu 4
+P mpi_nbnoeud 1
+P testlist  ci verification parallel
+
+F comm mesh002n.py D 1
+F mmed mesh002n.med D 20

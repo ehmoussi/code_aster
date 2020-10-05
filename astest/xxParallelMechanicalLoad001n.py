@@ -26,7 +26,7 @@ code_aster.init("--test")
 rank = code_aster.getMPIRank()
 
 pMesh2 = code_aster.ParallelMesh()
-pMesh2.readMedFile("xxParallelMechanicalLoad001h")
+pMesh2.readMedFile("xxParallelMechanicalLoad001h/%d.med"%rank, True)
 
 model = AFFE_MODELE(MAILLAGE = pMesh2,
                     AFFE = _F(MODELISATION = "POU_D_T",

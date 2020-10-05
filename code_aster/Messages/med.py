@@ -103,7 +103,12 @@ On ne peut pas écrire au format MED %(i1)d.%(i2)d.%(i3)d.
      Vérifier l'intégrité du fichier MED avec medconforme/mdump.
 """),
 
-
+    18 : _("""
+  Vous essayer de partitionner le maillage alors que le calcul est séquentiel.
+  Le partitionnement est désactivé.
+  -> Conseil :
+     Pour enlever cette alarme, utiliser le mot-clé SANS dans PARTITIONNEUR
+"""),
 
     19 : _("""
   -> Les mailles  %(k1)s ne sont pas nommées dans le fichier MED.

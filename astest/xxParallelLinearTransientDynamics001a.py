@@ -31,7 +31,7 @@ parallel=True
 
 if (parallel):
     MA = code_aster.ParallelMesh()
-    MA.readMedFile( "xxParallelLinearTransientDynamics001a" )
+    MA.readMedFile( "xxParallelLinearTransientDynamics001a/%d.med"%rank, True )
 else:
     MA = code_aster.Mesh()
     MA.readMedFile("xxParallelLinearTransientDynamics001a.med")

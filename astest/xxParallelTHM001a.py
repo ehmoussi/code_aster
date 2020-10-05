@@ -21,7 +21,6 @@ import code_aster
 from code_aster.Commands import *
 import os
 
-# test = petsc04c, mais avec solveur MUMPS
 test = code_aster.TestCase()
 
 code_aster.init("--test")
@@ -30,7 +29,7 @@ parallel= (nProc>1)
 
 if (parallel):
     MAIL = code_aster.ParallelMesh()
-    MAIL.readMedFile("xxFieldsplit001a")
+    MAIL.readMedFile("xxParallelTHM001a/%d.med"%rank, True)
 else:
     MAIL_LIN = code_aster.Mesh()
     MAIL_LIN.readMedFile("petsc04a.mmed")

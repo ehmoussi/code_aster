@@ -33,7 +33,7 @@ parallel= (nProc>1)
 
 if (parallel):
     MAIL = code_aster.ParallelMesh()
-    MAIL.readMedFile("xxFieldsplit001a")
+    MAIL.readMedFile("xxFieldsplit001a/%d.med"%rank, True)
 else:
     MAIL = code_aster.Mesh()
     MAIL.readMedFile("petsc04a.mmed")

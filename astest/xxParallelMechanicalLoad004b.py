@@ -29,7 +29,7 @@ test = code_aster.TestCase()
 
 if (parallel):
     MAIL = code_aster.ParallelMesh()
-    MAIL.readMedFile("xxParallelMechanicalLoad004a")
+    MAIL.readMedFile("xxParallelMechanicalLoad004a/%d.med"%rank, True)
     # os.system('echo "-mat_view :/tmp/par.txt:ascii_matlab " > ~/.petscrc')
     # os.system('echo "-ksp_view_rhs ascii:/tmp/rhs_par.txt " >> ~/.petscrc')
     # os.system('echo "-ksp_view_solution ascii:/tmp/sol_par.txt  " >> ~/.petscrc')

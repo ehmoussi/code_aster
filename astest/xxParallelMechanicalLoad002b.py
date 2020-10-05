@@ -27,7 +27,7 @@ nProc = code_aster.getMPINumberOfProcs()
 import os
 
 pMesh2 = code_aster.ParallelMesh()
-pMesh2.readMedFile("xxParallelMesh001a")
+pMesh2.readMedFile("xxParallelMesh001a/%d.med"%rank, True)
 
 rank = code_aster.getMPIRank()
 

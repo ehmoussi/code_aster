@@ -55,6 +55,10 @@ keywords = dict(
         ),
         INFO_MED=SIMP(statut='f', typ='I', defaut=1, into=(1, 2, 3)),
 
+        PARTITIONNEUR=SIMP(statut='f', typ='TXM', defaut="SANS",
+                into=('SANS', 'PTSCOTCH'),
+                fr=tr("Partitionner le maillage pour un calcul parallèle"),
+                ),
     ),
 
     b_format_ideas=BLOC(
@@ -75,10 +79,19 @@ keywords = dict(
     }
 )
 
+def lire_maillage_sdprod(FORMAT, PARTITION, **args):
+    if args.get('__all__'):
+        return (maillage_sdaster, maillage_p)
+
+    if(FORMAT == "MED" and PARTITION == "OUI"):
+        return maillage_p
+
+    return maillage_sdaster
+
 
 LIRE_MAILLAGE = OPER(nom="LIRE_MAILLAGE",
                       op=1,
-                      sd_prod=maillage_sdaster,
+                      sd_prod=lire_maillage_sdprod,
                       fr=tr("Crée un maillage par lecture d'un fichier"),
                       reentrant='n',
                       **keywords

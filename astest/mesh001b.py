@@ -35,7 +35,7 @@ test.assertEqual(nbproc, 3)
 
 # from MED format (only this one a ParallelMesh)
 mesh = code_aster.ParallelMesh()
-mesh.readMedFile("mesh001b")
+mesh.readMedFile("mesh001b/%d.med"%rank, True)
 
 
 mesh=DEFI_GROUP( reuse=mesh, MAILLAGE=mesh,

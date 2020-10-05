@@ -29,12 +29,12 @@ print("Nb procs", code_aster.getMPINumberOfProcs())
 print("Rank", code_aster.getMPIRank())
 
 pMesh2 = code_aster.ParallelMesh()
-pMesh2.readMedFile("xxParallelMesh001a")
+pMesh2.readMedFile("xxParallelMesh001a/%d.med"%rank, True)
 pMesh2=DEFI_GROUP(reuse =pMesh2,MAILLAGE=pMesh2,CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI'))
 del pMesh2
 
 pMesh = code_aster.ParallelMesh()
-pMesh.readMedFile("xxParallelMesh001a")
+pMesh.readMedFile("xxParallelMesh001a/%d.med"%rank, True)
 pMesh.debugPrint(rank+30)
 
 model = code_aster.Model(pMesh)

@@ -26,7 +26,7 @@ code_aster.init("--test")
 test = code_aster.TestCase()
 
 MAIL = code_aster.ParallelMesh()
-MAIL.readMedFile("xxParallelMesh002a")
+MAIL.readMedFile("xxParallelMesh002a/%d.med"%rank, True)
 #MAIL.debugPrint()
 
 MATER=DEFI_MATERIAU(ELAS=_F(E=10000.0,

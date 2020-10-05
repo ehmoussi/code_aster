@@ -32,11 +32,11 @@
 #include "ParallelUtilities/MPIContainerUtilities.h"
 #include "Utilities/Tools.h"
 
-bool ParallelMeshClass::readMedFile( const std::string &fileName ) {
-    std::string completeFileName = fileName + "/" + std::to_string( getMPIRank() ) + ".med";
-    BaseMeshClass::readMedFile( completeFileName );
 
-    CALLO_LRMJOI_WRAP( getName(), completeFileName );
+bool ParallelMeshClass::readPartitionedMedFile( const std::string &fileName ) {
+    BaseMeshClass::readMedFile( fileName );
+
+    CALLO_LRMJOI_WRAP( getName(), fileName );
 
     updateGlobalGroupOfNodes();
     updateGlobalGroupOfCells();

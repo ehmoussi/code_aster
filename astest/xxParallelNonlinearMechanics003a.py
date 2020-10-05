@@ -28,7 +28,7 @@ code_aster.init("--test")
 test = code_aster.TestCase()
 
 monMaillage = code_aster.ParallelMesh()
-monMaillage.readMedFile("xxParallelNonlinearMechanics003a")
+monMaillage.readMedFile("xxParallelNonlinearMechanics003a/%d.med"%rank, True)
 
 monModel = code_aster.Model(monMaillage)
 #monModel.addModelingOnMesh(

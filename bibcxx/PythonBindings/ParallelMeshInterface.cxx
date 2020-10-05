@@ -275,7 +275,19 @@ This function has to be used by developper only and not user
 Returns:
     bool: *True* if succeeds, *False* otherwise.
         )",
-              ( py::arg( "self" )) );
+              ( py::arg( "self" )) )
+        .def( "_readPartitionedMedFile", &ParallelMeshClass::readPartitionedMedFile, R"(
+Read a partitioned MED file (alaready partitioned by the MEDPartitioner)
+
+This function has to be used by developper only and not user
+
+Arguments:
+    filename (str): Path to the file to be read.
+
+Returns:
+    bool: *True* if succeeds, *False* otherwise.
+        )",
+              ( py::arg( "self" ), py::arg("filename")) ) ;
 };
 
 #endif /* _USE_MPI */

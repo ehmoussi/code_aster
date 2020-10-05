@@ -23,36 +23,34 @@ from ..Cata.Commands.lire_maillage import keywords as main_keywords
 from ..Cata.DataStructure import maillage_sdaster
 from ..Cata.Syntax import OPER, SIMP, tr
 from ..Helpers import LogicalUnitFile
-from ..Objects import Mesh
+from ..Objects import Mesh, ParallelMesh
 from ..Supervis import ExecuteCommand
+from ..Messages import UTMESS
 from .pre_gibi import PRE_GIBI
 from .pre_gmsh import PRE_GMSH
 from .pre_ideas import PRE_IDEAS
 
-
-def catalog_op():
-    """Define the catalog of the fortran operator."""
-
-    keywords = dict()
-    keywords.update(main_keywords)
-    del keywords['b_format_ideas']
-    keywords['FORMAT'] = SIMP(statut='f', typ='TXM',
-                            defaut='MED',
-                            into=('ASTER', 'MED'))
-
-    cata = OPER(nom="LIRE_MAILLAGE_OP",
-                 op=1,
-                 sd_prod=maillage_sdaster,
-                 fr=tr("Crée un maillage par lecture d'un fichier"),
-                 reentrant='n',
-                 **keywords
-    )
-    return cata
+from libaster import getMPINumberOfProcs
 
 
 class MeshReader(ExecuteCommand):
     """Command that creates a :class:`~code_aster.Objects.Mesh` from a file."""
     command_name = "LIRE_MAILLAGE"
+
+    def isParallelMesh(self, keywords):
+        """The mesh is a ParalellMesh: yes or not
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+
+        if(keywords['FORMAT'] == "MED" and keywords['PARTITIONNEUR'] == "PTSCOTCH"):
+            if getMPINumberOfProcs() > 1:
+                return True
+            else:
+                return False
+
+        return False
 
     def exec_(self, keywords):
         """Execute the command.
@@ -63,12 +61,14 @@ class MeshReader(ExecuteCommand):
         need_conversion = ('GIBI', 'GMSH', 'IDEAS')
         unit = keywords.get('UNITE')
         fmt = keywords['FORMAT']
+
         if fmt in need_conversion:
             tmpfile = LogicalUnitFile.new_free(new=True)
             unit_op = tmpfile.unit
             keywords['FORMAT'] = 'ASTER'
         else:
             unit_op = unit
+
 
         if fmt == 'GIBI':
             PRE_GIBI(UNITE_GIBI=unit, UNITE_MAILLAGE=unit_op)
@@ -79,12 +79,25 @@ class MeshReader(ExecuteCommand):
             PRE_IDEAS(UNITE_IDEAS=unit, UNITE_MAILLAGE=unit_op,
                       CREA_GROUP_COUL=coul)
 
-        if fmt in need_conversion:
-            tmpfile.release()
+        if self._result.isParallel():
+            if keywords['INFO'] > 1:
+                verbose = True
+            else:
+                verbose = False
 
-        keywords['UNITE'] = unit_op
+            filename = LogicalUnitFile.filename_from_unit(unit)
+            self._result.readMedFile(filename, partitioned=False, verbose=verbose)
+        else:
+            if(keywords['FORMAT'] == "MED" and keywords['PARTITIONNEUR'] == "PTSCOTCH"):
+                assert getMPINumberOfProcs() == 1
+                UTMESS("A", "MED_18")
 
-        super(MeshReader, self).exec_(keywords)
+            if fmt in need_conversion:
+                tmpfile.release()
+
+            keywords['UNITE'] = unit_op
+
+            super(MeshReader, self).exec_(keywords)
 
 
     def create_result(self, keywords):
@@ -93,7 +106,11 @@ class MeshReader(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Mesh()
+
+        if(self.isParallelMesh(keywords)):
+            self._result = ParallelMesh()
+        else:
+            self._result = Mesh()
 
 
 LIRE_MAILLAGE = MeshReader.run

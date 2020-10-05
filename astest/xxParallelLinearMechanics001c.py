@@ -26,7 +26,7 @@ test = code_aster.TestCase()
 
 rank = code_aster.getMPIRank()
 pMesh = code_aster.ParallelMesh()
-pMesh.readMedFile("xxParallelMesh001a")
+pMesh.readMedFile("xxParallelMesh001a/%d.med"%rank, True)
 
 monModel = code_aster.Model(pMesh)
 monModel.addModelingOnMesh(code_aster.Physics.Mechanics,

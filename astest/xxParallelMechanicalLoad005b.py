@@ -28,7 +28,7 @@ nProc = code_aster.getMPINumberOfProcs()
 rank = code_aster.getMPIRank()
 
 pMesh2 = code_aster.ParallelMesh()
-pMesh2.readMedFile("xxParallelMesh003a")
+pMesh2.readMedFile("xxParallelMesh003a/%d.med"%rank, True)
 
 model = AFFE_MODELE(MAILLAGE = pMesh2,
                     AFFE = _F(MODELISATION = "D_PLAN",
