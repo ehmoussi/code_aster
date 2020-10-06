@@ -51,7 +51,10 @@ subroutine as_med_open(fid, nom, acces, cret)
     aster_int, intent(in) :: acces
     aster_int, intent(out) :: cret
 !
-    integer, parameter :: med_acc_rdwr = 1, med_acc_creat = 3
+#if (MED_NUM_MAJOR == 4 && MED_NUM_MINOR == 0)
+    integer, parameter :: med_acc_rdwr = 1
+#endif
+    integer, parameter :: med_acc_creat = 3
     character(len=8) :: tvers
     integer :: mode, nbret, vers(3)
 !
