@@ -212,7 +212,7 @@ RE_MEM = re.compile("MEMOIRE INSUFFISANTE POUR ALLOUER")
 RE_TIME = re.compile("(<TimeLimitError>|ARRET PAR MANQUE DE TEMPS)", re.I)
 RE_CONV = re.compile("<(ConvergenceError|IntegrationError|SolverError"
                      "|ContactError)>", re.I)
-RE_EXCEPT = re.compile("<AsterError>")
+RE_EXCEPT = re.compile("<(AsterError|EXCEPTION)>")
 RE_ERRS = re.compile("^ *. *<S>", re.M)
 RE_ERRF = re.compile("^ *. *<F>", re.M)
 RE_SYNTAX = re.compile("SyntaxError")
@@ -252,14 +252,15 @@ def get_status(exitcode, output, test=False):
             state |= StateOptions.Syntax
         if RE_ERRF.search(text):
             state |= StateOptions.Fatal
-    if RE_MEM.search(text):
-        state |= StateOptions.Memory
-    if exitcode == -9 or RE_TIME.search(text):
-        state |= StateOptions.CpuLimit
-    if RE_CONV.search(text):
-        state |= StateOptions.Convergence
-    if RE_EXCEPT.search(text) or RE_ERRS.search(text):
-        state |= StateOptions.Except
+        # backout 9b68aa7f6fe8
+        if RE_MEM.search(text):
+            state |= StateOptions.Memory
+        if exitcode == -9 or RE_TIME.search(text):
+            state |= StateOptions.CpuLimit
+        if RE_CONV.search(text):
+            state |= StateOptions.Convergence
+        if RE_EXCEPT.search(text) or RE_ERRS.search(text):
+            state |= StateOptions.Except
     if not state:
         state = StateOptions.Abort
     state = StateOptions.effective(state)
