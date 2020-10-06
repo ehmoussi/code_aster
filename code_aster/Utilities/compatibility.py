@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois@edf.fr
-
 """
 :py:mod:`compatibility` --- Manage compatibility with *legacy* version
 **********************************************************************
@@ -28,13 +27,50 @@ It defines *decorators* or conversion functions for step by step migration
 from *legacy* code_aster source code and C++ code_aster code.
 """
 
+import sys
+import warnings
 from functools import wraps
-from warnings import simplefilter, warn
+from warnings import showwarning, warn
 
 from .base_utils import array_to_list, force_list
 
 
-def deprecated(replaced=True, help=None):
+def warn_to_stdout(message, category, filename, lineno, file=None, line=None):
+    """Same as `showwarning` but on stdout"""
+    return showwarning(message, category, filename, lineno,
+                       file=sys.stdout, line=line)
+
+warnings.showwarning = warn_to_stdout
+
+
+def deprecate(feature, case=1, help=None, level=4):
+    """Deprecate a feature, emit a deprecation warning depending on the case.
+
+    Arguments:
+        feature (str): Deprecated feature.
+        case (int):
+            Case 1: the feature still works but it will be removed.
+            Case 2: the feature does nothing, it has been removed.
+            Case 3: the feature still works but has a new implementation.
+        help (str): Additional help message, should be present for case 3.
+        level (int): Level of the caller in the stack.
+    """
+    if case == 1:
+        msg = ("This feature is obsoleted, {0!r} will be "
+               "removed in the future.")
+    elif case == 2:
+        msg = "This feature is obsoleted, {0!r} has been removed."
+    elif case == 3:
+        msg = ("This feature has a new implementation, {0!r} will be "
+               "removed in the future.")
+    else:
+        msg = "This feature is obsoleted: {0!r}"
+    if help:
+        msg += " " + help
+    warn(msg.format(feature), DeprecationWarning, stacklevel=level)
+
+
+def deprecated(case=1, help=None):
     """Decorator to mark a function as deprecated.
 
     It will do nothing at the beginning of the transitional phase.
@@ -44,25 +80,18 @@ def deprecated(replaced=True, help=None):
     Arguments:
         replaced (bool): Tell if the decorated function will be replaced
             or if it will be just removed (default: *True*, replaced).
+        help (str): Additional help message.
     """
     def deprecated_decorator(func):
         """Raw decorator"""
         @wraps(func)
         def wrapper(*args, **kwargs):
             """Wrapper"""
-            # phase 1: does nothing but keep in mind that it will be removed.
-            # phase 2: warn about deprecated functions.
-            msg = ("This feature is obsoleted, {0!r} will be "
-                   "removed in the future.")
-            if replaced:
-                msg = ("This feature has a new implementation, {0!r} will be "
-                       "removed in the future.")
-            if help:
-                msg += " " + help
-            warn(msg.format(func.__name__),
-                 DeprecationWarning, stacklevel=2)
+            deprecate(func.__name__, case, help, level=3)
             return func(*args, **kwargs)
+
         return wrapper
+
     return deprecated_decorator
 
 
@@ -147,6 +176,7 @@ def _if_not_exists(keywords, factor_keyword, simple_keyword, callback):
     elif simple_keyword.strip():
         if simple_keyword not in keywords:
             callback(keywords, simple_keyword)
+
 
 def remove_keyword(keywords, factor_keyword, simple_keyword, warning=False):
     """Remove a couple *(factor_keyword, simple_keyword)* for the user's

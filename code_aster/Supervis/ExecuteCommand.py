@@ -580,17 +580,17 @@ class ExecuteMacro(ExecuteCommand):
                                            valk=(orig, name)))
 
     @property
-    @deprecated(True, help="Not yet implemented.")
+    @deprecated(case=2)
     def reuse(self):
         return
 
     @property
-    @deprecated(True, help="Not yet implemented.")
+    @deprecated(case=2)
     def sd(self):
         return
 
     @property
-    @deprecated(True, help="Use the 'logger' object instead.")
+    @deprecated(case=3, help="Use the 'logger' object instead.")
     def cr(self):
         return logger
 

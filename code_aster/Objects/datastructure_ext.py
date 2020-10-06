@@ -98,7 +98,7 @@ class ExtendedDataStructure(object):
 
     # transitional functions - to remove later
     @property
-    @deprecated(help="Use 'getName()' instead.")
+    @deprecated(case=1, help="Use 'getName()' instead.")
     def nom(self):
         return self.getName()
 

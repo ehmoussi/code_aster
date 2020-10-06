@@ -50,7 +50,7 @@ from ..Supervis import CommandSyntax, ExecuteCommand, Serializer, loadObjects
 from ..Supervis.code_file import track_coverage
 from ..Supervis.ctopy import checksd, print_header
 from ..Supervis.TestResult import testresu_print
-from ..Utilities import ExecutionParameter, Options, logger
+from ..Utilities import ExecutionParameter, Options, deprecate, logger
 from ..Utilities.i18n import localization
 
 try:
@@ -107,8 +107,8 @@ class Starter(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords, changed in place.
         """
-        # silently ignored
-        keywords.pop("PAR_LOT", None)
+        if keywords.pop("PAR_LOT", None):
+            deprecate("PAR_LOT", case=2, level=6)
 
     @classmethod
     def run(cls, **keywords):
