@@ -56,14 +56,14 @@ DataStructure::DataStructure( const std::string type, const JeveuxMemory memType
 
 DataStructure::~DataStructure() {
 // #ifdef _DEBUG_CXX
-//     std::cout << "DEBUG: DataStructure.destr: " << this->getName() << std::endl;
+//     std::cout << "deleting " << this->getName() << std::endl;
 // #endif
     std::string nameWithoutBlanks = trim( _name );
     // empty name or no memory manager : skip silently
     if ( nameWithoutBlanks == "" || get_sh_jeveux_status() != 1 )
         return;
-#ifdef _DEBUG_CXX
     _tco->deallocate();
+#ifdef _DEBUG_CXX
     std::string base( " " );
     ASTERINTEGER pos = 1;
     ASTERINTEGER nbval2 = 0;

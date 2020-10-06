@@ -35,15 +35,14 @@ class ModelAssignment(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords, changed
                 in place.
         """
-
         mesh = keywords["MAILLAGE"]
-        if(isinstance(mesh, tuple)):
-            if(len(mesh) == 1):
+        if isinstance(mesh, tuple):
+            if len(mesh) == 1:
                 mesh = mesh[0]
             else:
                 raise ValueError("Mesh object is a tuple")
 
-        if (mesh.isParallel()):
+        if mesh.isParallel():
             keywords["DISTRIBUTION"] = {'METHODE': 'CENTRALISE'}
 
     def create_result(self, keywords):
@@ -53,13 +52,6 @@ class ModelAssignment(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         self._result = Model(keywords["MAILLAGE"])
-
-    def post_exec(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
 
 
 AFFE_MODELE = ModelAssignment.run

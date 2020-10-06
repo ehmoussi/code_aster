@@ -26,11 +26,12 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
+#include <string>
+
 #include "aster_fort_jeveux.h"
+#include "astercxx.h"
 #include "shared_vars.h"
 
-#include <string>
 
 /**
  * @enum JeveuxMemory
@@ -41,7 +42,7 @@ enum JeveuxMemory { Permanent, Temporary };
  * @def JeveuxTypesNames
  * @brief Fournit la lettre correspondant aux différentes base Jeveux
  */
-static const std::string JeveuxMemoryTypesNames[2] = {"G", "V"};
+static const std::string JeveuxMemoryTypesNames[2] = { "G", "V" };
 
 /**
  * @class JeveuxObjectClass
@@ -72,18 +73,7 @@ class JeveuxObjectClass {
         }
     };
 
-    bool exists() const {
-        // Si on n'a pas de nom, on sort
-        if ( _name == "" )
-            return false;
-
-        ASTERINTEGER boolRetour = 0;
-        // Appel a jeexin pour verifier que le vecteur existe
-        CALLO_JEEXIN( _name, &boolRetour );
-        if ( boolRetour == 0 )
-            return false;
-        return true;
-    };
+    bool exists() const;
 
     /**
      * @brief Return the name

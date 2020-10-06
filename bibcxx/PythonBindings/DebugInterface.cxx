@@ -28,6 +28,7 @@ namespace py = boost::python;
 #include "astercxx.h"
 #include "aster_fort_jeveux.h"
 
+#include "MemoryManager/JeveuxUtils.h"
 #include "Meshes/Mesh.h"
 #include "Modeling/Model.h"
 #include "Numbering/DOFNumbering.h"
@@ -42,9 +43,11 @@ static void libaster_debugJeveuxContent( const std::string message ) {
     CALLO_JEIMPR( &unit_out, base, message );
 };
 
+
 void exportDebugToPython() {
 
     py::def( "debugJeveuxContent", &libaster_debugJeveuxContent );
+    py::def( "debugJeveuxExists", &jeveuxExists );
     py::def( "use_count", &libaster_debugRefCount< MeshPtr > );
     py::def( "use_count", &libaster_debugRefCount< ModelPtr > );
     py::def( "use_count", &libaster_debugRefCount< DOFNumberingPtr > );
