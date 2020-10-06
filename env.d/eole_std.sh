@@ -9,7 +9,7 @@ export DEVTOOLS_COMPUTER_ID=eole
 # expected version of official prerequisites
 export OFFICIAL_PLATFORM=1
 export PREREQ_PATH=/projets/simumeca/public/v15
-export PREREQ_VERSION=20191105
+export PREREQ_VERSION=20201002
 
 # generic environment: compilers, python
 . /etc/profile.d/lmod.sh
@@ -34,8 +34,8 @@ export PYPATH_ASRUN="${PREREQ_PATH}/tools/Code_aster_frontend-salomemeca/lib/pyt
 export LIBPATH_HDF5="${PREREQ_PATH}/prerequisites/Hdf5-1103/lib"
 export INCLUDES_HDF5="${PREREQ_PATH}/prerequisites/Hdf5-1103/include"
 
-export LIBPATH_MED="${PREREQ_PATH}/prerequisites/Medfichier-400/lib"
-export INCLUDES_MED="${PREREQ_PATH}/prerequisites/Medfichier-400/include"
+export LIBPATH_MED="${PREREQ_PATH}/prerequisites/Medfichier-410/lib"
+export INCLUDES_MED="${PREREQ_PATH}/prerequisites/Medfichier-410/include"
 
 export LIBPATH_METIS="${PREREQ_PATH}/prerequisites/Metis_aster-510_aster4/lib"
 export INCLUDES_METIS="${PREREQ_PATH}/prerequisites/Metis_aster-510_aster4/include"
@@ -62,9 +62,9 @@ export LD_LIBRARY_PATH=${LIBPATH_HDF5}:${LIBPATH_MED}:${LIBPATH_METIS}:${LIBPATH
 export PYTHONPATH=${PYPATH_NUMPY}:${PYPATH_ASRUN}:${PYPATH_MFRONT}:${PYTHONPATH}
 
 export PATH=\
-${PREREQ_PATH}/prerequisites/Medfichier-400/bin:\
+${PREREQ_PATH}/prerequisites/Medfichier-410/bin:\
 ${PREREQ_PATH}/prerequisites/Gmsh_bin-2120Linux64/bin:\
-${PREREQ_PATH}/tools/Miss3d-67_aster2:\
+${PREREQ_PATH}/tools/Miss3d-67_aster3:\
 ${PREREQ_PATH}/tools/Homard_aster-1112_aster2:\
 ${PREREQ_PATH}/tools/Ecrevisse-322:\
 /projets/simumeca/salomemeca/appli_V2019:\

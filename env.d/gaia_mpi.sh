@@ -9,7 +9,7 @@ export DEVTOOLS_COMPUTER_ID=gaia
 # expected version of official prerequisites
 export OFFICIAL_PLATFORM=1
 export PREREQ_PATH=/projets/simumeca/public_INTEL2019/v15
-export PREREQ_VERSION=20191105
+export PREREQ_VERSION=20201002
 
 # force parallel build
 export ENABLE_MPI=1
@@ -38,8 +38,8 @@ export PYPATH_ASRUN="${PREREQ_PATH}/tools/Code_aster_frontend-salomemeca/lib/pyt
 export LIBPATH_HDF5="${PREREQ_PATH}/prerequisites/Hdf5-1103/lib"
 export INCLUDES_HDF5="${PREREQ_PATH}/prerequisites/Hdf5-1103/include"
 
-export LIBPATH_MED="${PREREQ_PATH}/prerequisites/Medfichier-400/lib"
-export INCLUDES_MED="${PREREQ_PATH}/prerequisites/Medfichier-400/include"
+export LIBPATH_MED="${PREREQ_PATH}/prerequisites/Medfichier-410/lib"
+export INCLUDES_MED="${PREREQ_PATH}/prerequisites/Medfichier-410/include"
 
 export LIBPATH_METIS="${PREREQ_PATH}/prerequisites/Metis_aster-510_aster4/lib"
 export INCLUDES_METIS="${PREREQ_PATH}/prerequisites/Metis_aster-510_aster4/include"
@@ -56,6 +56,13 @@ export INCLUDES_MUMPS="${PREREQ_PATH}/prerequisites/Mumps-521_consortium_aster/M
 export LIBPATH_PETSC="${PREREQ_PATH}/prerequisites/Petsc_mpi-3123_aster/lib"
 export INCLUDES_PETSC="${PREREQ_PATH}/prerequisites/Petsc_mpi-3123_aster/include"
 
+export LIBPATH_MEDCOUPLING="${PREREQ_PATH}/tools/Medcoupling_mpi-V9_6_0a1/lib"
+export INCLUDES_MEDCOUPLING="${PREREQ_PATH}/tools/Medcoupling_mpi-V9_6_0a1/include"
+export PYPATH_MEDCOUPLING="${PREREQ_PATH}/tools/Medcoupling_mpi-V9_6_0a1/lib/python3.6/site-packages"
+
+export LIBPATH_MPI4PY="${PREREQ_PATH}/prerequisites/Mpi4py-200_intel2019/lib"
+export PYPATH_MPI4PY="${PREREQ_PATH}/prerequisites/Mpi4py-200_intel2019/lib/python3.6/site-packages"
+
 export TFELHOME="${PREREQ_PATH}/prerequisites/Mfront-TFEL321"
 export TFELVERS="3.2.1"
 export LIBPATH_MFRONT="${TFELHOME}/lib"
@@ -68,14 +75,14 @@ export LIB_BOOST="boost_python3-mt"
 
 
 export LD_LIBRARY_PATH=${LIBPATH_HDF5}:${LIBPATH_MED}:${LIBPATH_METIS}:${LIBPATH_SCOTCH}:${LIBPATH_MUMPS}:${LIBPATH_MFRONT}:${LIBPATH_BOOST}:${LD_LIBRARY_PATH}
-export LD_LIBRARY_PATH=${LIBPATH_PARMETIS}:${LIBPATH_PETSC}:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${LIBPATH_PARMETIS}:${LIBPATH_PETSC}:${LIBPATH_MEDCOUPLING}:${LIBPATH_MPI4PY}:${LD_LIBRARY_PATH}
 
-export PYTHONPATH=${PYPATH_NUMPY}:${PYPATH_ASRUN}:${PYPATH_MFRONT}:${PYTHONPATH}
+export PYTHONPATH=${PYPATH_NUMPY}:${PYPATH_ASRUN}:${PYPATH_MFRONT}:${PYPATH_MEDCOUPLING}:${PYPATH_MPI4PY}:${PYTHONPATH}
 
 export PATH=\
-${PREREQ_PATH}/prerequisites/Medfichier-400/bin:\
+${PREREQ_PATH}/prerequisites/Medfichier-410/bin:\
 ${PREREQ_PATH}/prerequisites/Gmsh_bin-2120Linux64/bin:\
-${PREREQ_PATH}/tools/Miss3d-67_aster2:\
+${PREREQ_PATH}/tools/Miss3d-67_aster3:\
 ${PREREQ_PATH}/tools/Homard_aster-1112_aster2:\
 ${PREREQ_PATH}/tools/Ecrevisse-322:\
 /projets/simumeca/salomemeca/appli_V2019:\
