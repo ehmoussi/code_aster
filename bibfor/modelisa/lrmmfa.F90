@@ -342,50 +342,53 @@ character(len=24) :: grpnoe, grpmai
 !
             nbgrp = 0
             do igrp = 1, nbgrno
-                nbma = zi(jnbnog-1+igrp)
-                if( nbma.gt.0 ) then
+                nbno = zi(jnbnog-1+igrp)
+                if( nbno.gt.0 ) then
                     nbgrp = nbgrp + 1
                 endif
             enddo
-            call jecreo(gpptnn, 'G N K24')
-            call jeecra(gpptnn, 'NOMMAX', nbgrp)
-            call jecrec(grpnoe, 'G V I', 'NO '//gpptnn, 'DISPERSE', 'VARIABLE',&
-                        nbgrp)
 
-            call wkvect('&&LRMMFA.COL_NO', 'V V I', nbgrno, jcolno)
-            do igrp = 1, nbgrno
-                nbno = zi(jnbnog-1+igrp)
-                if( nbno.gt.0 ) then
-                    call jenuno(jexnum(nonogn, igrp), nomgrp)
-                    call jucroc(grpnoe, nomgrp, 0, nbno, jvec)
-                    zi(jcolno+igrp-1) = jvec
-                endif
-            enddo
-!
-            call wkvect('&&LRMMFA.NB_NO_GR', 'V V I', nbgrno, jnbno)
-            do ino = 1, nbnoeu
-                numfam = zi(adfano+ino-1)
-                if( numfam.ne.0 ) then
-                    ifam = zi(jv3+numfam-val_min)
-                    if(v_notempty_fami(ifam)) then
-                        jgrp = zi(jadcor+ifam-1)
-                        nbgr = zi(jv4+ifam-1)
-                        do igrp = 1, nbgr
-                            ngro = zi(jgrp+igrp-1)
-                            if(ngro .ne. 0) then
-                                nbno = zi(jnbno+ngro-1)
-                                ASSERT(nbno.le.zi(jnbnog+ngro-1))
-                                jvec = zi(jcolno+ngro-1)
-                                zi(jvec+nbno) = ino
-                                zi(jnbno+ngro-1) = nbno + 1
-                            end if
-                        enddo
+            if(nbgrp > 0) then
+                call jecreo(gpptnn, 'G N K24')
+                call jeecra(gpptnn, 'NOMMAX', nbgrp)
+                call jecrec(grpnoe, 'G V I', 'NO '//gpptnn, 'DISPERSE', 'VARIABLE',&
+                            nbgrp)
+
+                call wkvect('&&LRMMFA.COL_NO', 'V V I', nbgrno, jcolno)
+                do igrp = 1, nbgrno
+                    nbno = zi(jnbnog-1+igrp)
+                    if( nbno.gt.0 ) then
+                        call jenuno(jexnum(nonogn, igrp), nomgrp)
+                        call jucroc(grpnoe, nomgrp, 0, nbno, jvec)
+                        zi(jcolno+igrp-1) = jvec
                     endif
-                endif
-            enddo
-            call jedetr('&&LRMMFA.COL_NO')
+                enddo
+!
+                call wkvect('&&LRMMFA.NB_NO_GR', 'V V I', nbgrno, jnbno)
+                do ino = 1, nbnoeu
+                    numfam = zi(adfano+ino-1)
+                    if( numfam.ne.0 ) then
+                        ifam = zi(jv3+numfam-val_min)
+                        if(v_notempty_fami(ifam)) then
+                            jgrp = zi(jadcor+ifam-1)
+                            nbgr = zi(jv4+ifam-1)
+                            do igrp = 1, nbgr
+                                ngro = zi(jgrp+igrp-1)
+                                if(ngro .ne. 0) then
+                                    nbno = zi(jnbno+ngro-1)
+                                    ASSERT(nbno.le.zi(jnbnog+ngro-1))
+                                    jvec = zi(jcolno+ngro-1)
+                                    zi(jvec+nbno) = ino
+                                    zi(jnbno+ngro-1) = nbno + 1
+                                end if
+                            enddo
+                        endif
+                    endif
+                enddo
+                call jedetr('&&LRMMFA.COL_NO')
+                call jedetr('&&LRMMFA.NB_NO_GR')
+            end if
             call jedetr('&&LRMMFA.NB_NO_GRP')
-            call jedetr('&&LRMMFA.NB_NO_GR')
         endif
         call jedetr(nonogn)
 !
@@ -424,54 +427,57 @@ character(len=24) :: grpnoe, grpmai
                     nbgrp = nbgrp + 1
                 endif
             enddo
-            call jecreo(gpptnm, 'G N K24')
-            call jeecra(gpptnm, 'NOMMAX', nbgrp)
-            call jecrec(grpmai, 'G V I', 'NO '//gpptnm, 'DISPERSE', 'VARIABLE',&
-                        nbgrp)
 
-            call wkvect('&&LRMMFA.COL_MA', 'V V I', nbgrma, jcolma)
-            do igrp = 1, nbgrma
+            if(nbgrp > 0) then
+                call jecreo(gpptnm, 'G N K24')
+                call jeecra(gpptnm, 'NOMMAX', nbgrp)
+                call jecrec(grpmai, 'G V I', 'NO '//gpptnm, 'DISPERSE', 'VARIABLE',&
+                            nbgrp)
+
+                call wkvect('&&LRMMFA.COL_MA', 'V V I', nbgrma, jcolma)
+                do igrp = 1, nbgrma
 !
-                nbma = zi(jnbnog-1+igrp)
-                if( nbma.gt.0 ) then
-                    call jenuno(jexnum(nonogm, igrp), nomgrp)
-                    call jucroc(grpmai, nomgrp, 0, nbma, jvec)
-                    zi(jcolma+igrp-1) = jvec
-                endif
+                    nbma = zi(jnbnog-1+igrp)
+                    if( nbma.gt.0 ) then
+                        call jenuno(jexnum(nonogm, igrp), nomgrp)
+                        call jucroc(grpmai, nomgrp, 0, nbma, jvec)
+                        zi(jcolma+igrp-1) = jvec
+                    endif
 !
-            enddo
+                enddo
 !
-            call wkvect('&&LRMMFA.NB_MA_GR', 'V V I', nbgrma, jnbma)
-            do ityp = 1 , MT_NTYMAX
+                call wkvect('&&LRMMFA.NB_MA_GR', 'V V I', nbgrma, jnbma)
+                do ityp = 1 , MT_NTYMAX
 !
-                if( nmatyp(ityp).ne.0 ) then
-                    do ima = 1, nmatyp(ityp)
-                        numfam = zi(jfamma(ityp)+ima-1)
-                        if( numfam.ne.0 ) then
-                            ifam = zi(jv3+numfam-val_min)
-                            if(v_notempty_fami(ifam)) then
-                                jgrp = zi(jadcor+ifam-1)
-                                nbgr = zi(jv4+ifam-1)
-                                nummai = zi(jnumty(ityp)+ima-1)
-                                do igrp = 1, nbgr
-                                    ngro = zi(jgrp+igrp-1)
-                                    if(ngro .ne. 0) then
-                                        nbma = zi(jnbma+ngro-1)
-                                        ASSERT(nbma.le.zi(jnbnog+ngro-1))
-                                        jvec = zi(jcolma+ngro-1)
-                                        zi(jvec+nbma) = nummai
-                                        zi(jnbma+ngro-1) = nbma + 1
-                                    end if
-                                enddo
+                    if( nmatyp(ityp).ne.0 ) then
+                        do ima = 1, nmatyp(ityp)
+                            numfam = zi(jfamma(ityp)+ima-1)
+                            if( numfam.ne.0 ) then
+                                ifam = zi(jv3+numfam-val_min)
+                                if(v_notempty_fami(ifam)) then
+                                    jgrp = zi(jadcor+ifam-1)
+                                    nbgr = zi(jv4+ifam-1)
+                                    nummai = zi(jnumty(ityp)+ima-1)
+                                    do igrp = 1, nbgr
+                                        ngro = zi(jgrp+igrp-1)
+                                        if(ngro .ne. 0) then
+                                            nbma = zi(jnbma+ngro-1)
+                                            ASSERT(nbma.le.zi(jnbnog+ngro-1))
+                                            jvec = zi(jcolma+ngro-1)
+                                            zi(jvec+nbma) = nummai
+                                            zi(jnbma+ngro-1) = nbma + 1
+                                        end if
+                                    enddo
+                                endif
                             endif
-                        endif
-                    enddo
-                endif
+                        enddo
+                    endif
 !
-            enddo
-            call jedetr('&&LRMMFA.COL_MA')
+                enddo
+                call jedetr('&&LRMMFA.COL_MA')
+                call jedetr('&&LRMMFA.NB_MA_GR')
+            end if
             call jedetr('&&LRMMFA.NB_MA_GRP')
-            call jedetr('&&LRMMFA.NB_MA_GR')
 !
             do ityp = 1, MT_NTYMAX
                 if (nmatyp(ityp) .ne. 0) then
