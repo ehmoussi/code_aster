@@ -33,8 +33,10 @@ class DynamicMacroElementDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-
-        self._result = DynamicMacroElement()
+        if "reuse" in keywords:
+            self._result = keywords["reuse"]
+        else:
+            self._result = DynamicMacroElement()
 
     def post_exec(self, keywords):
         """Execute the command.

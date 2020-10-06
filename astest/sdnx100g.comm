@@ -316,7 +316,7 @@ MAEL=MACR_ELEM_DYNA(  BASE_MODALE=BAMO,
                        SANS_GROUP_NO='RADIER',
                        )
 
-IMPR_CO(CHAINE='MAEL    .LINO', UNITE = 6)
+#IMPR_CO(CHAINE='MAEL    .LINO', UNITE = 6)
 
 PRE_SEISME_NONL(
                   RESULTAT = _F(
@@ -494,8 +494,112 @@ STA0 = STAT_NON_LINE(MODELE=MODELB,
                           )
 
 
-IMPR_RESU(FORMAT="RESULTAT", RESU=_F(RESULTAT = STA0, NOM_CHAM='DEPL', INST=0.0,
+IMPR_RESU(FORMAT="RESULTAT", UNITE = 6, RESU=_F(RESULTAT = STA0, NOM_CHAM='DEPL', INST=0.0,
                    GROUP_NO=('CENT_RAD',)), )
+
+TEST_RESU(RESU=_F(INST=0.0,
+                  RESULTAT=STA0,
+                  NOM_CHAM='DEPL',
+                  GROUP_NO='CENT_RAD',
+                  NOM_CMP='DZ',
+                  VALE_REFE=-1.27057207385667E-02,
+                  VALE_CALC=-1.27057207385667E-02,
+                  REFERENCE='AUTRE_ASTER',
+                  PRECISION=0.001,
+                  ),
+          )
+
+Z0 = LIRE_IMPE_MISS(BASE=BAMO,
+                     INST_EXTR=0.0,
+                     NUME_DDL_GENE=NDDLGEN,
+                     SYME='OUI',
+                     UNITE_RESU_IMPE=35)
+
+DIFFK = COMB_MATR_ASSE(COMB_C=(_F(COEF_C=(1+0j),
+                                   MATR_ASSE=Z0),
+                                _F(COEF_C=(-1+0j),
+                                   MATR_ASSE=KS0)),
+                        SANS_CMP='LAGR')
+
+DEPL0 = CREA_CHAMP(CRITERE='RELATIF',
+                    INFO=1,
+                    INST=0.0,
+                    NOM_CHAM='DEPL',
+                    OPERATION='EXTR',
+                    RESULTAT=STA0,
+                    TYPE_CHAM='NOEU_DEPL_R')
+
+MAEL = MACR_ELEM_DYNA( reuse= MAEL, MACR_ELEM_DYNA=MAEL,
+                       BASE_MODALE=BAMO,
+                       MATR_IMPE_RIGI = DIFFK,
+                       SANS_GROUP_NO='RADIER',
+                       )
+
+rigiEle = CALC_MATR_ELEM(CALC_ELEM_MODELE='NON',
+                          CARA_ELEM=ELEMB,
+                          CHAM_MATER=CHMATB,
+                          CHARGE=(PESAZ, COND_LIB),
+                          INST=0.0,
+                          MODELE=MODELB,
+                          OPTION='RIGI_MECA')
+
+NUME = NUME_DDL(MATR_RIGI=rigiEle)
+
+MATKZ = ASSE_MATRICE(MATR_ELEM=rigiEle,
+                      NUME_DDL=NUME)
+
+VFORC = PROD_MATR_CHAM(CHAM_NO=DEPL0,
+                        MATR_ASSE=MATKZ)
+
+IMPR_RESU(FORMAT="RESULTAT", UNITE = 6, RESU=_F(CHAM_GD = VFORC,
+                   GROUP_NO=('CENT_RAD',)), )
+
+CHFORC = AFFE_CHAR_MECA( MODELE=MODELB,
+                         VECT_ASSE=VFORC,)
+
+MAEL = MACR_ELEM_DYNA( reuse= MAEL, MACR_ELEM_DYNA=MAEL,
+                       BASE_MODALE=BAMO,
+                       MATR_IMPE_RIGI = Z0,
+                       SANS_GROUP_NO='RADIER',
+                       )
+
+STA1 = STAT_NON_LINE(MODELE=MODELB,
+                 CHAM_MATER=CHMATB,
+                 CARA_ELEM=ELEMB,
+                 EXCIT=(
+                        _F(CHARGE=PESAZ,),
+                        _F(CHARGE=COND_LIB),
+                        _F(CHARGE=CHFORC),
+                        ),
+                 COMPORTEMENT=(_F(RELATION='ELAS',
+                                    TOUT='OUI',),
+                                ),
+                 NEWTON=_F(MATRICE='TANGENTE',
+                           REAC_ITER=1, ),
+                 CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-8,
+                                ITER_GLOB_MAXI = 20,
+                                ARRET='OUI',),
+                 SOLVEUR=_F(METHODE='MUMPS', NPREC = 20),
+                 INCREMENT=_F(LIST_INST=L_REEL,),
+                          )
+
+
+IMPR_RESU(FORMAT="RESULTAT", UNITE = 6, RESU=_F(RESULTAT = STA1, NOM_CHAM='DEPL', INST=0.0,
+                   GROUP_NO=('CENT_RAD',)), )
+
+TEST_RESU(RESU=_F(INST=0.0,
+                  RESULTAT=STA1,
+                  NOM_CHAM='DEPL',
+                  GROUP_NO='CENT_RAD',
+                  NOM_CMP='DZ',
+                  VALE_REFE=-1.27057207385667E-02,
+                  VALE_CALC=-1.27057207385667E-02,
+                  REFERENCE='AUTRE_ASTER',
+                  PRECISION=0.001,
+                  ),
+          )
+
+#FIN( );
 
 PRE_SEISME_NONL(
                  RESULTAT = _F( RESULTAT = CO('DYNA'), ),

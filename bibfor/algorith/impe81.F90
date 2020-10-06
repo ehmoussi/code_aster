@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,9 +29,11 @@ subroutine impe81(nomres, impe, basemo)
 #include "asterfort/jecroc.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeecra.h"
+#include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
+#include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
     character(len=8) :: nomres, basemo
@@ -62,7 +64,8 @@ subroutine impe81(nomres, impe, basemo)
     integer :: ldblo, ldbloi, lddesa, lddesm, lddesr, ldrefa, ldrefm
     integer :: ldrefr, ldresa, ldresm, ldresr, ldresi, ldrefi
     integer :: nbdef, nbmodd, nbmods, nfr, nim, ntail
-    integer :: nk, nc, nm, ldblok, ldbloc, ldblom
+    integer :: ntail1, ntail2, ntail3
+    integer :: nk, nc, nm, ldblok, ldbloc, ldblom, nma, nb
 !
     real(kind=8) :: partr, parti, partr0, parti0
     real(kind=8) :: amso, dpi, freq
@@ -81,6 +84,8 @@ subroutine impe81(nomres, impe, basemo)
 !
     call getres(nomres, typres, nomcom)
     dpi = 2.d0*r8pi()
+! --- MACR_ELEM_DYNA EXISTANT
+    call getvid(' ', 'MACR_ELEM_DYNA', nbval=0, nbret=nma)
 !
 ! --- RECUPERATION DES ARGUMENTS DE LA COMMANDE
 !
@@ -91,6 +96,11 @@ subroutine impe81(nomres, impe, basemo)
     call getvid(' ', 'MATR_IMPE_MASS', scal=impm, nbret=nm)
     call getvid(' ', 'MATR_IMPE_AMOR', scal=impc, nbret=nc)
     if (nfr .ne. 0) amso = 2.d0*amso
+
+    if (nma .ne. 0) then
+      call getvid(' ', 'BASE_MODALE', scal=basemo, nbret=nb)
+      goto 10
+    endif
 !
     call wkvect(nomres//'.MAEL_RAID_REFE', 'G V K24', 2, ldrefr)
     zk24(ldrefr) = basemo
@@ -105,6 +115,8 @@ subroutine impe81(nomres, impe, basemo)
     zk24(ldrefa+1) = blanc
 !
 !
+ 10 continue
+
     call dismoi('NB_MODES_DYN', basemo, 'RESULTAT', repi=nbmodd)
     call dismoi('NB_MODES_STA', basemo, 'RESULTAT', repi=nbmods)
     nbmode = nbmodd + nbmods
@@ -116,27 +128,42 @@ subroutine impe81(nomres, impe, basemo)
 ! --- ALLOCATION DE LA MATRICE RESULTAT
 !
     ntail = nbdef* (nbdef+1)/2
+    if (nma .ne. 0) then
+      call jelira(nomres//'.MAEL_RAID_VALE', 'LONMAX', ntail1)
+      if (ntail .ne. ntail1) call utmess('F','ALGORITH_52')
+      goto 11
+    endif
     call jecrec(nomres//'.MAEL_RAID_VALE', 'G V R', 'NU', 'DISPERSE', & 
                 'CONSTANT',1)   
     call jeecra(nomres//'.MAEL_RAID_VALE', 'LONMAX', ntail)
     call jecroc(jexnum(nomres//'.MAEL_RAID_VALE', 1))
+ 11 continue
     call jeveuo(jexnum(nomres//'.MAEL_RAID_VALE', 1), 'E', ldresr)
 !
+    if (nma .ne. 0) then
+      call jelira(nomres//'.MAEL_MASS_VALE', 'LONMAX', ntail2)
+      if (ntail .ne. ntail2) call utmess('F','ALGORITH_52')
+      goto 12
+    endif
     call jecrec(nomres//'.MAEL_MASS_VALE', 'G V R', 'NU', 'DISPERSE', & 
                 'CONSTANT',1)   
     call jeecra(nomres//'.MAEL_MASS_VALE', 'LONMAX', ntail)
     call jecroc(jexnum(nomres//'.MAEL_MASS_VALE', 1))
+ 12 continue
     call jeveuo(jexnum(nomres//'.MAEL_MASS_VALE', 1), 'E', ldresm)
 !
+    if (nma .ne. 0) then
+      call jelira(nomres//'.MAEL_AMOR_VALE', 'LONMAX', ntail3)
+      if (ntail .ne. ntail3) call utmess('F','ALGORITH_52')
+      goto 13
+    endif
     call jecrec(nomres//'.MAEL_AMOR_VALE', 'G V R', 'NU', 'DISPERSE', & 
                 'CONSTANT',1)   
     call jeecra(nomres//'.MAEL_AMOR_VALE', 'LONMAX', ntail)
     call jecroc(jexnum(nomres//'.MAEL_AMOR_VALE', 1))
+ 13 continue
     call jeveuo(jexnum(nomres//'.MAEL_AMOR_VALE', 1), 'E', ldresa)
 !
-!   call wkvect(nomres//'.MAEL_RAID_VALE', 'G V R', ntail, ldresr)
-!   call wkvect(nomres//'.MAEL_MASS_VALE', 'G V R', ntail, ldresm)
-!   call wkvect(nomres//'.MAEL_AMOR_VALE', 'G V R', ntail, ldresa)
 !
 !
 !        BOUCLE SUR LES COLONNES DE LA MATRICE ASSEMBLEE
@@ -186,6 +213,9 @@ subroutine impe81(nomres, impe, basemo)
 !
 ! --- CREATION DU .DESC
 !
+    if (nma .ne. 0) then
+      goto 14
+    endif
     call wkvect(nomres//'.MAEL_RAID_DESC', 'G V I', 3, lddesr)
     zi(lddesr) = 2
     zi(lddesr+1) = nbdef
@@ -203,6 +233,7 @@ subroutine impe81(nomres, impe, basemo)
     zk24(ldrefr) = basemo
     zk24(ldrefr+1) = blanc
     call wkvect(nomres//'.MAEL_INER_VALE', 'G V R', 3*nbdef, ldresi)
+ 14 continue
 !
     call jedema()
 end subroutine

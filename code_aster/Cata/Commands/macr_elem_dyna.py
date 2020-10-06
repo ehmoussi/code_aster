@@ -25,7 +25,7 @@ from ..Language.Syntax import *
 
 MACR_ELEM_DYNA=OPER(nom="MACR_ELEM_DYNA",op=  81,sd_prod=macr_elem_dyna,
                     fr=tr("Definition d'un macro element pour analyse modale ou harmonique par sous structuration dynamique"),
-                    reentrant='n',
+                    reentrant='f:MACR_ELEM_DYNA',
          regles=(
                  # AMOR_REDUIT et MATR_AMOR sont redondants
                  EXCLUS('MATR_AMOR','AMOR_REDUIT' ),
@@ -47,6 +47,8 @@ MACR_ELEM_DYNA=OPER(nom="MACR_ELEM_DYNA",op=  81,sd_prod=macr_elem_dyna,
                  PRESENT_ABSENT('MATR_IMPE_MASS','MATR_RIGI','MATR_MASS'),
                  PRESENT_ABSENT('MATR_IMPE_RIGI','MATR_RIGI','MATR_MASS'),
                  PRESENT_ABSENT('MATR_IMPE_AMOR','MATR_RIGI','MATR_MASS'),),
+         reuse=SIMP(statut='c', typ=CO),
+         MACR_ELEM_DYNA  =SIMP(statut='f',typ=macr_elem_dyna ),
          BASE_MODALE     =SIMP(statut='o',typ=mode_meca ),
          MATR_RIGI       =SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_depl_c),),
          MATR_MASS       =SIMP(statut='f',typ=matr_asse_depl_r ),

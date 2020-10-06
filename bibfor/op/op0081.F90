@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -58,11 +58,12 @@ subroutine op0081()
 #include "asterfort/remp81.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-    integer :: ioc, n1, nbval, imod
+    integer :: ioc, n1, nbvam, imod, nma
 !
     real(kind=8) :: pi
 !
     character(len=8) :: nomres, nomcon, nomope, mailla, basmod, blanc
+    character(len=8) :: macrin
     character(len=19) :: raid, mass, amor, impe, typmat
     character(len=24) :: nommat
     integer :: nbmod, iocm, iocf, ioca, vali(2)
@@ -78,17 +79,25 @@ subroutine op0081()
     pi=r8pi()
 !
 ! --- MACR_ELEM_DYNA OBTENU PAR MODELE NUMERIQUE OU EXPERIMENTAL
-    call getfac('MODELE_MESURE', nbval)
+    call getfac('MODELE_MESURE', nbvam)
+
+! --- MACR_ELEM_DYNA EXISTANT
+    call getvid(' ', 'MACR_ELEM_DYNA', nbval=0, nbret=nma)
 !
 ! --- RECUPERATION BASE MODALE, MATRICES ET CREATION .REFE
 !     ET DETERMINATION OPTION DE CALCUL
 !
-    call refe81(nomres, basmod, raid, mass, amor,&
-                mailla)
+    if (nma .eq. 0) then
+      call refe81(nomres, basmod, raid, mass, amor, mailla)
+    else
+      basmod = blanc
+      call getvid(' ', 'MACR_ELEM_DYNA', scal=macrin, nbret=nma)
+      if (macrin .ne. nomres) call utmess('F','ASSEMBLA_21')
+    endif
 !
 ! --- CALCUL DES MATRICES PROJETEES (SI PAS DE MOT-CLE MODELE_MESURE)
 !
-    if (nbval .eq. 0) then
+    if (nbvam .eq. 0) then
         impe = blanc
         call getvid(' ', 'MATR_IMPE', scal=impe, nbret=n1)
         if (impe .ne. blanc) then
@@ -229,7 +238,9 @@ subroutine op0081()
 !
 ! --- COMPATIBILITE AVEC SD MACR_ELEM_STAT
 !
-    call comp81(nomres, basmod, raid, mailla)
+    if (nma .eq. 0) then
+      call comp81(nomres, basmod, raid, mailla)
+    endif
 !
 ! --- MENAGE
     call jedetr('&&OP0081.MASS')
