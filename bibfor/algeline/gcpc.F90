@@ -75,6 +75,7 @@ subroutine gcpc(m, in, ip, ac, inpc, perm,&
 #include "asterfort/wkvect.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
+#include "asterfort/dismoi.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
@@ -93,6 +94,7 @@ subroutine gcpc(m, in, ip, ac, inpc, perm,&
     integer :: ifm, niv, jcri, jcrr, jcrk, iter, ier, vali, pcpiv
     character(len=24) :: precon, solvbd, usersm, renum
     character :: prec, rank
+    character(len=3) :: mathpc
     complex(kind=8) :: cbid
     integer, pointer :: slvi(:) => null()
     character(len=24), pointer :: slvk(:) => null()
@@ -109,8 +111,12 @@ subroutine gcpc(m, in, ip, ac, inpc, perm,&
 !
 !-----RECUPERATION DU NIVEAU D'IMPRESSION
     call infniv(ifm, niv)
-
-
+!
+! --- GCPC interdit avec un ParallelMesh
+    call dismoi('MATR_HPC', matas, 'MATR_ASSE', repk=mathpc)
+    if( mathpc == "OUI") then
+        call utmess('F', 'ALGELINE4_44')
+    end if
 !
 !-----PARAMETRE D'AFFICHAGE DE LA DECROISSANCE DU RESIDU
 !     (SI ON GAGNE PARAAF * 100%)
@@ -130,20 +136,20 @@ subroutine gcpc(m, in, ip, ac, inpc, perm,&
     precon=slvk(2)
     usersm=slvk(9)
     pcpiv=slvi(7)
-    blreps=slvr(4) 
+    blreps=slvr(4)
     solvbd = slvk(3)
     renum = slvk(4)
     if (precon == 'LDLT_SP') then
         prec='S'
-    else if ( precon == 'LDLT_DP') then 
+    else if ( precon == 'LDLT_DP') then
         prec='D'
     endif
-    if ( abs(blreps) < r8prem() ) then 
+    if ( abs(blreps) < r8prem() ) then
        rank='F'
     else
        rank='L'
     endif
-    if (( precon == 'LDLT_SP' ).or.( precon == 'LDLT_DP' )) then 
+    if (( precon == 'LDLT_SP' ).or.( precon == 'LDLT_DP' )) then
         call crsvfm(solvbd, matas,prec, rank, pcpiv, usersm, blreps, renum )
     endif
 !-----Pour tenir compte de la renumerotation de la matrice de preconditionnement (LDLT):

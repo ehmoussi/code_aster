@@ -241,6 +241,13 @@ Erreur utilisateur dans CREA_MAILLAGE / CREA_POI1 :
  Mais il existe déjà dans le maillage une maille de même nom.
 """),
 
+    44 : _("""
+ Le solveur itératif GCPC est interdit avec un maillage parallèle.
+
+ Conseils :
+  - Utilisez un autre solveur.
+"""),
+
     55 : _("""
  pas d'extraction pour  %(k1)s
  pour le numéro d'ordre  %(i1)d
