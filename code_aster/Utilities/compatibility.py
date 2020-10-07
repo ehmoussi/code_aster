@@ -52,6 +52,7 @@ def deprecate(feature, case=1, help=None, level=4):
             Case 1: the feature still works but it will be removed.
             Case 2: the feature does nothing, it has been removed.
             Case 3: the feature still works but has a new implementation.
+            Case 4: the feature does nothing but has a new implementation.
         help (str): Additional help message, should be present for case 3.
         level (int): Level of the caller in the stack.
     """
@@ -63,6 +64,9 @@ def deprecate(feature, case=1, help=None, level=4):
     elif case == 3:
         msg = ("This feature has a new implementation, {0!r} will be "
                "removed in the future.")
+    elif case == 4:
+        msg = ("This feature has a new implementation, {0!r} has been "
+               "removed.")
     else:
         msg = "This feature is obsoleted: {0!r}"
     if help:

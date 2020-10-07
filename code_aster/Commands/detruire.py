@@ -17,16 +17,60 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
+import gc
+import inspect
 
-def DETRUIRE(**keywords):
-    if "CONCEPT" in keywords:
-        kwlist = keywords["CONCEPT"]
-        if type(kwlist) not in (list, tuple):
-            kwlist = (kwlist, )
+from ..Objects import DataStructure, Function
+from ..Utilities import deprecate
+from ..Supervis import ExecuteCommand
+
+
+class Deleter(ExecuteCommand):
+    """Command that deletes *DataStructure* instances from the calling stack."""
+    command_name = "DETRUIRE"
+
+    def adapt_syntax(self, keywords):
+        """Adapt keywords.
+
+        Arguments:
+            keywords (dict): User's keywords, changed in place.
+        """
+        if keywords.pop("OBJET", None):
+            deprecate("DETRUIRE/OBJET", case=4, level=6,
+                      help="Use DETRUIRE/CONCEPT instead.")
+            keywords.setdefault("CONCEPT", {"NOM": Function()})
+
+    def exec_(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        to_del = []
+        kwlist = keywords.get("CONCEPT", [])
         for occ in kwlist:
-            objects = occ["NOM"]
-            if type(objects) not in (list, tuple):
-                objects = (objects, )
-            for concept in objects:
-                del concept
+            for obj in occ["NOM"]:
+                to_del.append(obj.getName())
+        if not to_del:
+            return
+
+        # calling stack
+        caller = inspect.currentframe()
+        for _ in range(3):
+            caller = caller.f_back
+        try:
+            context = caller.f_globals
+        finally:
+            del caller
+
+        for name in list(context.keys()):
+            if isinstance(context[name], DataStructure):
+                if context[name].getName() in to_del:
+                    del context[name]
+
+        # force garbage collection
+        gc.collect()
+
+
+DETRUIRE = Deleter.run

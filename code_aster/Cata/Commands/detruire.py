@@ -25,16 +25,9 @@ from ..Language.Syntax import *
 
 DETRUIRE=MACRO(nom="DETRUIRE",
                op=None,
-               fr=tr("Détruit des concepts utilisateurs dans la base GLOBALE ou des objets JEVEUX"),
-    regles=(UN_PARMI('CONCEPT', 'OBJET',),),
-
-    CONCEPT = FACT(statut='f',max='**',
-        NOM         = SIMP(statut='o',typ=assd,validators=NoRepeat(),max='**'),
+               fr=tr("Détruit des concepts utilisateurs dans le contexte courant"),
+    CONCEPT=FACT(statut='o', max='**',
+        NOM=SIMP(statut='o', typ=assd, validators=NoRepeat(), max='**'),
     ),
-    OBJET = FACT(statut='f',max='**',
-       CLASSE   = SIMP(statut='f', typ='TXM', into=('G', 'V', 'L'), defaut='G'),
-       CHAINE   = SIMP(statut='o', typ='TXM', validators=NoRepeat(), max='**'),
-       POSITION = SIMP(statut='f', typ='I', max='**'),
-    ),
-    INFO   = SIMP(statut='f', typ='I', into=(1, 2), defaut=1, ),
+    INFO=SIMP(statut='f', typ='I', into=(1, 2), defaut=1),
 )
