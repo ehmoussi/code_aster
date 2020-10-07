@@ -324,8 +324,7 @@ def PROJ(x,Hauteur) :
 # -->10: Boucle sur la pose des couches 3 a nbcouche
 for n in range(1,nbcouche-1):
 
-    DETRUIRE(INFO=1,
-             OBJET=_F(CHAINE=('CHLAT','PHAUT','SIEF','CHPAR',),),);
+    DETRUIRE(CONCEPT=_F(NOM=(CHLAT, PHAUT, SIEF, CHPAR)))
 
     n_couche = n+2
     print(' > n_couche          =',n_couche)

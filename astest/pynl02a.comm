@@ -244,8 +244,6 @@ for i_inst in range(1,len(l_inst)) :
       ME_AS=FACTORISER(reuse =ME_AS, METHODE="MULT_FRONT",
                        MATR_ASSE=ME_AS)
 
-   DETRUIRE(OBJET=_F(CHAINE='CHARB_AS'),INFO=1)
-
    # charge elementaire de blocage
    CHARB_EL=CALC_VECT_ELEM(OPTION='CHAR_MECA',INST = inst,CHARGE=CHARB,)
 
@@ -276,8 +274,6 @@ for i_inst in range(1,len(l_inst)) :
                             _F(CHAM_GD=BTLA_AS,  COEF_R=-1.),
                             ),)
 
-   DETRUIRE(OBJET=_F(CHAINE='DU'),INFO=1)
-
    if i_inst == 1 or pred == 'elastique' :
       # prediction avec la matrice elastique
       DU=RESOUDRE(MATR=ME_AS,CHAM_NO=F_AS,)
@@ -298,7 +294,6 @@ for i_inst in range(1,len(l_inst)) :
                       COMB=_F(CHAM_GD=DU, COEF_R=1.),)
 
    DETRUIRE(CONCEPT=_F(NOM=(MT_EL,MT_AS,F_AS)),INFO=1)
-   DETRUIRE(OBJET=_F(CHAINE='M_AS'),INFO=1)
 
    #=========================================================
    #               BOUCLE DE NEWTON
@@ -318,8 +313,9 @@ for i_inst in range(1,len(l_inst)) :
       #=========================================================
 
       # remarque la destruction du container 'CONT ne detruit pas les champs de la table...
-      # ce qui augmente leur numero  a chaque fois, et declanche les erreurs de verif SD
+      # ce qui augmente leur numero  a chaque fois, et declenche les erreurs de verif SD
       #DETRUIRE(OBJET=_F(CHAINE='CONT'),INFO=1)
+      # à vérifier en >15.2...
 
       if (i_inst == 1 and IterNewton == 1):
           CONT=CALCUL(OPTION=('COMPORTEMENT','FORC_INTE_ELEM','MATR_TANG_ELEM'),
@@ -412,8 +408,6 @@ for i_inst in range(1,len(l_inst)) :
                                      VALE_I=i_inst,),)
                             )
 
-      DETRUIRE(OBJET=_F(CHAINE='FORIN_AS'),INFO=1)
-
       # forces internes assemblees
       FORIN_AS=ASSE_VECTEUR(VECT_ELEM=FORIN_EL,
                             NUME_DDL=NU,)
@@ -429,8 +423,6 @@ for i_inst in range(1,len(l_inst)) :
                                    _F(NOM_PARA='NUME_ORDRE',
                                       VALE_I=i_inst,),)
                          )
-
-      DETRUIRE(OBJET=_F(CHAINE='BTLA_AS'),INFO=1)
 
       # Bt.La assemblee
       BTLA_AS=ASSE_VECTEUR(VECT_ELEM=BTLA_EL,
