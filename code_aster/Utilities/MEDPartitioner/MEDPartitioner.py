@@ -23,6 +23,8 @@ from mpi4py import MPI
 
 from .myMEDSplitter_mpi import BuildPartNameFromOrig, MakeThePartition, GetGraphPartitioner, setVerbose
 
+from ..logger import logger
+
 
 class MEDPartitioner:
 
@@ -65,12 +67,13 @@ class MEDPartitioner:
             verbose = False (bool): active verbosity mode
         """
         if verbose:
-            setVerbose(2)
+            level = logger.getEffectiveLevel()
+            setVerbose(2, True)
 
         self._meshPartitioned = MakeThePartition(self._filename, self._meshname, GetGraphPartitioner(None))
 
         if verbose:
-            setVerbose(0)
+            logger.setLevel(level)
 
     def writeMesh(self, path=None):
         """ Write the partitioning mesh file in MED format

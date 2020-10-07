@@ -31,14 +31,15 @@ import os
 rank = code_aster.getMPIRank()
 
 if (parallel):
-       pMesh2 = code_aster.ParallelMesh()
-       pMesh2.readMedFile("xxParallelMesh003a")
+    rank=code_aster.getMPIRank()
+    pMesh2 = code_aster.ParallelMesh()
+    pMesh2.readMedFile("xxParallelMesh003a/%d.med"%rank, True )
        #os.system('echo "-mat_view :/tmp/par.txt:ascii_matlab " > ~/.petscrc')
        #os.system('echo "-ksp_view_rhs ascii:/tmp/rhs_par.txt " >> ~/.petscrc')
        #os.system('echo "-ksp_view_solution ascii:/tmp/sol_par.txt  " >> ~/.petscrc')
 else:
-       pMesh2 = code_aster.Mesh()
-       pMesh2.readMedFile("xxParallelMechanicalLoad001a.med")
+    pMesh2 = code_aster.Mesh()
+    pMesh2.readMedFile("xxParallelMechanicalLoad001a.med")
        #os.system('echo "-mat_view :/tmp/seq.txt:ascii_matlab " > ~/.petscrc')
        #os.system('echo "-ksp_view_rhs ascii:/tmp/rhs_seq.txt  " >> ~/.petscrc')
        #os.system('echo "-ksp_view_solution ascii:/tmp/sol_seq.txt  " >> ~/.petscrc')

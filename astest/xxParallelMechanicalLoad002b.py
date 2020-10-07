@@ -17,14 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
 import code_aster
 from code_aster.Commands import *
 test = code_aster.TestCase()
 
 code_aster.init("--test")
 nProc = code_aster.getMPINumberOfProcs()
+rank = code_aster.getMPIRank()
 
-import os
 
 pMesh2 = code_aster.ParallelMesh()
 pMesh2.readMedFile("xxParallelMesh001a/%d.med"%rank, True)

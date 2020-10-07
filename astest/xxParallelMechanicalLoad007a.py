@@ -27,7 +27,7 @@ rank = code_aster.getMPIRank()
 
 if (parallel):
     MAIL = code_aster.ParallelMesh()
-    MAIL.readMedFile("xxParallelMechanicalLoad007a")
+    MAIL.readMedFile("xxParallelMechanicalLoad007a/%d.med"%rank, True)
 
 model = AFFE_MODELE( MAILLAGE = MAIL,
                         AFFE = (_F( MODELISATION = "3D",

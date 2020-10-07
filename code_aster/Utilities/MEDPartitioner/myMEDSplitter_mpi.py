@@ -29,6 +29,11 @@ import argparse, sys
 import medcoupling as mc
 import numpy as np
 
+try:
+    from ..logger import logger
+except:
+    pass
+
 from mpi4py import MPI
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(30,38)
@@ -42,18 +47,23 @@ class ColoredFormatter(logging.Formatter):
         record.levelname = COLOR_SEQ % ColoredFormatter.COLORS[record.levelname] + record.levelname + RESET_SEQ
         return logging.Formatter.format(self, record)
 
-logger = logging.getLogger()
-formatter = ColoredFormatter('%(levelname)s #{} : %(asctime)s : %(message)s '.format(MPI.COMM_WORLD.rank),style='%')
-formatter.default_time_format = '%H:%M:%S'
-formatter.default_msec_format = "%s.%03d"
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
-logger.addHandler(stream_handler)
 
-def setVerbose(verbose=1):
+def setVerbose(verbose=1, code_aster=False):
+    global logger
+
+    if not code_aster:
+        logger = logging.getLogger()
+        formatter = ColoredFormatter('%(levelname)s #{} : %(asctime)s : %(message)s '.format(MPI.COMM_WORLD.rank),style='%')
+        formatter.default_time_format = '%H:%M:%S'
+        formatter.default_msec_format = "%s.%03d"
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        logger.addHandler(stream_handler)
+
     verbose_map = { 0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
-    logger = logging.getLogger()
     logger.setLevel(verbose_map[verbose])
+
+
 
 class ChronoCtxMg:
     def __init__(self,what):

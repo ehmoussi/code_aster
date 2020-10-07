@@ -30,6 +30,7 @@ test = code_aster.TestCase()
 parallel=True
 
 if (parallel):
+    rank=code_aster.getMPIRank()
     MA = code_aster.ParallelMesh()
     MA.readMedFile( "xxParallelLinearTransientDynamics001a/%d.med"%rank, True )
 else:

@@ -26,8 +26,11 @@ test = code_aster.TestCase()
 
 ## This test has two independant domains. One on each cpu then there is no joint in the parallel mesh
 
+rank = code_aster.getMPIRank()
+
+
 monMaillage = code_aster.ParallelMesh()
-monMaillage.readMedFile("xxParallelNonlinearMechanics004a")
+monMaillage.readMedFile("xxParallelNonlinearMechanics004a/%d.med"%rank, True)
 
 monModel = AFFE_MODELE(MAILLAGE=monMaillage,
                         AFFE=_F(TOUT='OUI',

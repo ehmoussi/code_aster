@@ -28,6 +28,7 @@ test = code_aster.TestCase()
 parallel = True
 
 if parallel:
+    rank=code_aster.getMPIRank()
     MAIL = code_aster.ParallelMesh()
     MAIL.readMedFile("xxFieldsplit001a/%d.med"%rank, True)
 else:

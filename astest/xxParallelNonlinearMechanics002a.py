@@ -29,6 +29,9 @@ test = code_aster.TestCase()
 #parallel=False
 parallel=True
 
+rank = code_aster.getMPIRank()
+
+
 if (parallel):
     monMaillage = code_aster.ParallelMesh()
     monMaillage.readMedFile( "xxParallelNonlinearMechanics001a/%d.med"%rank, True )
