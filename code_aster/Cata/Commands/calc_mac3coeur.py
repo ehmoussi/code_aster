@@ -58,6 +58,9 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
                        
                        LAME = FACT(statut='f',max=1, fr=tr("Estimation des lames d'eau entre AC"),
                                    UNITE_THYC   = SIMP(statut='o',typ=UnitType(), max=1, inout='in'),            # Unite Logique du fichier THYC
+                                   COEF_MULT_THV = SIMP(statut='f',typ='R',max=1,defaut=1.),
+                                   COEF_MULT_THT = SIMP(statut='f',typ='R',max=1,defaut=1.),
+
                        ),
                        
                        # choix du maintien dans le cas mono-assemblage

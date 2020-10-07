@@ -397,8 +397,13 @@ class Mac3CoeurCalcul(object):
         """Return the loading due to the fluid flow"""
         coeur = self.coeur
         thyc = read_thyc(coeur, self.model, self.mcf['UNITE_THYC'])
-        fmult_ax = coeur.definition_temp_hydro_axiale()
-        fmult_tr = coeur.definition_effort_transverse()
+
+        coef_mult_thv = self.mcf['COEF_MULT_THV'] or 1.
+        coef_mult_tht = self.mcf['COEF_MULT_THT'] or 1.
+        
+        fmult_ax = coeur.definition_temp_hydro_axiale(coef_mult_thv)
+        fmult_tr = coeur.definition_effort_transverse(coef_mult_tht)
+        
         load_ax = [
             _F(CHARGE=thyc.chax_nodal, FONC_MULT=fmult_ax,),
             _F(CHARGE=thyc.chax_poutre, FONC_MULT=fmult_ax,),

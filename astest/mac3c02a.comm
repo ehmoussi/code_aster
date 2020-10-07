@@ -35,6 +35,8 @@ RESU = CALC_MAC3COEUR( TYPE_COEUR    = 'TEST',
                        RESU_DEF     =  CO('RES_LM'),
                        TYPE_DEFORMATION = 'GROT_GDEP',
                        LAME          = _F( UNITE_THYC    =  32,
+                                           COEF_MULT_THV = 1.0,
+                                           COEF_MULT_THT = 1.0,
                                            ))
 
 post_i = RESU.LIST_PARA()['INST'][-1]

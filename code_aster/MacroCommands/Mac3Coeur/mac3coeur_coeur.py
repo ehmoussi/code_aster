@@ -315,13 +315,13 @@ class Coeur(object):
 
         return _ARCH_F1
 
-    def definition_temp_hydro_axiale(self):
+    def definition_temp_hydro_axiale(self, coef_mult_thv):
         """ Fonction multiplicative de la force hydrodynamique axiale.
             On multiplie par 0.708 les forces hydrodynamiques a froid pour obtenir celles a chaud."""
         assert self.temps_simu[
             'T0'] is not None, '`definition_time` must be called first!'
-        FOHYFR_1 = 1.0    # Valeur a froid
-        FOHYCH_1 = 0.708  # Valeur a chaud
+        FOHYFR_1 = 1.0*coef_mult_thv    # Valeur a froid
+        FOHYCH_1 = 0.708*coef_mult_thv  # Valeur a chaud
 
         _HYDR_F1 = DEFI_FONCTION(
             NOM_PARA='INST', PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
@@ -337,11 +337,11 @@ class Coeur(object):
                   self.temps_simu['T9'], 0.0,),)
         return _HYDR_F1
 
-    def definition_effort_transverse(self):
+    def definition_effort_transverse(self, coef_mult_tht):
         """ Fonction multiplicative pour la prise en compte des efforts transverses."""
         assert self.temps_simu[
             'T0'] is not None, '`definition_time` must be called first!'
-        AVEC = 1.0
+        AVEC = 1.0*coef_mult_tht
         SANS = 0.0
 
         _F_TRAN1 = DEFI_FONCTION(
