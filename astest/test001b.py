@@ -111,4 +111,6 @@ test.assertFalse(libaster.debugJeveuxExists(tc1), msg="model / " + tc1)
 test.assertFalse(libaster.debugJeveuxExists(tc2), msg="material / " + tc2)
 test.assertFalse(libaster.debugJeveuxExists(tc2), msg="fieldmat / " + tc3)
 
+test.printSummary()
+
 code_aster.close()
