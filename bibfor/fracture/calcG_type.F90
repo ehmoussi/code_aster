@@ -101,6 +101,8 @@ implicit none
     type CalcG_Theta
 ! ----- name of theta field
         character(len=24)       :: theta_field = ' '
+! ----- name of factors necessary to createtheta field in te
+        character(len=24)       :: theta_factors = ' '
 ! ----- number of theta field
         integer                 :: nb_theta_field = 0
 ! ----- name of crack
@@ -424,13 +426,15 @@ contains
 !   In this     : theta type
 ! --------------------------------------------------------------------------------------------------
 !
-        integer :: ier, ndim
+        integer :: ier, ndim, j
         character(len=8) :: typfon
+        real(kind=8) :: maxtai, mintai
         aster_logical :: l_disc
 !
         call jemarq()
 ! --- get automatic name
         call gcncon("_", this%theta_field)
+        call gcncon("_", this%theta_factors)
 !
 ! --- get informations about the crack
 !
@@ -472,9 +476,9 @@ contains
         if(this%discretization == "LINEAIRE") then
             ASSERT(this%nb_point_fond >= 0)
             ASSERT(this%degree == 0)
-            if(this%nb_point_fond == 0) then
-                this%nb_point_fond = this%nb_fondNoeud
-            end if
+!~             if(this%nb_point_fond == 0) then
+!~                 this%nb_point_fond = this%nb_fondNoeud
+!~             end if
         end if
 !
         if(this%discretization == "LEGENDRE") then
@@ -483,13 +487,6 @@ contains
             if(this%l_closed) then
                 call utmess('F', 'RUPTURE0_90')
             end if
-        end if
-!
-        call getvr8('THETA', 'R_INF', iocc=1, scal=this%r_inf, nbret=ier)
-        call getvr8('THETA', 'R_SUP', iocc=1, scal=this%r_sup, nbret=ier)
-!
-        if(ier == 1 .and. ((this%r_inf < 0.d0) .or. (this%r_inf >= this%r_sup))) then
-            call utmess('F', 'RUPTURE3_3', nr=2, valr=[this%r_inf, this%r_sup])
         end if
 !
         call getvis('THETA', 'NB_COUCHE_INF', iocc=1, scal=this%nb_couche_inf, nbret=ier)
@@ -512,6 +509,35 @@ contains
         call jeveuo(this%crack//'.FOND.NOEU'     , 'L', vk8=this%fondNoeud)
 !
         this%nomNoeud = this%mesh//'.NOMNOE'
+
+! --- Get RINF and DE RSUP from command file or from SD FOND_FISSURE
+
+        call getvr8('THETA', 'R_INF', iocc=1, scal=this%r_inf, nbret=ier)
+        call getvr8('THETA', 'R_SUP', iocc=1, scal=this%r_sup, nbret=ier)
+!
+        if(ier == 1 .and. ((this%r_inf < 0.d0) .or. (this%r_inf >= this%r_sup))) then
+            call utmess('F', 'RUPTURE3_3', nr=2, valr=[this%r_inf, this%r_sup])
+        end if
+
+        if (ier .eq. 0) then
+            if (this%config_init .eq. 'DECOLLEE') then
+                call utmess('F', 'RUPTURE1_7')
+            endif
+            maxtai = this%fondTailleR(1)
+            mintai = this%fondTailleR(1)
+            do j = 1, this%nb_fondNoeud
+                maxtai = max(maxtai,this%fondTailleR(j))
+                mintai = min(mintai,this%fondTailleR(j))
+            end do
+            this%r_inf = 2*maxtai
+            this%r_sup = 4*maxtai
+            call utmess('I', 'RUPTURE1_5', nr=2, valr=[this%r_inf, this%r_sup])
+            if (maxtai .gt. 2*mintai) then
+                call utmess('A', 'RUPTURE1_16', nr=2, valr=[mintai, maxtai])
+            endif
+        endif
+
+
 !
 ! --- Some verification
 !

@@ -146,12 +146,15 @@ FISSH=DEFI_FISSURE(MAILLAGE=mesh, SYME='OUI',
                     LEVRE_SUP=_F(GROUP_MA='LEVRE_SUP',),
                     )
 
+#~ IMPR_CO(CONCEPT=_F(NOM=FISSH), ATTRIBUT='OUI', NIVEAU=2, UNITE=6)
+
 H0 = CALC_H(RESULTAT=RES0,
             OPTION=("G",),
             THETA=_F(FISSURE=FISSH,
                      CHAM_THETA=CO('cham_theta_no2'),
                      R_INF=0.0203282,
                      R_SUP=0.025))
+
 
 
 TEST_RESU(
