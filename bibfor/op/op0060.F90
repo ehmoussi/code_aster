@@ -63,7 +63,7 @@ subroutine op0060()
     character(len=13) :: motcl(8)
     character(len=16) :: typres, oper
     character(len=19) :: basnof, basloc, cnxinv, lnno, ltno
-    character(len=24) :: valk(2), entnom, abscur, fonoeu
+    character(len=24) :: valk(2), entnom, abscur, fonoeu, absfon
 ! DEB-------------------------------------------------------------------
 !
     call jemarq()
@@ -230,7 +230,7 @@ subroutine op0060()
     call jedetr(cnxinv)
 !
 !     ---------------------------------------------------------------
-!     CREATION DU VECTEUR .ABSCUR CONTENANT LES ABSCISSES
+!     CREATION DU VECTEUR .ABSFOND CONTENANT LES ABSCISSES
 !     CURVILIGNES DES NOEUDS DU FOND DE FISSURE
 !     ---------------------------------------------------------------
 !
@@ -247,24 +247,28 @@ subroutine op0060()
         ASSERT(.FALSE.)
     endif
 !   
-!   CALCUL DE L'ABSCISSE CURVILIGNE ET STOCKAGE DANS LA SD .FONDFISSURE
-    abscur = resu//'.ABSCUR'
-    call fonfis2(noma, nbnoff, fonoeu, abscur)
+!   CALCUL DE L'ABSCISSE CURVILIGNE ET STOCKAGE DANS OBJET INTERNE OP0060
+    absfon = '&&OP0060.ABSFOND'
+    call fonfis2(noma, nbnoff, fonoeu, absfon)
 !
 !     --------------------------------------------------------------- 
-!     CREATION DE LA BASE LOCALE ET DES LEVEL SETS EN CHAQUE NOEUD
+!     CREATION DE LA BASE LOCALE, DES LEVEL SETS ET DE L'ABCISSE 
+!     CURVILIGNE EN CHAQUE NOEUD
 !     ---------------------------------------------------------------
 !
 !     LA BASE LOCALE ET DES LEVEL SETS SONT CALCULEES EN CHAQUE NOEUD
 !     QUE SI L'OBJET BASENOF EXISTE DEJA
     call jeexin(basnof, ibas)
     if (ibas .ne. 0) then
+        abscur = resu//'.ABSCUR'
         basloc = resu//'.BASLOC'
         lnno = resu//'.LNNO'
         ltno = resu//'.LTNO'
-        call fonbas2(noma, basnof, typm, fonoeu, nbnoff,&
-                    basloc, lnno, ltno)
+        call fonbas2(noma, basnof, typm, fonoeu, nbnoff,absfon,&
+                    basloc,abscur, lnno, ltno)
     endif
+!
+    call jedetr(absfon)
 !
 !
 !     ---------------------------------------------------------------

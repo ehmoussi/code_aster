@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fonfis2(noma, nbnoff, fonoeu, abscur)
+subroutine fonfis2(noma, nbnoff, fonoeu, absfon)
 !
     implicit none
 !
@@ -31,7 +31,7 @@ subroutine fonfis2(noma, nbnoff, fonoeu, abscur)
     integer :: nbnoff
 
     character(len=8) :: noma
-    character(len=24) :: abscur, fonoeu
+    character(len=24) :: absfon, fonoeu
 !
 !
 !     ----------------------------------------------------------------
@@ -47,12 +47,12 @@ subroutine fonfis2(noma, nbnoff, fonoeu, abscur)
 !        FONOEU : NOMS DES NOEUDS DU FOND DE FISSURE
 !
 ! SORTIE:
-!        ABSCUR : VECTEUR .ABSCUR CONTENANT LES ABSCISSES 
+!        ABSFON : VECTEUR .ABSFON CONTENANT LES ABSCISSES 
 !                 CURVILIGNES DES NOEUDS DU FOND
 !     ------------------------------------------------------------------
 !
 !
-    integer :: i, iabscur,  jnoe, ni, nj
+    integer :: i, iabsfon,  jnoe, ni, nj
     real(kind=8) :: absci, coori(3), coorj(3), norm, xij, yij, zij
     real(kind=8), pointer :: vale(:) => null()
 !
@@ -64,7 +64,7 @@ subroutine fonfis2(noma, nbnoff, fonoeu, abscur)
 !
 !     ALLOCATION DU VECTEUR DES COORDONNEES ET DES ABSCISSES CURVILIGNES
 !     DES NOEUDS DU FOND
-    call wkvect(abscur, 'G V R', nbnoff, iabscur)
+    call wkvect(absfon, 'G V R', nbnoff, iabsfon)
 !
 !     RECUPERATION DES NOMS DES NOEUDS DU FOND DE FISSURE
     call jeveuo(fonoeu, 'L', jnoe)
@@ -78,7 +78,7 @@ subroutine fonfis2(noma, nbnoff, fonoeu, abscur)
 !
 !     REMPLISSAGE DE .FONDFISS DANS LA SD_FOND_FISS :
 !     DONNEES DU CAS 2D OU DU PREMIER NOEUD POUR LE CAS 3D
-     zr(iabscur-1 + 1) = 0.d0
+     zr(iabsfon-1 + 1) = 0.d0
 !
 !     REMPLISSAGE DE .FONDFISS DANS LA SD_FOND_FISS: CAS 3D
     if (nbnoff .ne. 1) then
@@ -103,9 +103,9 @@ subroutine fonfis2(noma, nbnoff, fonoeu, abscur)
             yij = coorj(2) - coori(2)
             zij = coorj(3) - coori(3)
             norm = sqrt(xij*xij + yij*yij + zij*zij)
-            absci = zr(iabscur-1 + (i-2) + 1)
+            absci = zr(iabsfon-1 + (i-2) + 1)
 !
-            zr(iabscur-1 + (i-1) + 1) = absci + norm
+            zr(iabsfon-1 + (i-1) + 1) = absci + norm
         enddo
     endif
 !

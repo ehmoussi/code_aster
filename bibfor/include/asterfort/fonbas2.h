@@ -19,14 +19,16 @@
 !
 !
 interface
-    subroutine fonbas2(noma, basnof, typm, fonoeu, nbnoff,&
-                      basloc, lnno, ltno)
+    subroutine fonbas2(noma, basnof, typm, fonoeu, nbnoff, absfon,&
+                      basloc, abscur, lnno, ltno)
         character(len=8)  :: noma
         character(len=19) :: basnof
         character(len=8)  :: typm
         character(len=24) :: fonoeu
         integer           :: nbnoff
+        character(len=24) :: absfon
         character(len=19) :: basloc
+        character(len=24) :: abscur
         character(len=19) :: lnno
         character(len=19) :: ltno
     end subroutine fonbas2

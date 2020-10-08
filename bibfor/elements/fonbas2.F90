@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fonbas2(noma, basnof, typm, fonoeu, nbnoff,&
-                  basloc, lnno, ltno)
+subroutine fonbas2(noma, basnof, typm, fonoeu, nbnoff, absfon,&
+                  basloc, abscur, lnno, ltno)
 !
     implicit none
 #include "jeveux.h"
@@ -33,10 +33,12 @@ subroutine fonbas2(noma, basnof, typm, fonoeu, nbnoff,&
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
+#include "asterfort/wkvect.h"
+
     integer           :: nbnoff
     character(len=8)  :: noma, typm
     character(len=19) :: basnof, basloc, lnno, ltno
-    character(len=24) :: fonoeu
+    character(len=24) :: fonoeu, absfon, abscur
 !
 ! FONCTION REALISEE:
 !
@@ -51,14 +53,17 @@ subroutine fonbas2(noma, basnof, typm, fonoeu, nbnoff,&
 !        FONOEU : NOM DES NOEUDS DU FOND DE FISSURE
 !        NBNOFF : NOMBRE DE NOEUDS AU FOND DE FISSURE
 !        TYPM   : TYPE DE FOND DE FISSURE : LIN OU QUAD
+!        ABSFON : ABSCISSE CURVILGNE DE CHAQUE NOEUD DU FOND DE FISSURE
 !     SORTIES:
 !        BASLOC : BASE LOCALE EN CHAQUE NOEUD DU MAILLAGE
+!        ABSCUR : ABSCISSE CURVILIGNE DU PROJETE SUR LE FOND DE FISSURE
+!                 DE CHAQUE NOEUD DU MAILLAGE
 !        LTNO   : LEVEL-SETS TANGENTS EN CHAQUE NOEUD DU MAILLAGE
 !        LNNO   : LEVLE-SETS NORMAUX EN CHAQUE NOEUD DU MAILLAGE
 !-----------------------------------------------------------------------
 !
     integer :: ibid, indica, indicb, ina, inb, ino, ni, nj, jnoe
-    integer :: iseg, jbas
+    integer :: iseg, jbas, jabsf, jabscur
     integer :: jgsl,   jlnsl,  jltsl
     integer :: k, nbno, ndim, nseg
     real(kind=8) :: d, dmin, eps, norm2, s, sn, xln, xlt
@@ -129,6 +134,13 @@ subroutine fonbas2(noma, basnof, typm, fonoeu, nbnoff,&
 !
 !   RECUPERATION DES NOMS DES NOEUDS DU FOND DE FISSURE
     call jeveuo(fonoeu, 'L', jnoe)
+!
+!   RECUPERATION DE L'ABSCISSE CURVILIGNE DES NOEUDS DU FOND DE FISSURE
+    call jeveuo(absfon, 'L', jabsf)
+!
+!   CREATION DU VECTEUR CONTENANT L'ABSCISSE CURVILIGNE DU PROJETE 
+!   SUR LE FOND DE FISSURE DE CHAQUE NOEUD DU MAILLAGE
+    call wkvect(abscur, 'G V R', nbno, jabscur)
 !
 !     ------------------------------------------------------------------
 !                BOUCLE SUR LES NOEUDS DU MAILLAGE
@@ -243,6 +255,8 @@ subroutine fonbas2(noma, basnof, typm, fonoeu, nbnoff,&
                     n(2) = s*yab+ya
                     n(3) = s*zab+za
                 endif
+!           ABSCISSE CURVILIGNE DU NOEUD N SUR LE FRONT DE FISSURE
+            zr(jabscur-1+ino) = (1-sn)*zr(jabsf-1+indica) + sn*zr(jabsf-1+indicb)
 !
             end do
 !
