@@ -55,13 +55,16 @@ DataStructure::DataStructure( const std::string type, const JeveuxMemory memType
                                     nameLength, type, memType ) {}
 
 DataStructure::~DataStructure() {
-// #ifdef _DEBUG_CXX
-//     std::cout << "deleting " << this->getName() << std::endl;
-// #endif
     std::string nameWithoutBlanks = trim( _name );
     // empty name or no memory manager : skip silently
     if ( nameWithoutBlanks == "" || get_sh_jeveux_status() != 1 )
         return;
+    // allow to see when the datastructure is really deleted
+    // only for user datastructures aka 'concept' (== without ".")
+    // too low-level to call UTMESS
+    if ( _name.find(".") == std::string::npos ) {
+        std::cout << "Deleting " << this->getName() << std::endl;
+    }
     _tco->deallocate();
 #ifdef _DEBUG_CXX
     std::string base( " " );

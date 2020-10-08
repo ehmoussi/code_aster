@@ -50,7 +50,6 @@ implicit none
 #include "asterfort/renuno.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/jelstc.h"
 !
     integer, intent(in) :: nb_ligr
     character(len=24), pointer :: list_ligr(:)

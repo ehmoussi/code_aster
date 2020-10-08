@@ -49,7 +49,6 @@ implicit none
 #include "asterfort/renuno.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/jelstc.h"
 !
 ! aslint: disable=W1501
 ! person_in_charge: jacques.pellet at edf.fr
