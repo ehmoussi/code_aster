@@ -79,5 +79,17 @@ void exportResultToPython() {
         .def( "printMedFile", c7 )
         .def( "printMedFile", c8 )
         .def( "setMesh", &ResultClass::setMesh )
-        .def( "update", &ResultClass::update );
+        .def( "update", &ResultClass::update )
+
+        .def( "getTable", &ListOfTablesClass::getTable, R"(
+Extract a Table from the results.
+
+Arguments:
+    identifier (str): Table identifier.
+
+Returns:
+    Table: Table stored with the given identifier.
+        )",
+              ( py::arg( "self" ), py::arg( "identifier" ) ) )
+        ;
 };

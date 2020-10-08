@@ -43,13 +43,15 @@
 #include "Discretization/ElementaryCharacteristics.h"
 #include "Loads/ListOfLoads.h"
 #include "DataFields/FieldBuilder.h"
+#include "DataFields/ListOfTables.h"
+
 
 /**
  * @class ResultClass
  * @brief Cette classe correspond a la sd_resultat de Code_Aster, elle stocke des champs
  * @author Nicolas Sellenet
  */
-class ResultClass : public DataStructure {
+class ResultClass : public DataStructure, public ListOfTablesClass {
   private:
     typedef std::vector< FieldOnNodesRealPtr > VectorOfFieldsNodes;
     typedef std::vector< FieldOnCellsRealPtr > VectorOfFieldsCells;
@@ -140,6 +142,7 @@ class ResultClass : public DataStructure {
      */
     ResultClass( const std::string &name, const std::string &resuTyp )
         : DataStructure( name, 19, resuTyp ),
+          ListOfTablesClass( name ),
           _symbolicNamesOfFields( NamesMapChar16( getName() + ".DESC" ) ),
           _namesOfFields( JeveuxCollectionChar24( getName() + ".TACH" ) ),
           _accessVariables( NamesMapChar16( getName() + ".NOVA" ) ),

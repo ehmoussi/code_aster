@@ -412,5 +412,5 @@ bool ResultClass::update()
     }
 
     CALL_JEDEMA();
-    return true;
+    return update_tables();
 };
