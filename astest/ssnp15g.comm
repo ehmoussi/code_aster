@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -222,12 +222,5 @@ TEST_RESU(RESU=(_F(INST=2.0,
                    MAILLE='CUBE',),
                 ),
           )
-
-# LISTE D'INSTANTS REELLEMENT CALCULES DANS LE DEUXIEME STAT_NON_LINE (POUR INFO)
-INST_C2=RECU_TABLE(CO=U2, NOM_TABLE='PARA_CALC')
-
-# IMPRESSION DE LA LISTE D'INSTANTS REELLEMENT CALCULES DANS LE DEUXIEME STAT_NON_LINE (POUR INFO)
-IMPR_TABLE(TABLE=INST_C2,
-           NOM_PARA='INST')
 
 FIN();

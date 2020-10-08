@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist ci verification sequential
 
 F comm ssnp15g.comm D 1
+F comm ssnp15g.py D 1
 F mail hsnv105a.mail D 20
