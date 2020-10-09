@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -287,5 +287,76 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 DETRUIRE(CONCEPT=_F(NOM=(TAB1),),)
 
+#***************************************************************************************************
+# 4) On verifie que les chargements cinématiques sont bien pris en compte par EXTR_MATR
+#***************************************************************************************************
+
+# 4.1) On compare les matrices pleine et creuse obtenues par EXTR_MATR 
+#-------------------------------------------------------------------------------------------------
+
+nu4    = NUME_DDL(MATR_RIGI = rigiel);
+matas4 = ASSE_MATRICE (MATR_ELEM = rigiel, NUME_DDL  = nu4, CHAR_CINE = chcine);
+
+Kf = matas4.EXTR_MATR()
+data, rows, cols, dim = matas4.EXTR_MATR(sparse=True)
+import numpy as np
+Kspf=np.zeros((dim, dim))
+for idx,_ in enumerate(data):
+   Kspf[rows[idx], cols[idx]] = data[idx]
+
+diff = np.linalg.norm(Kf - Kspf)
+
+# TEST_RESU
+TAB2=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),  _F(PARA='BOOLEEN',LISTE_R=diff,),),)
+TEST_TABLE(REFERENCE='ANALYTIQUE',CRITERE='ABSOLU',
+           VALE_CALC=0.,
+           VALE_REFE=0.,
+           NOM_PARA='BOOLEEN',
+           ORDRE_GRANDEUR = 1.0,PRECISION=1.e-12,
+           TABLE=TAB2,
+           FILTRE=_F(NOM_PARA='TEST',
+                     VALE_K='VALEUR  ',),
+           )
+
+DETRUIRE(CONCEPT=_F(NOM=(TAB2),),)
+
+
+# 4.2) On fait la même modélisation mais uniquement avec des conditions de Dirichlet 
+#      On compare la solution aster avec celle obtenue par Numpy
+#-------------------------------------------------------------------------------------------------
+
+chcine4 = AFFE_CHAR_CINE(MODELE=model, MECA_IMPO= (_F(GROUP_MA='AB',DX=0.,DY=1.),_F(GROUP_MA='CD',DY=2.), ));
+rigiel4 = CALC_MATR_ELEM(MODELE= model, CHAM_MATER= chmat, OPTION= 'RIGI_MECA', )
+nu42    = NUME_DDL(MATR_RIGI = rigiel4);
+matas42 = ASSE_MATRICE (MATR_ELEM = rigiel4, NUME_DDL  = nu42, CHAR_CINE = chcine4);
+vcine42 = CALC_CHAR_CINE (NUME_DDL=nu42, CHAR_CINE=chcine4);
+matas42 = FACTORISER(reuse=matas42,MATR_ASSE=matas42, METHODE= 'LDLT');
+ch4=AFFE_CHAR_MECA(MODELE=model, PRES_REP=_F(TOUT='OUI',PRES=0.));
+vecel4 = CALC_VECT_ELEM(CHARGE=ch4, CHAM_MATER = chmat, OPTION = 'CHAR_MECA')
+vecas42 = ASSE_VECTEUR(  VECT_ELEM=vecel4,   NUME_DDL=nu42 )
+u4=RESOUDRE( MATR = matas42, CHAM_NO= vecas42 , CHAM_CINE= vcine42)
+
+vref4 = u4.EXTR_COMP().valeurs
+K = matas42.EXTR_MATR()
+
+# Second membre
+F = np.array([0.,2.,0.,1.5,0.,1.,0.,2.,0.,2.,0.,3.,0.,1.,0.,1.,0.,1.5])
+v4 = np.linalg.solve(K, F)
+
+diff = np.linalg.norm(v4 - vref4)
+
+# TEST_RESU
+TAB2=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),  _F(PARA='BOOLEEN',LISTE_R=diff,),),)
+TEST_TABLE(REFERENCE='ANALYTIQUE',CRITERE='ABSOLU',
+           VALE_CALC=0.,
+           VALE_REFE=0.,
+           NOM_PARA='BOOLEEN',
+           ORDRE_GRANDEUR = 1.0,PRECISION=1.e-12, 
+           TABLE=TAB2,
+           FILTRE=_F(NOM_PARA='TEST',
+                     VALE_K='VALEUR  ',),
+           )
+
+DETRUIRE(CONCEPT=_F(NOM=(TAB2),),)
 
 FIN();

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # Copyright (C) 2014 STEFAN H. REITERER stefan.harald.reiterer@gmail.com
 # This file is part of code_aster.
 #
@@ -34,7 +34,7 @@ class matr_asse(ASSD):
             sparse (bool): By default, the returned matrix is dense. If *True*
                 the returned matrix is sparse.
             epsilon (float): Terms less than this value is considered null.
-                By default, it is 10^-8 * the mean of the absolute values.
+                By default, no filtering is done.
                 Only used if *sparse=True*.
 
         Returns:
@@ -54,6 +54,8 @@ class matr_asse(ASSD):
         valm = self.sdj.VALM.get()
         smhc = smos.SMHC.get()
         smdi = smos.SMDI.get()
+        ccid = self.sdj.cine.CCID.get()
+        ccid = ccid[:-1] if ccid else None  # suppress last entry containing number of bc
         sym = refa[8].strip() == "MS"
         dim = len(smdi)
         nnz = len(smhc)
@@ -106,14 +108,24 @@ class matr_asse(ASSD):
             cols = NP.concatenate((cols, cols_inf))
             data = NP.concatenate((triang_sup, triang_inf))
 
-            if epsilon is None:
-                epsilon = abs(data).mean() * 1e-8
-            nulls = NP.where(abs(data) < epsilon)
-            rows = NP.delete(rows, nulls)
-            cols = NP.delete(cols, nulls)
-            data = NP.delete(data, nulls)
+            # filter terms
+            if epsilon is not None:
+                nulls = NP.where(abs(data) < epsilon)
+                rows = NP.delete(rows, nulls)
+                cols = NP.delete(cols, nulls)
+                data = NP.delete(data, nulls)
+            # apply kinematic boundary conditions
+            if ccid:
+                elim = NP.where(NP.array(ccid) == 1)[0]
+                keep = NP.isin(rows, elim, invert=True) & NP.isin(cols, elim, invert=True)
+                data = data[keep]
+                rows = rows[keep]
+                cols = cols[keep]
+                rows = NP.concatenate((elim, rows))
+                cols = NP.concatenate((elim, cols))
+                data = NP.concatenate((NP.ones(len(elim)),data))
             return data, rows, cols, dim
-        else :
+        else:
             data = NP.zeros([dim, dim], dtype=dtype)
             jcol = 1
             for kterm in range(1,nnz+1):
@@ -122,6 +134,12 @@ class matr_asse(ASSD):
                     jcol += 1
                 data[jcol-1, ilig-1] = triang_inf[kterm-1]
                 data[ilig-1, jcol-1] = triang_sup[kterm-1]
+            # apply kinematic boundary conditions
+            if ccid:
+                elim = NP.where(NP.array(ccid) == 1)
+                data[elim,:] = 0.
+                data[:,elim] = 0.
+                data[elim,elim] = 1.
             return data
 
 class matr_asse_gd(matr_asse):
