@@ -72,5 +72,17 @@ Returns:
         .def( "setSaneModel", &ModelClass::setSaneModel )
         .def( "setSplittingMethod", split1 )
         .def( "setSplittingMethod", split2 )
-        .def( "getFiniteElementDescriptor", &ModelClass::getFiniteElementDescriptor );
+        .def( "getFiniteElementDescriptor", &ModelClass::getFiniteElementDescriptor )
+
+        .def( "getTable", &ListOfTablesClass::getTable, R"(
+Extract a Table from the datastructure.
+
+Arguments:
+    identifier (str): Table identifier.
+
+Returns:
+    Table: Table stored with the given identifier.
+        )",
+              ( py::arg( "self" ), py::arg( "identifier" ) ) )
+        ;
 };

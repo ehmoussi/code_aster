@@ -92,5 +92,17 @@ Return the Med type of each cell.
 Returns:
     list[int]: List of Med types.
         )",
-              ( py::arg( "self" ) ) );
+              ( py::arg( "self" ) ) )
+
+        .def( "getTable", &ListOfTablesClass::getTable, R"(
+Extract a Table from the datastructure.
+
+Arguments:
+    identifier (str): Table identifier.
+
+Returns:
+    Table: Table stored with the given identifier.
+        )",
+              ( py::arg( "self" ), py::arg( "identifier" ) ) )
+        ;
 };

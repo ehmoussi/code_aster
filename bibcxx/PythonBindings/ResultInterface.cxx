@@ -82,7 +82,7 @@ void exportResultToPython() {
         .def( "update", &ResultClass::update )
 
         .def( "getTable", &ListOfTablesClass::getTable, R"(
-Extract a Table from the results.
+Extract a Table from the datastructure.
 
 Arguments:
     identifier (str): Table identifier.

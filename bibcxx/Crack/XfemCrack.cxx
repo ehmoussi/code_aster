@@ -33,6 +33,7 @@
 
 XfemCrackClass::XfemCrackClass( const std::string name, MeshPtr mesh )
     : DataStructure( name, 8, "FISS_XFEM" ),
+      ListOfTablesClass( name ),
       _mesh( mesh ), _auxiliaryGrid( MeshPtr() ),
       _existingCrackWithGrid( XfemCrackPtr() ), _discontinuityType( "Crack" ), _crackLipsEntity(),
       _crackTipEntity(), _normalLevelSetFunction( FunctionPtr() ),
@@ -187,7 +188,7 @@ bool XfemCrackClass::build() {
         throw;
     }
 
-    return true;
+    return update_tables();
 };
 
 ModelPtr XfemCrackClass::enrichModelWithXfem( ModelPtr &baseModel ) {

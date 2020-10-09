@@ -28,6 +28,7 @@
 
 #include "astercxx.h"
 
+#include "DataFields/ListOfTables.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Supervis/ResultNaming.h"
@@ -37,7 +38,7 @@
  * @brief Cette classe correspond a une sd_melasflu
  * @author Natacha Béreux
  */
-class FluidStructureModalBasisClass : public DataStructure {
+class FluidStructureModalBasisClass : public DataStructure, public ListOfTablesClass {
   private:
     /** @brief Objet Jeveux '.REMF' */
     JeveuxVectorChar8 _remf;
@@ -71,6 +72,7 @@ class FluidStructureModalBasisClass : public DataStructure {
      */
     FluidStructureModalBasisClass( const std::string name )
         : DataStructure( name, 8, "MELASFLU", Permanent ),
+          ListOfTablesClass( name ),
           _remf( JeveuxVectorChar8( getName() + ".REMF" ) ),
           _desc( JeveuxVectorChar16( getName() + ".DESC" ) ),
           _fact( JeveuxVectorReal( getName() + ".FACT" ) ),

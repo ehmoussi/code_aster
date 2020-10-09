@@ -28,6 +28,7 @@
 
 #include "astercxx.h"
 #include "DataFields/FieldOnNodes.h"
+#include "DataFields/ListOfTables.h"
 #include "DataStructures/DataStructure.h"
 #include "Meshes/Mesh.h"
 #include "Modeling/Model.h"
@@ -39,7 +40,7 @@
  * @brief generates a data structure identical to DEFI_FISS_XFEM
  * @author Nicolas Tardieu
  */
-class XfemCrackClass : public DataStructure {
+class XfemCrackClass : public DataStructure, public ListOfTablesClass {
   public:
     /**
          * @brief kind of forward declaration

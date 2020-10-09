@@ -25,15 +25,17 @@
 
 #include "astercxx.h"
 
+#include "aster_fort_mesh.h"
+#include "aster_fort_superv.h"
+#include "aster_fort_utils.h"
+
 #include "Meshes/BaseMesh.h"
 #include "PythonBindings/LogicalUnitManager.h"
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/Exceptions.h"
 #include "Supervis/ResultNaming.h"
 #include "Utilities/CapyConvertibleValue.h"
-#include "aster_fort_mesh.h"
-#include "aster_fort_superv.h"
-#include "aster_fort_utils.h"
+
 
 int BaseMeshClass::getNumberOfNodes() const {
     if ( isEmpty() )
@@ -128,7 +130,7 @@ bool BaseMeshClass::readMeshFile( const std::string &fileName, const std::string
         CALL_EXECOP( &op );
     }
 
-    return true;
+    return update_tables();
 }
 
 bool BaseMeshClass::readMedFile( const std::string &fileName ) {

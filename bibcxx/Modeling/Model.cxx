@@ -101,7 +101,7 @@ bool ModelClass::build() {
         dict.container["DISTRIBUTION"] = listeDISTRIBUTION;
     }
 
-    return buildWithSyntax( dict );
+    return buildWithSyntax( dict ) && update_tables();
 };
 
 bool ModelClass::existsThm() {

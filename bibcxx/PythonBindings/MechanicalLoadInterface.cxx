@@ -56,7 +56,18 @@ void exportMechanicalLoadToPython() {
         .def( "getFiniteElementDescriptor",
               &GenericMechanicalLoadClass::getFiniteElementDescriptor )
         .def( "getModel", &GenericMechanicalLoadClass::getModel,
-              py::return_value_policy< py::copy_const_reference >() );
+              py::return_value_policy< py::copy_const_reference >() )
+        .def( "getTable", &ListOfTablesClass::getTable, R"(
+Extract a Table from the datastructure.
+
+Arguments:
+    identifier (str): Table identifier.
+
+Returns:
+    Table: Table stored with the given identifier.
+        )",
+              ( py::arg( "self" ), py::arg( "identifier" ) ) )
+        ;
 
     py::class_< NodalForceRealClass, NodalForceRealClass::MechanicalLoadPtr,
                 py::bases< GenericMechanicalLoadClass > >( "NodalForceReal", py::no_init )

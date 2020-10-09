@@ -74,5 +74,17 @@ void exportXfemCrackToPython() {
         .def( "setEnrichedLayersNumber", &XfemCrackClass::setEnrichedLayersNumber )
         .def( "getJunctingCracks", &XfemCrackClass::getJunctingCracks )
         .def( "insertJunctingCracks", &XfemCrackClass::insertJunctingCracks )
-        .def( "setPointForJunction", &XfemCrackClass::setPointForJunction );
+        .def( "setPointForJunction", &XfemCrackClass::setPointForJunction )
+
+        .def( "getTable", &ListOfTablesClass::getTable, R"(
+Extract a Table from the datastructure.
+
+Arguments:
+    identifier (str): Table identifier.
+
+Returns:
+    Table: Table stored with the given identifier.
+        )",
+              ( py::arg( "self" ), py::arg( "identifier" ) ) )
+        ;
 };

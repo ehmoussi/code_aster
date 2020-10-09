@@ -41,6 +41,8 @@
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Supervis/ResultNaming.h"
 #include "Utilities/SyntaxDictionary.h"
+#include "DataFields/ListOfTables.h"
+
 
 /**
  * @enum ModelSplitingMethod
@@ -73,7 +75,7 @@ extern const char *const GraphPartitionerNames[nbGraphPartitioner];
  * @brief Produit une sd identique a celle produite par AFFE_MODELE
  * @author Nicolas Sellenet
  */
-class ModelClass : public DataStructure {
+class ModelClass : public DataStructure, public ListOfTablesClass {
   public:
     /**
      * @brief Forward declaration for the XFEM enrichment
@@ -140,6 +142,7 @@ class ModelClass : public DataStructure {
 
     ModelClass( const std::string name, const BaseMeshPtr mesh )
         : DataStructure( name, 8, "MODELE" ),
+          ListOfTablesClass( name ),
           _typeOfCells( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
           _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
           _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ), _saneModel( nullptr ),

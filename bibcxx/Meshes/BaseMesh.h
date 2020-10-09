@@ -26,6 +26,7 @@
 #include "astercxx.h"
 
 #include "DataFields/MeshCoordinatesField.h"
+#include "DataFields/ListOfTables.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/NamesMap.h"
 #include "Meshes/MeshExplorer.h"
@@ -34,7 +35,7 @@
  * @class BaseMeshClass
  * @brief This object is the base class for all meshes variants
  */
-class BaseMeshClass : public DataStructure {
+class BaseMeshClass : public DataStructure, public ListOfTablesClass {
   public:
     typedef MeshExplorer< CellsIteratorFromConnectivity, const JeveuxCollectionLong &,
                           const JeveuxVectorLong & >
@@ -74,6 +75,7 @@ class BaseMeshClass : public DataStructure {
      */
     BaseMeshClass( const std::string &name, const std::string &type )
         : DataStructure( name, 8, type ),
+          ListOfTablesClass( name ),
           _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
           _nameOfNodes( NamesMapChar8( getName() + ".NOMNOE    " ) ),
           _coordinates( new MeshCoordinatesFieldClass( getName() + ".COORDO    " ) ),

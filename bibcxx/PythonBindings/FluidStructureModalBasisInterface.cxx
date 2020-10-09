@@ -36,5 +36,17 @@ void exportFluidStructureModalBasisToPython() {
                 py::bases< DataStructure > >( "FluidStructureModalBasis", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< FluidStructureModalBasisClass >))
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< FluidStructureModalBasisClass, std::string >));
+                              &initFactoryPtr< FluidStructureModalBasisClass, std::string >))
+
+        .def( "getTable", &ListOfTablesClass::getTable, R"(
+Extract a Table from the datastructure.
+
+Arguments:
+    identifier (str): Table identifier.
+
+Returns:
+    Table: Table stored with the given identifier.
+        )",
+              ( py::arg( "self" ), py::arg( "identifier" ) ) )
+        ;
 };

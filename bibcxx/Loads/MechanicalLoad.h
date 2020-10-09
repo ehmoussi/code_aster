@@ -30,6 +30,7 @@
 #include "aster_fort_superv.h"
 
 #include "DataFields/ConstantFieldOnCells.h"
+#include "DataFields/ListOfTables.h"
 #include "DataStructures/DataStructure.h"
 #include "Loads/PhysicalQuantity.h"
 #include "Meshes/BaseMesh.h"
@@ -260,7 +261,7 @@ template <> struct LoadTraits< THMFlux > {
  * @brief Define a generic mechanical load
  * @author Nicolas Sellenet
  */
-class GenericMechanicalLoadClass : public DataStructure {
+class GenericMechanicalLoadClass : public DataStructure, public ListOfTablesClass {
   public:
     struct MecaLoad {
         /** @brief Modele */
@@ -392,7 +393,9 @@ class GenericMechanicalLoadClass : public DataStructure {
      * @brief Constructor
      */
     GenericMechanicalLoadClass( const std::string name, const ModelPtr &currentModel )
-        : DataStructure( name, 8, "CHAR_MECA" ), _mecaLoad( getName() + ".CHME", currentModel ),
+        : DataStructure( name, 8, "CHAR_MECA" ),
+          ListOfTablesClass( name ),
+          _mecaLoad( getName() + ".CHME", currentModel ),
           _type( getName() + ".TYPE" ), _lisma01( getName() + ".LISMA01" ),
           _lisma02( getName() + ".LISMA02" ), _trans01( getName() + ".TRANS01" ),
           _trans02( getName() + ".TRANS02" ), _poidsMaille( getName() + ".POIDS_MAILLE" ){};
@@ -547,7 +550,7 @@ class MechanicalLoadClass : public GenericMechanicalLoadClass {
         } catch ( ... ) {
             throw;
         }
-        return true;
+        return update_tables();
     };
 };
 
