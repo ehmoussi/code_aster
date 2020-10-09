@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -130,6 +130,7 @@ IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=TEM_FIN2))
 T_INIT=CREA_CHAMP( OPERATION='EXTR', 
                    TYPE_CHAM='NOEU_TEMP_R', 
                    NOM_CHAM='TEMP',
+                   NUME_ORDRE=0,
                    RESULTAT=TEM_INIT)
 
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=T_INIT))
@@ -137,6 +138,7 @@ IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=T_INIT))
 T_FIN1=CREA_CHAMP( OPERATION='EXTR', 
                    TYPE_CHAM='NOEU_TEMP_R', 
                    NOM_CHAM='TEMP',
+                   NUME_ORDRE=0,
                    RESULTAT=TEM_FIN1)
 
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=T_FIN1))
@@ -144,6 +146,7 @@ IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=T_FIN1))
 T_FIN2=CREA_CHAMP( OPERATION='EXTR', 
                    TYPE_CHAM='NOEU_TEMP_R', 
                    NOM_CHAM='TEMP',
+                   NUME_ORDRE=0,
                    RESULTAT=TEM_FIN2)
 
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=T_FIN2))

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -242,7 +242,7 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
 
                  # si .not. TYPE_MAXI, on ne doit spécifier qu'un seul numéro d'ordre :
                  b_non_type_maxi =BLOC(condition = """not exists("TYPE_MAXI")""",
-                      regles=(EXCLUS('NUME_ORDRE','INST','FREQ','NUME_MODE','NOEUD_CMP','NOM_CAS','ANGLE'),),
+                      regles=(UN_PARMI('NUME_ORDRE','INST','FREQ','NUME_MODE','NOEUD_CMP','NOM_CAS','ANGLE'),),
                       NUME_ORDRE      =SIMP(statut='f',typ='I'),
                       INST            =SIMP(statut='f',typ='R'),
                       FREQ            =SIMP(statut='f',typ='R'),
@@ -250,8 +250,9 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                       NOEUD_CMP       =SIMP(statut='f',typ='TXM',max=2),
                       NOM_CAS         =SIMP(statut='f',typ='TXM'),
                       ANGLE           =SIMP(statut='f',typ='R'),
-
-                      INTERPOL        =SIMP(statut='f',typ='TXM',defaut="NON",into=("NON","LIN",) ),
+                      b_inst=BLOC(condition = """exists("INST") """,
+                        INTERPOL        =SIMP(statut='f',typ='TXM',defaut="NON",into=("NON","LIN",) ),
+                      ),
                  ),
 
                  CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",) ),

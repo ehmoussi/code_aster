@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -219,6 +219,7 @@ MESTAT=MECA_STATIQUE(MODELE=MO,
 
 DEP=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                OPERATION='EXTR',
+               NUME_ORDRE=1,
                RESULTAT=MESTAT,
                NOM_CHAM='DEPL',);
 # POUR OBTENIR LES EFFORTS, IL FUAT SOMMER LES CONTRIBUTIONS
@@ -248,11 +249,13 @@ CALC_CHAMP(reuse =EFSUP,
 
 EFNINF=CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
                   OPERATION='EXTR',
+                  NUME_ORDRE=1,
                   RESULTAT=EFINF,
                   NOM_CHAM='EFGE_NOEU',);
 
 EFNSUP=CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
                   OPERATION='EXTR',
+                  NUME_ORDRE=1,
                   RESULTAT=EFSUP,
                   NOM_CHAM='EFGE_NOEU',);
 
@@ -328,11 +331,13 @@ CALC_CHAMP(reuse =MESTAT1,
 
 DEP1=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 OPERATION='EXTR',
+                NUME_ORDRE=1,
                 RESULTAT=MESTAT1,
                 NOM_CHAM='DEPL',);
 
 EFF1=CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
                 OPERATION='EXTR',
+                NUME_ORDRE=1,
                 RESULTAT=MESTAT1,
                 NOM_CHAM='EFGE_NOEU',);
 # ______________________________________________________________________

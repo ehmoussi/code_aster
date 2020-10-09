@@ -356,6 +356,7 @@ STATIQUE=MACRO_ELAS_MULT(MODELE=MO,
 DEPLFO = CREA_CHAMP(OPERATION='EXTR',
                     TYPE_CHAM='NOEU_DEPL_R',
                     RESULTAT=STATIQUE,
+                    NUME_ORDRE=1,
                     NOM_CHAM='DEPL',
                     )
 

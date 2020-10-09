@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,7 +68,7 @@ def NormeAster(RESULTAT, Sol_Ana, MAIL, MODELE, GROUP_MA):
 
      Ucalc = CREA_CHAMP(OPERATION='EXTR',
                         NOM_CHAM = 'TEMP' , TYPE_CHAM = 'NOEU_TEMP_R',
-                        RESULTAT = RESULTAT ,);
+                        RESULTAT = RESULTAT ,NUME_ORDRE=0,);
 
      # ========================================================================================
      #          Creation de la solution analytique en deplacement aux points d'integration

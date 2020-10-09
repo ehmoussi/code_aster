@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -93,7 +93,11 @@ RES=MECA_STATIQUE(    MODELE=MOEL,
                            _F( CHARGE = CHARGE,  )),
                     )
 
-SIG=CREA_CHAMP(   RESULTAT=RES, OPERATION='EXTR', TYPE_CHAM='ELGA_SIEF_R', NOM_CHAM='SIEF_ELGA')
+SIG=CREA_CHAMP(   RESULTAT=RES, 
+                  OPERATION='EXTR', 
+                  TYPE_CHAM='ELGA_SIEF_R', 
+                  NUME_ORDRE=1,
+                  NOM_CHAM='SIEF_ELGA')
 
 ASSEMBLAGE ( MODELE=MOEL,
              CHAM_MATER=CHAM_MAT,

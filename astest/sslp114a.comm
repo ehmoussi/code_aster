@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -306,6 +306,7 @@ DEPL = CREA_CHAMP (OPERATION='EXTR',
                    NOM_CHAM = 'DEPL',
                    TYPE_CHAM = 'NOEU_DEPL_R',
                    RESULTAT = UTOT,
+                   NUME_ORDRE=1,
                   );
 
 CH_AFFE=CREA_CHAMP(OPERATION='AFFE',

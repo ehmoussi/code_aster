@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -141,6 +141,7 @@ RESU_TH0=THER_LINEAIRE(MODELE=MO_THER,
 TEMP_0=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
                   OPERATION='EXTR',
                   RESULTAT=RESU_TH0,
+                  NUME_ORDRE = 0,
                   NOM_CHAM='TEMP',);
 
 

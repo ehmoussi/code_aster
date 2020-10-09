@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -119,6 +119,7 @@ RESUTRQ2=CALC_ERREUR(reuse=RESUTRQ2,
 REQT_GD=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                    OPERATION='EXTR',
                    RESULTAT=RESUTRQ2,
+                   NUME_ORDRE=1,
                    NOM_CHAM = 'DEPL',);
 #
 # 4. Impressions
