@@ -49,7 +49,7 @@ bool ListOfTablesClass::update_tables() {
         if ( _mapTables[id] == nullptr )
             _mapTables[id] = TablePtr( new TableClass( name ) );
     }
-    // todo: remove previously registered and not yet available
+    // todo: remove previously registered and not available anymore
 
     CALL_JEDEMA();
     return true;

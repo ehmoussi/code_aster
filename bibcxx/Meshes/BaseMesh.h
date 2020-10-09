@@ -65,6 +65,8 @@ class BaseMeshClass : public DataStructure, public ListOfTablesClass {
     JeveuxCollectionLongNamePtr _groupsOfCells;
     /** @brief jeveux vector '.TITR' */
     JeveuxVectorChar80 _title;
+    /** @brief jeveux vector '.ADAPTATION' */
+    JeveuxVectorLong _adapt;
     /** @brief Object to allow loop over connectivity */
     const ConnectivityMeshExplorer _explorer;
 
@@ -89,6 +91,7 @@ class BaseMeshClass : public DataStructure, public ListOfTablesClass {
           _groupsOfCells(
               JeveuxCollectionLongNamePtr( getName() + ".GROUPEMA  ", _nameOfGrpCells ) ),
           _title( JeveuxVectorChar80( getName() + "           .TITR" ) ),
+          _adapt( JeveuxVectorLong( getName() + ".ADAPTATION" ) ),
           _explorer( ConnectivityMeshExplorer( _connectivity, _cellsType ) ){};
 
     /**

@@ -134,8 +134,7 @@ bool BaseMeshClass::readMeshFile( const std::string &fileName, const std::string
 }
 
 bool BaseMeshClass::readMedFile( const std::string &fileName ) {
-    readMeshFile( fileName, "MED" );
-    return true;
+    return readMeshFile( fileName, "MED" );
 }
 
 const JeveuxCollectionLong BaseMeshClass::getMedConnectivity() const {

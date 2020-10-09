@@ -37,20 +37,29 @@ class MeshReader(ExecuteCommand):
     """Command that creates a :class:`~code_aster.Objects.Mesh` from a file."""
     command_name = "LIRE_MAILLAGE"
 
-    def isParallelMesh(self, keywords):
-        """The mesh is a ParalellMesh: yes or not
+    def _create_parallel_mesh(self, keywords):
+        """Tell if the command is creating a ParallelMesh
 
         Arguments:
             keywords (dict): User's keywords.
+
+        Returns:
+            bool: *True* if a ParallelMesh is creating, *False* otherwise.
         """
+        return (keywords['FORMAT'] == "MED" and
+                keywords['PARTITIONNEUR'] == "PTSCOTCH" and
+                getMPINumberOfProcs() > 1)
 
-        if(keywords['FORMAT'] == "MED" and keywords['PARTITIONNEUR'] == "PTSCOTCH"):
-            if getMPINumberOfProcs() > 1:
-                return True
-            else:
-                return False
+    def create_result(self, keywords):
+        """Create the :class:`~code_aster.Objects.Mesh`.
 
-        return False
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        if self._create_parallel_mesh(keywords):
+            self._result = ParallelMesh()
+        else:
+            self._result = Mesh()
 
     def exec_(self, keywords):
         """Execute the command.
@@ -88,7 +97,7 @@ class MeshReader(ExecuteCommand):
             filename = LogicalUnitFile.filename_from_unit(unit)
             self._result.readMedFile(filename, partitioned=False, verbose=verbose)
         else:
-            if(keywords['FORMAT'] == "MED" and keywords['PARTITIONNEUR'] == "PTSCOTCH"):
+            if keywords['FORMAT'] == "MED" and keywords['PARTITIONNEUR'] == "PTSCOTCH":
                 assert getMPINumberOfProcs() == 1
                 UTMESS("A", "MED_18")
 
@@ -99,18 +108,13 @@ class MeshReader(ExecuteCommand):
 
             super(MeshReader, self).exec_(keywords)
 
-
-    def create_result(self, keywords):
-        """Create the :class:`~code_aster.Objects.Mesh`.
+    def post_exec(self, keywords):
+        """Execute the command.
 
         Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
+            keywords (dict): User's keywords.
         """
-
-        if(self.isParallelMesh(keywords)):
-            self._result = ParallelMesh()
-        else:
-            self._result = Mesh()
+        self._result.update()
 
 
 LIRE_MAILLAGE = MeshReader.run

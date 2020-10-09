@@ -34,14 +34,14 @@
 
 
 bool ParallelMeshClass::readPartitionedMedFile( const std::string &fileName ) {
-    BaseMeshClass::readMedFile( fileName );
+    const bool ret = BaseMeshClass::readMedFile( fileName );
 
     CALLO_LRMJOI_WRAP( getName(), fileName );
 
     updateGlobalGroupOfNodes();
     updateGlobalGroupOfCells();
 
-    return true;
+    return ret;
 };
 
 bool ParallelMeshClass::updateGlobalGroupOfNodes( void ) {

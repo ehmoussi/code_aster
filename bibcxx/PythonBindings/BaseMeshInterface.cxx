@@ -94,6 +94,13 @@ Returns:
         )",
               ( py::arg( "self" ) ) )
 
+        .def( "update", &ListOfTablesClass::update_tables, R"(
+Update the internal state of the datastructure.
+
+Returns:
+    bool: *True* in case of success, *False* otherwise.
+        )",
+              ( py::arg( "self" ) ) )
         .def( "getTable", &ListOfTablesClass::getTable, R"(
 Extract a Table from the datastructure.
 
