@@ -50,8 +50,6 @@ class XfemCrackClass : public DataStructure {
     /** @typedef Definition of a smart pointer on VirtualMeshEntity */
     typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
-    /** @brief Name of the JEVEUX Data Structure */
-    const std::string _jeveuxName;
     /** @brief Mesh supporting the crack */
     MeshPtr _mesh;
     /** @brief Mesh of the auxiliary grid */
@@ -294,8 +292,6 @@ class XfemCrackClass : public DataStructure {
     void setPointForJunction( const VectorReal point ) {
         _pointForJunctingCracks = point;
     }
-
-    std::string getJeveuxName() const { return _jeveuxName; }
 };
 
 /**

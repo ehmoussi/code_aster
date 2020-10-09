@@ -54,8 +54,8 @@ class BaseFunctionClass : public GenericFunctionClass {
      */
     BaseFunctionClass( const std::string type, const std::string type2 );
 
-    BaseFunctionClass( const std::string jeveuxName, const std::string type,
-                          const std::string type2 );
+    BaseFunctionClass( const std::string name, const std::string type,
+                       const std::string type2 );
 
     ~BaseFunctionClass(){};
 
@@ -175,8 +175,8 @@ class FunctionClass : public BaseFunctionClass {
     */
     FunctionClass() : BaseFunctionClass( "FONCTION", "FONCTION" ){};
 
-    FunctionClass( const std::string jeveuxName )
-        : BaseFunctionClass( jeveuxName, "FONCTION", "FONCTION" ){};
+    FunctionClass( const std::string name )
+        : BaseFunctionClass( name, "FONCTION", "FONCTION" ){};
 };
 
 /**
@@ -196,8 +196,8 @@ class FunctionComplexClass : public BaseFunctionClass {
     /**
     * Constructeur
     */
-    FunctionComplexClass( const std::string jeveuxName )
-        : BaseFunctionClass( jeveuxName, "FONCTION_C", "FONCT_C" ) {};
+    FunctionComplexClass( const std::string name )
+        : BaseFunctionClass( name, "FONCTION_C", "FONCT_C" ) {};
 
     FunctionComplexClass() : BaseFunctionClass( "FONCTION_C", "FONCT_C" ) {};
 

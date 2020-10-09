@@ -53,8 +53,8 @@ class TimeStepperClass : public DataStructure, public GenericStepper {
     /**
      * @brief Constructeur
      */
-    TimeStepperClass( const std::string jeveuxName, const JeveuxMemory memType = Permanent )
-        : DataStructure( jeveuxName, 8, "LIST_INST", memType ), _values( getName() + ".LIST" ){};
+    TimeStepperClass( const std::string name, const JeveuxMemory memType = Permanent )
+        : DataStructure( name, 8, "LIST_INST", memType ), _values( getName() + ".LIST" ){};
 
     /**
      * @brief Constructeur

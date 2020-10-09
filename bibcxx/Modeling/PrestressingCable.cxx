@@ -29,9 +29,9 @@
 #include "Supervis/ResultNaming.h"
 
 PrestressingCableClass::PrestressingCableClass(
-    const std::string jeveuxName, const ModelPtr &model, const MaterialFieldPtr &mater,
+    const std::string name, const ModelPtr &model, const MaterialFieldPtr &mater,
     const ElementaryCharacteristicsPtr &cara )
-    : DataStructure( jeveuxName, 8, "CABL_PRECONT" ), _model( model ), _mater( mater ),
+    : DataStructure( name, 8, "CABL_PRECONT" ), _model( model ), _mater( mater ),
       _cara( cara ),
       _mesh( boost::static_pointer_cast< MeshClass >( _model->getMesh() ) ),
       _sigin( new ConstantFieldOnCellsRealClass( getName() + ".CHME.SIGIN", _mesh ) ),

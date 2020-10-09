@@ -75,7 +75,7 @@ class PrestressingCableClass : public DataStructure {
     PrestressingCableClass( const ModelPtr &, const MaterialFieldPtr &,
                             const ElementaryCharacteristicsPtr & );
 
-    PrestressingCableClass( const std::string jeveuxName, const ModelPtr &,
+    PrestressingCableClass( const std::string name, const ModelPtr &,
                             const MaterialFieldPtr &, const ElementaryCharacteristicsPtr & );
 
     // Since no constructor allows to have null or empty objects,

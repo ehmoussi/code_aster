@@ -32,7 +32,7 @@
 #include "Crack/CrackShape.h"
 
 XfemCrackClass::XfemCrackClass( const std::string name, MeshPtr mesh )
-    : DataStructure( name, 8, "FISS_XFEM" ), _jeveuxName( ResultNaming::getCurrentName() ),
+    : DataStructure( name, 8, "FISS_XFEM" ),
       _mesh( mesh ), _auxiliaryGrid( MeshPtr() ),
       _existingCrackWithGrid( XfemCrackPtr() ), _discontinuityType( "Crack" ), _crackLipsEntity(),
       _crackTipEntity(), _normalLevelSetFunction( FunctionPtr() ),
@@ -40,20 +40,20 @@ XfemCrackClass::XfemCrackClass( const std::string name, MeshPtr mesh )
       _enrichedCells(), _discontinuousField( "DEPL" ), _enrichmentType( std::string() ),
       _enrichmentRadiusZone( 0 ), _enrichedLayersNumber( 0 ),
 
-      _tangentialLevelSetField( new FieldOnNodesRealClass( _jeveuxName + ".LTNO      " ) ),
-      _normalLevelSetField( new FieldOnNodesRealClass( _jeveuxName + ".LNNO      " ) ),
-      _tangentialLevelSetGradient( new FieldOnNodesRealClass( _jeveuxName + ".GRLTNO    " ) ),
-      _normalLevelSetGradient( new FieldOnNodesRealClass( _jeveuxName + ".GRLNNO    " ) ),
-      _localBasis( new FieldOnNodesRealClass( _jeveuxName + ".BASLOC    " ) ),
-      _crackTipCoords( JeveuxVectorReal( _jeveuxName + ".FONDFISS" ) ),
-      _crackTipBasis( JeveuxVectorReal( _jeveuxName + ".BASEFOND" ) ),
-      _crackTipMultiplicity( JeveuxVectorLong( _jeveuxName + ".FONDMULT" ) ),
-      _crackTipCharacteristics( JeveuxVectorReal( _jeveuxName + ".CARAFOND" ) ),
-      _elementSize( JeveuxVectorReal( _jeveuxName + ".FOND.TAILLE_R" ) ),
-      _enrichedNodes( JeveuxVectorLong( _jeveuxName + ".GROUP_NO_ENRI" ) ),
-      _crackTipCells( JeveuxVectorLong( _jeveuxName + ".MAILFISS.CTIP" ) ),
-      _heavisideCells( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HEAV" ) ),
-      _crackTipAndHeavisideCells( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HECT" ) ){};
+      _tangentialLevelSetField( new FieldOnNodesRealClass( getName() + ".LTNO      " ) ),
+      _normalLevelSetField( new FieldOnNodesRealClass( getName() + ".LNNO      " ) ),
+      _tangentialLevelSetGradient( new FieldOnNodesRealClass( getName() + ".GRLTNO    " ) ),
+      _normalLevelSetGradient( new FieldOnNodesRealClass( getName() + ".GRLNNO    " ) ),
+      _localBasis( new FieldOnNodesRealClass( getName() + ".BASLOC    " ) ),
+      _crackTipCoords( JeveuxVectorReal( getName() + ".FONDFISS" ) ),
+      _crackTipBasis( JeveuxVectorReal( getName() + ".BASEFOND" ) ),
+      _crackTipMultiplicity( JeveuxVectorLong( getName() + ".FONDMULT" ) ),
+      _crackTipCharacteristics( JeveuxVectorReal( getName() + ".CARAFOND" ) ),
+      _elementSize( JeveuxVectorReal( getName() + ".FOND.TAILLE_R" ) ),
+      _enrichedNodes( JeveuxVectorLong( getName() + ".GROUP_NO_ENRI" ) ),
+      _crackTipCells( JeveuxVectorLong( getName() + ".MAILFISS.CTIP" ) ),
+      _heavisideCells( JeveuxVectorLong( getName() + ".MAILFISS.HEAV" ) ),
+      _crackTipAndHeavisideCells( JeveuxVectorLong( getName() + ".MAILFISS.HECT" ) ){};
 
 XfemCrackClass::XfemCrackClass( MeshPtr mesh )
     : XfemCrackClass( ResultNaming::getNewResultName(), mesh ){};

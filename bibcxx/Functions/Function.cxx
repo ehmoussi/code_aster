@@ -31,13 +31,13 @@
 
 FunctionPtr emptyRealFunction( new FunctionClass( "" ) );
 
-BaseFunctionClass::BaseFunctionClass( const std::string jeveuxName, const std::string type,
-                                            const std::string type2 )
-    : GenericFunctionClass( jeveuxName, type, type2 ),
+BaseFunctionClass::BaseFunctionClass( const std::string name, const std::string type,
+                                      const std::string type2 )
+    : GenericFunctionClass( name, type, type2 ),
       _value( JeveuxVectorReal( getName() + ".VALE" ) ) {}
 
 BaseFunctionClass::BaseFunctionClass( const std::string type,
-                                            const std::string type2 )
+                                      const std::string type2 )
     : BaseFunctionClass::BaseFunctionClass( ResultNaming::getNewResultName(), type, type2 ) {}
 
 void BaseFunctionClass::allocate( JeveuxMemory mem,

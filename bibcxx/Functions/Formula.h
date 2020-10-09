@@ -40,9 +40,6 @@
  */
 class FormulaClass : public GenericFunctionClass {
   private:
-    // Nom Jeveux de la SD
-    /** @todo remettre le const */
-    std::string _jeveuxName;
     // Vecteur Jeveux '.NOVA'
     JeveuxVectorChar24 _variables;
     // Pointers to PyObject
@@ -62,7 +59,7 @@ class FormulaClass : public GenericFunctionClass {
         ( *_property )[2] = "";
         ( *_property )[3] = "TOUTRESU";
         ( *_property )[4] = "II";
-        ( *_property )[5] = _jeveuxName;
+        ( *_property )[5] = getName();
     };
 
   public:
@@ -77,7 +74,7 @@ class FormulaClass : public GenericFunctionClass {
      */
     FormulaClass();
 
-    FormulaClass( const std::string jeveuxName );
+    FormulaClass( const std::string name );
 
     ~FormulaClass();
 

@@ -31,10 +31,12 @@
 #include "Supervis/ResultNaming.h"
 #include "Utilities/Tools.h"
 
-FormulaClass::FormulaClass( const std::string jeveuxName )
-    : GenericFunctionClass( jeveuxName, "FORMULE", "FORMULE" ), _jeveuxName( getName() ),
+FormulaClass::FormulaClass( const std::string name )
+    : GenericFunctionClass( name, "FORMULE", "INTERPRE" ),
       _variables( JeveuxVectorChar24( getName() + ".NOVA" ) ),
-      _pointers( JeveuxVectorLong( getName() + ".ADDR" ) ), _expression( "" ), _code( NULL ),
+      _pointers( JeveuxVectorLong( getName() + ".ADDR" ) ),
+      _expression( "" ),
+      _code( NULL ),
       _context( NULL ) {
     _context = PyDict_New();
 }
