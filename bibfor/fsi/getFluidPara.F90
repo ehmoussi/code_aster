@@ -48,7 +48,7 @@ real(kind=8), optional, intent(out) :: rho_, cele_r_, pesa_
     character(len=16), parameter :: resu_name(nb_resu) = (/'RHO   ', 'CELE_R', 'PESA_Z'/)
     real(kind=8) :: resu_vale(nb_resu)
     real(kind=8) :: rho, cele_r, pesa
-    character(len=16) :: fami
+    character(len=8) :: fami
     character(len=1) :: poum
     integer :: ipg, ispg
 !
