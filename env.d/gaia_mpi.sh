@@ -82,7 +82,7 @@ export PYTHONPATH=${PYPATH_NUMPY}:${PYPATH_ASRUN}:${PYPATH_MFRONT}:${PYPATH_MEDC
 export PATH=\
 ${PREREQ_PATH}/prerequisites/Medfichier-410/bin:\
 ${PREREQ_PATH}/prerequisites/Gmsh_bin-2120Linux64/bin:\
-${PREREQ_PATH}/tools/Miss3d-67_aster3:\
+${PREREQ_PATH}/tools/Miss3d-67_aster2:\
 ${PREREQ_PATH}/tools/Homard_aster-1112_aster2:\
 ${PREREQ_PATH}/tools/Ecrevisse-322:\
 /projets/simumeca/salomemeca/appli_V2019:\
