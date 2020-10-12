@@ -133,7 +133,7 @@ subroutine chrpel(champ1, repere, nbcmp, icham, type_cham, &
     character(len=8), pointer               :: nom_cmp(:)   => null()
     character(len=8), pointer               :: cesk(:)      => null()
 !
-    aster_logical :: exi_cmp, exi_local, okelem
+    aster_logical :: exi_cmp, exi_local, okelem, effort_elno
 ! --------------------------------------------------------------------------------------------------
     call jemarq()
     ipaxe = 0
@@ -204,14 +204,15 @@ subroutine chrpel(champ1, repere, nbcmp, icham, type_cham, &
     call jeveuo(chams1//'.CESV', 'E', jcesv)
     call jeveuo(chams1//'.CESL', 'L', jcesl)
 !
-    if ( (nomch.eq.'EFGE_ELNO').and. &
-         ((type_cham.ne.'VECTR_3D').and.(type_cham.ne.'COQUE_GENE')) ) then
+    effort_elno = (nomch.eq.'EFGE_ELNO').or.(nomch.eq.'SIEF_ELNO')
+!
+    if ( effort_elno.and.((type_cham.ne.'VECTR_3D').and.(type_cham.ne.'COQUE_GENE')) ) then
         call utmess('F', 'ALGORITH2_35', sk=type_cham)
     endif
 !   Si le champ est exprimé dans le repère local des éléments
 !       Construction du champ des repère locaux
     exi_local = .false.
-    if ( (nomch.eq.'EFGE_ELNO').and.(type_cham.eq.'VECTR_3D') ) then
+    if ( effort_elno.and.(type_cham.eq.'VECTR_3D') ) then
 !       Les noms des composantes : N, VX, VY, MT, MFY, MFZ DANS CETTE ORDRE
         if ( (nom_cmp(1).ne.'N') .or.(nom_cmp(2).ne.'VY') .or.(nom_cmp(3).ne.'VZ') .or. &
              (nom_cmp(4).ne.'MT').or.(nom_cmp(5).ne.'MFY').or.(nom_cmp(6).ne.'MFZ') ) then

@@ -75,7 +75,7 @@ subroutine modirepresu(resuou, resuin )
     character(len=24) :: nompar, champ0, champ1
     character(len=24) :: valk(2)
 !
-    aster_logical :: lreuse, lcumu(2), lcoc(2)
+    aster_logical :: lreuse, lcumu(2), lcoc(2), effort_elno
 !
     data lcumu/.false.,.false./
     data lcoc/.false.,.false./
@@ -168,11 +168,13 @@ subroutine modirepresu(resuou, resuin )
                 endif
             endif
 !           Dans le cas 'VECTR_3D'
-!               Obligatoire : modèle, cara_elem
-!                             repere == UTILISATEUR
+!               Obligatoire : modèle , cara_elem
+!                             repere = UTILISATEUR
+!                             option = EFGE_ELNO ou SIEF_ELNO
             if (type_cham.eq.'VECTR_3D') then
-                if ( (modele.eq.'') .or. (carele.eq.'') .or. &
-                     (repere.ne.'UTILISATEUR') .or. (option.ne.'EFGE_ELNO') ) then
+                effort_elno = (option.eq.'EFGE_ELNO').or.(option.eq.'SIEF_ELNO')
+                if ( (modele.eq.'').or.(carele.eq.'').or.(repere.ne.'UTILISATEUR').or. &
+                     (.not. effort_elno) ) then
                     call utmess('F', 'ALGORITH2_32')
                 endif
             endif
