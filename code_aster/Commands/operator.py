@@ -34,7 +34,9 @@ command with few changes.
 
 from ..Cata.Commands import commandStore
 from ..Cata.Syntax import Macro, Operator, Procedure
+from ..Helpers.debugging import track_dependencies
 from ..Supervis import ExecuteCommand, ExecuteMacro
+
 
 UNSUPPORTED = ('FORMULE', )
 
@@ -60,3 +62,6 @@ def define_operators(store):
             store[name] = legacy_command_factory(ExecuteCommand, name)
         elif isinstance(command, Macro):
             store[name] = legacy_command_factory(ExecuteMacro, name)
+
+# for debugging
+ExecuteCommand.register_hook(track_dependencies)

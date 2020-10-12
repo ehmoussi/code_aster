@@ -122,6 +122,7 @@ class ExecuteCommand(object):
     # class attributes
     command_name = command_op = command_cata = None
     level = 0
+    hook = None
 
     _cata = _op = _result = _counter = _caller = _exc = None
     _tuplmode = None
@@ -227,6 +228,16 @@ class ExecuteCommand(object):
         execution was successful.
         """
         return self._exc
+
+    @classmethod
+    def register_hook(cls, func):
+        """Register a hook for *post_exec* step.
+
+        Arguments:
+            func (function): Function with signature: *ExecuteCommand*, *dict*
+                of keywords.
+        """
+        cls.hook = func
 
     @classmethod
     def show_syntax(cls):
@@ -395,9 +406,12 @@ class ExecuteCommand(object):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
+
         try:
             self.add_references(keywords)
             self.post_exec(keywords)
+            if self.hook:
+                self.hook(keywords)
         finally:
             self.print_result()
 
