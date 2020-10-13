@@ -259,7 +259,6 @@ IMPR_FONCTION(UNITE=unite, FORMAT='TABLEAU', SEPARATEUR=',', FORMAT_R='E17.10',
     ),
 )
 DEFI_FICHIER(UNITE = unite, ACTION='LIBERER',)
-DETRUIRE(INFO=1, CONCEPT=(_F(NOM=unite,),),)
 #
 fic_courbe = './REPE_OUT/ssnd120b_filtre_%04d.dat' % (int(pas2*1000))
 unite = DEFI_FICHIER(FICHIER = fic_courbe, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
@@ -271,7 +270,6 @@ IMPR_FONCTION(UNITE=unite, FORMAT='TABLEAU', SEPARATEUR=',', FORMAT_R='E17.10',
     ),
 )
 DEFI_FICHIER(UNITE = unite, ACTION='LIBERER',)
-DETRUIRE(INFO=1, CONCEPT=(_F(NOM=unite,),),)
 
 fic_courbe = './REPE_OUT/ssnd120b_%04d.dat' % (int(pas1*1000))
 unite = DEFI_FICHIER(FICHIER = fic_courbe, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
@@ -286,7 +284,6 @@ IMPR_FONCTION(UNITE=unite, FORMAT='TABLEAU', SEPARATEUR=',', FORMAT_R='E17.10',
     ),
 )
 DEFI_FICHIER(UNITE = unite, ACTION='LIBERER',)
-DETRUIRE(INFO=1, CONCEPT=(_F(NOM=unite,),),)
 #
 fic_courbe = './REPE_OUT/ssnd120b_%04d.dat' % (int(pas2*1000))
 unite = DEFI_FICHIER(FICHIER = fic_courbe, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
@@ -301,6 +298,5 @@ IMPR_FONCTION(UNITE=unite, FORMAT='TABLEAU', SEPARATEUR=',', FORMAT_R='E17.10',
     ),
 )
 DEFI_FICHIER(UNITE = unite, ACTION='LIBERER',)
-DETRUIRE(INFO=1, CONCEPT=(_F(NOM=unite,),),)
 """
 FIN()
