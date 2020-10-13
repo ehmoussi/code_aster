@@ -27,6 +27,10 @@ These module defines some convenient utilities that **are not intended to
 be used in production**.
 """
 
+import os
+import os.path as osp
+import re
+
 from ..Cata.Language.SyntaxUtils import force_list
 from ..Objects import DataStructure
 from .LogicalUnit import LogicalUnitFile
@@ -117,6 +121,7 @@ class DataStructureFilter(object):
 
 
 TEMPLATE = '''
+
     def dependencies(self, keywords):
         """Defines the keywords containing dependencies.
 
@@ -147,12 +152,53 @@ def track_dependencies(inst, keywords):
     dumpfile.release()
     with open("dump.txt", "r") as fobj:
         dump = fobj.read()
+    os.remove("dump.txt")
 
     visitor = DataStructureFilter(dump)
     cata.accept(visitor, keywords)
     if not visitor.paths:
         return
 
-    paths = [repr("/".join(path)) for path in visitor.paths]
-    code = TEMPLATE.format(used=", ".join(paths))
-    print(code)
+    paths = ["/".join(path) for path in visitor.paths]
+    print("#27406:", inst.command_name, " ".join(paths))
+    # paths = [repr("/".join(path)) for path in visitor.paths]
+    # code = TEMPLATE.format(used=", ".join(paths))
+    # modifier = ChangeCommands()
+    # modifier.change(inst, paths, code)
+
+
+class ChangeCommands:
+    """Change source files"""
+    src = osp.join(os.environ["HOME"], "dev", "codeaster", "src",
+                   "code_aster", "Commands")
+    seen = {}
+
+    @classmethod
+    def change(cls, inst, paths, code):
+        """Register a command"""
+        name = inst.command_name
+        filename = osp.join(cls.src, name.lower() + ".py")
+        if name in cls.seen:
+            if cls.seen[name] != paths:
+                print("#27406: ERROR: already seen, changed", filename, paths)
+            return
+        cls.seen[name] = paths
+
+        if not osp.exists(filename):
+            print("#27406: ERROR: not found", filename, paths)
+            return
+
+        with open(filename, "r") as fsrc:
+            content = fsrc.read()
+        if "def dependencies(" in content:
+            print("#27406: 'dependencies' already exists in", filename)
+            return
+
+        expr = re.compile("(?:\n+)(?P<cmd>^{0}) *=".format(name.upper()), re.M)
+        mat = expr.search(content)
+        if not mat:
+            print("#27406: ERROR: not found", filename, name.upper())
+            return
+        text = expr.sub(code + "\n\n" + r"\g<cmd> =", content)
+        with open(filename, "w") as fsrc:
+            fsrc.write(text)
