@@ -69,7 +69,7 @@ import libaster
 from ..Cata import Commands
 from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
-from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
+from ..Cata.SyntaxUtils import force_list, mixedcopy, remove_none, search_for
 from ..Messages import UTMESS, MessageLog
 from ..Objects import DataStructure, PyDataStructure
 from ..Utilities import (ExecutionParameter, Options, deprecated,
@@ -278,15 +278,43 @@ class ExecuteCommand(object):
             if name != toVisit.getName():
                 self._result.addDependency(toVisit)
 
-    def add_references(self, keywords):
-        """Add reference to DataStructure in self._result
+    def dependencies(self, keywords):
+        """Defines the keywords containing dependencies.
 
         Arguments:
-            keywords (dict): Keywords arguments of user's keywords, changed
-                in place.
+            keywords (dict): User's keywords.
+
+        Returns:
+            list[str]: List of keywords ("SIMP" or "FACT/SIMP").
         """
-        if isinstance(self._result, DataStructure):
-            self._add_deps_keywords(keywords)
+        return []
+
+    def add_references(self, keywords):
+        """Add reference to input *DataStructure* objects in self._result
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        if not isinstance(self._result, DataStructure):
+            return
+
+        paths = self.dependencies(keywords)
+        for path in paths:
+            spl = path.split("/")
+            key = spl[-1]
+            if not spl:
+                values = force_list(keywords.get(key, []))
+                for obj in values:
+                    self._result.addDependency(obj)
+            else:
+                factkwds = force_list(keywords.get(spl[0], []))
+                for occ in factkwds:
+                    values = force_list(occ.get(key, []))
+                    for obj in values:
+                        self._result.addDependency(obj)
+
+        # orig
+        self._add_deps_keywords(keywords)
 
     def adapt_syntax(self, keywords):
         """Hook to adapt syntax from a old version or for compatibility reasons.

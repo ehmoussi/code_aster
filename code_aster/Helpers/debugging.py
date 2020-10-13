@@ -27,16 +27,11 @@ These module defines some convenient utilities that **are not intended to
 be used in production**.
 """
 
-import os
-import os.path as osp
-import re
-
-from ..Cata.Language.SyntaxObjects import _F
-from ..Cata.Language.SyntaxUtils import force_list, mixedcopy
+from ..Cata.Language.SyntaxUtils import force_list
 from ..Objects import DataStructure
 from .LogicalUnit import LogicalUnitFile
 
-DEL = object()
+SKIPPED = object()
 
 
 class DataStructureFilter(object):
@@ -95,7 +90,7 @@ class DataStructureFilter(object):
                 keep.append(i)
         if keep and not islist:
             keep = keep[0]
-        self._keep = keep or DEL
+        self._keep = keep or SKIPPED
 
     def _visitComposite(self, step, userDict=None):
         """Visit a composite object (containing BLOC, FACT and SIMP objects)
@@ -107,41 +102,32 @@ class DataStructureFilter(object):
             userOrig = userOcc.copy()
             ctxt = self._parent_context[-1] if self._parent_context else {}
             # loop on keywords provided by the user
-            todel = []
             for key, value in userOcc.items():
                 self._path.append(key)
-                if len(self._path) == 2 and type(value) in (list, tuple):
-                    self._path.append(len(value))
                 # NB: block conditions are evaluated with the original values
                 kwd = step.getKeyword(key, userOrig, ctxt)
                 if not kwd:
                     continue
                 kwd.accept(self, value)
                 if self._keep is not None:
-                    if self._keep is DEL:
-                        todel.append(key)
-                    else:
+                    if self._keep is not SKIPPED:
                         self.paths.append(self._path[:])
-                        userOcc[key] = self._keep
                     self._keep = None
-                if len(self._path) == 3:
-                    self._path.pop(-1)
                 self._path.pop(-1)
-            for key in todel:
-                del userOcc[key]
 
 
 TEMPLATE = '''
-    def add_references(self, keywords):
-        """Add references to linked *DataStructure* objects.
+    def dependencies(self, keywords):
+        """Defines the keywords containing dependencies.
 
         Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-${references}
-'''
+            keywords (dict): User's keywords.
 
-REF = " " * 8 + '''self._result.addDependency(${arg})'''
+        Returns:
+            list[str]: List of keywords ("SIMP" or "FACT/SIMP").
+        """
+        return [{used}]
+'''
 
 
 def track_dependencies(inst, keywords):
@@ -150,9 +136,6 @@ def track_dependencies(inst, keywords):
     Arguments:
         inst (function): the *ExecuteCommand* instance.
         keywords (dict): User keywords.
-
-    Returns:
-        dict: pairs of name per corresponding Python instance.
     """
     cata = inst._cata
     result = inst._result
@@ -166,22 +149,10 @@ def track_dependencies(inst, keywords):
         dump = fobj.read()
 
     visitor = DataStructureFilter(dump)
-    onlyds = mixedcopy(keywords)
-    cata.accept(visitor, onlyds)
+    cata.accept(visitor, keywords)
+    if not visitor.paths:
+        return
 
-    defs = []
-    while visitor.paths:
-        path = visitor.paths.pop(0)
-        key1 = path.pop(0)
-        root = 'keywords["{0}"]'.format(key1)
-        if not path:
-            defs.append(root)
-        elif len(path) == 1:
-            key2 = path.pop(0)
-            defs.append(root + "[{0}]".format(key2))
-        else:
-            key2, size = path
-            for i in range(size):
-                defs.append(root + '[{0}]["{1}"]'.format(i, key2))
-
-    print("DBGREF:", defs)
+    paths = [repr("/".join(path)) for path in visitor.paths]
+    code = TEMPLATE.format(used=", ".join(paths))
+    print(code)
