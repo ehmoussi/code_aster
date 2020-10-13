@@ -16,14 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! aslint: disable=W1501
-! person_in_charge: nicolas.sellenet at edf.fr
 !
 subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
                   chtype, typesd)
-    implicit none
-!     --- ARGUMENTS ---
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterc/r8vide.h"
 #include "asterfort/asasve.h"
 #include "asterfort/ascova.h"
 #include "asterfort/calcop.h"
@@ -32,6 +33,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exlima.h"
+#include "asterfort/ischar.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -75,7 +77,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
     integer :: jordr, iret, iordr, i, jinfc, nbchar, ic, jref
     integer :: iachar, ichar, ii, nuord, nh, jnmo, nbddl, lmat, iad, ind
     integer :: neq, jfo, lonch, jfr, jfi
-    integer :: lonc2, ltrav, j, inume, jddl, jddr, lacce
+    integer :: lonc2, ltrav, j, inume, jddl, jddr, lacce, jvPara
     integer :: cret
     real(kind=8) :: etan, time, partps(3), omega2, coef(3)
     character(len=1) :: stop
@@ -92,7 +94,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
     character(len=24) :: chvive, chacve, masse, chvarc, compor, k24bid, chamno
     character(len=24) :: strx
     character(len=24) :: bidon, chacce, modele, kstr
-    aster_logical :: exitim, lstr, lstr2
+    aster_logical :: exitim, lstr, lstr2, lPilo1, lPilo2
     real(kind=8), pointer :: cgmp(:) => null()
     real(kind=8), pointer :: chmp(:) => null()
     real(kind=8), pointer :: fono(:) => null()
@@ -455,10 +457,18 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
                 call asasve(vefpip, nume, 'R', vafpip)
                 call ascova('D', vafpip, fomult, 'INST', time,&
                             'R', cnfpip)
-! - RECUPERATION DU PARAMETRE DE CHARGE ETAN DANS LA SD EVOL_NOLI
-                call rsadpa(resuin, 'L', 1, 'ETA_PILOTAGE', iordr,&
-                            0, sjv=iad, styp=ctyp)
-                etan=zr(iad)
+! ------------- Loads with continuation method
+                lPilo1 = ischar(infcha, 'DIRI', 'PILO')
+                lPilo2 = ischar(infcha, 'NEUM', 'PILO')
+                if (lPilo1 .or. lPilo2) then
+                    call rsadpa(resuin, 'L', 1, 'ETA_PILOTAGE', iordr, 0, sjv=jvPara, istop=0)
+                    etan = zr(jvPara)
+                    if (etan .eq. r8vide()) then
+                        call utmess('F', 'CALCCHAMP_8')
+                    endif
+                else
+                    etan = 0.d0
+                endif
             endif
 !
 ! --- CALCUL DU CHAMNO DE REACTION PAR DIFFERENCE DES FORCES NODALES
