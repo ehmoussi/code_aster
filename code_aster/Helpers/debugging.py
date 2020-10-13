@@ -17,7 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: mathieu.courtois at edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
+# aslint: disable=C4009
+# C4009: in a string
 
 """
 :py:mod:`debugging` --- Debugging utilities
@@ -25,6 +27,34 @@
 
 These module defines some convenient utilities that **are not intended to
 be used in production**.
+
+Check for dependency on input datastructures
+============================================
+
+- Run testcases with `track_dependencies` enabled by adding this line
+  in :file:`code_aster/Commands/operator.py`:
+
+  .. code-block:: python
+
+        # for debugging
+        ExecuteCommand.register_hook(track_dependencies)
+
+- Extract data from output files (replace ``resutest`` by the results
+  directory):
+
+  .. code-block:: sh
+
+        grep -h '#27406' resutest/*.mess > data.txt
+
+- Start a Python session within code_aster environment (for example, by running
+  ``run_aster``) and change the source files.
+
+  .. code-block:: python
+
+        from code_aster.Helpers.debugging import ChangeCommands
+        modifier = ChangeCommands("__path-to__/data.txt")
+        modifier.change_commands()
+
 """
 
 import os
@@ -144,15 +174,16 @@ def track_dependencies(inst, keywords):
     """
     cata = inst._cata
     result = inst._result
-    if not result:
+    if not isinstance(result, DataStructure):
         return
 
-    dumpfile = LogicalUnitFile.open("dump.txt")
+    filename = "dump-27406.txt"
+    dumpfile = LogicalUnitFile.open(filename)
     result.debugPrint(dumpfile.unit)
     dumpfile.release()
-    with open("dump.txt", "r") as fobj:
-        dump = fobj.read()
-    os.remove("dump.txt")
+    with open(filename, "rb") as fobj:
+        dump = fobj.read().decode('ascii', errors='replace')
+    os.remove(filename)
 
     visitor = DataStructureFilter(dump)
     cata.accept(visitor, keywords)
@@ -161,31 +192,48 @@ def track_dependencies(inst, keywords):
 
     paths = ["/".join(path) for path in visitor.paths]
     print("#27406:", inst.command_name, " ".join(paths))
-    # paths = [repr("/".join(path)) for path in visitor.paths]
-    # code = TEMPLATE.format(used=", ".join(paths))
-    # modifier = ChangeCommands()
-    # modifier.change(inst, paths, code)
 
 
 class ChangeCommands:
     """Change source files"""
-    src = osp.join(os.environ["HOME"], "dev", "codeaster", "src",
-                   "code_aster", "Commands")
-    seen = {}
+    src = osp.join(os.environ["HOME"], "dev", "codeaster", "src", "code_aster")
 
-    @classmethod
-    def change(cls, inst, paths, code):
-        """Register a command"""
-        name = inst.command_name
-        filename = osp.join(cls.src, name.lower() + ".py")
-        if name in cls.seen:
-            if cls.seen[name] != paths:
-                print("#27406: ERROR: already seen, changed", filename, paths)
-            return
-        cls.seen[name] = paths
+    def __init__(self, datafile):
+        self.seen = {}
+        self.data = self.read_data(datafile)
 
-        if not osp.exists(filename):
-            print("#27406: ERROR: not found", filename, paths)
+    @staticmethod
+    def read_data(datafile):
+        """Read and merge data"""
+        with open(datafile, "r") as fdata:
+            lines = fdata.readlines()
+        raw = [line.split()[1:] for line in lines]
+        seen = {}
+        for line in raw:
+            name = line.pop(0)
+            paths = set(line)
+            paths.discard("reuse")
+            if name in seen:
+                diff = paths.difference(seen[name])
+                if diff:
+                    print("#27406: changed", name, "previous:", seen[name],
+                          "new:", diff)
+                    paths.update(seen[name])
+            seen[name] = sorted(list(paths))
+        return seen
+
+    def change_commands(self):
+        """Update all commands source files"""
+        for name, paths in self.data.items():
+            args = [repr(path) for path in paths]
+            code = TEMPLATE.format(used=", ".join(args))
+            self.change_one(name, paths, code)
+
+    def change_one(self, name, paths, code):
+        """Change the source file for a command"""
+        filename = self.get_command(name)
+        if not filename:
+            print("#27406: ERROR: file not found for", name, paths)
             return
 
         with open(filename, "r") as fsrc:
@@ -197,8 +245,19 @@ class ChangeCommands:
         expr = re.compile("(?:\n+)(?P<cmd>^{0}) *=".format(name.upper()), re.M)
         mat = expr.search(content)
         if not mat:
-            print("#27406: ERROR: not found", filename, name.upper())
+            print("#27406: WARNING: not found", filename, name.upper())
             return
         text = expr.sub(code + "\n\n" + r"\g<cmd> =", content)
         with open(filename, "w") as fsrc:
             fsrc.write(text)
+
+    def get_command(self, name):
+        """Return the filename defining the given command."""
+        basename = name.lower() + ".py"
+        filename = osp.join(self.src, "Commands", basename)
+        if osp.exists(filename):
+            return filename
+        for root, _, files in os.walk(osp.join(self.src, "MacroCommands")):
+            if basename in files:
+                return osp.join(root, basename)
+        return None
