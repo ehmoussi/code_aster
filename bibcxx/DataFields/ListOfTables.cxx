@@ -37,7 +37,7 @@ bool ListOfTablesClass::update_tables() {
 
     if ( ! _dsId->updateValuePointer() || ! _dsName->updateValuePointer() ) {
         CALL_JEDEMA();
-        return false;
+        return true;
     }
 
     const int size = _dsId->usedSize();
