@@ -116,7 +116,7 @@ for n_adap in range(n_adap_max ) :
 #
 # B.1.2. Aux passages suivants, on detruit les concepts a reprendre
 # -----------------------------------------------------------------
-    DETRUIRE(INFO=1,CONCEPT = _F(NOM = (MODELE,CHMAT,CHCINE,CHMECA,RESU),),);
+    DETRUIRE(INFO=1,CONCEPT = _F(NOM = (MODELE,CHMAT,CHCINE,CHMECA),),);
 #
 # B.2. Modele courant
 # ------------------
