@@ -117,7 +117,9 @@ class Starter(ExecuteCommand):
         Arguments:
             keywords (dict): User keywords
         """
-        if not ExecutionStarter.init():
+        if not ExecutionStarter.init(["--continue"]
+                                     if cls.command_name == "POURSUITE"
+                                     else []):
             return
 
         super(Starter, cls).run(**keywords)
