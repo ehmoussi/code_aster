@@ -75,6 +75,7 @@ except AsterError as err:
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_77":
       is_ok = 1
+
 TAB130=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
                          _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -85,8 +86,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='TEST',
                      VALE_K='VALEUR  ',),
            )
-
-DETRUIRE(CONCEPT=_F(NOM=(NUM130,MATAS130,TAB130),),)
 
 # 1 : MANQUE DE BLOCAGE DETECTE VIA LE MECANISME NPREC/STOP_SINGULIER
 #     TEST AVEC LDLT/MF/MUMPS. AVEC MUMPS ON TESTE AUSSI LE MECANISME NPREC<0
@@ -112,7 +111,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(NUM11,MATAS11,TAB11),),)
 
 is_ok = 0
 try :
@@ -135,8 +133,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(NUM12,MATAS12,TAB12),),)
-
 is_ok = 0
 try :
   NUM130=NUME_DDL(MATR_RIGI=MEL11, );
@@ -157,8 +153,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='TEST',
                      VALE_K='VALEUR  ',),
            )
-
-DETRUIRE(CONCEPT=_F(NOM=(NUM130,MATAS130,TAB130),),)
 
 # Verification provisoirement debranchee. Attente reponse equipe MUMPS
 is_ok = 0
@@ -187,8 +181,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(NUM131,MATAS131,VECTE131,VECTA131,TAB131,MEL11),),)
-
 # 2 : REDONDANCE DE BLOCAGES DETECTE VIA LE MECANISME NPREC/STOP_SINGULIER
 #     TEST AVEC LDLT/MF/MUMPS. AVEC MUMPS ON TESTE AUSSI LE MECANISME NPREC<0
 #----------------------------------------------------------------------
@@ -215,8 +207,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(NUM21,MATAS21,TAB21),),)
-
 is_ok = 0
 try :
   NUM22=NUME_DDL(MATR_RIGI=MEL21, );
@@ -238,8 +228,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(NUM22,MATAS22,TAB22),),)
-
 is_ok = 0
 try :
   NUM230=NUME_DDL(MATR_RIGI=MEL21, );
@@ -260,8 +248,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='TEST',
                      VALE_K='VALEUR  ',),
            )
-
-DETRUIRE(CONCEPT=_F(NOM=(NUM230,MATAS230,TAB230),),)
 
 is_ok = 0
 try :
@@ -289,8 +275,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(NUM231,MATAS231,VECTE231,VECTA231,VCIN231,TAB231),),)
-
 is_ok = 0
 try :
   NUM232=NUME_DDL(MATR_RIGI=MEL21, );
@@ -315,5 +299,4 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(NUM232,MATAS232,VECTE232,VECTA232,VCIN232,TAB232,MEL21),),)
 FIN()

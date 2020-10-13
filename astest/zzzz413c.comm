@@ -171,6 +171,5 @@ for grp in LGroupe:
                       NOM_CMP =('SIXX'), ),
               )
     DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
-    DETRUIRE(CONCEPT=_F(NOM=unit,),)
 
 FIN()

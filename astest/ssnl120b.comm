@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -248,7 +248,6 @@ unit = DEFI_FICHIER(FICHIER = fic, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
 IMPR_TABLE(UNITE=unit,TABLE=S1MAZAR,FORMAT='ASTER')
 IMPR_TABLE(UNITE=unit,TABLE=V1MAZAR,FORMAT='ASTER')
 DEFI_FICHIER(UNITE = unit, ACTION='LIBERER',)
-DETRUIRE(INFO=1,ALARME='NON',CONCEPT=(_F(NOM=unit,),),)
 
 fic = './REPE_OUT/courbes1.post'
 unit = DEFI_FICHIER(FICHIER = fic, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
@@ -289,7 +288,6 @@ IMPR_FONCTION(UNITE=unit,FORMAT='TABLEAU',
    )
 )
 DEFI_FICHIER(UNITE = unit, ACTION='LIBERER',)
-DETRUIRE(INFO=1,ALARME='NON',CONCEPT=(_F(NOM=unit,),),)
 
 
 # Table contenant les resultats en contrainte aux sous-points
@@ -302,7 +300,6 @@ unit = DEFI_FICHIER(FICHIER = fic, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
 IMPR_TABLE(UNITE=unit,TABLE=S2MAZAR,FORMAT='ASTER')
 IMPR_TABLE(UNITE=unit,TABLE=V2MAZAR,FORMAT='ASTER')
 DEFI_FICHIER(UNITE = unit, ACTION='LIBERER',)
-DETRUIRE(INFO=1,ALARME='NON',CONCEPT=(_F(NOM=unit,),),)
 
 fic = './REPE_OUT/courbes2.post'
 unit = DEFI_FICHIER(FICHIER = fic, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
@@ -343,6 +340,5 @@ IMPR_FONCTION(UNITE=unit,FORMAT='TABLEAU',
    )
 )
 DEFI_FICHIER(UNITE = unit, ACTION='LIBERER',)
-DETRUIRE(INFO=1,ALARME='NON',CONCEPT=(_F(NOM=unit,),),)
 """
 FIN()

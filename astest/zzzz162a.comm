@@ -887,7 +887,6 @@ chirra=LIRE_RESU(
    ),
    TOUT_ORDRE = 'OUI',
 )
-DETRUIRE(CONCEPT=_F(NOM=unit_m), INFO=1)
 
 TEST_RESU(RESU=(_F(INST=0.0,
                    REFERENCE='ANALYTIQUE',
