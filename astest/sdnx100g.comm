@@ -316,8 +316,6 @@ MAEL=MACR_ELEM_DYNA(  BASE_MODALE=BAMO,
                        SANS_GROUP_NO='RADIER',
                        )
 
-#IMPR_CO(CHAINE='MAEL    .LINO', UNITE = 6)
-
 PRE_SEISME_NONL(
                   RESULTAT = _F(
                                 MODELE = CO('MODELB'),
@@ -494,9 +492,6 @@ STA0 = STAT_NON_LINE(MODELE=MODELB,
                           )
 
 
-IMPR_RESU(FORMAT="RESULTAT", UNITE = 6, RESU=_F(RESULTAT = STA0, NOM_CHAM='DEPL', INST=0.0,
-                   GROUP_NO=('CENT_RAD',)), )
-
 TEST_RESU(RESU=_F(INST=0.0,
                   RESULTAT=STA0,
                   NOM_CHAM='DEPL',
@@ -551,9 +546,6 @@ MATKZ = ASSE_MATRICE(MATR_ELEM=rigiEle,
 VFORC = PROD_MATR_CHAM(CHAM_NO=DEPL0,
                         MATR_ASSE=MATKZ)
 
-IMPR_RESU(FORMAT="RESULTAT", UNITE = 6, RESU=_F(CHAM_GD = VFORC,
-                   GROUP_NO=('CENT_RAD',)), )
-
 CHFORC = AFFE_CHAR_MECA( MODELE=MODELB,
                          VECT_ASSE=VFORC,)
 
@@ -584,9 +576,6 @@ STA1 = STAT_NON_LINE(MODELE=MODELB,
                           )
 
 
-IMPR_RESU(FORMAT="RESULTAT", UNITE = 6, RESU=_F(RESULTAT = STA1, NOM_CHAM='DEPL', INST=0.0,
-                   GROUP_NO=('CENT_RAD',)), )
-
 TEST_RESU(RESU=_F(INST=0.0,
                   RESULTAT=STA1,
                   NOM_CHAM='DEPL',
@@ -598,8 +587,6 @@ TEST_RESU(RESU=_F(INST=0.0,
                   PRECISION=0.001,
                   ),
           )
-
-#FIN( );
 
 PRE_SEISME_NONL(
                  RESULTAT = _F( RESULTAT = CO('DYNA'), ),
