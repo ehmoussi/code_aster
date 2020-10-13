@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -94,7 +94,7 @@ character(len=24) :: grpnoe, grpmai
     integer, parameter :: ednoeu=3,edmail=0,typnoe=0
     integer :: codret, major, minor, rel, cret, nblim1, nblim2
     integer :: nbgr, jv2, jv3, num, ifam, igrp, jnogrp, numfam, nbver
-    integer :: ityp, ilmed, jgrp, ecart, jv4
+    integer :: ityp, ilmed, jgrp, ecart, jv4, nbgrp
     integer :: nbrfam, jnbnog, jadcor, ino, jcolno, jnbno, jvec, nbno
     integer :: adfano, val_max, val_min, ngro, ima
     integer :: ifm, niv, jcolma, jnbma, nbma, nummai, nbattr
@@ -334,44 +334,52 @@ character(len=24) :: grpnoe, grpmai
                         do igrp = 1, nbgr
                             ngro = zi(jgrp+igrp-1)
                             ASSERT(ngro.le.nbgrno)
-                            zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
+                            if(ngro .ne. 0) then
+                                zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
+                            end if
                         enddo
                     endif
                 endif
             enddo
-
+!
+            nbgrp = 0
             call wkvect('&&LRMMFA.COL_NO', 'V V I', nbgrno, jcolno)
             do igrp = 1, nbgrno
                 nbno = zi(jnbnog-1+igrp)
                 if( nbno.gt.0 ) then
+                    nbgrp = nbgrp + 1
                     call jenuno(jexnum(nonogn, igrp), nomgrp)
                     call jucroc(grpnoe, nomgrp, 0, nbno, jvec)
                     zi(jcolno+igrp-1) = jvec
                 endif
             enddo
 !
-            call wkvect('&&LRMMFA.NB_NO_GR', 'V V I', nbgrno, jnbno)
-            do ino = 1, nbnoeu
-                numfam = zi(adfano+ino-1)
-                if( numfam.ne.0 ) then
-                    ifam = zi(jv3+numfam-val_min)
-                    if(v_notempty_fami(ifam)) then
-                        jgrp = zi(jadcor+ifam-1)
-                        nbgr = zi(jv4+ifam-1)
-                        do igrp = 1, nbgr
-                            ngro = zi(jgrp+igrp-1)
-                            nbno = zi(jnbno+ngro-1)
-                            ASSERT(nbno.le.zi(jnbnog+ngro-1))
-                            jvec = zi(jcolno+ngro-1)
-                            zi(jvec+nbno) = ino
-                            zi(jnbno+ngro-1) = nbno + 1
-                        enddo
+            if(nbgrp .gt. 0) then
+                call wkvect('&&LRMMFA.NB_NO_GR', 'V V I', nbgrno, jnbno)
+                do ino = 1, nbnoeu
+                    numfam = zi(adfano+ino-1)
+                    if( numfam.ne.0 ) then
+                        ifam = zi(jv3+numfam-val_min)
+                        if(v_notempty_fami(ifam)) then
+                            jgrp = zi(jadcor+ifam-1)
+                            nbgr = zi(jv4+ifam-1)
+                            do igrp = 1, nbgr
+                                ngro = zi(jgrp+igrp-1)
+                                if(ngro .ne. 0) then
+                                    nbno = zi(jnbno+ngro-1)
+                                    ASSERT(nbno.le.zi(jnbnog+ngro-1))
+                                    jvec = zi(jcolno+ngro-1)
+                                    zi(jvec+nbno) = ino
+                                    zi(jnbno+ngro-1) = nbno + 1
+                                end if
+                            enddo
+                        endif
                     endif
-                endif
-            enddo
-            call jedetr('&&LRMMFA.COL_NO')
+                enddo
+                call jedetr('&&LRMMFA.COL_NO')
+                call jedetr('&&LRMMFA.NB_NO_GR')
+            end if
             call jedetr('&&LRMMFA.NB_NO_GRP')
-            call jedetr('&&LRMMFA.NB_NO_GR')
         endif
         call jedetr(nonogn)
 !
@@ -396,7 +404,9 @@ character(len=24) :: grpnoe, grpmai
                                 do igrp = 1, nbgr
                                     ngro = zi(jgrp+igrp-1)
                                     ASSERT(ngro.le.nbgrma)
-                                    zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
+                                    if(ngro .ne. 0) then
+                                        zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
+                                    end if
                                 enddo
                             endif
                         endif
@@ -404,12 +414,14 @@ character(len=24) :: grpnoe, grpmai
                 endif
 !
             enddo
-
+!
+            nbgrp = 0
             call wkvect('&&LRMMFA.COL_MA', 'V V I', nbgrma, jcolma)
             do igrp = 1, nbgrma
 !
                 nbma = zi(jnbnog-1+igrp)
                 if( nbma.gt.0 ) then
+                    nbgrp = nbgrp + 1
                     call jenuno(jexnum(nonogm, igrp), nomgrp)
                     call jucroc(grpmai, nomgrp, 0, nbma, jvec)
                     zi(jcolma+igrp-1) = jvec
@@ -417,6 +429,7 @@ character(len=24) :: grpnoe, grpmai
 !
             enddo
 !
+        if(nbgrp .gt. 0) then
             call wkvect('&&LRMMFA.NB_MA_GR', 'V V I', nbgrma, jnbma)
             do ityp = 1 , MT_NTYMAX
 !
@@ -442,10 +455,11 @@ character(len=24) :: grpnoe, grpmai
                     enddo
                 endif
 !
-            enddo
-            call jedetr('&&LRMMFA.COL_MA')
+                enddo
+                call jedetr('&&LRMMFA.COL_MA')
+                call jedetr('&&LRMMFA.NB_MA_GR')
+            end if
             call jedetr('&&LRMMFA.NB_MA_GRP')
-            call jedetr('&&LRMMFA.NB_MA_GR')
 !
             do ityp = 1, MT_NTYMAX
                 if (nmatyp(ityp) .ne. 0) then
