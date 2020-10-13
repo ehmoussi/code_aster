@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rcvarc(arret    , varc_name_, poum,&
-                  fami     , kpg       , ksp ,&
+                  famiZ    , kpg       , ksp ,&
                   varc_vale, iret)
 !
 use calcul_module, only : ca_decala_, ca_iactif_, ca_iel_, ca_iredec_, &
@@ -36,16 +37,13 @@ implicit none
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=1), intent(in) :: arret
-    character(len=*), intent(in) :: varc_name_
-    character(len=*), intent(in) :: poum
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    real(kind=8), intent(out) :: varc_vale
-    integer, intent(out) :: iret
+character(len=1), intent(in) :: arret
+character(len=*), intent(in) :: varc_name_
+character(len=*), intent(in) :: poum
+character(len=*), intent(in) :: famiZ
+integer, intent(in) :: kpg, ksp
+real(kind=8), intent(out) :: varc_vale
+integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,7 +71,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: varc_name
+    character(len=8) :: varc_name, fami
     integer :: nb2vrc, k
     integer :: varc_indx, ibid, nbsp, kpgvrc
     integer :: iadzi, iazk24, kpgmat
@@ -91,6 +89,7 @@ implicit none
         iprem = 1
     endif
     varc_name = varc_name_
+    fami = famiZ
 !
 ! - From SIMU_POINT_MAT
 !
