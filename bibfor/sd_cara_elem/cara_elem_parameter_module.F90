@@ -207,7 +207,7 @@ character(len=16),parameter :: ACE_NM_ELEMENT(ACE_NB_ELEMENT) =[ &
         'MEMBTR7         ','MEMBQU9         ']
 !
 ! --------------------------------------------------------------------------------------------------
-    integer, parameter :: ACE_NB_MASSIF    = 50
+    integer, parameter :: ACE_NB_MASSIF    = 58
     character(len=16),parameter :: ACE_EL_MASSIF(ACE_NB_MASSIF) =[ &
         'MECA_HEXA8      ','MECA_PENTA6     ','MECA_PENTA18    ','MECA_TETRA4     ',&
         'MECA_HEXA27     ','MECA_HEXA20     ','MECA_PENTA15    ','MECA_TETRA10    ',&
@@ -221,7 +221,9 @@ character(len=16),parameter :: ACE_NM_ELEMENT(ACE_NB_ELEMENT) =[ &
         'THER_PYRAM13    ','THAXTR3         ','THAXQU4         ','THAXTR6         ',&
         'THAXQU8         ','THAXQU9         ','THPLTR3         ','THPLQU4         ',&
         'THPLTR6         ','THPLQU8         ','THPLQU9         ','MET3SEG3        ',&
-        'MET6SEG3        ','MET3SEG4        ' ]
+        'MET6SEG3        ','MET3SEG4        ','MECA3DH27_HHO121','MECA3DTE8_HHO121',&
+        'MECA3DH27_HHO222','MECA3DTE8_HHO222','MECA_DPQ8_HHO121','MECA_DPT6_HHO121',&
+        'MECA_DPQ8_HHO121','MECA_DPT6_HHO121']
 !
 ! --------------------------------------------------------------------------------------------------
     integer, parameter :: ACE_NB_THHMM     = 75
