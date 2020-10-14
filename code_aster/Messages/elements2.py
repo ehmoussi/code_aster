@@ -85,7 +85,7 @@ Contactez le support technique.
 """),
 
     45 : _("""
- on n'a pas trouvé de variable interne correspondante a la déformation plastique équivalente cumulée
+On n'a pas trouvé de variable interne correspondante à la déformation plastique équivalente cumulée.
 """),
 
     46 : _("""
