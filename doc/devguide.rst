@@ -86,10 +86,14 @@ Contents
 
     devguide/commands
     devguide/datastructures
-    devguide/boost
     devguide/supervis
-    devguide/naming-conventions
+    devguide/cata
+    devguide/boost
+    devguide/linearalgebra
+    devguide/messages
+    devguide/helpers
     devguide/utilities
+    devguide/naming-conventions
     devguide/debugging
 
     devguide/documentation

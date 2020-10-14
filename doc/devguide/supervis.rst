@@ -38,13 +38,3 @@ Detailed description
    :show-inheritance:
    :members:
    :special-members: __init__
-
-.. .. automodule:: code_aster.Helpers
-..    :show-inheritance:
-..    :members:
-..    :special-members: __init__
-
-.. automodule:: code_aster.Helpers.LogicalUnit
-   :show-inheritance:
-   :members:
-   :special-members: __init__

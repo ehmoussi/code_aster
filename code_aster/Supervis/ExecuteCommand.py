@@ -278,11 +278,8 @@ class ExecuteCommand(object):
             if name != toVisit.getName():
                 self._result.addDependency(toVisit)
 
-    def dependencies(self, keywords):
+    def dependencies(self):
         """Defines the keywords containing dependencies.
-
-        Arguments:
-            keywords (dict): User's keywords.
 
         Returns:
             list[str]: List of keywords ("SIMP" or "FACT/SIMP").
@@ -298,11 +295,11 @@ class ExecuteCommand(object):
         if not isinstance(self._result, DataStructure):
             return
 
-        paths = self.dependencies(keywords)
+        paths = self.dependencies()
         for path in paths:
             spl = path.split("/")
             key = spl[-1]
-            if not spl:
+            if len(spl) == 1:
                 values = force_list(keywords.get(key, []))
                 for obj in values:
                     self._result.addDependency(obj)
@@ -312,8 +309,7 @@ class ExecuteCommand(object):
                     values = force_list(occ.get(key, []))
                     for obj in values:
                         self._result.addDependency(obj)
-
-        # orig
+        # orig: add all datastructures as deps
         self._add_deps_keywords(keywords)
 
     def adapt_syntax(self, keywords):

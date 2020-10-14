@@ -130,9 +130,9 @@ class MESSAGE_LOGGER(metaclass=Singleton):
         """Appelé par la routine fortran U2MESG ou à la fonction python UTMESS
         pour afficher un message.
         L'impression de ce message est différée si le `code` est suivi d'un "+".
-            code  : 'A', 'E', 'S', 'F', 'I'
-            idmess : identificateur du message
-            valk, vali, valr : liste des chaines, entiers ou réels.
+        - code  : 'A', 'E', 'S', 'F', 'I'
+        - idmess : identificateur du message
+        - valk, vali, valr : liste des chaines, entiers ou réels.
         Si exception==True, on lève une exception en cas d'erreur, sinon
         c'est l'appelant qui devra s'en charger (dans le C a priori).
         'print_as', 'files', 'cc' : cf. print_buffer_content.
@@ -355,9 +355,10 @@ Exception : %s
     def print_buffer_content(self, print_as=None, files=None, cc=True):
         """Extrait l'ensemble des messages du buffer dans un dictionnaire unique,
         imprime le message, et vide le buffer pour le message suivant.
-            - code : celui du message le plus grave (cf. dgrav)
-            - id   : celui du premier message qui est affiché
-            - corps : concaténation de tous les messages.
+        - code : celui du message le plus grave (cf. dgrav)
+        - id   : celui du premier message qui est affiché
+        - corps : concaténation de tous les messages.
+
         'print'_as permet d'imprimer un message sur des fichiers autres que les fichiers
         habituels de 'code'. Par ex, imprimer un message d'info sur 'ERREUR'.
         'files' : liste de noms de fichiers ou objets fichier dans lesquels
@@ -627,18 +628,24 @@ def UTMESS(code, idmess, valk=(), vali=(), valr=(),
            exc_typ=None, print_as=None, files=None, cc=True):
     """Utilitaire analogue à la routine fortran U2MESS/U2MESG avec les arguments
     optionnels.
-        code   : 'A', 'E', 'S', 'F', 'I'
-        idmess : identificateur du message
-        valk, vali, valr : liste des chaines, entiers ou réels.
 
-    Appel sans valeurs :                avec valeurs :
-        UTMESS('A', 'SUPERVIS_40')          UTMESS('A', 'SUPERVIS_40', vali=[1, 2])
+    Appel sans valeurs ::
+        UTMESS('A', 'SUPERVIS_40')
+
+    avec valeurs ::
+        UTMESS('A', 'SUPERVIS_40', vali=[1, 2])
 
     Remarques :
-        - Nommer les arguments permet de ne pas tous les passer.
-        - Meme fonctionnement que U2MESG :
-            + appel à MessageLog
-            + puis exception ou abort en fonction du niveau d'erreur.
+    - Nommer les arguments permet de ne pas tous les passer.
+    - Meme fonctionnement que U2MESG :
+
+      - appel à MessageLog
+      - puis exception ou abort en fonction du niveau d'erreur.
+
+    Arguments:
+        code (str): 'A', 'E', 'S', 'F', 'I'
+        idmess (str): identificateur du message
+        valk, vali, valr : liste des chaines, entiers ou réels.
     """
     MessageLog(code, idmess, valk, vali, valr, exc_typ=exc_typ,
                exception=True, print_as=print_as, files=files, cc=cc)
@@ -664,8 +671,8 @@ def message_exception(code, exc):
 def MasquerAlarme(idmess):
     """Masque une alarme : ni affichee, ni comptee.
     Utilisation dans les macros :
-        MasquerAlarme(XXX)  au debut de la macro
-        RetablirAlarme(XXX) a la fin de la macro
+    - MasquerAlarme(XXX)  au debut de la macro
+    - RetablirAlarme(XXX) a la fin de la macro
     Comme il s'agit d'un compteur qui est incremente puis decremente, il est
     imperatif qu'il y ait autant d'appel a MasquerAlarme qu'a RetablirAlarme.
     """

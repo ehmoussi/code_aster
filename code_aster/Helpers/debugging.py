@@ -47,13 +47,14 @@ Check for dependency on input datastructures
         grep -h '#27406' resutest/*.mess > data.txt
 
 - Start a Python session within code_aster environment (for example, by running
-  ``run_aster``) and change the source files.
+  ``run_aster``) and show the command dependencies.
 
   .. code-block:: python
 
         from code_aster.Helpers.debugging import ChangeCommands
         modifier = ChangeCommands("__path-to__/data.txt")
-        modifier.change_commands()
+        with open("__path-to__/merge.txt", "w") as fobj:
+            fobj.write(modifier.deps_txt())
 
 """
 
@@ -68,17 +69,19 @@ from .LogicalUnit import LogicalUnitFile
 SKIPPED = object()
 
 
-class DataStructureFilter(object):
+class DataStructureFilter:
     """This object store the path to *DataStructure* objects that are
     referenced in a dump.
 
     Arguments:
+        current (str): Name of the current result.
         dump (str): Text dump of a *DataStructure*.
     """
 
-    def __init__(self, dump):
+    def __init__(self, current, dump):
         """Initialization"""
         self._parent_context = []
+        self._current = current
         self._dump = dump
         self._keep = None
         self._path = []
@@ -120,7 +123,8 @@ class DataStructureFilter(object):
         skwValue = force_list(skwValue)
         keep = []
         for i in skwValue:
-            if isinstance(i, DataStructure) and i.getName() in self._dump:
+            if (isinstance(i, DataStructure) and i.getName() != self._current
+                    and i.getName() in self._dump):
                 keep.append(i)
         if keep and not islist:
             keep = keep[0]
@@ -152,11 +156,8 @@ class DataStructureFilter(object):
 
 TEMPLATE = '''
 
-    def dependencies(self, keywords):
+    def dependencies(self):
         """Defines the keywords containing dependencies.
-
-        Arguments:
-            keywords (dict): User's keywords.
 
         Returns:
             list[str]: List of keywords ("SIMP" or "FACT/SIMP").
@@ -185,7 +186,7 @@ def track_dependencies(inst, keywords):
         dump = fobj.read().decode('ascii', errors='replace')
     os.remove(filename)
 
-    visitor = DataStructureFilter(dump)
+    visitor = DataStructureFilter(result.getName(), dump)
     cata.accept(visitor, keywords)
     if not visitor.paths:
         return
@@ -210,6 +211,8 @@ class ChangeCommands:
         raw = [line.split()[1:] for line in lines]
         seen = {}
         for line in raw:
+            if not line:
+                continue
             name = line.pop(0)
             paths = set(line)
             paths.discard("reuse")
@@ -218,9 +221,17 @@ class ChangeCommands:
                 if diff:
                     print("#27406: changed", name, "previous:", seen[name],
                           "new:", diff)
-                    paths.update(seen[name])
+                paths.update(seen[name])
             seen[name] = sorted(list(paths))
         return seen
+
+    def deps_txt(self):
+        """Print list of dependencies for each command"""
+        lines = []
+        for name, paths in self.data.items():
+            values = [name] + paths
+            lines.append(" ".join(values))
+        return os.linesep.join(sorted(lines))
 
     def change_commands(self):
         """Update all commands source files"""
