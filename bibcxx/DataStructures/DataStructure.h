@@ -86,10 +86,16 @@ class DataStructure {
     ~DataStructure();
 
     /**
-     * @brief Function to add a reference to another datastructure
+     * @brief Function to add a datastructure as a dependency
      * @param ds datastructure to reference
      */
     void addDependency( const DataStructurePtr & );
+
+    /**
+     * @brief Function to remove a datastructure from dependencies
+     * @param ds datastructure to be removed
+     */
+    void removeDependency( const DataStructurePtr & );
 
     std::vector< DataStructurePtr > getDependencies() const;
 

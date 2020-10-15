@@ -111,6 +111,43 @@ test.assertFalse(libaster.debugJeveuxExists(tc1), msg="model / " + tc1)
 test.assertFalse(libaster.debugJeveuxExists(tc2), msg="material / " + tc2)
 test.assertFalse(libaster.debugJeveuxExists(tc2), msg="fieldmat / " + tc3)
 
+# check for dependencies accessors
+mesh = LIRE_MAILLAGE(UNITE=20, FORMAT='MED')
+same = LIRE_MAILLAGE(UNITE=20, FORMAT='MED')
+
+model = AFFE_MODELE(MAILLAGE=mesh,
+                    AFFE=_F(TOUT='OUI',
+                            PHENOMENE='MECANIQUE',
+                            MODELISATION='3D'))
+deps = model.getDependencies()
+test.assertTrue(mesh in deps)
+test.assertFalse(same in deps)
+test.assertEqual(len(deps), 1)
+
+model.addDependency(mesh)
+deps = model.getDependencies()
+test.assertTrue(mesh in deps)
+test.assertFalse(same in deps)
+test.assertEqual(len(deps), 1)
+
+model.addDependency(same)
+deps = model.getDependencies()
+test.assertTrue(mesh in deps)
+test.assertTrue(same in deps)
+test.assertEqual(len(deps), 2)
+
+model.removeDependency(same)
+deps = model.getDependencies()
+test.assertTrue(mesh in deps)
+test.assertFalse(same in deps)
+test.assertEqual(len(deps), 1)
+
+model.removeDependency(mesh)
+deps = model.getDependencies()
+test.assertFalse(mesh in deps)
+test.assertFalse(same in deps)
+test.assertEqual(len(deps), 0)
+
 test.printSummary()
 
 code_aster.close()

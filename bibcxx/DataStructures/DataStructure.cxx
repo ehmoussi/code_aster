@@ -21,6 +21,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
 #include <stdexcept>
 #include <string>
 
@@ -59,11 +60,12 @@ DataStructure::~DataStructure() {
     // empty name or no memory manager : skip silently
     if ( nameWithoutBlanks == "" || get_sh_jeveux_status() != 1 )
         return;
-    // allow to see when the datastructure is really deleted
-    // only for user datastructures aka 'concept' (== without ".")
-    // too low-level to call UTMESS
+    // Allow to see when the datastructure is really deleted.
+    // Only for user datastructures aka 'concept' (== without ".").
+    // Too low-level to call UTMESS.
     if ( _name.find(".") == std::string::npos ) {
-        std::cout << "Deleting " << this->getName() << std::endl;
+        std::cout << "Deleting <" << trim( this->getName() ) << "> "
+            << this->getUserName() << std::endl;
     }
     _tco->deallocate();
 #ifdef _DEBUG_CXX
@@ -90,7 +92,29 @@ DataStructure::~DataStructure() {
 };
 
 void DataStructure::addDependency( const DataStructurePtr &ds ) {
-    _depsVector.push_back( ds );
+    int idx;
+    int size( _depsVector.size() );
+    for ( idx = 0; idx < size; idx++ ) {
+        if ( ds == _depsVector[idx] ) {
+            break;
+        }
+    }
+    if ( idx == size ) {
+        _depsVector.push_back( ds );
+    }
+}
+
+void DataStructure::removeDependency( const DataStructurePtr &ds ) {
+    int idx;
+    int size( _depsVector.size() );
+    for ( idx = 0; idx < size; idx++ ) {
+        if ( ds == _depsVector[idx] ) {
+            break;
+        }
+    }
+    if ( idx < size ) {
+        _depsVector.erase( _depsVector.begin() + idx );
+    }
 }
 
 std::vector< DataStructure::DataStructurePtr > DataStructure::getDependencies() const {

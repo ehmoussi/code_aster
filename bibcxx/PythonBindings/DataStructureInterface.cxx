@@ -46,6 +46,16 @@ Arguments:
         )",
             ( py::arg( "self" ), py::arg( "ds" ) ) )
 
+        .def( "removeDependency", &DataStructure::removeDependency,
+        R"(
+Remove a dependency to a *DataStructure*.
+
+Arguments:
+    ds (*DataStructure*): Parent *DataStructure* to be removed from
+        dependencies.
+        )",
+            ( py::arg( "self" ), py::arg( "ds" ) ) )
+
         .def( "getDependencies", &DataStructure::getDependencies,
         R"(
 Return the explicit dependencies.

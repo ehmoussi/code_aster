@@ -278,38 +278,14 @@ class ExecuteCommand(object):
             if name != toVisit.getName():
                 self._result.addDependency(toVisit)
 
-    def dependencies(self):
-        """Defines the keywords containing dependencies.
+    def add_dependencies(self, keywords):
+        """Register input *DataStructure* objects as dependencies.
 
-        Returns:
-            list[str]: List of keywords ("SIMP" or "FACT/SIMP").
-        """
-        return []
-
-    def add_references(self, keywords):
-        """Add reference to input *DataStructure* objects in self._result
+        The default implementation registers all input objects as dependencies.
 
         Arguments:
             keywords (dict): User's keywords.
         """
-        if not isinstance(self._result, DataStructure):
-            return
-
-        paths = self.dependencies()
-        for path in paths:
-            spl = path.split("/")
-            key = spl[-1]
-            if len(spl) == 1:
-                values = force_list(keywords.get(key, []))
-                for obj in values:
-                    self._result.addDependency(obj)
-            else:
-                factkwds = force_list(keywords.get(spl[0], []))
-                for occ in factkwds:
-                    values = force_list(occ.get(key, []))
-                    for obj in values:
-                        self._result.addDependency(obj)
-        # orig: add all datastructures as deps
         self._add_deps_keywords(keywords)
 
     def adapt_syntax(self, keywords):
@@ -432,7 +408,8 @@ class ExecuteCommand(object):
         """
 
         try:
-            self.add_references(keywords)
+            if isinstance(self._result, DataStructure):
+                self.add_dependencies(keywords)
             self.post_exec(keywords)
             if self.hook:
                 self.hook(keywords)
