@@ -26,6 +26,9 @@ import logging
 
 import argparse, sys
 
+from distutils.version import StrictVersion
+
+import med
 import medcoupling as mc
 import numpy as np
 
@@ -100,8 +103,29 @@ class MasterChronoCtxMg:
 def BuildPartNameFromOrig(fn, rank):
     return "{}_new_{}.med".format(os.path.splitext(fn)[0],rank)
 
+def RetrieveFamGrpsMapInternal(fn,mn):
+    famsPy = {}
+    grpsPy = {}
+    fid = med.MEDfileOpen(fn,med.MED_ACC_RDONLY)
+    med.MEDnFamily(fid,mn)
+    s = set()
+    for elt in range(med.MEDnFamily(fid,mn)):
+      nbGrps = med.MEDnFamilyGroup(fid,mn,elt+1)
+      gro    = med.MEDCHAR(med.MED_LNAME_SIZE*nbGrps+1)
+      famName, famId, grps = med.MEDfamilyInfo(fid,mn,elt+1,gro)
+      if famName in s:
+          famName = "{}@".format(famName)
+      famsPy[famName] = famId
+      grps2 = ["".join(gro[i*med.MED_LNAME_SIZE:(i+1)*med.MED_LNAME_SIZE]).rstrip() for i in range(nbGrps)]
+      grpsPy[famName] = grps2
+      s.add(famName)
+      pass
+    med.MEDfileClose(fid)
+    return famsPy,grpsPy
+
 def RetrieveFamGrpsMap(medFileContxt):
-    return mc.GetFamiliesGroupsInfo(medFileContxt.getFileName(),medFileContxt.getMeshName())
+    return RetrieveFamGrpsMapInternal(medFileContxt.getFileName(),medFileContxt.getMeshName())
+    #return mc.GetFamiliesGroupsInfo(medFileContxt.getFileName(),medFileContxt.getMeshName())
 
 class MedFileContext:
     """Ease to get context of meshName contained in fileName"""
@@ -180,7 +204,9 @@ class PartialMedFileUMesh:
             idsInLoadedArrays = arrayOfGlobalIdsOfOrphanNodes - vmin
             self._orphan_coords = dataFromFile[0][idsInLoadedArrays]
             self._orphan_global_ids = arrayOfGlobalIdsOfOrphanNodes
-            self._orphan_fam_ids = dataFromFile[2][idsInLoadedArrays]
+            self._orphan_fam_ids = None
+            if dataFromFile[2]:
+                self._orphan_fam_ids = dataFromFile[2][idsInLoadedArrays]
             self._orphan_num_ids = None
             if dataFromFile[3]:
                 self._orphan_num_ids = dataFromFile[3][idsInLoadedArrays]
@@ -624,10 +650,10 @@ def GetUMeshFrom(paramesh,cellFamIds,nodeFamIds,cellsPartition):
     pm2 = paramesh.redistributeCells(cellsPartition)
     mergeMesh = mc.MEDFileUMesh()
     mergeMesh[0] = pm2.getMesh()
-    if cellFamIds:
+    if cellFamIds is not None:
         arr = paramesh.redistributeCellField(cellsPartition,cellFamIds)
         mergeMesh.setFamilyFieldArr(0,arr)
-    if nodeFamIds:
+    if nodeFamIds is not None:
         arrn = paramesh.redistributeNodeField(cellsPartition, nodeFamIds )
         mergeMesh.setFamilyFieldArr(1,arrn)
     mergeMesh.setGlobalNumFieldAtLevel(1,pm2.getGlobalNodeIds())
@@ -694,30 +720,38 @@ def MakeThePartition(fileName, meshName, MyPartitioner):
 
     mm_levs = { }
     for lev in partialMedFileUMesh.getMEDFileUMesh().getNonEmptyLevels():
+        logger.debug("ajout du niveau: "+str(lev))
+
         pm_lev, fam_field_node = partialMedFileUMesh.getParaUMeshAtLevel(lev)
+        logger.debug("récupération des cells du niveau: "+str(lev))
         if lev == 0:
             cellsPartition_lev = pm_lev.getCellIdsLyingOnNodes(nodesPartition.nodes,False)
         else:
             cellsPartition_lev = pm_lev.getCellIdsLyingOnNodes(globalNodeIdsOfRk0,True)
         #  connaissant les cells du niveau lev dont j ai besoin j appelle la communauté pour me donner mon morceau
+        logger.debug("creation du maillage unitaire avec les cells du niveau "+str(lev))
         mm_lev = GetUMeshFrom(pm_lev, partialMedFileUMesh.getMEDFileUMesh().getFamilyFieldAtLevel(lev) , fam_field_node, cellsPartition_lev)
         #
         if lev == 0:
+            logger.debug("recuperation nodes id")
             globalNodeIdsOfRk0 = mm_lev.getGlobalNumFieldAtLevel(1)[mm_lev[0].computeFetchedNodeIds()]
             globalNodeIdsOfRk0 = globalNodeIdsOfRk0.buildUnion(nodesPartition.nodes)
         #
-        mm_levs [lev] = mm_lev
+        mm_levs[lev] = mm_lev
         pass
 
+    logger.debug("ajout des point1")
     if partialMedFileUMesh.presenceOfPoint1():
         pm_lev, fam_field_node = partialMedFileUMesh.getParaUMeshAtLevelZero()
         cellsPartition_lev = pm_lev.getCellIdsLyingOnNodes(nodesPartition.nodes,False)
         mm_lev = GetUMeshFrom(pm_lev, partialMedFileUMesh.getFamilyFieldAtLevelZero() , fam_field_node, cellsPartition_lev)
         mm_levs[-partialMedFileUMesh.getMeshDimension()] = mm_lev
 
+    logger.debug("fusion des niveaux")
     meshResult = FuseLevels(mm_levs)
     # on rajoute les noms des familles/groupes attachés aux ids
 
+    logger.debug("ajout des groupes")
     famsPy,grpsPy = RetrieveFamGrpsMap(medFileContext)
     for fam,famid in famsPy.items():
         meshResult.addFamily(fam,famid)
@@ -782,6 +816,9 @@ if __name__ == '__main__':
         sys.exit(0)
 
     with MasterChronoCtxMg("Decoupage"):
+
+        if StrictVersion(mc.MEDFileVersionOfFileStr(args.fileName)) < StrictVersion("3.0.0"):
+            raise RuntimeError("File \"{}\" is < 3.0.0 : Not compatible with // load. To use this // decoupeur, just convert your old MED file into MED file version > 3.0.0, to do that ConvertMEDFileTo33.py MEDCoupling tool may help you.")
 
         mfd = MakeThePartition(args.fileName, args.meshName, GetGraphPartitioner(args.graphScotch) )
 

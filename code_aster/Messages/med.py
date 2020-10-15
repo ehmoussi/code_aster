@@ -114,6 +114,13 @@ On ne peut pas écrire au format MED %(i1)d.%(i2)d.%(i3)d.
   -> Les mailles  %(k1)s ne sont pas nommées dans le fichier MED.
 """),
 
+    20 : _("""
+  Le partitionneur de maillage n'est compatible qu'avec une version de MED >= %(k1)s. La version de MED du maillage utilisé est %(k2)s, d'où l'incompatibilité.
+
+  -> Conseil :
+     Convertissez votre maillage vers une version plus récente.
+"""),
+
 
 
     21 : _("""

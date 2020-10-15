@@ -20,9 +20,11 @@
 # person_in_charge: nicolas.pignet at edf.fr
 
 from mpi4py import MPI
+import medcoupling as mc
 
 from .myMEDSplitter_mpi import BuildPartNameFromOrig, MakeThePartition, GetGraphPartitioner, setVerbose
 
+from ...Messages import UTMESS
 from ..logger import logger
 
 
@@ -43,6 +45,11 @@ class MEDPartitioner:
         self._meshname = meshname
         self._meshPartitioned = None
         self._writedFilename = None
+
+        med_vers_min = 300 # minimal med version 3.0.0
+        med_vers_num = int(mc.MEDFileVersionOfFileStr(self._filename).replace(".", ""))
+        if med_vers_num < med_vers_min:
+            UTMESS("F", "MED_20", valk=("3.0.0", mc.MEDFileVersionOfFileStr(self._filename)))
 
     def filename(self):
         """ Return the name of MED file"""

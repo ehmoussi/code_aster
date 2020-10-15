@@ -325,8 +325,8 @@ character(len=24) :: grpnoe, grpmai
                 numfam = zi(adfano+ino-1)
                 if( numfam.ne.0 ) then
                     ifam = zi(jv3+numfam-val_min)
+                    ASSERT(ifam.le.nbrfam.and.ifam.ne.0)
                     if(v_notempty_fami(ifam)) then
-                        ASSERT(ifam.le.nbrfam.and.ifam.ne.0)
                         jgrp = zi(jadcor+ifam-1)
                         nbgr = zi(jv4+ifam-1)
                         do igrp = 1, nbgr
@@ -402,8 +402,8 @@ character(len=24) :: grpnoe, grpmai
                         numfam = zi(jfamma(ityp)+ima-1)
                         if( numfam.ne.0 ) then
                             ifam = zi(jv3+numfam-val_min)
+                            ASSERT(ifam.le.nbrfam.and.ifam.ne.0)
                             if(v_notempty_fami(ifam)) then
-                                ASSERT(ifam.le.nbrfam.and.ifam.ne.0)
                                 jgrp = zi(jadcor+ifam-1)
                                 nbgr = zi(jv4+ifam-1)
                                 do igrp = 1, nbgr
