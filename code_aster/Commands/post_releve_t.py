@@ -36,4 +36,12 @@ class PostReleveT(ExecuteCommand):
         """
         self._result = Table()
 
+    def add_dependencies(self, keywords):
+        """Register input *DataStructure* objects as dependencies.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+
+
 POST_RELEVE_T = PostReleveT.run

@@ -81,5 +81,16 @@ class ComputeAdditionalField(ExecuteCommand):
 
         self._result.update()
 
+    def add_dependencies(self, keywords):
+        """Register input *DataStructure* objects as dependencies.
+
+        Do not keep reference to RESULTAT (if not reused).
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        super().add_dependencies(keywords)
+        self._result.removeDependency(keywords["RESULTAT"])
+
 
 CALC_CHAMP = ComputeAdditionalField.run

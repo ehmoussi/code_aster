@@ -36,4 +36,11 @@ class RecuTable(ExecuteCommand):
         """
         self._result = Table()
 
+    def add_dependencies(self, keywords):
+        """Register input *DataStructure* objects as dependencies.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+
 RECU_TABLE = RecuTable.run

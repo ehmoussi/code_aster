@@ -50,10 +50,11 @@ class Copier(ExecuteCommand):
         else:
             self._result = type(other)()
 
-    def post_exec(self, keywords):
-        """
+    def add_dependencies(self, keywords):
+        """Do not keep any references to original objects.
+
         Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
+            keywords (dict): User's keywords.
         """
 
 

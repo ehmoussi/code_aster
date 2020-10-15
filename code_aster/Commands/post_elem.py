@@ -36,4 +36,14 @@ class PostElem(ExecuteCommand):
         """
         self._result = Table()
 
+    def add_dependencies(self, keywords):
+        """Register input *DataStructure* objects as dependencies.
+
+        Some references may be required for CARA_GEOM/CARA_POUTRE.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+
+
 POST_ELEM = PostElem.run

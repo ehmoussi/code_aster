@@ -83,7 +83,8 @@ class FieldCreator(ExecuteCommand):
                     try:
                         dofNum = resultat.getDOFNumbering()
                         self._result.setDescription(dofNum.getFiniteElementDescriptors()[0])
-                    except: pass
+                    except:
+                        pass
                 if resultat.getModel() is not None:
                     self._result.setModel(resultat.getModel())
             elif caraElem is not None:
@@ -98,6 +99,30 @@ class FieldCreator(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         self._result.update()
+
+    def add_dependencies(self, keywords):
+        """Register input *DataStructure* objects as dependencies.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        super().add_dependencies(keywords)
+
+        for occ in (list(keywords.get("ASSE", [])) +
+                    list(keywords.get("COMB", []))):
+            self._result.removeDependency(occ["CHAM_GD"])
+
+        if keywords["OPERATION"] in ("ASSE_DEPL", "R2C", "C2R", "DISC"):
+            self._result.removeDependency(keywords["CHAM_GD"])
+
+        for occ in keywords.get("EVAL", []):
+            self._result.removeDependency(occ["CHAM_F"])
+            self._result.removeDependency(occ["CHAM_PARA"])
+
+        if keywords["OPERATION"] == "EXTR":
+            for key in ("RESULTAT", "FISSURE", "TABLE", "CARA_ELEM", "CHARGE"):
+                if keywords.get(key):
+                    self._result.removeDependency(keywords[key])
 
 
 CREA_CHAMP = FieldCreator.run

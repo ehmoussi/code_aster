@@ -46,4 +46,19 @@ class TableCreation(ExecuteCommand):
             else:
                 self._result = Table()
 
+    def add_dependencies(self, keywords):
+        """Register input *DataStructure* objects as dependencies.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        super().add_dependencies(keywords)
+        if keywords.get("RESU"):
+            occ = keywords["RESU"]
+            if occ.get("CHAM_GD"):
+                self._result.removeDependency(occ["CHAM_GD"])
+            if occ.get("RESULTAT"):
+                self._result.removeDependency(occ["RESULTAT"])
+
+
 CREA_TABLE = TableCreation.run

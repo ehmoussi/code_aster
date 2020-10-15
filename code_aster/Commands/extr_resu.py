@@ -52,4 +52,14 @@ class ExtrResu(ExecuteCommand):
                 self._result.appendMaterialFieldOnAllRanks(resultat.getMaterialField())
             self._result.update()
 
+    def add_dependencies(self, keywords):
+        """Register input *DataStructure* objects as dependencies.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        super().add_dependencies(keywords)
+        self._result.removeDependency(keywords["RESULTAT"])
+
+
 EXTR_RESU = ExtrResu.run

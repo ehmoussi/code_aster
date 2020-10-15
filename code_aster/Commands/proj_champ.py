@@ -72,6 +72,19 @@ class FieldProjector(ExecuteCommand):
             if "MAILLAGE_1" in keywords:
                 self._result.setFirstMesh(keywords["MAILLAGE_1"])
 
+    def add_dependencies(self, keywords):
+        """Register input *DataStructure* objects as dependencies.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        super().add_dependencies(keywords)
+        if keywords.get("RESULTAT"):
+            self._result.removeDependency(keywords["RESULTAT"])
+        if keywords.get("CHAM_GD"):
+            self._result.removeDependency(keywords["CHAM_GD"])
+        if keywords.get("CHAM_NO_REFE"):
+            self._result.removeDependency(keywords["CHAM_NO_REFE"])
 
 
 PROJ_CHAMP = FieldProjector.run

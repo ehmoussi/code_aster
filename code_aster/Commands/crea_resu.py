@@ -131,5 +131,35 @@ class ResultCreator(ExecuteCommand):
 
         self._result.update()
 
+    def add_dependencies(self, keywords):
+        """Register input *DataStructure* objects as dependencies.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        super().add_dependencies(keywords)
+
+        for occ in (list(keywords.get("AFFE", [])) +
+                    list(keywords.get("PREP_VRC1", []))):
+            self._result.removeDependency(occ["CHAM_GD"])
+
+        for occ in keywords.get("ASSE", []):
+            self._result.removeDependency(occ["RESULTAT"])
+
+        for occ in (list(keywords.get("ECLA_PG", [])) +
+                    list(keywords.get("KUCV", [])) +
+                    list(keywords.get("CONV_RESU", []))):
+            self._result.removeDependency(occ["RESU_INIT"])
+
+        if keywords["OPERATION"] == "PERM_CHAM":
+            self._result.removeDependency(occ["RESU_INIT"])
+            self._result.removeDependency(occ["RESU_FINAL"])
+
+        for occ in keywords.get("PROL_RTZ", []):
+            self._result.removeDependency(occ["TABLE"])
+
+        for occ in keywords.get("PREP_VRC2", []):
+            self._result.removeDependency(occ["ELAS_THER"])
+
 
 CREA_RESU = ResultCreator.run

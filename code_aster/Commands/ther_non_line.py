@@ -51,5 +51,21 @@ class NonLinearThermalAnalysis(ExecuteCommand):
             self._result.appendModelOnAllRanks(keywords["MODELE"])
             self._result.update()
 
+    def add_dependencies(self, keywords):
+        """Register input *DataStructure* objects as dependencies.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        super().add_dependencies(keywords)
+        if keywords.get("RESULTAT"):
+            self._result.removeDependency(keywords["RESULTAT"])
+
+        if keywords.get("ETAT_INIT"):
+            occ = keywords["ETAT_INIT"]
+            for key in ("EVOL_THER", "CHAM_NO"):
+                if occ.get(key):
+                    self._result.removeDependency(occ[key])
+
 
 THER_NON_LINE = NonLinearThermalAnalysis.run
