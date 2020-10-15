@@ -234,10 +234,10 @@ Conseil:
 """),
 
     60 : _("""
- L'intégrale d'un champ sur des éléments de structure
-(poutre, plaque, coque, tuyau, poutre multifibre) n'est pas programmée.
- Réduisez la zone de calcul par le mot-clé GROUP_MA/MAILLE.
-"""),
+L'intégrale d'un champ sur des éléments de structure
+(poutre, plaque, coque, tuyau, poutre multifibre) n'est pas programmée,
+à l’exception des composantes N, VY, VZ, MT, MFY et MFZ sur les  éléments POU_D_T. 
+Réduisez la zone de calcul par le mot-clé GROUP_MA/MAILLE."""),
 
     61 : _("""
  Erreur dans les données pour le champ  %(k1)s

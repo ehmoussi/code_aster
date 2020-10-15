@@ -66,17 +66,19 @@ character(len=19) :: tableOut
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nbParaResult = 4, nbParaField = 2
+    integer, parameter :: nbParaResult = 4, nbParaField = 2, nbCmpOk = 6
     character(len=8), parameter :: paraTypeResult(nbParaResult) = (/'K16','I  ','R  ','R  '/)
     character(len=8), parameter :: paraTypeField(nbParaField) = (/'K16','R  '/)
     character(len=16), parameter :: paraNameResult(nbParaResult) = (/'NOM_CHAM  ','NUME_ORDRE',&
                                                                      'INST      ','VOL       '/)
     character(len=16), parameter :: paraNameField(nbParaField) = (/'CHAM_GD ','VOL     '/)
+    character(len=3), parameter :: cmpNameOk(nbCmpOk) = (/'N  ','VY ','VZ ','MT ','MFY','MFZ'/)
     integer :: iret, ibid, iocc, nbret
     integer :: cellNume,  cmpNume, numeStore
-    integer :: iCmp, iCellCompute, iGroup, iStore
+    integer :: iCmp, iCellCompute, iGroup, iStore, iCell, iCmpOk
     integer :: nbCellMesh, nbCellUser, nbCell, nbCellFilter, nbCellCompute
     integer :: nbCmp, nbStore, nbCmpField, nbGroup, nbVari
+    integer :: pdtElemType
     real(kind=8) :: inst
     character(len=8) :: mesh, resultIn, cellName, physName
     character(len=4) :: fieldSupp, lStructElem
@@ -91,7 +93,7 @@ character(len=19) :: tableOut
     character(len=19), parameter :: cespoi ='&&PEEINT.CESPOI'
     character(len=19) :: fieldInput
     character(len=24) :: fieldName, groupName
-    aster_logical :: convToNeut, lFromField, lFromResult, lVariName
+    aster_logical :: convToNeut, lFromField, lFromResult, lVariName, lCmpOk
     integer :: filterTypeNume
     character(len=8) :: filterTypeName
     character(len=8), pointer :: cmpNameNode(:) => null(), cmpNameNeut(:) => null()
@@ -99,6 +101,7 @@ character(len=19) :: tableOut
     integer, pointer :: cellCompute(:) => null()
     integer, pointer :: cellFilter(:) => null()
     integer, pointer :: listNumeStore(:) => null()
+    integer, pointer :: listElemType(:) => null()
     real(kind=8), pointer :: listTimeStore(:) => null()
     character(len=16), pointer :: variName(:) => null()
     character(len=8), pointer :: cmpName(:) => null(), cellNames(:) => null()
@@ -175,12 +178,6 @@ character(len=19) :: tableOut
         call jeveuo(listCellFilter, 'L', vi = cellFilter)
         call exlim1(cellFilter, nbCellFilter, model, 'V', ligrel)
 
-! ----- No structural elements !
-        call dismlg('EXI_RDM', ligrel, ibid, lStructElem, iret)
-        if (lStructElem .eq. 'OUI') then
-            call utmess('F', 'UTILITAI8_60')
-        endif
-
 ! ----- Get name of components
         call getvtx(keywFact, 'NOM_CMP', iocc = iocc, nbval = 0, nbret = nbCmp)
         nbCmp     = -nbCmp
@@ -233,6 +230,31 @@ character(len=19) :: tableOut
                 cmpNameInit(iCmp) = cmpName(iCmp)
             endif
         end do
+
+! ----- No structural elements !
+!       Except POU_D_T, components N, VY, VZ, MFT, MFY, MFZ
+        call dismlg('EXI_RDM', ligrel, ibid, lStructElem, iret)
+        if (lStructElem .eq. 'OUI') then
+            call jenonu(jexnom('&CATA.TE.NOMTE', 'MECA_POU_D_T'), pdtElemType)
+            call jeveuo(model//'.MAILLE', 'L', vi=listElemType)
+!           Check components
+            do iCmp=1, nbCmp
+                lCmpOk = .false.
+                do iCmpOk=1, nbCmpOk
+                    if (cmpNameInit(iCmp).eq. cmpNameOk(iCmpOk))then
+                        lCmpOk = .true.
+                        exit
+                    endif
+                enddo
+                if (.not. lCmpOk) call utmess('F', 'UTILITAI8_60')
+            enddo
+!           Check elements types
+            do iCell = 1, nbCellFilter
+                if (listElemType(cellFilter(iCell)) .ne. pdtElemType) then
+                    call utmess('F', 'UTILITAI8_60')
+                endif
+            enddo
+        endif
 
 ! ----- Loop on storing index
         do iStore = 1, nbStore
