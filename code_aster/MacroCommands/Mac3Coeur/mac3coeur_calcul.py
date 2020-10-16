@@ -1035,15 +1035,16 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
     def _run(self,tinit=None,tfin=None):
         """Run the main part of the calculation"""
         coeur = self.coeur
+        lock = AFFE_CHAR_MECA(MODELE=self.model, DDL_IMPO=(_F(GROUP_NO=('FIX', 'P_CUV'), DY=0, DZ=0, DX=0),
+                                                           _F(GROUP_NO=('PMNT_S',), DY=0, DZ=0)))
+
         # calcul de deformation d'apres DAMAC / T0 - T1
         _snl_lame = STAT_NON_LINE(**self.snl_lame(
                                   INCREMENT=_F(LIST_INST=self.times,
                                                INST_INIT=0.,
                                                PRECISION=1.E-08,
                                                INST_FIN=coeur.temps_simu['T1']),
-                                  EXCIT=self.archimede_load + self.vessel_head_load +
-                                  self.vessel_dilatation_load + self.gravity_load +
-                                  self.layer_load + self.periodic_cond,
+                                  EXCIT=self.layer_load + self.periodic_cond + [_F(CHARGE=lock)],
                                   ))
         self.update_coeur(_snl_lame, self.keyw['TABLE_N'])
         # WARNING: element characteristics and the most of the loadings must be
