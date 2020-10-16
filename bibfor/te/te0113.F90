@@ -86,14 +86,21 @@ subroutine te0113(option, nomte)
         zr(ival+(ino-1)*nbcmp-1+1) = young
         zr(ival+(ino-1)*nbcmp-1+2) = k
         zr(ival+(ino-1)*nbcmp-1+3) = nexpo
-        zr(ival+(ino-1)*nbcmp-1+4) = caragene(2*(ino-1)+1) ! A
-        zr(ival+(ino-1)*nbcmp-1+5) = caragene(2*(ino-1)+2) ! I
-        zr(ival+(ino-1)*nbcmp-1+6) = carageo(2*(ino-1)+1)  ! R
-        zr(ival+(ino-1)*nbcmp-1+7) = carageo(2*(ino-1)+2)  ! EP
+!       A
+        zr(ival+(ino-1)*nbcmp-1+4) = caragene(2*(ino-1)+1)
+!       I
+        zr(ival+(ino-1)*nbcmp-1+5) = caragene(2*(ino-1)+2)
+!       R
+        zr(ival+(ino-1)*nbcmp-1+6) = carageo(2*(ino-1)+1)
+!       EP
+        zr(ival+(ino-1)*nbcmp-1+7) = carageo(2*(ino-1)+2)
 !       valeur de l'autre noeud pour réduction
-        zr(ival+(ino-1)*nbcmp-1+8) = caragene(2*(ino2-1)+2) ! I
-        zr(ival+(ino-1)*nbcmp-1+9) = carageo(2*(ino2-1)+1)  ! R
-        zr(ival+(ino-1)*nbcmp-1+10) = carageo(2*(ino2-1)+2)  ! EP
+!       I2
+        zr(ival+(ino-1)*nbcmp-1+8) = caragene(2*(ino2-1)+2)
+!       R2
+        zr(ival+(ino-1)*nbcmp-1+9) = carageo(2*(ino2-1)+1)
+!       EP        
+        zr(ival+(ino-1)*nbcmp-1+10) = carageo(2*(ino2-1)+2)
     enddo
 ! ----------------------------------------------------------------------
 end subroutine
