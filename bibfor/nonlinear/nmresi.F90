@@ -335,10 +335,10 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 !
     if (l_rom) then
         if (ds_algorom%phase .eq. 'HROM') then
-            call romAlgoNLMecaResidual(v_cnfint, v_cnfext, ds_algorom, l_load_cine, v_ccid,&
+            call romAlgoNLMecaResidual(v_cnequi, ds_algorom, l_load_cine, v_ccid,&
                                        r_equi_vale)
         elseif (ds_algorom%phase .eq. 'CORR_EF') then
-            call romAlgoNLCorrEFMecaResidual(v_cnfint, v_cnfext, ds_algorom, l_load_cine, v_ccid,&
+            call romAlgoNLCorrEFMecaResidual(v_cnequi, ds_algorom, l_load_cine, v_ccid,&
                                              r_equi_vale)
         else
             ASSERT(ASTER_FALSE)

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romAlgoNLMecaResidual(v_fint, v_fext, ds_algorom, l_cine, v_ccid, resi)
+subroutine romAlgoNLMecaResidual(v_cnequi, ds_algorom, l_cine, v_ccid, resi)
 !
 use Rom_Datastructure_type
 !
@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "blas/ddot.h"
 !
-real(kind=8), pointer :: v_fint(:), v_fext(:)
+real(kind=8), pointer :: v_cnequi(:)
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 aster_logical, intent(in) :: l_cine
 integer, pointer :: v_ccid(:)
@@ -46,8 +46,7 @@ real(kind=8), intent(out) :: resi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Ptr v_fint           : pointer to internal forces
-! Ptr v_fext           : pointer to external forces
+! Ptr v_cnequi           : pointer to equilibre forces vector
 ! In  ds_algorom       : datastructure for ROM parameters
 ! In  l_cine           . .true. if AFFE_CHAR_CINE
 ! Ptr v_ccid           : pointer to CCID object (AFFE_CHAR_CINE)
@@ -83,10 +82,13 @@ real(kind=8), intent(out) :: resi
     do iEqua = 1, nbEqua
         if (l_cine) then
             if (v_ccid(iEqua) .ne. 1) then
-                v_resi(iEqua) = v_fint(iEqua) - v_fext(iEqua)
+                v_resi(iEqua) = v_cnequi(iEqua)
             endif
+        else
+            v_resi(iEqua) = v_cnequi(iEqua)
         endif
     enddo
+
 !
 ! - Truncation of residual
 !
