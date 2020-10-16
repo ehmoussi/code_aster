@@ -143,28 +143,6 @@ class MECA_2D_HHO1_F(Element):
         )
     calculs = (
 
-        OP.NSPG_NBVA(te=496,
-            para_in=((OP.NSPG_NBVA.PCOMPOR, LC.CCOMPO2), ),
-            para_out=((SP.PDCEL_I, LC.EDCEL_I), ),
-        ),
-
-        OP.TOU_INI_ELEM(te=99,
-            para_out=((SP.PFORC_R, CFORCER), (OP.TOU_INI_ELEM.PPRES_R, CPRES_R),
-                     ),
-        ),
-
-        OP.TOU_INI_ELGA(te=99,
-            para_out=((OP.TOU_INI_ELGA.PDEPL_R, EDEPLPG), (OP.TOU_INI_ELGA.PGEOM_R, EGGEOM_R),
-                     (OP.TOU_INI_ELGA.PNEUT_F, EGNEUT_F), (OP.TOU_INI_ELGA.PNEUT_R, EGNEUT_R),
-                     (OP.TOU_INI_ELGA.PPRES_R, LC.EPRESGA), ),
-        ),
-
-        OP.TOU_INI_ELNO(te=99,
-            para_out=((OP.TOU_INI_ELNO.PGEOM_R, NGEOMER), (OP.TOU_INI_ELNO.PNEUT_F, LC.ENNEUT_F),
-                     (OP.TOU_INI_ELNO.PNEUT_R, LC.ENNEUT_R), (OP.TOU_INI_ELNO.PPRES_R, EPRESNO),
-                     (OP.TOU_INI_ELNO.PSIEF_R, ECONTNO), ),
-        ),
-
         OP.CHAR_MECA_FR1D2D(te=459,
             para_in=((SP.PFR1D2D, NFORCER), (SP.PGEOMER, NGEOMER),),
             para_out=((SP.PVECTUR, MVECTUR), ),
@@ -185,5 +163,31 @@ class MECA_2D_HHO1_F(Element):
         OP.CHAR_MECA_PRES_R(te=459,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PPRESSR, EPRESNO),),
             para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
+
+        OP.INIT_VARC(te=99,
+            para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), (OP.INIT_VARC.PVARCNO, LC.ZVARCNO),),
+        ),
+
+        OP.NSPG_NBVA(te=496,
+            para_in=((OP.NSPG_NBVA.PCOMPOR, LC.CCOMPO2), ),
+            para_out=((SP.PDCEL_I, LC.EDCEL_I), ),
+        ),
+
+        OP.TOU_INI_ELEM(te=99,
+            para_out=((SP.PFORC_R, CFORCER), (OP.TOU_INI_ELEM.PPRES_R, CPRES_R),
+                     ),
+        ),
+
+        OP.TOU_INI_ELGA(te=99,
+            para_out=((OP.TOU_INI_ELGA.PDEPL_R, EDEPLPG), (OP.TOU_INI_ELGA.PGEOM_R, EGGEOM_R),
+                     (OP.TOU_INI_ELGA.PNEUT_F, EGNEUT_F), (OP.TOU_INI_ELGA.PNEUT_R, EGNEUT_R),
+                     (OP.TOU_INI_ELGA.PPRES_R, LC.EPRESGA), ),
+        ),
+
+        OP.TOU_INI_ELNO(te=99,
+            para_out=((OP.TOU_INI_ELNO.PGEOM_R, NGEOMER), (OP.TOU_INI_ELNO.PNEUT_F, LC.ENNEUT_F),
+                     (OP.TOU_INI_ELNO.PNEUT_R, LC.ENNEUT_R), (OP.TOU_INI_ELNO.PPRES_R, EPRESNO),
+                     (OP.TOU_INI_ELNO.PSIEF_R, ECONTNO), ),
         ),
     )

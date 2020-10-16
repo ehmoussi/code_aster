@@ -167,6 +167,10 @@ class MECA3DQU9_HHO2_F(Element):
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
+        OP.INIT_VARC(te=99,
+            para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), (OP.INIT_VARC.PVARCNO, LC.ZVARCNO),),
+        ),
+
         OP.NSPG_NBVA(te=496,
             para_in=((OP.NSPG_NBVA.PCOMPOR, LC.CCOMPO2), ),
             para_out=((SP.PDCEL_I, LC.EDCEL_I), ),

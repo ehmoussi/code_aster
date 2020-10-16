@@ -289,6 +289,40 @@ class MECA3DH27_HHO121(Element):
         )
     calculs = (
 
+        OP.COOR_ELGA(te=488,
+            para_in=((SP.PGEOMER, NGEOMER), ),
+            para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
+        ),
+
+        OP.EPSI_ELGA(te=25,
+            para_in=((SP.PCAMASS, CCAMASS), (SP.PDEPLAR, DEPLHHO),
+                     (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (OP.EPSI_ELGA.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
+                     ),
+            para_out=((SP.PDEFOPC, EDEFOPC), (OP.EPSI_ELGA.PDEFOPG, EDEFOPG),
+                     ),
+        ),
+
+        OP.EPSI_ELNO(te=4,
+            para_in=((OP.EPSI_ELNO.PDEFOPG, EDEFOPG), ),
+            para_out=((SP.PDEFONC, EDEFONC), (SP.PDEFONO, EDEFONO),
+                     ),
+        ),
+
+        OP.EPSP_ELGA(te=333,
+            para_in=((OP.EPSP_ELGA.PCOMPOR, LC.CCOMPOR), (OP.EPSP_ELGA.PCONTRR, ECONTPG),
+                     (SP.PDEPLAR, DEPLHHO), (SP.PGEOMER, NGEOMER),
+                     (SP.PMATERC, LC.CMATERC), (SP.PTEMPSR, CTEMPSR),
+                     (OP.EPSP_ELGA.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
+                     (SP.PVARIGR, ZVARIPG), ),
+            para_out=((OP.EPSP_ELGA.PDEFOPG, EDEFOPG), ),
+        ),
+
+        OP.EPSP_ELNO(te=4,
+            para_in=((OP.EPSP_ELNO.PDEFOPG, EDEFOPG), ),
+            para_out=((SP.PDEFONO, EDEFONO), ),
+        ),
+
         OP.FULL_MECA(te=455,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI), (SP.PMULCOM, LC.CMLCOMP),
                      (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
@@ -383,6 +417,10 @@ class MECA3DH27_HHO121(Element):
                      (OP.HHO_CINE_F_MECA.PFONC, PFONC),
             ),
             para_out=((OP.HHO_CINE_F_MECA.PCINE, HHOCINE),),
+        ),
+
+        OP.INIT_VARC(te=99,
+            para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), (OP.INIT_VARC.PVARCNO, LC.ZVARCNO),),
         ),
 
         OP.MATE_ELGA(te=142,

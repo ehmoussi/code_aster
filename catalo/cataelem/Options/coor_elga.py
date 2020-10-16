@@ -75,6 +75,5 @@ COOR_ELGA = Option(
       CondCalcul('+', ((AT.PHENO,'ME'),)),
       CondCalcul('+', ((AT.PHENO,'TH'),)),
       CondCalcul('+', ((AT.PHENO,'AC'),)),
-      CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'HHO'),)),
     ),
 )

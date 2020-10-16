@@ -1,0 +1,236 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
+
+MAIL=LIRE_MAILLAGE(FORMAT='MED',)
+
+MAIL_HHO = CREA_MAILLAGE(MAILLAGE=MAIL, TETRA4_8=_F(TOUT='OUI'))
+
+
+PRECIS=1.E-6
+
+
+#=====  2 - CREATION DU MATERIAU  =======================================
+
+ACIER=DEFI_MATERIAU(ELAS=_F(E=210000.0,
+                            NU=0.3,),
+                    MONO_VISC1=_F(N=12.,
+                                  K=5.,
+                                  C=0.,),
+                    MONO_ISOT1=_F(R_0=250.,
+                                  Q=55.,
+                                  B=12.,
+                                  H=0.),
+                    MONO_CINE1=_F(D=0.,),)
+
+Nu=0.3
+E_L=210000.
+G=E_L/2./(1.+Nu)
+# test  orthotropie
+MATFRONT=DEFI_MATERIAU(
+                      ELAS=_F(E=210000.0, NU=0.3,),
+                      MFRONT=_F(LISTE_COEF=(E_L ,E_L ,E_L,Nu,Nu,Nu,G,G,G,12.,5.,0.,250.,55.,12.,0.,
+                                                ),)
+                                ,)
+
+CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL_HHO,
+                    AFFE=_F(TOUT='OUI',
+                            MATER=ACIER,),)
+
+CHMATF=AFFE_MATERIAU(MAILLAGE=MAIL_HHO,
+                    AFFE=_F(TOUT='OUI',
+                            MATER=MATFRONT,),)
+
+COMPORT=DEFI_COMPOR(MONOCRISTAL=_F(MATER=ACIER,
+                                   ECOULEMENT='MONO_VISC1',
+                                   ECRO_ISOT='MONO_ISOT1',
+                                   ECRO_CINE='MONO_CINE1',
+                                   ELAS='ELAS',
+                                   FAMI_SYST_GLIS='OCTAEDRIQUE',),)
+
+
+#=====  3 - AFFECTATION AUX ELEMENTS ET CHARGEMENT======================
+
+# 3.1 DEFINITION DU MODELE MECANIQUE
+
+MO=AFFE_MODELE(MAILLAGE=MAIL_HHO,
+                    AFFE=_F(TOUT='OUI',
+                            PHENOMENE='MECANIQUE',
+                            MODELISATION='3D_HHO', FORMULATION="LINEAIRE"),
+                    DISTRIBUTION=_F(METHODE='MAIL_CONTIGU',),)
+
+
+# 3.2 CHARGEMENT
+
+#  DIMENSION MOYENNE DU VER
+DIME=1
+
+# VITESSE DE DEFORMATION IMPOSEE (EN S-1)
+VITEPS=1.E-3
+
+EPSMAX=0.1
+
+TMAX=EPSMAX/VITEPS
+
+COEFU=EPSMAX*DIME
+
+# COEFU2=COEFU*-0.4
+
+
+COEF=DEFI_FONCTION(NOM_PARA='INST',
+                 VALE=(0.0,0.0,TMAX,1.0,),
+                 PROL_DROITE='LINEAIRE',
+                 PROL_GAUCHE='LINEAIRE',)
+
+CHME1=AFFE_CHAR_CINE(MODELE=MO,
+                     MECA_IMPO=_F(GROUP_MA='ARRIERE',
+                                 DX=0.0,),)
+
+CHME2=AFFE_CHAR_CINE(MODELE=MO,
+                     MECA_IMPO=_F(GROUP_MA='BAS',
+                                 DZ=0.0,),)
+
+CHME3=AFFE_CHAR_CINE(MODELE=MO,
+                     MECA_IMPO=_F(GROUP_MA='GAUCHE',
+                                 DY=0.0,),)
+
+CHME4=AFFE_CHAR_CINE(MODELE=MO,
+                       MECA_IMPO=_F(GROUP_MA='HAUT',
+                                   DZ=COEFU,),)
+
+
+
+
+# 3.2 ORIENTATION DES GROUPES D'ELEMENTS
+
+
+ORIELEM=AFFE_CARA_ELEM(MODELE=MO,
+                     MASSIF=(
+
+    _F(GROUP_MA='GM1',ANGL_EULER=(0.00,137.47,272.02),),
+    _F(GROUP_MA='GM2',ANGL_EULER=(165.11,86.24,78.83),),
+    _F(GROUP_MA='GM3',ANGL_EULER=(16.94,69.04,244.55),),
+    _F(GROUP_MA='GM4',ANGL_EULER=(336.49,103.47,186.99),),
+    _F(GROUP_MA='GM5',ANGL_EULER=(299.15,158.57,19.25),),
+    _F(GROUP_MA='GM6',ANGL_EULER=(190.69,69.98,2.77),),
+    _F(GROUP_MA='GM7',ANGL_EULER=(138.03,150.03,150.29),),
+    _F(GROUP_MA='GM8',ANGL_EULER=(247.24,79.75,334.96),),
+    _F(GROUP_MA='GM9',ANGL_EULER=(304.62,86.91,33.11),),
+    _F(GROUP_MA='GM10',ANGL_EULER=(235.41,99.67,252.43),),
+
+                               ),)
+
+
+#=====  4 - RESOLUTION ============================================
+
+
+
+LINSTOP=DEFI_LIST_REEL(DEBUT=0.,
+                     INTERVALLE=(
+                                _F(JUSQU_A=2.3,
+                                    NOMBRE=1,),
+                                _F(JUSQU_A=3.,
+                                    NOMBRE=8,),
+                                    ),)
+LINSTAOP=DEFI_LIST_REEL(DEBUT=0.,
+                        INTERVALLE=(
+                                _F(JUSQU_A=2.3,
+                                    NOMBRE=1,),
+                                _F(JUSQU_A=3.,
+                                    NOMBRE=3,),
+                                    ),)
+
+TFIN=3.
+
+
+MFRONT=STAT_NON_LINE(MODELE=MO,
+                  CHAM_MATER=CHMATF,
+                  CARA_ELEM=ORIELEM,
+                   EXCIT=(_F(CHARGE=CHME1,),
+                          _F(CHARGE=CHME2,),
+                          _F(CHARGE=CHME3,),
+                          _F(CHARGE=CHME4,
+                             FONC_MULT=COEF),
+                          ),
+                    COMPORTEMENT=_F(RELATION='MFRONT',
+                                    NOM_ROUTINE='astermonocrystal_cfc',
+                                    UNITE_LIBRAIRIE=39,
+                                    RESI_INTE_MAXI=1e-11,
+                                    ITER_INTE_MAXI=100,
+                                            ),
+                  INCREMENT=_F(LIST_INST=LINSTOP,
+                               INST_FIN=TFIN),
+                  ARCHIVAGE=_F(LIST_INST=LINSTAOP),
+                  NEWTON=_F(PREDICTION='TANGENTE',),
+                  HHO=_F(OPTIMISATION='TEMPS',),
+                  CONVERGENCE = _F(ITER_GLOB_MAXI=20))
+
+MFRONT=CALC_CHAMP(reuse=MFRONT,RESULTAT=MFRONT,DEFORMATION=('EPSI_ELGA','EPSP_ELGA'))
+
+# cf zmat007a
+# Les erreurs sont plus importantes car on n'a pas les mêmes quadratures
+# le point de gauss est légèrement décalé
+TEST_RESU(RESU=(_F(INST=3.0,
+                   POINT=1,
+                   RESULTAT=MFRONT,
+                   NOM_CHAM='SIEF_ELGA',
+                   NOM_CMP='SIXX',
+                   VALE_CALC=9.020061192278902,
+                   GROUP_MA='M1',),
+                _F(INST=3.0,
+                   REFERENCE='AUTRE_ASTER',
+                   POINT=1,
+                   RESULTAT=MFRONT,
+                   NOM_CHAM='EPSI_ELGA',
+                   NOM_CMP='EPXX',
+                   VALE_CALC=-0.001046146274377388,
+                   VALE_REFE=-1.025E-3,
+                   PRECISION=0.03,
+                   GROUP_MA='M1',),
+                _F(INST=3.0,
+                   REFERENCE='AUTRE_ASTER',
+                   POINT=1,
+                   RESULTAT=MFRONT,
+                   NOM_CHAM='EPSI_ELGA',
+                   NOM_CMP='EPYY',
+                   VALE_CALC=-0.0010061101139458113,
+                   VALE_REFE=-9.37146E-4,
+                   PRECISION=0.08,
+                   GROUP_MA='M1',),
+                _F(INST=3.0,
+                   REFERENCE='AUTRE_ASTER',
+                   POINT=1,
+                   RESULTAT=MFRONT,
+                   NOM_CHAM='EPSP_ELGA',
+                   NOM_CMP='EPYY',
+                   VALE_CALC=-0.0002694876615972411,
+                   VALE_REFE=-2.77459E-4,
+                   PRECISION=0.03,
+                   GROUP_MA='M1',),
+                ),
+          )
+
+IMPR_RESU(FORMAT="MED", UNITE=80, RESU=_F(RESULTAT=MFRONT,))
+
+FIN()

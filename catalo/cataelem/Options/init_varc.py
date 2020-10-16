@@ -43,7 +43,6 @@ INIT_VARC = Option(
       CondCalcul('+', ((AT.PHENO,'TH'),(AT.BORD,'0'),)),
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD_ISO,'OUI'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.FLUIDE,'OUI'),)),
-      CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'HHO'),)),
     ),
     comment=""" OPTION NE CALCULANT RIEN.
    ELLE SERT A ALLOUER LES CHAMPS DE VARIABLES DE COMMANDE POUR LE MATERIAU.

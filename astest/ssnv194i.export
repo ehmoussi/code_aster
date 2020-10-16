@@ -1,0 +1,10 @@
+P time_limit 60
+P memory_limit 1024
+P ncpus 1
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist ci verification sequential
+
+F comm ssnv194i.comm D 1
+F mmed ssnv194h.mmed D 20
+F libr ssnv194b.40 D 40

@@ -1,0 +1,10 @@
+P time_limit 120
+P memory_limit 1024
+P ncpus 1
+P mpi_nbcpu 4
+P mpi_nbnoeud 1
+P testlist ci verification parallel
+
+F comm mfron03l.comm D 1
+F mmed mfron03l.mmed D 20
+F libr  MonoCrystal_CFC.mfront   D 38

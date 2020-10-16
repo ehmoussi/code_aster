@@ -1,0 +1,218 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(
+NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='NON'))
+
+CUBE0=LIRE_MAILLAGE(FORMAT="MED", UNITE=20)
+
+CUBE = CREA_MAILLAGE(MAILLAGE=CUBE0, TETRA4_8=_F(TOUT='OUI'))
+
+
+PRECIS=1.E-6
+
+
+TROISD=AFFE_MODELE(MAILLAGE=CUBE,
+                   AFFE=_F(TOUT='OUI',
+                           PHENOMENE='MECANIQUE',
+                           MODELISATION='3D_HHO', FORMULATION="LINEAIRE"),
+                           )
+TFIN = 0.003
+
+
+LINST=DEFI_LIST_REEL(DEBUT=0.0,
+                     INTERVALLE=(_F(JUSQU_A=0.001,
+                                    NOMBRE=1,),
+                                 _F(JUSQU_A=TFIN,
+                                    NOMBRE=100,),
+                                    ),)
+
+ACIER=DEFI_MATERIAU(ELAS=_F(E=145200.0,
+                            NU=0.3, ALPHA=0.0,),
+                    MONO_VISC1=_F(N=10.0,
+                                  K=40.0,
+                                  C=1.0,),
+                    MONO_ISOT1=_F(R_0=75.5,
+                                  Q=9.77,
+                                  B=19.34,
+                                  H1=1.0,
+                                  H2=0.0,
+                                  H3=0.0,
+                                  H4=0.0,
+                                  ),
+                    MONO_CINE1=_F(D=36.68,),)
+
+# test de la possibité de définir des matériaux différents
+# les valeurs sont identiques a celle de ACIER
+
+ACIER2=DEFI_MATERIAU(ELAS=_F(E=145200.0,
+                            NU=0.3, ALPHA=0.0,),
+                    MONO_VISC1=_F(N=10.0,
+                                  K=40.0,
+                                  C=1.0,),
+                    MONO_ISOT1=_F(R_0=75.5,
+                                  Q=9.77,
+                                  B=19.34,
+                                  H1=1.0,
+                                  H2=0.0,
+                                  H3=0.0,
+                                  H4=0.0,
+                                  ),
+                    MONO_CINE1=_F(D=36.68,),)
+
+COEF=DEFI_FONCTION(NOM_PARA='INST',
+                   VALE=(0.0,0.0,1.0,1.0,),
+                   PROL_DROITE='LINEAIRE',
+                   PROL_GAUCHE='LINEAIRE',)
+
+# fictous thermal field to test VARC
+TEMP0=0.0
+
+TEMP=CREA_CHAMP(OPERATION='AFFE',TYPE_CHAM='NOEU_TEMP_R',
+                       MAILLAGE=CUBE,
+                       AFFE=_F(TOUT='OUI',
+                               NOM_CMP='TEMP',
+                               VALE=TEMP0),
+                       )
+
+MAT2=AFFE_MATERIAU(MAILLAGE=CUBE,
+                  AFFE=_F(TOUT='OUI',
+                          MATER=(ACIER,ACIER2)),
+                  AFFE_VARC=_F(TOUT='OUI',
+                                     NOM_VARC='TEMP',
+                                     CHAM_GD=TEMP,
+                                     VALE_REF=TEMP0,
+                                     ),)
+
+TRAC=AFFE_CHAR_CINE(MODELE=TROISD,
+                     MECA_IMPO=(
+                     _F(GROUP_MA='ARRIERE',
+                                 DX=0.0,),
+                        _F(GROUP_MA='BAS',
+                                 DZ=0.0,),
+                       _F(GROUP_MA='GAUCHE',
+                                 DY=0.0,),
+                       _F(GROUP_MA='HAUT',
+                                   DZ=1.0),
+                                   ),)
+
+table=LIRE_TABLE( UNITE=40,
+                   FORMAT='ASTER',
+                   NUME_TABLE=1,
+                   SEPARATEUR=' ',)
+
+
+COMPORT=DEFI_COMPOR(MONOCRISTAL=(_F(MATER=ACIER,
+                                    ECOULEMENT='MONO_VISC1',
+                                    ECRO_ISOT='MONO_ISOT1',
+                                    ECRO_CINE='MONO_CINE1',
+                                    ELAS='ELAS',
+                                    FAMI_SYST_GLIS='BCC24',),),
+                      #MATR_INTER= table,
+                                    )
+
+COMPORT2=DEFI_COMPOR(MONOCRISTAL=(_F(MATER=ACIER2,
+                                    ECOULEMENT='MONO_VISC1',
+                                    ECRO_ISOT='MONO_ISOT1',
+                                    ECRO_CINE='MONO_CINE1',
+                                    ELAS='ELAS',
+                                    FAMI_SYST_GLIS='BCC24',),),
+                      #MATR_INTER= table,
+                                    )
+
+
+
+COMPORP2=DEFI_COMPOR(POLYCRISTAL=(
+                        _F(MONOCRISTAL=COMPORT,FRAC_VOL=0.1,ANGL_EULER=(-150.646,33.864,55.646,),),
+                        _F(MONOCRISTAL=COMPORT,FRAC_VOL=0.1,ANGL_EULER=(-137.138,41.5917,142.138,),),
+                        _F(MONOCRISTAL=COMPORT,FRAC_VOL=0.1,ANGL_EULER=(-166.271,35.46958,171.271,),),
+                        _F(MONOCRISTAL=COMPORT,FRAC_VOL=0.1,ANGL_EULER=(-77.676,15.61819,154.676,),),
+                        _F(MONOCRISTAL=COMPORT,FRAC_VOL=0.1,ANGL_EULER=(-78.6463,33.864,155.646,),),
+                        _F(MONOCRISTAL=COMPORT2,FRAC_VOL=0.1,ANGL_EULER=(-65.1378,41.5917,142.138,),),
+                        _F(MONOCRISTAL=COMPORT2,FRAC_VOL=0.1,ANGL_EULER=(-94.2711,35.46958,71.271,),),
+                        _F(MONOCRISTAL=COMPORT2,FRAC_VOL=0.1,ANGL_EULER=(-5.67599,15.61819,154.676,),),
+                        _F(MONOCRISTAL=COMPORT2,FRAC_VOL=0.1,ANGL_EULER=(-6.64634,33.864,155.646,),),
+                        _F(MONOCRISTAL=COMPORT2,FRAC_VOL=0.1,ANGL_EULER=(6.86224,41.5917,142.138,),),
+                        ),
+                    LOCALISATION='BETA',DL=0.,DA=0.,
+                    MU_LOCA=145200./2.6,
+                    )
+
+
+
+# test des deux matériaux
+
+SOLNL=STAT_NON_LINE(MODELE=TROISD,
+                     CHAM_MATER=MAT2,
+                     EXCIT=(_F(CHARGE=TRAC,
+                               FONC_MULT=COEF,
+                               TYPE_CHARGE='FIXE_CSTE',),),
+                       INCREMENT=(_F(LIST_INST=LINST,),),
+                    COMPORTEMENT=(_F(RELATION='POLYCRISTAL',
+                                  COMPOR=COMPORP2,
+                                  DEFORMATION='PETIT',
+                                  ALGO_INTE='RUNGE_KUTTA',
+                                  TOUT='OUI',
+                                  RESI_INTE_RELA=1.E-6
+                                  ),),
+                     NEWTON=(_F(PREDICTION='TANGENTE',
+                                MATRICE='TANGENTE',),),
+                    HHO=_F(OPTIMISATION='TEMPS',),
+                     CONVERGENCE=(_F(ITER_GLOB_MAXI=50,
+                                     RESI_GLOB_RELA=1.E-4
+                                     ),),)
+
+SOLNL=CALC_CHAMP(reuse=SOLNL,RESULTAT=SOLNL,DEFORMATION=('EPSI_ELGA','EPSP_ELGA'))
+
+
+# Calcul des moyennes
+
+INT_SI=POST_ELEM(MODELE=TROISD,
+                   RESULTAT=SOLNL,
+                   INTEGRALE=_F(NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP=('SIXX','SIYY','SIZZ'),
+                                TOUT='OUI',
+                                TYPE_MAILLE= '3D'),)
+
+
+INT_EP=POST_ELEM(MODELE=TROISD,
+                   RESULTAT=SOLNL,
+                   INTEGRALE=_F(NOM_CHAM='EPSP_ELGA',
+                                NOM_CMP=('EPXX','EPYY','EPZZ'),
+                                TOUT='OUI',
+                                TYPE_MAILLE= '3D'),)
+
+
+TEST_TABLE(
+           VALE_CALC=279.1706313197254,
+           NOM_PARA='INTE_SIZZ',
+           TABLE=INT_SI,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=TFIN,),
+           )
+
+TEST_TABLE(
+           VALE_CALC=0.0010771618117356978,
+           NOM_PARA='INTE_EPZZ',
+           TABLE=INT_EP,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=TFIN,),
+           )
+
+FIN()
