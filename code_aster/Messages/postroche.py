@@ -21,10 +21,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-    1 : _("""La modélisation de certaines mailles déclarées dans l'occurrence
-numéro %(i1)d de %(k1)s est différente de POU_D_T qui est la seule autorisée."""),
-
-
     2 : _("""Le %(k1)s associé au résultat ou au champ de l'occurrence numéro %(i1)d de %(k2)s
 est différent de celui associé au résultat ou au champ de la première occurrence ou de
 celui renseigné dans la commande :
