@@ -53,12 +53,7 @@ class TableCreation(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         super().add_dependencies(keywords)
-        if keywords.get("RESU"):
-            occ = keywords["RESU"]
-            if occ.get("CHAM_GD"):
-                self._result.removeDependency(occ["CHAM_GD"])
-            if occ.get("RESULTAT"):
-                self._result.removeDependency(occ["RESULTAT"])
+        self.remove_dependencies(keywords, "RESU", ("RESULTAT", "CHAM_GD"))
 
 
 CREA_TABLE = TableCreation.run

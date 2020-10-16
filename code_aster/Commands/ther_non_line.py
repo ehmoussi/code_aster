@@ -58,14 +58,8 @@ class NonLinearThermalAnalysis(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         super().add_dependencies(keywords)
-        if keywords.get("RESULTAT"):
-            self._result.removeDependency(keywords["RESULTAT"])
-
-        if keywords.get("ETAT_INIT"):
-            occ = keywords["ETAT_INIT"]
-            for key in ("EVOL_THER", "CHAM_NO"):
-                if occ.get(key):
-                    self._result.removeDependency(occ[key])
+        self.remove_dependencies(keywords, "RESULTAT")
+        self.remove_dependencies(keywords, "ETAT_INIT", ("EVOL_THER, 'CHAM_NO"))
 
 
 THER_NON_LINE = NonLinearThermalAnalysis.run

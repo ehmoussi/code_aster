@@ -107,22 +107,20 @@ class FieldCreator(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         super().add_dependencies(keywords)
-
-        for occ in (list(keywords.get("ASSE", [])) +
-                    list(keywords.get("COMB", []))):
-            self._result.removeDependency(occ["CHAM_GD"])
+        self.remove_dependencies(keywords, "ASSE", "CHAM_GD")
+        self.remove_dependencies(keywords, "COMB", "CHAM_GD")
 
         if keywords["OPERATION"] in ("ASSE_DEPL", "R2C", "C2R", "DISC"):
-            self._result.removeDependency(keywords["CHAM_GD"])
+            self.remove_dependencies(keywords, "CHAM_GD")
 
-        for occ in keywords.get("EVAL", []):
-            self._result.removeDependency(occ["CHAM_F"])
-            self._result.removeDependency(occ["CHAM_PARA"])
+        self.remove_dependencies(keywords, "EVAL", ("CHAM_F", "CHAM_PARA"))
 
         if keywords["OPERATION"] == "EXTR":
-            for key in ("RESULTAT", "FISSURE", "TABLE", "CARA_ELEM", "CHARGE"):
-                if keywords.get(key):
-                    self._result.removeDependency(keywords[key])
+            self.remove_dependencies(keywords, "RESULTAT")
+            self.remove_dependencies(keywords, "FISSURE")
+            self.remove_dependencies(keywords, "TABLE")
+            self.remove_dependencies(keywords, "CARA_ELEM")
+            self.remove_dependencies(keywords, "CHARGE")
 
 
 CREA_CHAMP = FieldCreator.run

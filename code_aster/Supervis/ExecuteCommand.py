@@ -288,6 +288,39 @@ class ExecuteCommand(object):
         """
         self._add_deps_keywords(keywords)
 
+    def remove_dependencies(self, keywords, key1, key2=None):
+        """Remove dependencies to the input *DataStructure* objects passed
+        with given keywords.
+
+        Arguments:
+            keywords (dict): User's keywords.
+            key1 (str/list[str]): One or more simple keywords, or factor keyword.
+            key2 (str/list[str]): One or more simple keywords if `key1` is a
+                factor keyword.
+        """
+        if not key2:
+            key1 = force_list(key1)
+            for key in key1:
+                value = keywords.get(key)
+                if not value:
+                    return
+                for obj in force_list(value):
+                    self._result.removeDependency(obj)
+        else:
+            assert type(key1) is str, key1
+            fact = keywords.get(key1)
+            if not fact:
+                return
+            key2 = force_list(key2)
+            for occ in force_list(fact):
+                for key in key2:
+                    value = occ.get(key)
+                    if not value:
+                        return
+                    for obj in force_list(value):
+                        self._result.removeDependency(obj)
+
+
     def adapt_syntax(self, keywords):
         """Hook to adapt syntax from a old version or for compatibility reasons.
 

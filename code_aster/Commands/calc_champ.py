@@ -90,7 +90,7 @@ class ComputeAdditionalField(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         super().add_dependencies(keywords)
-        self._result.removeDependency(keywords["RESULTAT"])
+        self.remove_dependencies(keywords, "RESULTAT")
 
 
 CALC_CHAMP = ComputeAdditionalField.run

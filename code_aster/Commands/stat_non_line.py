@@ -62,15 +62,10 @@ class NonLinearStaticAnalysis(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         super().add_dependencies(keywords)
-        if keywords.get("RESULTAT"):
-            self._result.removeDependency(keywords["RESULTAT"])
-
-        if keywords.get("ETAT_INIT"):
-            occ = keywords["ETAT_INIT"]
-            for key in ("DEPL", "SIGM", "VARI", "STRX", "COHE", "VITE", "ACCE",
-                        "EVOL_NOLI"):
-                if occ.get(key):
-                    self._result.removeDependency(occ[key])
+        self.remove_dependencies(keywords, "RESULTAT")
+        self.remove_dependencies(keywords, "ETAT_INIT",
+                                 ("DEPL", "SIGM", "VARI", "STRX", "COHE",
+                                  "VITE", "ACCE", "EVOL_NOLI"))
 
 
 STAT_NON_LINE = NonLinearStaticAnalysis.run

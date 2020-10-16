@@ -138,28 +138,17 @@ class ResultCreator(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         super().add_dependencies(keywords)
-
-        for occ in (list(keywords.get("AFFE", [])) +
-                    list(keywords.get("PREP_VRC1", []))):
-            self._result.removeDependency(occ["CHAM_GD"])
-
-        for occ in keywords.get("ASSE", []):
-            self._result.removeDependency(occ["RESULTAT"])
-
-        for occ in (list(keywords.get("ECLA_PG", [])) +
-                    list(keywords.get("KUCV", [])) +
-                    list(keywords.get("CONV_RESU", []))):
-            self._result.removeDependency(occ["RESU_INIT"])
-
+        self.remove_dependencies(keywords, "AFFE", "CHAM_GD")
+        self.remove_dependencies(keywords, "ASSE", "RESULTAT")
+        self.remove_dependencies(keywords, "ECLA_PG", "RESU_INIT")
         if keywords["OPERATION"] == "PERM_CHAM":
-            self._result.removeDependency(occ["RESU_INIT"])
-            self._result.removeDependency(occ["RESU_FINAL"])
-
-        for occ in keywords.get("PROL_RTZ", []):
-            self._result.removeDependency(occ["TABLE"])
-
-        for occ in keywords.get("PREP_VRC2", []):
-            self._result.removeDependency(occ["ELAS_THER"])
+            self.remove_dependencies(keywords, "RESU_INIT")
+            self.remove_dependencies(keywords, "RESU_FINAL")
+        self.remove_dependencies(keywords, "PROL_RTZ", "TABLE")
+        self.remove_dependencies(keywords, "PREP_VRC1", "CHAM_GD")
+        self.remove_dependencies(keywords, "PREP_VRC2", "ELAS_THER")
+        self.remove_dependencies(keywords, "KUCV", "RESU_INIT")
+        self.remove_dependencies(keywords, "CONV_RESU", "RESU_INIT")
 
 
 CREA_RESU = ResultCreator.run

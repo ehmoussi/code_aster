@@ -64,10 +64,8 @@ class ModiRepere(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         super().add_dependencies(keywords)
-        if keywords.get("RESULTAT"):
-            self._result.removeDependency(keywords["RESULTAT"])
-        if keywords.get("CHAM_GD"):
-            self._result.removeDependency(keywords["CHAM_GD"])
+        self.remove_dependencies(keywords, "RESULTAT")
+        self.remove_dependencies(keywords, "CHAM_GD")
 
 
 MODI_REPERE = ModiRepere.run

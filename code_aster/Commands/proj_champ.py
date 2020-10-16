@@ -79,12 +79,9 @@ class FieldProjector(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         super().add_dependencies(keywords)
-        if keywords.get("RESULTAT"):
-            self._result.removeDependency(keywords["RESULTAT"])
-        if keywords.get("CHAM_GD"):
-            self._result.removeDependency(keywords["CHAM_GD"])
-        if keywords.get("CHAM_NO_REFE"):
-            self._result.removeDependency(keywords["CHAM_NO_REFE"])
+        self.remove_dependencies(keywords, "RESULTAT")
+        self.remove_dependencies(keywords, "CHAM_GD")
+        self.remove_dependencies(keywords, "CHAM_NO_REFE")
 
 
 PROJ_CHAMP = FieldProjector.run
