@@ -138,7 +138,7 @@ implicit none
                 k24b, ibid, ibid, kbid, k24b, prbid, pcbid)
     call jeveuo(vldist,'L',jldist)
     if (lcpu) call cpu_time(rctdeb)
-    
+
     lonch=-999
     ci=dcmplx(0.D0,1.D0)
     cun=dcmplx(1.D0,0.D0)
@@ -220,7 +220,7 @@ implicit none
                 modele, sd_partition, lsdpar,&
                 ibid, ibid, ibid, ibid, ibid,&
                 k24b, ibid, ibid, kbid, k24b, prbid, pcbid)
-    if (nbproc.eq.1) then
+    if (nbproc.eq.1 .and. niv >1) then
         call utmess('I','PREPOST_25',sk=option)
     else if (nbproc.gt.1) then
       if (ldist) then

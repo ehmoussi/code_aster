@@ -307,7 +307,7 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
                 mode24, sd_partition, lsdpar,&
                 ibid, ibid, ibid, ibid, ibid,&
                 k24b, ibid, ibid, kbid, k24b, prbid, pcbid)
-    if (nbproc.eq.1) then
+    if (nbproc.eq.1.and. niv>1) then
         call utmess('I','PREPOST_25',sk=optio2)
     else if (nbproc.gt.1) then
       if (ldist) then

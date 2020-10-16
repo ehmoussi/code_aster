@@ -44,7 +44,6 @@ SIEQ_ELGA = Option(
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.EFGE,'OUI'),(AT.SIGM,'NON'),)),
-      CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'HHO'),)),
     ),
     comment="""  SIEQ_ELGA : CONTRAINTES EQUIVALENTES PAR ELEMENTS AUX POINTS DE GAUSS """,
 )

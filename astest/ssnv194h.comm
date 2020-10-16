@@ -176,7 +176,8 @@ SOLNL=STAT_NON_LINE(MODELE=TROISD,
                                      RESI_GLOB_RELA=1.E-4
                                      ),),)
 
-SOLNL=CALC_CHAMP(reuse=SOLNL,RESULTAT=SOLNL,DEFORMATION=('EPSI_ELGA','EPSP_ELGA'))
+SOLNL=CALC_CHAMP(reuse=SOLNL,RESULTAT=SOLNL,DEFORMATION=('EPSI_ELGA','EPSP_ELGA'),
+                 VARI_INTERNE=('VARC_ELGA'))
 
 
 # Calcul des moyennes

@@ -38,7 +38,7 @@ ctrac = LIRE_FONCTION(UNITE=21,
 
 E = 206.9
 mater = DEFI_MATERIAU(
-    TRACTION=_F(SIGM=ctrac,), ELAS=_F(E=E, NU=0.29)
+    TRACTION=_F(SIGM=ctrac,), ELAS=_F(E=E, NU=0.29, RHO=1.0)
 )
 
 fieldmat = AFFE_MATERIAU(
@@ -108,7 +108,9 @@ resnonl = STAT_NON_LINE(
 resnonl = CALC_CHAMP(
     reuse=resnonl,
     CHAM_MATER=fieldmat,
-    CRITERES=('SIEQ_NOEU',),
+    CRITERES=('SIEQ_NOEU','SIEQ_ELGA'),
+    PROPRIETES=('MATE_ELEM', 'MATE_ELGA'),
+    CONTRAINTE=('SIEF_ELNO','SIEF_NOEU',),
     MODELE=model,
     RESULTAT=resnonl,
 )

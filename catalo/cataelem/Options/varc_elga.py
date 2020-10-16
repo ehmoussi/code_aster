@@ -40,6 +40,5 @@ VARC_ELGA = Option(
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
-      CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'HHO'),)),
     ),
 )

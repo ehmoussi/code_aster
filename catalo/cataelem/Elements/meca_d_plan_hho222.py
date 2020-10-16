@@ -403,13 +403,13 @@ class MECA_DPQ8_HHO222(Element):
         ),
 
         OP.MATE_ELGA(te=142,
-            para_in=((SP.PMATERC, LC.CMATERC),
+            para_in=((SP.PMATERC, LC.CMATERC), (SP.PGEOMER, NGEOMER),
                      (OP.MATE_ELGA.PVARCPR, LC.ZVARCPG), ),
             para_out=((OP.MATE_ELGA.PMATERR, LC.EGMATE_R), ),
         ),
 
         OP.MATE_ELEM(te=142,
-            para_in=((SP.PMATERC, LC.CMATERC),
+            para_in=((SP.PMATERC, LC.CMATERC), (SP.PGEOMER, NGEOMER),
                      (OP.MATE_ELEM.PVARCPR, LC.ZVARCPG), ),
             para_out=((OP.MATE_ELEM.PMATERR, LC.EEMATE_R), ),
         ),
@@ -435,6 +435,18 @@ class MECA_DPQ8_HHO222(Element):
                      (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG), (OP.RIGI_MECA_TANG.PVARIPR, ZVARIPG),
                      (SP.PCODRET, LC.ECODRET),
                      ),
+        ),
+
+        OP.SIEF_ELNO(te=4,
+            para_in=((OP.SIEF_ELNO.PCONTRR, ECONTPG), (OP.SIEF_ELNO.PVARCPR, LC.ZVARCPG),
+                     ),
+            para_out=((SP.PSIEFNOC, ECONTNC), (OP.SIEF_ELNO.PSIEFNOR, ECONTNO),
+                     ),
+        ),
+
+        OP.SIEQ_ELGA(te=335,
+            para_in=((OP.SIEQ_ELGA.PCONTRR, ECONTPG), ),
+            para_out=((OP.SIEQ_ELGA.PCONTEQ, ECOEQPG), ),
         ),
 
         OP.SIEQ_ELNO(te=335,
@@ -474,6 +486,11 @@ class MECA_DPQ8_HHO222(Element):
                      (OP.TOU_INI_ELNO.PNEUT_F, LC.ENNEUT_F), (OP.TOU_INI_ELNO.PNEUT_R, LC.ENNEUT_R),
                      (OP.TOU_INI_ELNO.PSIEF_R, ECONTNO), (OP.TOU_INI_ELNO.PVARI_R, LC.ZVARINO),
                      ),
+        ),
+
+        OP.VARC_ELGA(te=530,
+            para_in=((OP.VARC_ELGA.PVARCPR, LC.ZVARCPG), ),
+            para_out=((SP.PVARC_R, LC.EVARC_R), ),
         ),
 
         OP.VARI_ELNO(te=4,

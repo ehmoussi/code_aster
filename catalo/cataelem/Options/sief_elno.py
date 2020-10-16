@@ -80,7 +80,6 @@ SIEF_ELNO = Option(
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.ABSO,'OUI'),)),
-      CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'HHO'),)),
     ),
     comment="""  SIEF_ELNO : CALCUL DE L ETAT DE CONTRAINTE AUX NOEUDS """,
 )

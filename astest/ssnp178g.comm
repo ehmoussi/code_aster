@@ -36,7 +36,7 @@ mesh = MODI_MAILLAGE(reuse=mesh, MAILLAGE=mesh,
 
 E = 70
 mater = DEFI_MATERIAU(
-    ECRO_LINE=_F(D_SIGM_EPSI=0.13474, SY=0.243), ELAS=_F(E=E, NU=0.4999)
+    ECRO_LINE=_F(D_SIGM_EPSI=0.13474, SY=0.243), ELAS=_F(E=E, NU=0.4999, RHO=1.0)
 )
 
 fieldmat = AFFE_MATERIAU(
@@ -73,6 +73,12 @@ model = AFFE_MODELE(
     MAILLAGE=mesh
 )
 
+carael =AFFE_CARA_ELEM(MODELE=model,
+                       MASSIF=(_F( GROUP_MA='load',
+                                   ANGL_REP=(0.0,0,0),
+                                ),
+                         ),)
+
 depl = AFFE_CHAR_CINE(
     MECA_IMPO=_F(DX=0.0, DY=0.0, DZ=0.0, GROUP_MA=('Encast', )), MODELE=model, INFO=1,
 )
@@ -107,7 +113,9 @@ resnonl = STAT_NON_LINE(
 resnonl = CALC_CHAMP(
     reuse=resnonl,
     CHAM_MATER=fieldmat,
-    CRITERES=('SIEQ_NOEU',),
+    CRITERES=('SIEQ_NOEU','SIEQ_ELGA'),
+    PROPRIETES=('MATE_ELEM', 'MATE_ELGA'),
+    CONTRAINTE=('SIEF_ELNO','SIEF_NOEU',),
     MODELE=model,
     RESULTAT=resnonl,
 )
