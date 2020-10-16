@@ -439,7 +439,6 @@ class ExecuteCommand(object):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-
         try:
             self.post_exec(keywords)
             if isinstance(self._result, DataStructure):
