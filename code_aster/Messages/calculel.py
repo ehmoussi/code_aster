@@ -555,8 +555,8 @@ Risques et conseils :
 """),
 
     89 : _("""
- Commande CALC_FERRAILLAGE : ATTENTION la masse volumique des acier n'est pas renseignée ou est négative !
-   Conséquence : le calcul de la densité volumique d'armature ne sera pas réalisé.
+ Commande CALC_FERRAILLAGE : ATTENTION la masse volumique des aciers n'est pas renseignée ou est négative !
+   Conséquence : Le calcul de la densité volumique d'armature ne sera pas réalisé.
    Renseignez le mot-clé RHO_ACIER pour que le calcul de la densité volumique d'armature soit réalisé.
 """),
 

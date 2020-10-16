@@ -441,9 +441,9 @@ class ExecuteCommand(object):
         """
 
         try:
+            self.post_exec(keywords)
             if isinstance(self._result, DataStructure):
                 self.add_dependencies(keywords)
-            self.post_exec(keywords)
             if self.hook:
                 self.hook(keywords)
         finally:

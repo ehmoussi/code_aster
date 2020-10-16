@@ -116,7 +116,8 @@ class FieldCreator(ExecuteCommand):
         self.remove_dependencies(keywords, "EVAL", ("CHAM_F", "CHAM_PARA"))
 
         if keywords["OPERATION"] == "EXTR":
-            self.remove_dependencies(keywords, "RESULTAT")
+            # depends on "result".LIGREL
+            # self.remove_dependencies(keywords, "RESULTAT")
             self.remove_dependencies(keywords, "FISSURE")
             self.remove_dependencies(keywords, "TABLE")
             self.remove_dependencies(keywords, "CARA_ELEM")
