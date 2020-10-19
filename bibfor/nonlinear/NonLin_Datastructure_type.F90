@@ -75,11 +75,11 @@ implicit none
 ! ----- Number of active columns
         integer                :: nb_cols         = 0
 ! ----- Maximum number of columns in table
-        integer                :: nb_cols_maxi    = 39
+        integer                :: nb_cols_maxi    = 40
 ! ----- List of columns in table
-        type(NL_DS_Column)     :: cols(39)
+        type(NL_DS_Column)     :: cols(40)
 ! ----- List of _active_ columns in table
-        aster_logical          :: l_cols_acti(39) = ASTER_FALSE
+        aster_logical          :: l_cols_acti(40) = ASTER_FALSE
 ! ----- Total width of table
         integer                :: width           = 0
 ! ----- Number of lines for title
@@ -93,7 +93,7 @@ implicit none
 ! ----- Table in output datastructure
         type(NL_DS_TableIO)    :: table_io
 ! ----- Index to values
-        integer                :: indx_vale(39)   = 0
+        integer                :: indx_vale(40)   = 0
     end type NL_DS_Table
 !
 ! - Type: print
@@ -209,6 +209,7 @@ implicit none
         aster_logical     :: l_store     = ASTER_FALSE
         aster_logical     :: l_obsv      = ASTER_FALSE
         character(len=24) :: algo_name   = ' '
+
         character(len=24) :: init_name   = ' '
         character(len=4)  :: init_type   = ' '
     end type NL_DS_Field

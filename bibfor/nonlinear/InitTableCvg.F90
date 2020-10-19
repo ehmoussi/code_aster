@@ -50,7 +50,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
     integer :: i_dof_monitor, nb_dof_monitor
     type(NL_DS_Table) :: table_cvg
-    aster_logical :: l_line_search, l_pilo, l_cont_disc, l_cont_cont, l_hrom
+    aster_logical :: l_line_search, l_pilo, l_cont_disc, l_cont_cont, l_hrom, l_rom
     aster_logical :: l_deborst, l_refe_rela, l_comp_rela
     aster_logical :: l_loop_cont, l_loop_frot, l_loop_geom, l_cont_all_verif
     aster_logical :: l_newt_frot, l_newt_cont, l_newt_geom
@@ -90,6 +90,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
     l_newt_geom      = isfonc(list_func_acti,'GEOM_NEWTON')
     l_comp_rela      = isfonc(list_func_acti,'RESI_COMP')
     l_cont_all_verif = isfonc(list_func_acti,'CONT_ALL_VERIF')
+    l_rom            = isfonc(list_func_acti,'ROM')
     l_hrom           = isfonc(list_func_acti,'HROM')
     l_pena_cont      = isfonc(list_func_acti,'EXIS_PENA')
 !
@@ -209,6 +210,12 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
     if (l_hrom) then
         call SetTableColumn(table_cvg, name_ = 'BOUC_HROM', flag_acti_ = ASTER_TRUE)
+    endif
+!
+! - ROM error indicator
+!
+    if (l_rom .and. .not. l_hrom) then
+        call SetTableColumn(table_cvg, name_ = 'EREF_ROM ', flag_acti_ = ASTER_TRUE)
     endif
 !
 ! - For DOF monitoring

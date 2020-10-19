@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine nmimrv(ds_print, list_func_acti, iter_newt, line_sear_coef, line_sear_iter,&
-                  eta)
+                  eta     , eref_rom )
 !
 use NonLin_Datastructure_type
 !
@@ -37,6 +37,7 @@ implicit none
     real(kind=8), intent(in) :: line_sear_coef
     integer, intent(in) :: line_sear_iter
     real(kind=8), intent(in) :: eta
+    real(kind=8), intent(in) :: eref_rom  
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,16 +53,19 @@ implicit none
 ! In  line_sear_coef   : coefficient for line search
 ! In  line_sear_iter   : number of iterations for line search
 ! In  eta              : coefficient for pilotage (continuation)
+! In  eref_rom         : pseudo error indicator for ROM
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_line_search, l_pilo, l_deborst
+    aster_logical :: l_line_search, l_pilo, l_deborst, l_rom, l_hrom
 !
 ! --------------------------------------------------------------------------------------------------
 !
     l_deborst     = isfonc(list_func_acti,'DEBORST')
     l_pilo        = isfonc(list_func_acti,'PILOTAGE')
     l_line_search = isfonc(list_func_acti,'RECH_LINE')
+    l_rom            = isfonc(list_func_acti,'ROM')
+    l_hrom           = isfonc(list_func_acti,'HROM')
 !
 ! - Set values for line search
 !
@@ -81,5 +85,12 @@ implicit none
     if (l_deborst) then
         call nmimck(ds_print, 'DEBORST  ', 'DE BORST...', .true._1)
     endif
+!
+! - Set value for ROM error indicator
+!
+    if (l_rom .and. .not. l_hrom) then
+        call nmimcr(ds_print, 'EREF_ROM ', eref_rom, .true._1)
+    endif
+
 !
 end subroutine

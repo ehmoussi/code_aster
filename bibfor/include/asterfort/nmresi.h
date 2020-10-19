@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ interface
         type(NL_DS_Print), intent(inout) :: ds_print
         type(NL_DS_Contact), intent(inout) :: ds_contact
         type(NL_DS_InOut), intent(in) :: ds_inout
-        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+        type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
         type(NL_DS_System), intent(in) :: ds_system
         character(len=19), intent(in) :: matass
         integer, intent(in) :: nume_inst

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ type(NL_DS_Print), intent(out) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_cols_defi = 30
+    integer, parameter :: nb_cols_defi = 31
     integer, parameter :: nb_cols_dof_defi = 9
     integer :: i_col, i_cols_dof
     character(len=1) :: indsui
@@ -58,7 +58,7 @@ type(NL_DS_Print), intent(out) :: ds_print
                   'CTCD_NBIT','CONT_NEWT','FROT_NEWT',&
                   'GEOM_NEWT','CTCC_CYCL','BOUC_VALE',&
                   'BOUC_NOEU','FROT_NOEU','GEOM_NOEU',&
-                  'PENE_MAXI','ITER_TIME'/)
+                  'PENE_MAXI','ITER_TIME','EREF_ROM '/)
 !
     character(len=16), parameter :: cols_title_1(nb_cols_defi) = (/&
               '   INCREMENT    ','     CALCUL     ','     CONTACT    ','     CONTACT    ',&
@@ -70,7 +70,7 @@ type(NL_DS_Print), intent(out) :: ds_print
               '     CONTACT    ','     CONTACT    ','     CONTACT    ',&
               '     CONTACT    ','     CONTACT    ','     CONTACT    ',&
               '     CONTACT    ','     CONTACT    ','     CONTACT    ',&
-              '     CONTACT    ','     NEWTON     '/)
+              '     CONTACT    ','     NEWTON     ','   ESTIMATEUR   '/)
     character(len=16), parameter :: cols_title_2(nb_cols_defi) = (/&
               '    INSTANT     ','      HYPER     ','    BCL. GEOM.  ','    BCL. FROT.  ',&
               '    BCL. CONT.  ','    ITERATION   ','     RELATIF    ',&
@@ -81,7 +81,7 @@ type(NL_DS_Print), intent(out) :: ds_print
               '    DISCRET     ','   NEWTON GENE  ','   NEWTON GENE  ',&
               '   NEWTON GENE  ','    PRESSURE    ','     CRITERE    ',&
               '     CRITERE    ','   NEWTON GENE  ','   NEWTON GENE  ',&
-              '  PENETRATION   ','  TEMPS CALCUL  '/)
+              '  PENETRATION   ','  TEMPS CALCUL  ','     ERREUR     '/)
     character(len=16), parameter :: cols_title_3(nb_cols_defi) = (/&
               '                ','      REDUIT    ','    ITERATION   ','    ITERATION   ',&
               '    ITERATION   ','                ',' RESI_GLOB_RELA ',&
@@ -92,7 +92,7 @@ type(NL_DS_Print), intent(out) :: ds_print
               '    NB. ITER    ','   VARI. CONT.  ','   CRIT. FROT.  ',&
               '   CRIT. GEOM.  ','    ERROR       ','    VALEUR      ',&
               '    MAX. LIEU   ',' LIEU MAX FROT. ',' LIEU MAX GEOM. ',&
-              '                ','    VALEUR      '/)
+              '                ','    VALEUR      ','      ROM       '/)
 !
     character(len=1), parameter :: cols_type(nb_cols_defi) = (/&
                   'R','K','I','I',&
@@ -104,7 +104,7 @@ type(NL_DS_Print), intent(out) :: ds_print
                   'I','I','R',&
                   'R','R','R',&
                   'K','K','K',&
-                  'R','R'/)
+                  'R','R','R'/)
 !
 ! --------------------------------------------------------------------------------------------------
 !

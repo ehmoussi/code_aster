@@ -25,7 +25,7 @@ subroutine nmresi(mesh       , list_func_acti, ds_material,&
                   matass     , nume_inst     , eta        ,&
                   hval_incr  , hval_algo     ,&
                   hval_veasse, hval_measse   ,&
-                  r_equi_vale, r_char_vale)
+                  r_equi_vale, r_char_vale   )
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -69,7 +69,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 type(NL_DS_Print), intent(inout) :: ds_print
 type(NL_DS_Contact), intent(inout) :: ds_contact
 type(NL_DS_InOut), intent(in) :: ds_inout
-type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: matass
 integer, intent(in) :: nume_inst
@@ -334,6 +334,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 ! - Evaluate residuals in applying HYPER-REDUCTION
 !
     if (l_rom) then
+        ds_algorom%eref_rom = r_equi_vale
         if (ds_algorom%phase .eq. 'HROM') then
             call romAlgoNLMecaResidual(v_cnequi, ds_algorom, l_load_cine, v_ccid,&
                                        r_equi_vale)

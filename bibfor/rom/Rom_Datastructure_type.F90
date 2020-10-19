@@ -539,6 +539,8 @@ implicit none
         character(len=24) :: field_iden = ' '
 ! ----- Penalisation parameter for EF correction
         real(kind=8)      :: vale_pena = 0.d0
+! ----- Pseuo error indicator for ROM
+        real(kind=8)      :: eref_rom = -1.d0
     end type ROM_DS_AlgoPara
 !
 end module

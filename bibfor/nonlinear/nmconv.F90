@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_Print), intent(inout) :: ds_print
 type(NL_DS_Conv), intent(inout) :: ds_conv
-type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -220,7 +220,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! ----- Set value of informations in convergence table (residuals are in nmimre)
 !
         call nmimrv(ds_print, fonact, iterat, line_sear_coef, line_sear_iter,&
-                    eta)
+                    eta, ds_algorom%eref_rom)
 !
 ! ----- CAPTURE ERREUR EVENTUELLE
 !

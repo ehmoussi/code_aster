@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ interface
         integer :: iterat
         real(kind=8) :: eta
         type(NL_DS_Contact), intent(inout) :: ds_contact
-        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+        type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: measse(*)
