@@ -156,7 +156,7 @@ class PostRocheCommon():
         # zone analysee
 
         dZone = []
-        for j in kwargs.get('ZONE_ANALYSEE'):
+        for j in kwargs.get('ZONE_ANALYSE'):
             dZone.append(j.cree_dict_valeurs(j.mc_liste))
         self.dZone = dZone
         

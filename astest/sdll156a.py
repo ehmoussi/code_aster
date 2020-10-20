@@ -229,7 +229,7 @@ post_roche_analytic.calcul_sigma_eq()
 
 # appel à POST_ROCHE
 
-chPostRocheTout = POST_ROCHE(ZONE_ANALYSEE=(_F(GROUP_MA='RUN',
+chPostRocheTout = POST_ROCHE(ZONE_ANALYSE=(_F(GROUP_MA='RUN',
                                                GROUP_NO_ORIG = 'A',
                                               ),
                                             _F(GROUP_MA='BRANCH',

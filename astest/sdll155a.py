@@ -343,7 +343,7 @@ post_roche_analytic.calcul_sigma_eq()
 
 # appel à POST_ROCHE
 
-chPostRocheTout = POST_ROCHE(ZONE_ANALYSEE=(_F(
+chPostRocheTout = POST_ROCHE(ZONE_ANALYSE=(_F(
                                      TOUT='OUI',
                                      GROUP_NO_ORIG = 'A',
                                     ),

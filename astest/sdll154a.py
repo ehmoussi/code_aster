@@ -237,7 +237,7 @@ post_roche_analytic.calcul_sigma_eq()
 
 # appel à POST_ROCHE
 
-chPostRocheTout = POST_ROCHE(ZONE_ANALYSEE=(_F(
+chPostRocheTout = POST_ROCHE(ZONE_ANALYSE=(_F(
                                      TOUT='OUI',
                                      GROUP_NO_ORIG = 'A',
                                     ),
@@ -273,7 +273,7 @@ IMPR_RESU(UNITE=6, FORMAT='RESULTAT',
                             'X7','X8','X9','X10','X11','X12',
                             'X13','X14','X15','X16','X17','X18','X19','X20')))
 
-chPostRocheGrMa = POST_ROCHE(ZONE_ANALYSEE=(_F(
+chPostRocheGrMa = POST_ROCHE(ZONE_ANALYSE=(_F(
                                      GROUP_MA='TUYAU',
                                      GROUP_NO_ORIG = 'A',
                                     ),

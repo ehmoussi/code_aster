@@ -287,7 +287,7 @@ post_roche_analytic.calcul_sigma_eq()
 
 # appel à POST_ROCHE
 
-resuPostRoche = POST_ROCHE(ZONE_ANALYSEE=(_F(
+resuPostRoche = POST_ROCHE(ZONE_ANALYSE=(_F(
                                      GROUP_MA='TUYAU',
                                      GROUP_NO_ORIG = 'A',
                                     ),
