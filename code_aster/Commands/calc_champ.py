@@ -45,7 +45,7 @@ class ComputeAdditionalField(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        if keywords.get("reuse") is None:
+        if "reuse" not in keywords:
             modele = keywords.get("MODELE")
             if modele is None:
                 try:
@@ -91,6 +91,26 @@ class ComputeAdditionalField(ExecuteCommand):
         """
         super().add_dependencies(keywords)
         self.remove_dependencies(keywords, "RESULTAT")
+        if "reuse" not in keywords:
+            # only if there is only one model, fieldmat...
+            try:
+                model = keywords["RESULTAT"].getModel()
+                if model:
+                    self._result.addDependency(model)
+            except RuntimeError:
+                pass
+            try:
+                fieldmat = keywords["RESULTAT"].getMaterialField()
+                if fieldmat:
+                    self._result.addDependency(fieldmat)
+            except RuntimeError:
+                pass
+            try:
+                elem = keywords["RESULTAT"].getElementaryCharacteristics()
+                if elem:
+                    self._result.addDependency(elem)
+            except RuntimeError:
+                pass
 
 
 CALC_CHAMP = ComputeAdditionalField.run
