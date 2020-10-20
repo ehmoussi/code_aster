@@ -19,10 +19,19 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
+"""
+This module provides an interface to PETSc objects for linear algebric
+operations.
+
+NB: The Cython language is required to build this interface.
+"""
+
+# silently pass to build documentation without the interface build
 try:
     from Petsc4PyTest import *
-except ModuleNotFoundError as e:
-    print("Module Petsc4PyTest unavailable : {}".format(e))
+except ImportError as exc:
+    print("Module Petsc4PyTest unavailable: {}".format(exc))
+
 from libaster import _petscInitializeWithOptions, petscFinalize
 
 
@@ -30,6 +39,8 @@ def petscInitialize(options=" "):
     """Starts the PETSc interface with options.
 
     Arguments:
-        options[str]: PETSc options"""
-
+        options[str]: PETSc options
+    """
     _petscInitializeWithOptions(options)
+
+del _petscInitializeWithOptions
