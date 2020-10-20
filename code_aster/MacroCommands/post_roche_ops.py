@@ -207,14 +207,17 @@ class PostRocheCommon():
             if self.model is None:
                 UTMESS('F','POSTROCHE_4')
         self.mailla = self.model.getMesh()
+        self.modelName = self.model.getName()
         
         if self.args.get('CARA_ELEM'):
             self.caraelem = self.args.get('CARA_ELEM')
+            self.caraelemName = self.caraelem.getName()
         else:
             self.caraelem = None
         
         if self.args.get('CHAM_MATER'):
             self.chammater = self.args.get('CHAM_MATER')
+            self.chammaterName = self.chammater.getName()
         else:
             self.chammater = None
     
@@ -446,26 +449,31 @@ class PostRocheCommon():
             
             model2  = resin.getModel()
             
-            if model2 != self.model and model2 != None:
-                UTMESS('F','POSTROCHE_2', vali=iocc, 
-                       valk=['MODELE', self.mcf, self.model.getName(), model2.getName()])
+            if model2 != None:
+                if model2.getName() != self.modelName 
+                    UTMESS('F','POSTROCHE_2', vali=iocc, 
+                            valk=['MODELE', self.mcf, self.modelName, model2.getName()])
             
             if lresu:
                 carael2 = resin.getElementaryCharacteristics()
                 if self.caraelem:
-                    if carael2 != self.caraelem and carael2 != None:
-                        UTMESS('F','POSTROCHE_2', vali=iocc, 
-                               valk=['CARA_ELEM',self.mcf, self.caraelem.getName(), carael2.getName()])
+                    if carael2 != None:
+                        if carael2.getName() != self.caraelemName:
+                            UTMESS('F','POSTROCHE_2', vali=iocc, 
+                                    valk=['CARA_ELEM',self.mcf, self.caraelemName, carael2.getName()])
                 else:
                     self.caraelem=carael2
+                    self.caraelemName = self.caraelem.getName()
                 
                 chmat2 = resin.getMaterialField()
                 if self.chammater:
-                    if chmat2 != self.chammater and chmat2 != None:
-                        UTMESS('F','POSTROCHE_2', vali=iocc, 
-                               valk=['CHAM_MATER',self.mcf, self.chammater.getName(), chmat2.getName()])
+                    if chmat2 != None:
+                        if chmat2.getName() != self.chammaterName:
+                            UTMESS('F','POSTROCHE_2', vali=iocc, 
+                                    valk=['CHAM_MATER',self.mcf, self.chammaterName, chmat2.getName()])
                 else:
                     self.chammater=chmat2
+                    self.chammaterName = self.chammater.getName()
                 
 
             # classification par type de chargement
