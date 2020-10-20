@@ -17,8 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(
-              NIV_PUB_WEB='INTERNET',),);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
+
+from code_aster import LinearAlgebra
+
+# force PETSc to start before solves for testing purpose only - no need in regular study
+LinearAlgebra.petscInitialize()
 
 MA=LIRE_MAILLAGE(FORMAT='MED',);
 
@@ -66,6 +70,8 @@ VECAS=MECA_STATIQUE(MODELE=MO,
                                ALGORITHME='CR',
                                RESI_RELA=1.E-08),);
 
+LinearAlgebra.petscFinalize()
+
 VECAS2=MECA_STATIQUE(MODELE=MO,
                     CHAM_MATER=CHMAT,
                     EXCIT=(_F(CHARGE=CHA1,),
@@ -73,7 +79,8 @@ VECAS2=MECA_STATIQUE(MODELE=MO,
                     SOLVEUR=_F(METHODE='PETSC',
                                PRE_COND='LDLT_INC',
                                ALGORITHME='CG',
-                               RESI_RELA=1.E-08),);
+                               RESI_RELA=1.E-08,
+                               OPTION_PETSC='-info -ksp_monitor_singular_value',),);
 
 TEST_RESU(RESU=(_F(RESULTAT=VECAS,
                    NUME_ORDRE=1,

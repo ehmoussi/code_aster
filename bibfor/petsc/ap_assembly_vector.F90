@@ -22,6 +22,7 @@ subroutine ap_assembly_vector(chno)
 #include "asterf_petsc.h"
 !
 ! person_in_charge: nicolas.sellenet at edf.fr
+! aslint: disable=C1308
 use aster_petsc_module
 use petsc_data_module
 use saddle_point_module, only : convert_rhs_to_saddle_point
@@ -107,7 +108,7 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
     call PetscInitialized(done, ierr)
     ASSERT(ierr.eq.0)
     if( .not.done ) then
-        call ap_on_off('ON')
+        call ap_on_off('ON', " ")
     endif
     call VecCreate(mpicomm, assembly, ierr)
     ASSERT(ierr.eq.0)

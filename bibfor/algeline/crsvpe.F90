@@ -28,6 +28,7 @@ subroutine crsvpe(motfac, solveu,  kellag )
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/lxlgut.h"
 !
     character(len=3) :: kellag
     character(len=16) :: motfac
@@ -40,12 +41,15 @@ subroutine crsvpe(motfac, solveu,  kellag )
 ! ----------------------------------------------------------
 !
     integer :: ibid, niremp, nmaxit, reacpr, pcpiv
+    integer :: lch, i, lslvo
     real(kind=8) :: fillin, epsmax, resipc, blreps
     character(len=8) :: kacmum
     character(len=24) :: kalgo, kprec, renum
     character(len=19) :: solvbd
     character(len=24) :: usersm
+    character(len=2500) :: myopt
     character(len=24), pointer :: slvk(:) => null()
+    character(len=80), pointer :: slvo(:) => null()
     integer, pointer :: slvi(:) => null()
     real(kind=8), pointer :: slvr(:) => null()
 !
@@ -66,7 +70,9 @@ subroutine crsvpe(motfac, solveu,  kellag )
     ASSERT(ibid.eq.1)
     call getvr8(motfac, 'RESI_RELA_PC', iocc=1, scal=resipc, nbret=ibid)
     ASSERT(ibid.eq.1)
-!
+    call getvtx('SOLVEUR', 'OPTION_PETSC', iocc=1, nbval=1, scal=myopt, nbret=ibid)
+    ASSERT(ibid.eq.1)
+    !
 !
 !     INITIALISATION DES PARAMETRES OPTIONNELS
     niremp = 0
@@ -86,32 +92,32 @@ subroutine crsvpe(motfac, solveu,  kellag )
         ASSERT(ibid.eq.1)
 
 !   PARAMETRES OPTIONNELS LIES AU PRECONDITIONNEUR LDLT_SP/LDLT_DP
-    case ('LDLT_SP','LDLT_DP') 
+    case ('LDLT_SP','LDLT_DP')
         call getvis(motfac, 'REAC_PRECOND', iocc=1, scal=reacpr, nbret=ibid)
         ASSERT(ibid.eq.1)
         call getvis(motfac, 'PCENT_PIVOT', iocc=1, scal=pcpiv, nbret=ibid)
         ASSERT(ibid.eq.1)
         call getvtx(motfac, 'GESTION_MEMOIRE', iocc=1, scal=usersm, nbret=ibid)
         ASSERT(ibid.eq.1)
-        
+
 !       NOM DE SD SOLVEUR BIDON QUI SERA PASSEE A MUMPS
 !       POUR LE PRECONDITIONNEMENT
         call gcncon('.', solvbd)
-! 
+!
         if (nmaxit==0) nmaxit=100
         if (( kprec.eq.'LDLT_SP' ).or.( kprec .eq. 'LDLT_DP')) then
             call getvr8(motfac, 'LOW_RANK_SEUIL', iocc=1, scal=blreps, nbret=ibid)
             ASSERT(ibid.eq.1)
-            if ( abs(blreps) < r8prem() ) then 
+            if ( abs(blreps) < r8prem() ) then
                kacmum = 'FR+'
-            else 
+            else
                kacmum='LR+'
-            endif 
+            endif
         endif
 !
 
 !   PARAMETRES OPTIONNELS LIES AU MULTIGRILLE ALGEBRIQUE ML
-    case ('ML') 
+    case ('ML')
 
 !   PARAMETRES OPTIONNELS LIES AU MULTIGRILLE ALGEBRIQUE BOOMERAMG
     case ('BOOMER')
@@ -122,7 +128,7 @@ subroutine crsvpe(motfac, solveu,  kellag )
     case ('BLOC_LAGR')
 
 !   PAS DE PARAMETRES POUR LES AUTRES PRECONDITIONNEURS
-    case( 'JACOBI', 'SOR', 'SANS','FIELDSPLIT') 
+    case( 'JACOBI', 'SOR', 'SANS','FIELDSPLIT')
 !     RIEN DE PARTICULIER...
 !
     case default
@@ -133,6 +139,15 @@ subroutine crsvpe(motfac, solveu,  kellag )
     call jeveuo(solveu//'.SLVK', 'E', vk24=slvk)
     call jeveuo(solveu//'.SLVR', 'E', vr=slvr)
     call jeveuo(solveu//'.SLVI', 'E', vi=slvi)
+    call jeveuo(solveu//'.SLVO', 'E', vk80=slvo)
+!
+! ON REMPLIT LE VECTEUR SLVO AVEC LES OPTIONS DE PETSC
+    lch = lxlgut(myopt)
+    ASSERT(lch.lt.2500)
+    lslvo = int(lch / 80) + 1
+    do i=1, lslvo
+        slvo(i) = myopt(80*(i-1)+1:80*i)
+    enddo
 !
     slvk(1) = 'PETSC'
     slvk(2) = kprec
@@ -168,6 +183,7 @@ subroutine crsvpe(motfac, solveu,  kellag )
     slvi(6) = reacpr
     slvi(7) = pcpiv
     slvi(8) = 0
+    slvi(9) = lslvo
 !
 !
 ! FIN ------------------------------------------------------

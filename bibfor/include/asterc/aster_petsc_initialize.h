@@ -19,7 +19,8 @@
 !
 !
 interface
-    subroutine aster_petsc_initialize(ierr)
+    subroutine aster_petsc_initialize(myopt, ierr)
+        character(len=2500) :: myopt
         integer, intent(out) :: ierr
     end subroutine aster_petsc_initialize
 end interface

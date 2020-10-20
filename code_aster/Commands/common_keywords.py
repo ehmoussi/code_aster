@@ -56,7 +56,7 @@ def create_solver(solver_keyword):
                        "FILTRAGE_MATRICE", "LOW_RANK_TAILLE"
                        "MIXER_PRECISION", "NIVE_REMPLISSAGE",
                        "NMAX_ITER", "REAC_PRECOND", "RESI_RELA_PC",
-                       "POSTTRAITEMENTS", "ACCELERATION"):
+                       "POSTTRAITEMENTS", "ACCELERATION", "OPTION_PETSC"):
             unsupported(solver_keyword, "", key, warning=True)
 
     method = solver_keyword["METHODE"]
@@ -81,6 +81,9 @@ def create_solver(solver_keyword):
 
     if "RESI_RELA" in solver_keyword:
         solver.setSolverResidual(solver_keyword["RESI_RELA"])
+
+    if "OPTION_PETSC" in solver_keyword:
+        solver.setPetscOption(solver_keyword["OPTION_PETSC"])
 
     if "STOP_SINGULIER" in solver_keyword:
         value = True

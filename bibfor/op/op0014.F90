@@ -44,6 +44,7 @@ subroutine op0014()
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/lxlgut.h"
 #include "asterfort/mtcopy.h"
 #include "asterfort/mtdefs.h"
 #include "asterfort/mtdsc2.h"
@@ -64,12 +65,14 @@ subroutine op0014()
     character(len=24) :: usersm
     character(len=16) :: concep, nomcmd, metres , renum
     character(len=19) :: mass, mfac, solveu, solvbd
+    integer :: lch, i, lslvo
     integer :: nprec, iatfac, ibdeb, ibfin, ibid, ier1, ifm, ildeb, ilfin
     integer :: iret, isingu, istop, jadia, pcpiv, niremp
     integer :: ldtblo, lfnblo, ndeci, neq, niv, npvneg
-    integer :: jslvk, jslvr, jslvi, reacpr
+    integer :: jslvk, jslvr, jslvi, reacpr, jslvo
     real(kind=8) :: fillin, epsmat, eps, blreps
     character(len=24), pointer :: refa(:) => null()
+    character(len=2500) :: myopt
     aster_logical :: lreuse
 !   ------------------------------------------------------------------
     call jemarq()
@@ -143,6 +146,7 @@ subroutine op0014()
     call jeveuo(solveu//'.SLVK', 'E', jslvk)
     call jeveuo(solveu//'.SLVR', 'E', jslvr)
     call jeveuo(solveu//'.SLVI', 'E', jslvi)
+    call jeveuo(solveu//'.SLVO', 'E', jslvo)
 
 
     call uttcpu('CPU.RESO.1', 'DEBUT', ' ')
@@ -236,6 +240,16 @@ subroutine op0014()
         mfac=mass
         zk24(jslvk-1+2) = precon
 
+        call getvtx(' ', 'OPTION_PETSC', scal=myopt, nbret=ibid)
+        ASSERT(ibid.eq.1)
+        lch = lxlgut(myopt)
+        ASSERT(lch.lt.2500)
+        lslvo = int(lch / 80) + 1
+        do i=1, lslvo
+            zk80(jslvo-1+i) = myopt(80*(i-1):80*i)
+        enddo
+    !
+
         if (precon .eq. 'LDLT_INC') then
             call getvis(' ', 'NIVE_REMPLISSAGE', scal=niremp, nbret=ibid)
             call getvr8(' ', 'REMPLISSAGE', scal=fillin, nbret=ibid)
@@ -264,6 +278,7 @@ subroutine op0014()
             zi(jslvi-1+5) = 0
             zi(jslvi-1+6) = reacpr
             zi(jslvi-1+7) = pcpiv
+            zi(jslvi-1+9) = lslvo
             zk24(jslvk-1+5) = kacmum
             zk24(jslvk-1+9)=usersm
             zr(jslvr-1+4) = blreps

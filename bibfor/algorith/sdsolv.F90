@@ -41,8 +41,8 @@ function sdsolv(vect)
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: zslvk, zslvr, zslvi
-    parameter (zslvk=14,zslvr=5 ,zslvi=8)
+    integer :: zslvk, zslvr, zslvi, zslvo
+    parameter (zslvk=14,zslvr=5,zslvi=9,zslvo=31)
 !
 ! ----------------------------------------------------------------------
 !
@@ -53,6 +53,8 @@ function sdsolv(vect)
         sdsolv = zslvr
     else if (vect.eq.'ZSLVI') then
         sdsolv = zslvi
+    else if (vect.eq.'ZSLVO') then
+        sdsolv = zslvo
     else
         ASSERT(.false.)
     endif

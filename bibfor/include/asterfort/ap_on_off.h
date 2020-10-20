@@ -18,7 +18,8 @@
 
 !
 interface
-    subroutine ap_on_off(action)
+    subroutine ap_on_off(action, option)
         character(len=*), intent(in) :: action
+        character(len=*), intent(in) :: option
     end subroutine ap_on_off
 end interface

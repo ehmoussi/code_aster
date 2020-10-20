@@ -50,8 +50,8 @@ subroutine cresol(solveu, basz, xfem)
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: zslvk, zslvr, zslvi
-    integer :: istop, nsolve, ibid, nprec, islvk, islvr, islvi, n1
+    integer :: zslvk, zslvr, zslvi, zslvo
+    integer :: istop, nsolve, ibid, nprec, islvk, islvr, islvi, n1, islvo
     real(kind=8) :: epsmat
     character(len=1) :: base
     character(len=3) :: mixpre, kellag
@@ -146,9 +146,11 @@ subroutine cresol(solveu, basz, xfem)
     zslvk = sdsolv('ZSLVK')
     zslvr = sdsolv('ZSLVR')
     zslvi = sdsolv('ZSLVI')
+    zslvo = sdsolv('ZSLVO')
     call wkvect(solveu//'.SLVK', base//' V K24', zslvk, islvk)
     call wkvect(solveu//'.SLVR', base//' V R', zslvr, islvr)
     call wkvect(solveu//'.SLVI', base//' V I', zslvi, islvi)
+    call wkvect(solveu//'.SLVO', base//' V K80', zslvo, islvo)
 !
 ! ------------------------------------------------------
 ! --- LECTURE MOT-CLE ET REMPLISSAGE DE LA SD_SOLVEUR PROPRE A CHAQUE

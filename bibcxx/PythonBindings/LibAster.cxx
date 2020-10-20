@@ -121,6 +121,7 @@
 #include "PythonBindings/PrestressingCableInterface.h"
 #include "PythonBindings/ResultInterface.h"
 #include "PythonBindings/ResultNamingInterface.h"
+#include "PythonBindings/PetscInitializeFinalize.h"
 #include "PythonBindings/SimpleFieldOnCellsInterface.h"
 #include "PythonBindings/SimpleFieldOnNodesInterface.h"
 #include "PythonBindings/SkeletonInterface.h"
@@ -309,4 +310,5 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportExternalVariablesResultToPython();
     exportMaterialFieldBuilderToPython();
     exportCreateEnthalpyToPython();
+    exportPetscInitializeFinalizeToPython();
 };

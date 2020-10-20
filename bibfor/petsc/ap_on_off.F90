@@ -16,13 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ap_on_off(action)
+subroutine ap_on_off(action, option)
 !
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
 !
 ! person_in_charge: natacha.bereux at edf.fr
+! aslint: disable=C1308
 !
 use aster_petsc_module
 use petsc_data_module
@@ -33,22 +34,26 @@ use elg_module
 #include "jeveux.h"
 #include "asterc/aster_petsc_initialize.h"
 #include "asterc/aster_petsc_finalize.h"
+#include "asterc/getfac.h"
 #include "asterfort/assert.h"
+#include "asterfort/getvtx.h"
 #include "asterfort/utmess.h"
 !
     character(len=*), intent(in) :: action
+    character(len=*), intent(in) :: option
 !-----------------------------------------------------------------------
-! BUT : ROUTINE POUR INITIALISER OU STOPPER PETSC
+! BUT : ROUTINE POUR INITIALISER OU STOPPER PETSC AVEC OPTIONS
 !
 ! IN  : ACTION
 !     /'ON'  : DEMARRER
 !     /'OFF' : STOPPER
+!     : OPTIONS
 !-----------------------------------------------------------------------
 !
 #ifdef _HAVE_PETSC
 !
 !     VARIABLES LOCALES
-    integer :: iprem, k, ier2
+    integer :: iprem, k, ier2, jerr
     integer :: np
     real(kind=8) :: r8
 !
@@ -59,18 +64,17 @@ use elg_module
     PetscScalar :: sbid
     PetscOffset :: offbid
     PetscReal :: rbid
+    PetscBool :: done
 
-!----------------------------------------------------------------
-!   INITIALISATION DE PETSC A FAIRE AU PREMIER APPEL
-    save iprem
-    data iprem /0/
 !----------------------------------------------------------------
 !
 !   0. FERMETURE DE PETSC DANS FIN
 !   ------------------------------
     if (action .eq. 'OFF') then
 !       petsc a-t-il ete initialise ?
-        if (iprem .eq. 1) then
+        call PetscInitialized(done, ierr)
+        ASSERT(ierr.eq.0)
+        if (done) then
             call aster_petsc_finalize()
 !           on ne verifie pas le code retour car on peut
 !           se retrouver dans fin suite a une erreur dans l'initialisation
@@ -79,7 +83,7 @@ use elg_module
     endif
 !
 !
-    if (iprem .eq. 0 .and. action .eq. 'ON') then
+    if (action .eq. 'ON') then
 !     --------------------
 !        -- quelques verifications sur la coherence Aster / Petsc :
         ASSERT(kind(rbid).eq.kind(r8))
@@ -87,7 +91,7 @@ use elg_module
         ASSERT(kind(offbid).eq.kind(np))
 !
         ier2 = 0
-        call aster_petsc_initialize(ier2)
+        call aster_petsc_initialize(option, ier2)
         ierr = to_petsc_int(ier2)
         if (ierr .ne. 0) call utmess('F', 'PETSC_1')
         ASSERT(ierr .eq. 0)

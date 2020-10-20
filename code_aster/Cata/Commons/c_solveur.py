@@ -166,6 +166,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
     _BlocPE_BOOMER = {}
     _BlocPE_GAMG = {}
     _BlocPE_LAGAUG = {}
+    _BlocPE_FIELD = {}
     _BlocXX_Autres = {}
 
 # --------------------------------------------------------------------
@@ -327,6 +328,10 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
     _BlocPE['ALGORITHME'] = SIMP(statut='f', typ='TXM', defaut="FGMRES", into=(
         "CG", "CR", "GMRES", "GCR", "FGMRES", "GMRES_LMP"), )
 
+ # --------------------------------------------------------------------
+
+    _BlocPE['OPTION_PETSC'] = SIMP(statut='f', typ='TXM', max=1, defaut="", )
+
 # --------------------------------------------------------------------
 
     _BlocGC['PRE_COND'] = SIMP(
@@ -405,19 +410,18 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 
 # --------------------------------------------------------------------
 
-    _BlocXX_Autres['NOM_CMP'] = SIMP(
-        statut='f', typ='TXM', max='**',)
+    _BlocPE_FIELD['RENUM'] = SIMP(
+        statut='f', typ='TXM', defaut="SANS", into=("SANS",), )
 
 # --------------------------------------------------------------------
 
-    _BlocXX_Autres['OPTION_PETSC'] = SIMP(
-        statut='f', typ='TXM', max=1,)
-
-# --------------------------------------------------------------------
-
-    _BlocXX_Autres['PARTITION_CMP'] = SIMP(
+    _BlocPE_FIELD['PARTITION_CMP'] = SIMP(
         statut='f', typ='I',  max='**',)
 
+# --------------------------------------------------------------------
+
+    _BlocPE_FIELD['NOM_CMP'] = SIMP(
+        statut='f', typ='TXM', max='**',)
 
 # --------------------------------------------------------------------
 #
@@ -499,8 +503,12 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
                                                               "Paramètres du préconditionneur Lagrangien Augmenté BLOC_LAGR"),
                                                           **_BlocPE_LAGAUG
                                       ),
+                                      b_fieldsplit=BLOC(
+                                          condition="""is_in("PRE_COND", ('FIELDSPLIT'))""",
+                                                          **_BlocPE_FIELD
+                                      ),
                                       b_autres=BLOC(
-                                          condition="""is_in("PRE_COND", ('JACOBI','SOR','FIELDSPLIT', 'SANS'))""",
+                                          condition="""is_in("PRE_COND", ('JACOBI','SOR','SANS'))""",
                                                           **_BlocXX_Autres
                                       ),
                                       **_BlocPE

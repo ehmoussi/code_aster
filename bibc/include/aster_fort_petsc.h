@@ -39,6 +39,9 @@ extern "C" {
 #define CALLO_MATASS2PETSC( a, b, c ) CALLOPP( MATASS2PETSC, matass2petsc, a, b, c )
 #define CALL_MATASS2PETSC( a, b, c ) CALLSPP( MATASS2PETSC, matass2petsc, a, b, c )
 void DEFSPP( MATASS2PETSC, matass2petsc, const char *, STRING_SIZE, Mat *, PetscErrorCode * );
+
+#define CALLO_AP_ON_OFF( a, b ) CALLOO( AP_ON_OFF, ap_on_off, a , b)
+void DEFSS( AP_ON_OFF, ap_on_off, const char *, STRING_SIZE , const char *, STRING_SIZE );
 #endif
 
 #ifdef __cplusplus

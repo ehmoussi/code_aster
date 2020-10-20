@@ -72,7 +72,7 @@ BaseLinearSolverClass::BaseLinearSolverClass( const std::string name,
         _filling( "REMPLISSAGE", false ), _renum( "RENUM", false ),
         _residual( "RESI_RELA", false ), _precondResidual( "RESI_RELA_PC", false ),
         _stopSingular( "STOP_SINGULIER", false ), _resolutionType( "TYPE_RESOL", false ),
-        _acceleration( "ACCELERATION", false ),
+        _acceleration( "ACCELERATION", false ), _optionPetsc("OPTION_PETSC", false ),
         _matrixPrec( new AssemblyMatrixDisplacementRealClass(
             ResultNaming::getNewResultName() + ".PREC" ) ),
         _commandName( "SOLVEUR" ),
@@ -93,6 +93,7 @@ BaseLinearSolverClass::BaseLinearSolverClass( const std::string name,
             _reac = (ASTERINTEGER)30;
             _pivotPourcent = (ASTERINTEGER)20;
             _memory = "AUTO";
+            _optionPetsc = "";
         }
         if ( currentBaseLinearSolver == Mumps ) {
             _lagr = "LAGR2";
@@ -148,6 +149,7 @@ BaseLinearSolverClass::BaseLinearSolverClass( const std::string name,
         _listOfParameters.push_back( &_stopSingular );
         _listOfParameters.push_back( &_resolutionType );
         _listOfParameters.push_back( &_acceleration );
+        _listOfParameters.push_back( &_optionPetsc );
 };
 
 void BaseLinearSolverClass::setPreconditioning( Preconditioning precond ) {
@@ -225,11 +227,11 @@ bool BaseLinearSolverClass::matrixFactorization(
 FieldOnNodesRealPtr BaseLinearSolverClass::solveRealLinearSystem(
     const AssemblyMatrixDisplacementRealPtr &currentMatrix,
     const FieldOnNodesRealPtr &currentRHS, FieldOnNodesRealPtr result ) const {
-        
+
     if (!currentMatrix->isFactorized()) {
         throw std::runtime_error( "Matrix must be factored first" );
     }
-    
+
     if ( result->getName() == "" )
         result = FieldOnNodesRealPtr( new FieldOnNodesRealClass( Permanent ) );
 
@@ -251,11 +253,11 @@ FieldOnNodesRealPtr BaseLinearSolverClass::solveRealLinearSystemWithKinematicsLo
     const AssemblyMatrixDisplacementRealPtr &currentMatrix,
     const FieldOnNodesRealPtr &kinematicsField, const FieldOnNodesRealPtr &currentRHS,
     FieldOnNodesRealPtr result ) const {
-    
+
     if (!currentMatrix->isFactorized()) {
         throw std::runtime_error( "Matrix must be factored first" );
     }
-    
+
     if ( result->getName() == "" )
         result = FieldOnNodesRealPtr( new FieldOnNodesRealClass( Permanent ) );
 

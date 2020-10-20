@@ -19,4 +19,17 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-from Petsc4PyTest import *
+try:
+    from Petsc4PyTest import *
+except ModuleNotFoundError as e:
+    print("Module Petsc4PyTest unavailable : {}".format(e))
+from libaster import _petscInitializeWithOptions, petscFinalize
+
+
+def petscInitialize(options=" "):
+    """Starts the PETSc interface with options.
+
+    Arguments:
+        options[str]: PETSc options"""
+
+    _petscInitializeWithOptions(options)

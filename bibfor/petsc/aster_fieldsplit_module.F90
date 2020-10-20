@@ -94,7 +94,6 @@ contains
         integer :: idx, nb_fields, start, end, ntot, i, length1, length2
         character(len=8), dimension(:), allocatable :: cmp_global
         character(len=256) :: field_name1, field_name2
-        character(len=2500) :: myopt
         integer :: ifm, niv
 !
 !  Get debug level
@@ -131,9 +130,6 @@ contains
         allocate(fields_size(nb_fields), stat=ierr)
         call getvis('SOLVEUR', 'PARTITION_CMP', iocc=1, nbval=nb_fields, &
                     vect=fields_size, nbret=jerr)
-! PETSc solver options
-        call getvtx('SOLVEUR', 'OPTION_PETSC', iocc=1, nbval=1, scal=myopt,&
-                    nbret=jerr)
 !
 !  an IS is built for each "physical field" ,
 !  a "physical field" is defined by a group of components
@@ -189,14 +185,6 @@ contains
 !
 !  Build PC and KSP
 !  ----------------
-!
-! We clear the options database and only maitain the options from the command file
-        call PetscOptionsClear(PETSC_NULL_OPTIONS, ierr)
-        ASSERT(ierr == 0)
-        call PetscLogDefaultBegin(ierr)
-        ASSERT(ierr.eq.0)
-        call PetscOptionsInsertString(PETSC_NULL_OPTIONS, myopt, ierr)
-        ASSERT(ierr == 0)
 !
 ! Allocation of the PC, KSP and sub-IS, which define how fields are embeded in each other
         allocate(pc_list(nb_fields-1), stat=ierr)
@@ -318,7 +306,7 @@ contains
         deallocate(subis_list)
         call ISDestroy(current_is, ierr)
         ASSERT( ierr == 0 )
-        call ISDestroy(is_with_bs_3, ierr)
+        if (bs==3) call ISDestroy(is_with_bs_3, ierr)
         ASSERT( ierr == 0 )
 !
     end subroutine mfield_setup

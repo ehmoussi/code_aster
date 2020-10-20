@@ -460,6 +460,7 @@ implicit none
 !-----------------------------------------------------------------------
     else if (precon == 'SANS') then
         call PCSetType(pc, PCNONE, ierr)
+        call PCSetFromOptions(pc, ierr)
         ASSERT(ierr == 0)
 !-----------------------------------------------------------------------
     else

@@ -134,8 +134,8 @@ use petsc_data_module
 !     - pour suivre les itérations de Krylov
 !     --------------------------------------
     if (niv .ge. 2) then
-         call PetscViewerAndFormatCreate(PETSC_VIEWER_STDOUT_WORLD, PETSC_VIEWER_DEFAULT, vf,ierr)
-         call KSPMonitorSet(ksp,KSPMonitorTrueResidualNorm, vf, PetscViewerAndFormatDestroy,&
+        call PetscViewerAndFormatCreate(PETSC_VIEWER_STDOUT_WORLD, PETSC_VIEWER_DEFAULT, vf,ierr)
+        call KSPMonitorSet(ksp,KSPMonitorTrueResidualNorm, vf, PetscViewerAndFormatDestroy,&
                             ierr)
         ASSERT(ierr.eq.0)
     endif

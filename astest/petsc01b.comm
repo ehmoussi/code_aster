@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(
-              NIV_PUB_WEB='INTERNET',),);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),)
+
+from code_aster import LinearAlgebra
+
+# force PETSc to start before solves for testing purpose only - no need in regular study
+LinearAlgebra.petscInitialize('-info')
 
 MA=LIRE_MAILLAGE(FORMAT='MED',);
 
@@ -50,6 +54,20 @@ CHA2=AFFE_CHAR_CINE(MODELE=MO,
 LIST=DEFI_LIST_REEL(DEBUT=0.0,
                     INTERVALLE=_F(JUSQU_A=1.0,
                                   NOMBRE=1,),);
+
+EVOL=STAT_NON_LINE(MODELE=MO,
+                   CHAM_MATER=CHMAT,
+                   EXCIT=(_F(CHARGE=CHA1,),
+                          _F(CHARGE=CHA2,),),
+                   COMPORTEMENT=_F(RELATION='ELAS',
+                                TOUT='OUI',),
+                   INCREMENT=_F(LIST_INST=LIST,),
+                   SOLVEUR=_F(METHODE='PETSC',
+                              PRE_COND='LDLT_INC',
+                              ALGORITHME='CR',
+                              RESI_RELA=1.E-8,),);
+
+LinearAlgebra.petscFinalize()
 
 EVOL=STAT_NON_LINE(MODELE=MO,
                    CHAM_MATER=CHMAT,

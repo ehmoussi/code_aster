@@ -31,11 +31,11 @@ subroutine crsolv(method, renum, kacmum, blreps, solve, bas)
 !     CREATION D'UNE STRUCTURE SOLVEUR
 !
 !-----------------------------------------------------------------------
-    integer :: islvi, islvk, islvr, nprec
+    integer :: islvi, islvk, islvr, islvo, nprec
     real(kind=8) :: resire
 !-----------------------------------------------------------------------
 !
-    integer :: zslvk, zslvr, zslvi
+    integer :: zslvk, zslvr, zslvi, zslvo
     real(kind=8) :: epsmat
     character(len=1) :: base
     character(len=8) :: preco
@@ -61,9 +61,11 @@ subroutine crsolv(method, renum, kacmum, blreps, solve, bas)
     zslvk = sdsolv('ZSLVK')
     zslvr = sdsolv('ZSLVR')
     zslvi = sdsolv('ZSLVI')
+    zslvo = sdsolv('ZSLVO')
     call wkvect(solveu//'.SLVK', base//' V K24', zslvk, islvk)
     call wkvect(solveu//'.SLVR', base//' V R', zslvr, islvr)
     call wkvect(solveu//'.SLVI', base//' V I', zslvi, islvi)
+    call wkvect(solveu//'.SLVO', base//' V K80', zslvo, islvo)
 !
 ! --- REMPLISSAGE DE LA S.D. SOLVEUR
 !
@@ -111,6 +113,7 @@ subroutine crsolv(method, renum, kacmum, blreps, solve, bas)
     zi(islvi-1+6) =-9999
     zi(islvi-1+7) =-9999
     zi(islvi-1+8) = 0
+    zi(islvi-1+9) = 0
 !
     call jedema()
 !

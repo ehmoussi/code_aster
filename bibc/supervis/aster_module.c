@@ -43,17 +43,56 @@
 #ifdef _HAVE_PETSC
 #include "petsc.h"
 
-void DEFP(ASTER_PETSC_INITIALIZE,aster_petsc_initialize, ASTERINTEGER* ierr)
+void DEFSP(ASTER_PETSC_INITIALIZE,aster_petsc_initialize, _IN char* options,
+           _IN STRING_SIZE loptions, ASTERINTEGER* ierr)
 {
     int a = 0;
-    *ierr = (ASTERINTEGER)PetscInitialize(&a, NULL, NULL, NULL);
+    char** myargs;
+    char* options2;
+    int myargc;
+
+    options2 = MakeCStrFromFStr(options, loptions);
+    myargs = (char**) malloc(2500 * sizeof(*myargs));
+
+    charToPetscArgcArgv(options2, " ", myargs, &myargc);
+
+   *ierr = (ASTERINTEGER)PetscInitialize(&myargc, &myargs, NULL, NULL);
     PetscInitializeFortran();
+
+    FreeStr(options2);
+    free(myargs);
 };
 
 void DEF0(ASTER_PETSC_FINALIZE,aster_petsc_finalize)
 {
     PetscFinalize();
 };
+
+void charToPetscArgcArgv(char *buffer, char * delim, char ** Output, int* index) {
+
+    int partcount = 0;
+    *index=0;
+    Output[partcount++] = "petsc_aster";
+    *index+=1;
+    Output[partcount++] = buffer;
+
+    char* ptr = buffer;
+
+    while (ptr != 0) { //check if the string is over
+        ptr = strstr(ptr, delim);
+        if (ptr != NULL) {
+            *ptr = 0;
+            Output[partcount++] = ptr + strlen(delim);
+            ptr = ptr + strlen(delim);
+            *index+=1;
+            if (*index > 2499)MYABORT("Erreur dans charToPetscArgcArgv");
+        }
+    }
+    Output[partcount++] = NULL;
+    *index+=1;
+}
+
+
 #endif
 
 /*

@@ -24,6 +24,7 @@ subroutine apetsc(action, solvez, matasz, rsolu, vcinez,&
 !
 !
 ! person_in_charge: natacha.bereux at edf.fr
+! aslint: disable=C1308
 !
 use aster_petsc_module
 use petsc_data_module
@@ -35,11 +36,13 @@ use elg_module
 #include "asterc/asmpi_comm.h"
 #include "asterc/aster_petsc_initialize.h"
 #include "asterc/aster_petsc_finalize.h"
+#include "asterc/getfac.h"
 #include "asterfort/apmain.h"
 #include "asterfort/apldlt.h"
 #include "asterfort/asmpi_info.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jelira.h"
@@ -90,8 +93,8 @@ use elg_module
 !
 !     VARIABLES LOCALES
     integer :: iprem, k, l, nglo, kdeb, jnequ, ier2
-    integer ::  kptsc
-    integer :: np
+    integer ::  kptsc, jerr, lslvo
+    integer :: np, i
     real(kind=8) :: r8
 !
     logical :: mat_not_recorded
@@ -101,7 +104,10 @@ use elg_module
     character(len=1) :: rouc
     real(kind=8), pointer :: travail(:) => null()
     character(len=24), pointer :: refa(:) => null()
-!
+    character(len=80), pointer :: slvo(:) => null()
+    integer, pointer :: slvi(:) => null()
+    character(len=2500) :: myopt
+    !
 !----------------------------------------------------------------
 !
 !     Variables PETSc
@@ -109,6 +115,7 @@ use elg_module
     PetscScalar :: sbid
     PetscOffset :: offbid
     PetscReal :: rbid
+    PetscBool :: initialized
 
 !----------------------------------------------------------------
 !   INITIALISATION DE PETSC A FAIRE AU PREMIER APPEL
@@ -137,15 +144,29 @@ use elg_module
     endif
 !
 !
-    if (iprem .eq. 0) then
+!   petsc a-t-il ete initialise ?
+    call PetscInitialized(initialized, ierr)
+    ASSERT(ierr.eq.0)
+
+    if ((iprem .eq. 0 .or. .not.initialized) .and. action.ne.'DETR_MAT') then
 !     --------------------
 !        -- quelques verifications sur la coherence Aster / Petsc :
         ASSERT(kind(rbid).eq.kind(r8))
         ASSERT(kind(sbid).eq.kind(r8))
         ASSERT(kind(offbid).eq.kind(np))
 !
+        ! PETSc solver options
+        call jeveuo(solveu//'.SLVO', 'L', vk80=slvo)
+        call jeveuo(solveu//'.SLVI', 'L', vi=slvi)
+        myopt = ""
+        lslvo = slvi(9)
+        do i=1, lslvo
+            myopt(80*(i-1)+1:80*i)=slvo(i)
+        enddo
+
+
         ier2 = 0
-        call aster_petsc_initialize(ier2)
+        call aster_petsc_initialize(myopt, ier2)
         ierr = to_petsc_int(ier2)
         if (ierr .ne. 0) call utmess('F', 'PETSC_1')
         do k = 1, nmxins
@@ -165,6 +186,8 @@ use elg_module
         iprem = 1
     endif
     ASSERT(matas.ne.' ')
+
+
 
 
 !   1. On ne veut pas de matrice complexe :

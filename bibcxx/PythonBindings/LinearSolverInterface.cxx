@@ -137,6 +137,7 @@ void exportLinearSolverToPython() {
         .def( "setSingularityDetectionThreshold",
               &BaseLinearSolverClass::setSingularityDetectionThreshold )
         .def( "setSolverResidual", &BaseLinearSolverClass::setSolverResidual )
+        .def( "setPetscOption", &BaseLinearSolverClass::setPetscOption )
         .def( "setUpdatePreconditioningParameter",
               &BaseLinearSolverClass::setUpdatePreconditioningParameter );
 

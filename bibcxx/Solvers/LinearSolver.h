@@ -175,6 +175,7 @@ class BaseLinearSolverClass : public DataStructure {
     GenParam _stopSingular;
     GenParam _resolutionType;
     GenParam _acceleration;
+    GenParam _optionPetsc;
     ListGenParam _listOfParameters;
     AssemblyMatrixDisplacementRealPtr _matrixPrec;
     std::string _commandName;
@@ -319,6 +320,12 @@ class BaseLinearSolverClass : public DataStructure {
         if ( _linearSolver != Petsc )
             throw std::runtime_error( "Algorithm only allowed with Petsc" );
         _algo = std::string( IterativeSolverAlgorithmNames[(int)algo] );
+    };
+
+    void setPetscOption( std::string option ) {
+        if ( _linearSolver != Petsc )
+            throw std::runtime_error( "Options only allowed with Petsc" );
+        _optionPetsc = option;
     };
 
     void setDistributedMatrix( bool matDist ) {
