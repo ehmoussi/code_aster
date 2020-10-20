@@ -44,7 +44,7 @@ real(kind=8), intent(out) :: rate
 !
 ! --------------------------------------------------------------------------------------------------
 !
-real(kind=8), dimension(nb_sing):: N, Y
+real(kind=8) :: N(nb_sing), Y(nb_sing)
 integer :: i, nb_pos
 !
 !
@@ -60,10 +60,14 @@ nb_pos = i - 1
 
 !
 
-rate = ( nb_sing * dot_product(Y(1:nb_pos),N(1:nb_pos)) - sum(Y(1:nb_pos)) * sum(N(1:nb_pos)) ) /&
-       ( nb_sing * dot_product(N(1:nb_pos),N(1:nb_pos)) - sum(N(1:nb_pos))**2 )
-
-call utmess('I', 'ROM7_33' , sr = rate)
+if (abs(nb_sing * dot_product(N(1:nb_pos),N(1:nb_pos)) - sum(N(1:nb_pos))**2) > r8prem()) then
+    rate=(nb_sing * dot_product(Y(1:nb_pos),N(1:nb_pos))-sum(Y(1:nb_pos))*sum(N(1:nb_pos)))/&
+    (nb_sing * dot_product(N(1:nb_pos),N(1:nb_pos)) - sum(N(1:nb_pos))**2 )
+    call utmess('I', 'ROM7_33' , sr = rate)
+else
+    call utmess('I', 'ROM7_37' , sr =  nb_sing * dot_product(N(1:nb_pos),N(1:nb_pos))&
+                                       -sum(N(1:nb_pos))**2 )
+endif
 
 !
 end subroutine

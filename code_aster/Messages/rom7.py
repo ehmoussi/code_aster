@@ -30,6 +30,8 @@ cata_msg = {
 
    14 : _("""Nombre final de clichés retenus dans l'algorithme incrémental: %(i1)d."""),
    
-   33 : _("""La pente de décroissance des valeurs singulière de la POD: %(r1)13.6G."""), 
-
+   33 : _("""La pente de décroissance des valeurs singulières de la POD: %(r1)13.6G."""), 
+  
+   37 : _("""La pente de décroissance des valeurs singulières de la POD n'a pu être calculée. Variance: %(r1)13.6G."""), 
+   
 }
