@@ -124,7 +124,7 @@ template < class ValueType > class FieldOnCellsClass : public DataFieldClass {
      * @brief Get the model
      */
     ModelPtr getModel() const {
-        if ( _model->isEmpty() )
+        if (_model != nullptr && _model->isEmpty() )
             throw std::runtime_error( "Model is empty" );
         return _model;
     };
