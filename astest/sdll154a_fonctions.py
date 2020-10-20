@@ -17,7 +17,19 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 import numpy as np
-from scipy.optimize import fsolve
+
+def fsolve(func, x0):
+    epsfcn = np.finfo(np.dtype(float)).eps
+    eps = epsfcn**0.5
+    delta_x = 1.
+    x = x0
+    while abs(delta_x) > 1.49012e-08:
+        f_x = func(x)
+        d_x = max(eps, eps*abs(x))
+        df_x = (func(x+d_x) - f_x) / d_x
+        delta_x = - f_x / df_x
+        x += delta_x
+    return x
 
 class PostRocheAnalytic(object):
     """classe pour calcul analytique des valeurs de post roche"""
@@ -71,18 +83,18 @@ class PostRocheAnalytic(object):
         """calcule self._sigma_deplacement, self._sigma_sismique, self._g, self._g_s"""
         def func(x):
             """equation de contrainte vrai"""
-            return [(x[0]/self._E + self._epsi_p(x[0]) - self._epsi_p(sigma_ref)) + r * (x[0]-sigma_ref) / self._E]
+            return (x/self._E + self._epsi_p(x) - self._epsi_p(sigma_ref)) + r * (x-sigma_ref) / self._E
         # resolution sigma_deplacement
         sigma_deplacement = []
         for sigma_ref, r in zip(self._sigma_deplacement_ref, self._r_m):
-            root = fsolve(func, [sigma_ref])
-            sigma_deplacement.append(root[0])
+            root = fsolve(func, sigma_ref)
+            sigma_deplacement.append(root)
         self._sigma_deplacement = np.array(sigma_deplacement)
         # resolution sigma_sismique
         sigma_sismique = []
         for sigma_ref, r in zip(self._sigma_sismique_ref, self._r_s):
-            root = fsolve(func, [sigma_ref])
-            sigma_sismique.append(root[0])
+            root = fsolve(func, sigma_ref)
+            sigma_sismique.append(root)
         self._sigma_sismique = np.array(sigma_sismique)
         # abbatements
         self._g = (self._sigma_deplacement-self._pression) / (self._sigma_deplacement_ref-self._pression)

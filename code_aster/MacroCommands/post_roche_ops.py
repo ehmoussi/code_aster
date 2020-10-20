@@ -450,7 +450,7 @@ class PostRocheCommon():
             model2  = resin.getModel()
             
             if model2 != None:
-                if model2.getName() != self.modelName 
+                if model2.getName() != self.modelName:
                     UTMESS('F','POSTROCHE_2', vali=iocc, 
                             valk=['MODELE', self.mcf, self.modelName, model2.getName()])
             
@@ -463,7 +463,8 @@ class PostRocheCommon():
                                     valk=['CARA_ELEM',self.mcf, self.caraelemName, carael2.getName()])
                 else:
                     self.caraelem=carael2
-                    self.caraelemName = self.caraelem.getName()
+                    if self.caraelem:
+                        self.caraelemName = self.caraelem.getName()
                 
                 chmat2 = resin.getMaterialField()
                 if self.chammater:
@@ -473,7 +474,8 @@ class PostRocheCommon():
                                     valk=['CHAM_MATER',self.mcf, self.chammaterName, chmat2.getName()])
                 else:
                     self.chammater=chmat2
-                    self.chammaterName = self.chammater.getName()
+                    if self.caraelem:
+                        self.chammaterName = self.chammater.getName()
                 
 
             # classification par type de chargement
