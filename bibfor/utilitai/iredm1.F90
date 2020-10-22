@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -425,6 +425,7 @@ subroutine iredm1(masse, noma, basemo, nbmode, nbmods,&
                 inoe = noeud(ino)
                 iddl = zi( aprno + (nec+2)*(inoe-1) + 1 - 1 ) - 1
                 ncmp = zi( aprno + (nec+2)*(inoe-1) + 2 - 1 )
+                ncmp = min(6,ncmp)
                 iddl0 = iddl+1
                 if (iddl0 .eq. 0) then
                     write(ifmis,110) zero,zero,zero,zero,zero,zero
@@ -461,6 +462,7 @@ subroutine iredm1(masse, noma, basemo, nbmode, nbmods,&
                 inoe = noeud(ino)
                 iddl = zi( aprno + (nec+2)*(inoe-1) + 1 - 1 ) - 1
                 ncmp = zi( aprno + (nec+2)*(inoe-1) + 2 - 1 )
+                ncmp = min(6,ncmp)
                 iddl0 = iddl+1
                 if (iddl0 .eq. 0) then
                     write(ifmis,110) zero,zero,zero,zero,zero,zero
