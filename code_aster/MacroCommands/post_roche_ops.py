@@ -18,16 +18,13 @@
 # --------------------------------------------------------------------
 
 import aster
-from libaster import AsterError
-import traceback
-from numpy import sqrt, pi
+from math import sqrt, pi
 from ..Messages import UTMESS
-
 from ..Cata.Syntax import _F
 from ..Commands import (CREA_CHAMP, CALC_CHAM_ELEM, CREA_TABLE,
-                        POST_ELEM, FORMULE, IMPR_RESU,
-                        IMPR_TABLE, MODI_MAILLAGE, DEFI_CONSTANTE,
-                        COPIER, DETRUIRE,CREA_RESU,FIN)
+                        POST_ELEM, FORMULE, 
+                        MODI_MAILLAGE, DEFI_CONSTANTE,
+                        COPIER, DETRUIRE,CREA_RESU)
 
 # ===========================================================================
 #           CORPS DE LA MACRO "POST_ROCHE"
@@ -35,7 +32,6 @@ from ..Commands import (CREA_CHAMP, CALC_CHAM_ELEM, CREA_TABLE,
 # USAGE :
 #
 # ===========================================================================
-
 
 def post_roche_ops(self, **kwargs):
     """
@@ -200,7 +196,7 @@ class PostRocheCommon():
             if self.dResuMeca[0].get('RESULTAT'):
                 resin = self.dResuMeca[0]['RESULTAT']
             else:
-                resin = dResuMeca[0]['CHAM_GD']
+                resin = self.dResuMeca[0]['CHAM_GD']
 
             self.model  = resin.getModel()
             # la méthode ne renvoie rien pour les résultats COMB_SISM_MODAL
