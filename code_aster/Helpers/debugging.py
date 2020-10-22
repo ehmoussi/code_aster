@@ -18,43 +18,25 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois@edf.fr
-# aslint: disable=C4009
-# C4009: in a string
 
 """
 :py:mod:`debugging` --- Debugging utilities
 *******************************************
 
-These module defines some convenient utilities that **are not intended to
+This module defines some convenient utilities that **are not intended to
 be used in production**.
 
-Check for dependency on input datastructures
-============================================
+Check for dependency between datastructures
+===========================================
 
-- Run testcases with `track_dependencies` enabled by adding this line
-  in :file:`code_aster/Commands/operator.py`:
+To enable a hook called after each command add this line
+in :file:`code_aster/Commands/operator.py`:
 
-  .. code-block:: python
+.. code-block:: python
 
-        # for debugging
-        ExecuteCommand.register_hook(track_dependencies)
-
-- Extract data from output files (replace ``resutest`` by the results
-  directory):
-
-  .. code-block:: sh
-
-        grep -h '#27406' resutest/*.mess > data.txt
-
-- Start a Python session within code_aster environment (for example, by running
-  ``run_aster``) and show the command dependencies.
-
-  .. code-block:: python
-
-        from code_aster.Helpers.debugging import ChangeCommands
-        modifier = ChangeCommands("__path-to__/data.txt")
-        with open("__path-to__/merge.txt", "w") as fobj:
-            fobj.write(modifier.deps_txt())
+    # replace "hook_function" by the function to be used
+    from ..Helpers.debugging import hook_function
+    ExecuteCommand.register_hook(hook_function)
 
 """
 
@@ -154,16 +136,23 @@ class DataStructureFilter:
                 self._path.pop(-1)
 
 
-TEMPLATE = '''
+def dump_datastructure(obj):
+    """Return a dump (IMPR_CO) of a *DataStructure*.
 
-    def dependencies(self):
-        """Defines the keywords containing dependencies.
+    Arguments:
+        obj (DataStructure): Object to be dumped.
 
-        Returns:
-            list[str]: List of keywords ("SIMP" or "FACT/SIMP").
-        """
-        return [{used}]
-'''
+    Returns:
+        str: Output of IMPR_CO/debugPrint.
+    """
+    filename = "dump-27406.txt"
+    dumpfile = LogicalUnitFile.open(filename)
+    obj.debugPrint(dumpfile.unit)
+    dumpfile.release()
+    with open(filename, "rb") as fobj:
+        dump = fobj.read().decode('ascii', errors='replace')
+    os.remove(filename)
+    return dump
 
 
 def track_dependencies(inst, keywords):
@@ -178,14 +167,7 @@ def track_dependencies(inst, keywords):
     if not isinstance(result, DataStructure):
         return
 
-    filename = "dump-27406.txt"
-    dumpfile = LogicalUnitFile.open(filename)
-    result.debugPrint(dumpfile.unit)
-    dumpfile.release()
-    with open(filename, "rb") as fobj:
-        dump = fobj.read().decode('ascii', errors='replace')
-    os.remove(filename)
-
+    dump = dump_datastructure(result)
     visitor = DataStructureFilter(result.getName(), dump)
     cata.accept(visitor, keywords)
     if not visitor.paths:
@@ -195,80 +177,65 @@ def track_dependencies(inst, keywords):
     print("#27406:", inst.command_name, " ".join(paths))
 
 
-class ChangeCommands:
-    """Change source files"""
-    src = osp.join(os.environ["HOME"], "dev", "codeaster", "src", "code_aster")
+def check_dependencies(inst, _):
+    """Hook that check dependencies
 
-    def __init__(self, datafile):
-        self.seen = {}
-        self.data = self.read_data(datafile)
+    Arguments:
+        inst (function): the *ExecuteCommand* instance.
+    """
+    if not hasattr(check_dependencies, "_storage"):
+        check_dependencies._storage = {}
 
-    @staticmethod
-    def read_data(datafile):
-        """Read and merge data"""
-        with open(datafile, "r") as fdata:
-            lines = fdata.readlines()
-        raw = [line.split()[1:] for line in lines]
-        seen = {}
-        for line in raw:
-            if not line:
-                continue
-            name = line.pop(0)
-            paths = set(line)
-            paths.discard("reuse")
-            if name in seen:
-                diff = paths.difference(seen[name])
-                if diff:
-                    print("#27406: changed", name, "previous:", seen[name],
-                          "new:", diff)
-                paths.update(seen[name])
-            seen[name] = sorted(list(paths))
-        return seen
+    result = inst._result
+    if not isinstance(result, DataStructure):
+        return
 
-    def deps_txt(self):
-        """Print list of dependencies for each command"""
-        lines = []
-        for name, paths in self.data.items():
-            values = [name] + paths
-            lines.append(" ".join(values))
-        return os.linesep.join(sorted(lines))
+    # keep all created DS
+    # TODO use regular expression instead '[0-9a-f]{8}'
+    # and check if they still exist?
+    name = result.getName()
+    typ = result.getType()
+    if not check_dependencies._storage.get(name):
+        check_dependencies._storage[name] = typ
 
-    def change_commands(self):
-        """Update all commands source files"""
-        for name, paths in self.data.items():
-            args = [repr(path) for path in paths]
-            code = TEMPLATE.format(used=", ".join(args))
-            self.change_one(name, paths, code)
+    def _check_deps(stack, obj):
+        """Push dependencies of `obj` in `stack` recursively."""
+        for dep in obj.getDependencies():
+            if dep not in stack:
+                stack.append(dep)
+                _check_deps(stack, dep)
 
-    def change_one(self, name, paths, code):
-        """Change the source file for a command"""
-        filename = self.get_command(name)
-        if not filename:
-            print("#27406: ERROR: file not found for", name, paths)
-            return
+    deps = []
+    _check_deps(deps, result)
+    # print("#27406:", name, typ, len(deps))
+    all_deps = [i.getName() for i in deps]
 
-        with open(filename, "r") as fsrc:
-            content = fsrc.read()
-        if "def dependencies(" in content:
-            print("#27406: 'dependencies' already exists in", filename)
-            return
+    dump = dump_datastructure(result)
+    dump_deps = [i for i in check_dependencies._storage.keys()
+                 if i != name and i in dump]
+    direct_deps = [i.getName() for i in result.getDependencies()]
 
-        expr = re.compile("(?:\n+)(?P<cmd>^{0}) *=".format(name.upper()), re.M)
-        mat = expr.search(content)
-        if not mat:
-            print("#27406: WARNING: not found", filename, name.upper())
-            return
-        text = expr.sub(code + "\n\n" + r"\g<cmd> =", content)
-        with open(filename, "w") as fsrc:
-            fsrc.write(text)
+    printed = False
+    missed = sorted(list(set(dump_deps).difference(direct_deps)))
+    if missed:
+        missed_all = sorted(list(set(dump_deps).difference(all_deps)))
+        missed = sorted(list(set(missed).difference(missed_all)))
+        printed = True
+        if missed:
+            print("#27406:", name, typ, "missing direct dep to", missed,
+                  "current:", direct_deps)
+        if missed_all:
+            print("#27406:", name, typ, "ERROR missing recursive dep to", missed_all)
+        # else:
+        #     print("#27406:", name, typ, "INFO direct deps:", direct_deps)
+    nodirect = sorted(list(set(direct_deps).difference(dump_deps)))
+    if nodirect:
+        printed = True
+        print("#27406:", name, typ, "unnecessary direct dep to", nodirect)
+    if not printed:
+        print("#27406:", name, typ)
 
-    def get_command(self, name):
-        """Return the filename defining the given command."""
-        basename = name.lower() + ".py"
-        filename = osp.join(self.src, "Commands", basename)
-        if osp.exists(filename):
-            return filename
-        for root, _, files in os.walk(osp.join(self.src, "MacroCommands")):
-            if basename in files:
-                return osp.join(root, basename)
-        return None
+
+# used to force to show children commands
+# from ..Utilities import ExecutionParameter, Options
+# ExecutionParameter().enable(Options.ShowChildCmd)
