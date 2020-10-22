@@ -100,7 +100,7 @@ subroutine porea1(nno, nc, deplm, deplp, geom,&
         valkm(1) = zk24(iazk24+3-1)
         valkm(2) = ' '
         valrm = trigom('ACOS',cosangle)
-        call utmess('A', 'ELEMENTS_38', nk=2, valk=valkm, sr=cosangle)
+        call utmess('A', 'ELEMENTS_38', nk=2, valk=valkm, sr=valrm)
     endif
 !
     if (vecteu) then

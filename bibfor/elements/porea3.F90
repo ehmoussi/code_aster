@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine porea3(nno, nc, deplm, geom,&
+subroutine porea3(nno, nc, deplm, deplp, geom,&
                   gamma, pgl, xl1, angp)
     implicit none
 #include "asterf_types.h"
@@ -33,7 +33,7 @@ subroutine porea3(nno, nc, deplm, geom,&
 #include "blas/ddot.h"
 
 integer :: nno, nc
-real(kind=8) :: deplm(nno*nc),  geom(3, nno), gamma
+real(kind=8) :: deplm(nno*nc), deplp(nno*nc), geom(3, nno), gamma
 real(kind=8) :: pgl(3, 3), xl1, angp(3)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -59,14 +59,18 @@ real(kind=8) :: pgl(3, 3), xl1, angp(3)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i
-    real(kind=8) :: xug(6), xd0(3), alfa1, beta1
+    real(kind=8) :: utg(14), xug(6), xd0(3), alfa1, beta1
 
 ! --------------------------------------------------------------------------------------------------
     ASSERT(nno.eq.2)
     !   Calcul du vecteur xlocal au temps t-
+!   Déplacement total a t+
+    do i = 1, nno*nc
+        utg(i) = deplm(i) + deplp(i)
+    enddo
     do i = 1, 3
-        xug(i)   = geom(i,1) + deplm(i)
-        xug(i+3) = geom(i,2) + deplm(i+nc)
+        xug(i)   = geom(i,1) + utg(i)
+        xug(i+3) = geom(i,2) + utg(i+nc)
         xd0(i)   = xug(i+3) - xug(i)
     enddo
 !

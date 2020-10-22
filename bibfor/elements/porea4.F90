@@ -46,7 +46,7 @@ subroutine porea4(nno, nc, geom, gamma, pgl,&
 !     ------------------------------------------------------------------
 !
 !     VARIABLES LOCALES
-    integer :: i, ideplm, iret
+    integer :: i, ideplm, ideplp, iret
     real(kind=8) :: utg(14), xug(6), xd(3), alfa1, beta1, ang1(3)
 !
     ASSERT(nno.eq.2)
@@ -60,6 +60,13 @@ subroutine porea4(nno, nc, geom, gamma, pgl,&
        do  i = 1, 2*nc
           utg(i) = zr(ideplm-1+i)
        enddo
+    endif
+!
+    call tecach('ONO', 'PDEPLPR', 'L', iret, iad=ideplp)
+    if (iret .eq. 0) then
+        do i = 1, 2*nc
+            utg(i) = utg(i) + zr(ideplp-1+i)
+        end do
     endif
 !
     do i = 1, 3

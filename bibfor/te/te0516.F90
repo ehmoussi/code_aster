@@ -259,7 +259,7 @@ character(len=16) :: option, nomte
                         gamma, lVect, pgl, xl, angp)
         else
 !          Rotation sur dernier pas convergee
-            call porea3(nno, nc, zr(ideplm), zr(igeom+1),&
+            call porea3(nno, nc, zr(ideplm), zr(ideplp), zr(igeom+1),&
                         gamma, pgl, xl, angp)
         endif
 !       sauvegarde des angles nautiques
@@ -344,7 +344,7 @@ character(len=16) :: option, nomte
 !           - apres calcul de deps, on le stocke dans strxpr
 !       les deformations sont stockes a partir de la 8eme position
         kk=ncomp*(kp-1)+ncomp2
-        if (.not. isgrot) then
+        if (.not. reactu) then
 !           calcul classique des deformations à partir de DU
             do i = 1, nc
                 do j = 1, 2*nc
