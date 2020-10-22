@@ -1,0 +1,57 @@
+#!/bin/bash
+
+wrkdir=$(pwd)/wrk.88
+install_dir=$(dirname $(dirname "${ASTER_DATADIR}"))
+
+_error()
+{
+    # usage: _error messsage
+    echo "NOOK error: ${1}"
+    exit 4
+}
+
+
+mkdir "${wrkdir}"
+pushd "${wrkdir}"
+cat << EOF > file1.comm
+DEBUT()
+a = 1
+with open("out1", "w") as fres:
+    fres.write(str(a))
+FIN()
+EOF
+
+cat << EOF > file2.comm
+POURSUITE()
+b = a + 1
+with open("out2", "w") as fres:
+    fres.write(str(b))
+FIN()
+EOF
+
+cat << EOF > file.export
+P time_limit 10
+P memory_limit 128
+F comm file1.comm D 1
+R base base1 R 0
+F nom out1 R 0
+EOF
+"${install_dir}/bin/run_aster" file.export
+iret=$?
+[ ${iret} -ne 0 ] && _error "execution of file1.comm returns ${iret}"
+[ $(cat out1) != "1" ] && _error "expecting a=1, not $(cat out1)"
+
+cat << EOF > file.export
+P time_limit 10
+P memory_limit 128
+F comm file2.comm D 1
+R base base1 D 0
+R base base2 R 0
+F nom out2 R 0
+EOF
+"${install_dir}/bin/run_aster" file.export
+iret=$?
+[ ${iret} -ne 0 ] && _error "execution of file2.comm returns ${iret}"
+[ $(cat out1) != "1" ] && _error "expecting b=2, not $(cat out2)"
+
+popd

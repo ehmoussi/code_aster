@@ -8,3 +8,4 @@ P testlist submit ci verification sequential
 F comm asrun01b.comm D 1
 F nom asrun01b.py D 0
 F libr asrun01b.11 D 11
+F libr asrun01b.88 D 88

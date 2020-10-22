@@ -353,7 +353,7 @@ class TestExport(unittest.TestCase):
         self.assertEqual(export.get("time_limit"), 123.456)
         self.assertIsNone(export.get("consbtc"))
         self.assertEqual(len(export.commfiles), 1)
-        self.assertEqual(len(export.datafiles), 2)
+        self.assertEqual(len(export.datafiles), 3)
         # 0 in asrun01b.export, but
         # + 'mess' with '--ctest',
         # + 'resu' + 'code' with as_run
@@ -364,10 +364,14 @@ class TestExport(unittest.TestCase):
         self.assertTrue(comm.data)
         export.remove_file(comm)
         self.assertEqual(len(export.commfiles), 0)
-        tar = [i for i in export.datafiles if i.filetype == "libr"][0]
+        tar = [i for i in export.datafiles if i.unit == 11][0]
         self.assertEqual(osp.basename(tar.path), "asrun01b.11")
-        self.assertEqual(tar.unit, 11)
+        self.assertEqual(tar.filetype, "libr")
         self.assertTrue(tar.data)
+        shell = [i for i in export.datafiles if i.unit == 88][0]
+        self.assertEqual(osp.basename(shell.path), "asrun01b.88")
+        self.assertEqual(shell.filetype, "libr")
+        self.assertTrue(shell.data)
 
     def test_data(self):
         text = "\n".join([
@@ -703,6 +707,14 @@ class TestCTest2Junit(unittest.TestCase):
             report.read_ctest()
             report.write_xml("run_testcases.xml")
         os.chdir(previous)
+
+
+class TestFromShell(unittest.TestCase):
+    """Check execution of run_aster script"""
+
+    def test(self):
+        iret = os.system("bash fort.88 > asrun01b.88.o 2> asrun01b.88.e")
+        self.assertEqual(iret, 0)
 
 
 if __name__ == "__main__":

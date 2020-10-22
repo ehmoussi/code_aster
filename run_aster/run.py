@@ -224,11 +224,12 @@ class RunAster:
             _log_mess(FMT_DIAG.format(state=status.diag))
         return status
 
-    def _get_cmdline_exec(self, commfile):
+    def _get_cmdline_exec(self, commfile, idx):
         """Build the command line really executed, without redirection.
 
         Arguments:
             commfile (str): Command file name.
+            idx (int): Index of execution.
 
         Returns:
             list[str]: List of command line arguments, without redirection.
@@ -248,8 +249,10 @@ class RunAster:
         cmd.append(commfile)
         if self._test:
             cmd.append("--test")
-        for obj in self.export.datafiles:
-            cmd.append(f'--link="{obj.as_argument}"')
+        # copy datafiles only the first time because all share the same workdir
+        if idx == 0:
+            for obj in self.export.datafiles:
+                cmd.append(f'--link="{obj.as_argument}"')
         cmd.extend(self.export.args)
         # TODO add pid + mode to identify the process by asrun
         return cmd
@@ -285,7 +288,7 @@ class RunAster:
         Returns:
             list[str]: List of command line arguments.
         """
-        cmd = self._get_cmdline_exec(commfile)
+        cmd = self._get_cmdline_exec(commfile, idx)
         if self._interact:
             pass
         elif self._tee:
@@ -363,7 +366,7 @@ class RunOnlyEnv(RunAster):
             last (bool): *True* for the last command file.
             timeout (float): Remaining time.
         """
-        cmd = self._get_cmdline_exec(comm)
+        cmd = self._get_cmdline_exec(comm, idx)
         logger.info(f"    {' '.join(cmd)}")
         with open(f"cmd{idx}.sh", "w") as fobj:
             fobj.write(' '.join(cmd) + '\n')

@@ -87,8 +87,7 @@ class ExecutionStarter:
         params.print_header = print_header
         params.checksd = checksd
         params.testresu_print = testresu_print
-        if not params.option & Options.Continue:
-            copy_datafiles(params.export.datafiles)
+        copy_datafiles(params.export.datafiles)
         aster_core.register(params, MessageLog)
         libaster.onFatalError("ABORT")
         libaster.jeveux_init()
