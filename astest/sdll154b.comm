@@ -1,0 +1,273 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+# maillage, modele, caraelem
+
+maillage = LIRE_MAILLAGE()
+
+modele = AFFE_MODELE(MAILLAGE = maillage,
+                    AFFE = _F(MODELISATION = "POU_D_T",
+                              PHENOMENE = "MECANIQUE",
+                              TOUT = "OUI",))
+
+acier=DEFI_MATERIAU(ELAS=_F(E = 2.E11,
+                            RHO = 7800,
+                            ALPHA = 1.2E-5,
+                            NU = 0.3),
+                    RAMBERG_OSGOOD=_F(FACTEUR=0.01,
+                                     EXPOSANT=2)
+                    )
+
+
+t_ini=CREA_CHAMP(
+    TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MODELE=modele,
+    AFFE=_F(TOUT='OUI', NOM_CMP='TEMP', VALE=20,),)
+
+t_final=CREA_CHAMP(
+                            TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MODELE=modele,
+                            AFFE=_F(TOUT='OUI', NOM_CMP='TEMP', VALE=120.0,),)
+
+resu_temp = CREA_RESU(TYPE_RESU = 'EVOL_THER',
+                        NOM_CHAM='TEMP',
+                        OPERATION='AFFE',
+                        AFFE=(
+                            _F(CHAM_GD=t_ini, INST=0.0),
+                            _F(CHAM_GD=t_final, INST=1.0),))
+
+
+ch_mater=AFFE_MATERIAU(MAILLAGE=maillage,
+                       AFFE_VARC=_F(TOUT='OUI',NOM_VARC = 'TEMP',EVOL=resu_temp,VALE_REF=20.0,),
+                       AFFE=_F(TOUT="OUI", MATER = acier))
+
+cara_elem=AFFE_CARA_ELEM(MODELE=modele, INFO=2,
+                         POUTRE=_F(GROUP_MA="TUYAU", SECTION = 'CERCLE',
+                                   CARA = ('R', 'EP'),
+                                   VALE = (0.01, 0.005)))
+
+# conditions aux limites
+
+blocage_a = AFFE_CHAR_MECA(MODELE=modele,
+                           DDL_IMPO=(_F(GROUP_NO='A',
+                                        DX=0,DY=0,DZ=0,DRX=0, DRY=0, DRZ=0)))
+
+blocage_b = AFFE_CHAR_MECA(MODELE=modele,
+                           DDL_IMPO=(_F(GROUP_NO='B',
+                                        DX=0, DZ=0)))
+
+deplacement_b = AFFE_CHAR_MECA(MODELE=modele,
+                               DDL_IMPO=(_F(GROUP_NO='B',
+                                               DRX=0.02,)))
+
+poids = AFFE_CHAR_MECA(MODELE=modele,
+                       PESANTEUR=_F(GRAVITE=9.81,DIRECTION=( 0., 0., -1.),)
+                       )
+
+acce_xy=DEFI_FONCTION(NOM_PARA='FREQ',    INTERPOL='LOG',
+                      VALE=(1.0, 1.962, 10.0, 19.62,
+                            30.0,  19.62,   100.0,    1.962,
+                            10000.0,   1.962,          )       )
+spect_xy=DEFI_NAPPE(NOM_PARA='AMOR',
+                    INTERPOL=('LIN', 'LOG'),
+                    PARA=(0.015, 0.02, 0.025,),
+                    FONCTION=(acce_xy, acce_xy, acce_xy))
+
+# modes
+
+ASSEMBLAGE(MODELE=modele,
+           CHAM_MATER=ch_mater,
+           CARA_ELEM=cara_elem,
+           CHARGE=(blocage_a, blocage_b),
+           NUME_DDL=CO('nddl'),
+           MATR_ASSE=(_F(MATRICE=CO('matrice_rigi'),
+                         OPTION='RIGI_MECA',),
+                      _F(MATRICE=CO('matrice_mass'),
+                         OPTION='MASS_MECA',),),);
+
+modes_dyn=CALC_MODES(MATR_RIGI=matrice_rigi,
+                     MATR_MASS=matrice_mass,
+                     CALC_FREQ=_F(NMAX_FREQ=4),
+                     )
+modes_dyn=CALC_CHAMP(reuse=modes_dyn,
+                     RESULTAT=modes_dyn,
+                     CONTRAINTE='EFGE_ELNO')
+
+modes_sta=MODE_STATIQUE(MATR_RIGI=matrice_rigi,
+                        MATR_MASS=matrice_mass,
+                        PSEUDO_MODE=_F(  AXE = ( 'X',  'Y',  'Z', )))
+modes_sta=CALC_CHAMP(reuse=modes_sta,
+                     RESULTAT=modes_sta,
+                     CONTRAINTE='EFGE_ELNO')
+
+# resultats
+
+poids_propre = MECA_STATIQUE(MODELE=modele,
+                             CHAM_MATER=ch_mater,
+                             CARA_ELEM=cara_elem,
+                             EXCIT=(_F(CHARGE=blocage_a),
+                                    _F(CHARGE=poids)),
+                             INST = 0.0)
+poids_propre = CALC_CHAMP(reuse=poids_propre,
+                            RESULTAT=poids_propre,
+                            CONTRAINTE='EFGE_ELNO')
+
+deplacement_impose = MECA_STATIQUE(MODELE=modele,
+                                   CHAM_MATER=ch_mater,
+                                   CARA_ELEM=cara_elem,
+                                   EXCIT=(_F(CHARGE=blocage_a),
+                                           _F(CHARGE=deplacement_b)),
+                                   INST = 0.0)
+deplacement_impose = CALC_CHAMP(reuse=deplacement_impose,
+                                RESULTAT=deplacement_impose,
+                                CONTRAINTE='EFGE_ELNO')
+
+dilatation_thermique = MECA_STATIQUE(MODELE=modele,
+                                     CHAM_MATER=ch_mater,
+                                     CARA_ELEM=cara_elem,
+                                     EXCIT=(_F(CHARGE=blocage_a,),
+                                            _F(CHARGE=blocage_b,)),
+                                     INST = 1.0)
+dilatation_thermique = CALC_CHAMP(reuse=dilatation_thermique,
+                                  RESULTAT=dilatation_thermique,
+                                  CONTRAINTE='EFGE_ELNO')
+
+sismique = COMB_SISM_MODAL(MODE_MECA=modes_dyn,
+                           AMOR_REDUIT=0.02,
+                           CORR_FREQ='NON',
+                           MODE_CORR=modes_sta,
+                           MONO_APPUI = 'OUI',
+                           EXCIT=_F( TRI_SPEC = 'OUI',
+                                     SPEC_OSCI = ( spect_xy,  spect_xy, spect_xy, ),
+                           ECHELLE = ( 1.,  1.,  0.5, )),
+                           COMB_MODE=_F(  TYPE = 'SRSS'),
+                           COMB_DIRECTION=_F(  TYPE = 'QUAD'),
+                           OPTION=('EFGE_ELNO')
+                          )
+
+# résultats dépendant du temps
+
+sismique_dyn_1 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
+                            OPERATION='EXTR',
+                            RESULTAT=sismique,
+                            NOM_CHAM='EFGE_ELNO',
+                            NUME_ORDRE=14)
+
+sismique_qs_1 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
+                            OPERATION='EXTR',
+                            RESULTAT=sismique,
+                            NOM_CHAM='EFGE_ELNO',
+                            NUME_ORDRE=24)
+
+# contournement car le résultat de COMB_SIMS_MODAL ne contient pas le modele
+sismique_qs_1.setModel(modele)
+sismique_dyn_1.setModel(modele)
+
+sismique_dyn_2 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
+                            OPERATION='ASSE',
+                            MODELE=modele,
+                            ASSE=_F(TOUT="OUI",
+                                    CHAM_GD=sismique_dyn_1,
+                                    COEF_R=0.5)
+                            )
+
+sismique_qs_2 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
+                            OPERATION='ASSE',
+                            MODELE=modele,
+                            ASSE=_F(TOUT="OUI",
+                                    CHAM_GD=sismique_qs_1,
+                                    COEF_R=0.5)
+                            )
+
+
+sismique_total_1 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
+                              OPERATION='ASSE',
+                              MODELE=modele,
+                              ASSE=(_F(TOUT="OUI",
+                                      CHAM_GD=sismique_dyn_1,
+                                      CUMUL="OUI"),
+                                    _F(TOUT="OUI",
+                                      CHAM_GD=sismique_qs_1,
+                                      CUMUL="OUI"))
+                              )
+
+sismique_total_2 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
+                              OPERATION='ASSE',
+                              MODELE=modele,
+                              ASSE=(_F(TOUT="OUI",
+                                      CHAM_GD=sismique_dyn_2,
+                                      CUMUL="OUI"),
+                                    _F(TOUT="OUI",
+                                      CHAM_GD=sismique_qs_2,
+                                      CUMUL="OUI"))
+                              )
+
+
+resu_dyna=CREA_RESU(OPERATION='AFFE',
+                    TYPE_RESU='DYNA_TRANS',
+                    NOM_CHAM='EFGE_ELNO',
+                    AFFE=(_F(CHAM_GD=sismique_dyn_1,INST=1.0,MODELE=modele),
+                          _F(CHAM_GD=sismique_dyn_2,INST=2.0,MODELE=modele),
+                          ),
+                    )
+
+resu_corr=CREA_RESU(OPERATION='AFFE',
+                    TYPE_RESU='DYNA_TRANS',
+                    NOM_CHAM='EFGE_ELNO',
+                    AFFE=(_F(CHAM_GD=sismique_total_1,INST=1.0,MODELE=modele),
+                          _F(CHAM_GD=sismique_total_2,INST=2.0,MODELE=modele),),
+                    )
+
+# appel à POST_ROCHE
+
+resuPostRoche = POST_ROCHE(ZONE_ANALYSE=(_F(
+                                     GROUP_MA='TUYAU',
+                                     GROUP_NO_ORIG = 'A',
+                                    ),
+                                  ),
+                    RESU_MECA_TRAN=(
+                               _F(TYPE_CHAR='SISM_INER_TRAN',
+                                 RESULTAT=resu_dyna,
+                                 RESU_CORR=resu_corr,
+                                 INST=(1,2),
+                                 #NUME_ORDRE=(1,2),
+                                 #TOUT_ORDRE='OUI',
+                                 ),
+                               _F(TYPE_CHAR='POIDS',
+                                 RESULTAT=poids_propre,
+                                 NUME_ORDRE=1,
+                                 ),
+                               _F(TYPE_CHAR='DILAT_THERM',
+                                 RESULTAT=dilatation_thermique,
+                                 NUME_ORDRE=1,
+                                 ),
+                               _F(TYPE_CHAR='DEPLACEMENT',
+                                 RESULTAT=deplacement_impose,
+                                 NUME_ORDRE=1,
+                                 ),
+                                ),
+                     PRESSION=(_F(
+                                     GROUP_MA='TUYAU',
+                                     VALE = 1E6,
+                                    ),
+                                  ),
+                    )
+
+
+FIN()

@@ -16,239 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-  
-import code_aster
-from code_aster.Commands import *
+
 import numpy as np
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
-
-# maillage, modele, caraelem
-
-maillage = code_aster.Mesh()
-maillage.readMedFile("sdll156a.mmed")
-
-modele = AFFE_MODELE(MAILLAGE = maillage,
-                    AFFE = (_F(MODELISATION = "POU_D_T",
-                              PHENOMENE = "MECANIQUE",
-                              GROUP_MA = "RUN",),
-                            _F(MODELISATION = "POU_D_T",
-                              PHENOMENE = "MECANIQUE",
-                              GROUP_MA = "BRANCH",)
-                              
-                              
-                              
-                              ))
-
-acier=DEFI_MATERIAU(ELAS=_F(E = 2.E11,
-                            RHO = 7800,
-                            ALPHA = 1.2E-5,
-                            NU = 0.3),
-                    RAMBERG_OSGOOD=_F(FACTEUR=0.01,
-                                     EXPOSANT=2)
-                    )
-
-
-t_ini=CREA_CHAMP(
-    TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MODELE=modele,
-    AFFE=_F(TOUT='OUI', NOM_CMP='TEMP', VALE=20,),)
-
-t_final=CREA_CHAMP(
-                            TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MODELE=modele,
-                            AFFE=_F(TOUT='OUI', NOM_CMP='TEMP', VALE=120.0,),)
-
-resu_temp = CREA_RESU(TYPE_RESU = 'EVOL_THER',
-                        NOM_CHAM='TEMP',
-                        OPERATION='AFFE',
-                        AFFE=(
-                            _F(CHAM_GD=t_ini, INST=0.0),
-                            _F(CHAM_GD=t_final, INST=1.0),))
-
-
-ch_mater=AFFE_MATERIAU(MAILLAGE=maillage,
-                       AFFE_VARC=_F(TOUT='OUI',NOM_VARC = 'TEMP',EVOL=resu_temp,VALE_REF=20.0,),
-                       AFFE=_F(TOUT="OUI", MATER = acier))
-
-cara_elem=AFFE_CARA_ELEM(MODELE=modele, INFO=2,
-                         POUTRE=_F(GROUP_MA="TUYAU", SECTION = 'CERCLE',
-                                   CARA = ('R', 'EP'),
-                                   VALE = (0.01, 0.005)))
-
-# conditions aux limites
-
-blocage_a = AFFE_CHAR_MECA(MODELE=modele,
-                           DDL_IMPO=(_F(GROUP_NO='A',
-                                        DX=0,DY=0,DZ=0,DRX=0, DRY=0, DRZ=0)))
-
-blocage_b = AFFE_CHAR_MECA(MODELE=modele,
-                           DDL_IMPO=(_F(GROUP_NO='B',
-                                        DX=0)))
-
-blocage_c = AFFE_CHAR_MECA(MODELE=modele,
-                           DDL_IMPO=(_F(GROUP_NO='C',
-                                        DZ=0)))
-
-deplacement_b = AFFE_CHAR_MECA(MODELE=modele,
-                               DDL_IMPO=(_F(GROUP_NO='B',
-                                               DRX=0.02,)))
-
-poids = AFFE_CHAR_MECA(MODELE=modele,
-                       PESANTEUR=_F(GRAVITE=9.81,DIRECTION=( 0., 0., -1.),)
-                       )
-
-acce_xy=DEFI_FONCTION(NOM_PARA='FREQ',    INTERPOL='LOG',
-                      VALE=(1.0, 1.962, 10.0, 19.62,
-                            30.0,  19.62,   100.0,    1.962,
-                            10000.0,   1.962,          )       )
-spect_xy=DEFI_NAPPE(NOM_PARA='AMOR',
-                    INTERPOL=('LIN', 'LOG'),
-                    PARA=(0.015, 0.02, 0.025,),
-                    FONCTION=(acce_xy, acce_xy, acce_xy))
-
-# modes
-
-ASSEMBLAGE(MODELE=modele,
-           CHAM_MATER=ch_mater,
-           CARA_ELEM=cara_elem,
-           CHARGE=blocage_a,
-           NUME_DDL=CO('nddl'),
-           MATR_ASSE=(_F(MATRICE=CO('matrice_rigi'),
-                         OPTION='RIGI_MECA',),
-                      _F(MATRICE=CO('matrice_mass'),
-                         OPTION='MASS_MECA',),),);
-
-modes_dyn=CALC_MODES(MATR_RIGI=matrice_rigi,
-                     MATR_MASS=matrice_mass,
-                     CALC_FREQ=_F(NMAX_FREQ=4),
-                     )
-modes_dyn=CALC_CHAMP(reuse=modes_dyn,
-                     RESULTAT=modes_dyn,
-                     CONTRAINTE='EFGE_ELNO')
-
-modes_sta=MODE_STATIQUE(MATR_RIGI=matrice_rigi,
-                        MATR_MASS=matrice_mass,
-                        PSEUDO_MODE=_F(  AXE = ( 'X',  'Y',  'Z', )))
-modes_sta=CALC_CHAMP(reuse=modes_sta,
-                     RESULTAT=modes_sta,
-                     CONTRAINTE='EFGE_ELNO')
-
-# resultats
-
-poids_propre = MECA_STATIQUE(MODELE=modele,
-                             CHAM_MATER=ch_mater,
-                             CARA_ELEM=cara_elem,
-                             EXCIT=(_F(CHARGE=blocage_a),
-                                    _F(CHARGE=poids)),
-                             INST = 0.0)
-poids_propre = CALC_CHAMP(reuse=poids_propre,
-                            RESULTAT=poids_propre,
-                            CONTRAINTE='EFGE_ELNO')
-
-deplacement_impose = MECA_STATIQUE(MODELE=modele,
-                                   CHAM_MATER=ch_mater,
-                                   CARA_ELEM=cara_elem,
-                                   EXCIT=(_F(CHARGE=blocage_a),
-                                           _F(CHARGE=deplacement_b)),
-                                   INST = 0.0)
-deplacement_impose = CALC_CHAMP(reuse=deplacement_impose,
-                                RESULTAT=deplacement_impose,
-                                CONTRAINTE='EFGE_ELNO')
-
-dilatation_thermique = MECA_STATIQUE(MODELE=modele,
-                                     CHAM_MATER=ch_mater,
-                                     CARA_ELEM=cara_elem,
-                                     EXCIT=(_F(CHARGE=blocage_a,),
-                                            _F(CHARGE=blocage_c,)),
-                                     INST = 1.0)
-dilatation_thermique = CALC_CHAMP(reuse=dilatation_thermique,
-                                  RESULTAT=dilatation_thermique,
-                                  CONTRAINTE='EFGE_ELNO')
-
-sismique = COMB_SISM_MODAL(MODE_MECA=modes_dyn,
-                           AMOR_REDUIT=0.02,
-                           CORR_FREQ='NON',
-                           MODE_CORR=modes_sta,
-                           MONO_APPUI = 'OUI',
-                           EXCIT=_F( TRI_SPEC = 'OUI',
-                                     SPEC_OSCI = ( spect_xy,  spect_xy, spect_xy, ),
-                           ECHELLE = ( 1.,  1.,  0.5, )),
-                           COMB_MODE=_F(  TYPE = 'SRSS'),
-                           COMB_DIRECTION=_F(  TYPE = 'QUAD'),
-                           OPTION=('EFGE_ELNO')
-                          )
-
-# résultats dépendant du temps
-
-sismique_dyn_1 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
-                            OPERATION='EXTR',
-                            RESULTAT=sismique,
-                            NOM_CHAM='EFGE_ELNO',
-                            NUME_ORDRE=14)
-
-sismique_qs_1 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
-                            OPERATION='EXTR',
-                            RESULTAT=sismique,
-                            NOM_CHAM='EFGE_ELNO',
-                            NUME_ORDRE=24)
-
-# contournement car le résultat de COMB_SIMS_MODAL ne contient pas le modele
-sismique_qs_1.setModel(modele)
-sismique_dyn_1.setModel(modele)
-
-sismique_dyn_2 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
-                            OPERATION='ASSE',
-                            MODELE=modele,
-                            ASSE=_F(TOUT="OUI",
-                                    CHAM_GD=sismique_dyn_1,
-                                    COEF_R=0.5)
-                            )
-
-sismique_qs_2 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
-                            OPERATION='ASSE',
-                            MODELE=modele,
-                            ASSE=_F(TOUT="OUI",
-                                    CHAM_GD=sismique_qs_1,
-                                    COEF_R=0.5)
-                            )
-
-
-sismique_total_1 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
-                              OPERATION='ASSE',
-                              MODELE=modele,
-                              ASSE=(_F(TOUT="OUI",
-                                      CHAM_GD=sismique_dyn_1,
-                                      CUMUL="OUI"),
-                                    _F(TOUT="OUI",
-                                      CHAM_GD=sismique_qs_1,
-                                      CUMUL="OUI"))
-                              )
-
-sismique_total_2 = CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
-                              OPERATION='ASSE',
-                              MODELE=modele,
-                              ASSE=(_F(TOUT="OUI",
-                                      CHAM_GD=sismique_dyn_2,
-                                      CUMUL="OUI"),
-                                    _F(TOUT="OUI",
-                                      CHAM_GD=sismique_qs_2,
-                                      CUMUL="OUI"))
-                              )
-
-
-resu_dyna=CREA_RESU(OPERATION='AFFE',
-                    TYPE_RESU='DYNA_TRANS',
-                    NOM_CHAM='EFGE_ELNO',
-                    AFFE=(_F(CHAM_GD=sismique_dyn_1,INST=1.0,MODELE=modele),
-                          _F(CHAM_GD=sismique_dyn_2,INST=2.0,MODELE=modele),
-                          ),
-                    )
-
-resu_corr=CREA_RESU(OPERATION='AFFE',
-                    TYPE_RESU='DYNA_TRANS',
-                    NOM_CHAM='EFGE_ELNO',
-                    AFFE=(_F(CHAM_GD=sismique_total_1,INST=1.0,MODELE=modele),
-                          _F(CHAM_GD=sismique_total_2,INST=2.0,MODELE=modele),),
-                    )
+POURSUITE(CODE='OUI', DEBUG=_F(SDVERI='OUI'),)
 
 # calcul des references pour POST_ROCHE, on extrait uniquement les valeurs de MT, MFY et MFZ non nulles
 
@@ -271,7 +42,6 @@ table = CREA_TABLE(RESU=_F(RESULTAT=dilatation_thermique,
                             TOUT="OUI",
                             NOM_CMP=("MT", "MFY", "MFZ")))
 dilatation_thermique_values = table.EXTR_TABLE().values()
-mfy_dilatation_thermique = np.array(dilatation_thermique_values["MFY"])
 
 table = CREA_TABLE(RESU=_F(RESULTAT=sismique,
                             NUME_ORDRE=14,
@@ -279,7 +49,6 @@ table = CREA_TABLE(RESU=_F(RESULTAT=sismique,
                             TOUT="OUI",
                             NOM_CMP=("MT", "MFY", "MFZ")))
 sismique_dyn_values = table.EXTR_TABLE().values()
-mt_sismique_dyn = np.array(sismique_dyn_values["MT"])
 mfy_sismique_dyn = np.array(sismique_dyn_values["MFY"])
 mfz_sismique_dyn = np.array(sismique_dyn_values["MFZ"])
 
@@ -289,53 +58,14 @@ table = CREA_TABLE(RESU=_F(RESULTAT=sismique,
                             TOUT="OUI",
                             NOM_CMP=("MT", "MFY", "MFZ")))
 sismique_qs_values = table.EXTR_TABLE().values()
-mt_sismique_qs = np.array(sismique_qs_values["MT"])
 mfy_sismique_qs = np.array(sismique_qs_values["MFY"])
 mfz_sismique_qs = np.array(sismique_qs_values["MFZ"])
 
-from sdll156a_fonctions import PostRocheAnalytic
-post_roche_analytic = PostRocheAnalytic(mfy_poids_propre, mt_deplacement_impose, mfy_sismique_dyn, mfz_sismique_dyn, mfy_sismique_qs, mfz_sismique_qs,\
-                         mfy_dilatation_thermique, mt_sismique_dyn, mt_sismique_qs)
+from sdll154a_fonctions import PostRocheAnalytic
+post_roche_analytic = PostRocheAnalytic(mfy_poids_propre, mt_deplacement_impose, mfy_sismique_dyn, mfz_sismique_dyn, mfy_sismique_qs, mfz_sismique_qs)
 post_roche_analytic.calcul_ressort()
 post_roche_analytic.calcul_abattement()
 post_roche_analytic.calcul_sigma_eq()
-
-# appel à POST_ROCHE
-
-resuPostRoche = POST_ROCHE(ZONE_ANALYSE=(_F(GROUP_MA='RUN',
-                                               GROUP_NO_ORIG = 'A',
-                                              ),
-                                            _F(GROUP_MA='BRANCH',
-                                               GROUP_NO_ORIG = 'C',
-                                              ),
-                                  ),
-                    RESU_MECA_TRAN=(
-                               _F(TYPE_CHAR='SISM_INER_TRAN',
-                                 RESULTAT=resu_dyna,
-                                 RESU_CORR=resu_corr,
-                                 INST=(1,2),
-                                 # NUME_ORDRE=(1,2),
-                                 # TOUT_ORDRE='OUI',
-                                 ),
-                               _F(TYPE_CHAR='POIDS',
-                                 RESULTAT=poids_propre,
-                                 NUME_ORDRE=1,
-                                 ),
-                               _F(TYPE_CHAR='DILAT_THERM',
-                                 RESULTAT=dilatation_thermique,
-                                 NUME_ORDRE=1,
-                                 ),
-                               _F(TYPE_CHAR='DEPLACEMENT',
-                                 RESULTAT=deplacement_impose,
-                                 NUME_ORDRE=1,
-                                 ),
-                                ),
-                     PRESSION=(_F(
-                                     GROUP_MA='TUYAU',
-                                     VALE = 1E6,
-                                    ),
-                                  ),
-                    )
 
 # TEST_RESU
 
@@ -347,7 +77,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X1',
-                   VALE_CALC=14541953.839530045,
+                   VALE_CALC=13384615.38461538,
                    VALE_REFE=post_roche_analytic._sigma_deplacement_ref[0]),
                 _F(MAILLE='M1',
                    POINT=2,
@@ -356,7 +86,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X1',
-                   VALE_CALC=13384615.38461542,
+                   VALE_CALC=13384615.38461538,
                    VALE_REFE=post_roche_analytic._sigma_deplacement_ref[1]),
                 _F(MAILLE='M2',
                    POINT=1,
@@ -365,7 +95,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X1',
-                   VALE_CALC=13384615.384615349,
+                   VALE_CALC=13384615.38461538,
                    VALE_REFE=post_roche_analytic._sigma_deplacement_ref[2]),
                 _F(MAILLE='M2',
                    POINT=2,
@@ -374,7 +104,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X1',
-                   VALE_CALC=13384615.384615349,
+                   VALE_CALC=13384615.38461538,
                    VALE_REFE=post_roche_analytic._sigma_deplacement_ref[3]),
                 # X2 = contrainte de référence S2
                 _F(MAILLE='M1',
@@ -384,7 +114,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X2',
-                   VALE_CALC=43474610.549473695,
+                   VALE_CALC=29235194.152436085,
                    VALE_REFE=post_roche_analytic._sigma_sismique_ref[0]),
                 _F(MAILLE='M1',
                    POINT=2,
@@ -393,7 +123,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X2',
-                   VALE_CALC=17938116.906759135,
+                   VALE_CALC=11392799.196481014,
                    VALE_REFE=post_roche_analytic._sigma_sismique_ref[1]),
                 _F(MAILLE='M2',
                    POINT=1,
@@ -402,7 +132,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X2',
-                   VALE_CALC=10477220.030450225,
+                   VALE_CALC=11392799.196481109,
                    VALE_REFE=post_roche_analytic._sigma_sismique_ref[2]),
                 _F(MAILLE='M2',
                    POINT=2,
@@ -423,7 +153,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X3',
-                   VALE_CALC=0.8527002357080138,
+                   VALE_CALC=0.8180652597627946,
                    VALE_REFE=post_roche_analytic._t[0]),
                 _F(MAILLE='M1',
                    POINT=2,
@@ -432,7 +162,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X3',
-                   VALE_CALC=0.8180652597627959,
+                   VALE_CALC=0.8180652597627946,
                    VALE_REFE=post_roche_analytic._t[1]),
                 _F(MAILLE='M2',
                    POINT=1,
@@ -441,7 +171,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X3',
-                   VALE_CALC=0.8180652597627939,
+                   VALE_CALC=0.8180652597627946,
                    VALE_REFE=post_roche_analytic._t[2]),
                 _F(MAILLE='M2',
                    POINT=2,
@@ -450,7 +180,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X3',
-                   VALE_CALC=0.8180652597627939,
+                   VALE_CALC=0.8180652597627946,
                    VALE_REFE=post_roche_analytic._t[3]),
                 # X4 = réversibilité locale ts
                 _F(MAILLE='M1',
@@ -460,7 +190,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X4',
-                   VALE_CALC=1.4743576660612867,
+                   VALE_CALC=1.2090325502738972,
                    VALE_REFE=post_roche_analytic._t_s[0]),
                 _F(MAILLE='M1',
                    POINT=2,
@@ -469,7 +199,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X4',
-                   VALE_CALC=0.9470511313218294,
+                   VALE_CALC=0.7547449634307279,
                    VALE_REFE=post_roche_analytic._t_s[1]),
                 _F(MAILLE='M2',
                    POINT=1,
@@ -478,7 +208,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X4',
-                   VALE_CALC=0.7237824269229747,
+                   VALE_CALC=0.754744963430731,
                    VALE_REFE=post_roche_analytic._t_s[2]),
                 _F(MAILLE='M2',
                    POINT=2,
@@ -487,8 +217,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X4',
-                   ORDRE_GRANDEUR=1.,
                    VALE_CALC=0.,
+                   ORDRE_GRANDEUR=1.,
                    VALE_REFE=post_roche_analytic._t_s[3]),
                 # X5 = réversibilité totale T
                 _F(MAILLE='M1',
@@ -498,8 +228,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X5',
-                   VALE_CALC=0.8275566726302965,
-                   VALE_REFE=post_roche_analytic._T[0]),
+                   VALE_CALC=0.8180652597627946,
+                   VALE_REFE=post_roche_analytic._T),
                 _F(MAILLE='M1',
                    POINT=2,
                    REFERENCE="ANALYTIQUE",
@@ -507,8 +237,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X5',
-                   VALE_CALC=0.8275566726302965,
-                   VALE_REFE=post_roche_analytic._T[1]),
+                   VALE_CALC=0.8180652597627946,
+                   VALE_REFE=post_roche_analytic._T),
                 _F(MAILLE='M2',
                    POINT=1,
                    REFERENCE="ANALYTIQUE",
@@ -516,8 +246,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X5',
-                   VALE_CALC=0.8275566726302965,
-                   VALE_REFE=post_roche_analytic._T[2]),
+                   VALE_CALC=0.8180652597627946,
+                   VALE_REFE=post_roche_analytic._T),
                 _F(MAILLE='M2',
                    POINT=2,
                    REFERENCE="ANALYTIQUE",
@@ -525,8 +255,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X5',
-                   VALE_CALC=0.8275566726302965,
-                   VALE_REFE=post_roche_analytic._T[3]),
+                   VALE_CALC=0.8180652597627946,
+                   VALE_REFE=post_roche_analytic._T),
                 # X6 = réversibilité totale Ts
                 _F(MAILLE='M1',
                    POINT=1,
@@ -535,8 +265,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X6',
-                   VALE_CALC=1.3091377252304939,
-                   VALE_REFE=post_roche_analytic._T_s[0]),
+                   VALE_CALC=1.0603460405433702,
+                   VALE_REFE=post_roche_analytic._T_s),
                 _F(MAILLE='M1',
                    POINT=2,
                    REFERENCE="ANALYTIQUE",
@@ -544,8 +274,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X6',
-                   VALE_CALC=1.3091377252304939,
-                   VALE_REFE=post_roche_analytic._T_s[1]),
+                   VALE_CALC=1.0603460405433702,
+                   VALE_REFE=post_roche_analytic._T_s),
                 _F(MAILLE='M2',
                    POINT=1,
                    REFERENCE="ANALYTIQUE",
@@ -553,8 +283,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X6',
-                   VALE_CALC=1.3091377252304939,
-                   VALE_REFE=post_roche_analytic._T_s[2]),
+                   VALE_CALC=1.0603460405433702,
+                   VALE_REFE=post_roche_analytic._T_s),
                 _F(MAILLE='M2',
                    POINT=2,
                    REFERENCE="ANALYTIQUE",
@@ -562,8 +292,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X6',
-                   VALE_CALC=1.3091377252304939,
-                   VALE_REFE=post_roche_analytic._T_s[3]),
+                   VALE_CALC=1.0603460405433702,
+                   VALE_REFE=post_roche_analytic._T_s),
                 # X7 = facteur d'effet de ressort r_M
                 _F(MAILLE='M1',
                    POINT=1,
@@ -582,7 +312,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X7',
-                   VALE_CALC=0.011602268589492093,
+                   VALE_CALC=0.0,
+                   ORDRE_GRANDEUR=1.,
                    VALE_REFE=post_roche_analytic._r_m[1]),
                 _F(MAILLE='M2',
                    POINT=1,
@@ -591,7 +322,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X7',
-                   VALE_CALC=0.011602268589494757,
+                   VALE_CALC=0.0,
+                   ORDRE_GRANDEUR=1.,
                    VALE_REFE=post_roche_analytic._r_m[2]),
                 _F(MAILLE='M2',
                    POINT=2,
@@ -600,7 +332,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X7',
-                   VALE_CALC=0.011602268589494757,
+                   VALE_CALC=0.0,
+                   ORDRE_GRANDEUR=1.,
                    VALE_REFE=post_roche_analytic._r_m[3]),
                 # X8 = facteur d'effet de ressort r_S
                 _F(MAILLE='M1',
@@ -620,7 +353,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X8',
-                   VALE_CALC=0.3823305647745636,
+                   VALE_CALC=0.4049064146430583,
                    VALE_REFE=post_roche_analytic._r_s[1]),
                 _F(MAILLE='M2',
                    POINT=1,
@@ -629,7 +362,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X8',
-                   VALE_CALC=0.808744833438479,
+                   VALE_CALC=0.40490641464305255,
                    VALE_REFE=post_roche_analytic._r_s[2]),
                 _F(MAILLE='M2',
                    POINT=2,
@@ -648,28 +381,32 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X9',
-                   VALE_CALC=0.011602268589494757),
+                   ORDRE_GRANDEUR=1.,
+                   VALE_CALC=0.0),
                 _F(MAILLE='M1',
                    POINT=2,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X9',
-                   VALE_CALC=0.011602268589494757),
+                   ORDRE_GRANDEUR=1.,
+                   VALE_CALC=0.0),
                 _F(MAILLE='M2',
                    POINT=1,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X9',
-                   VALE_CALC=0.011602268589494757),
+                   ORDRE_GRANDEUR=1.,
+                   VALE_CALC=0.0),
                 _F(MAILLE='M2',
                    POINT=2,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X9',
-                   VALE_CALC=0.011602268589494757),
+                   ORDRE_GRANDEUR=1.,
+                   VALE_CALC=0.0),
                 # X10 = facteur d'effet de ressort maximal r_S_Max
                 _F(MAILLE='M1',
                    POINT=1,
@@ -677,28 +414,28 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X10',
-                   VALE_CALC=0.808744833438479),
+                   VALE_CALC=0.4049064146430583),
                 _F(MAILLE='M1',
                    POINT=2,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X10',
-                   VALE_CALC=0.808744833438479),
+                   VALE_CALC=0.4049064146430583),
                 _F(MAILLE='M2',
                    POINT=1,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X10',
-                   VALE_CALC=0.808744833438479),
+                   VALE_CALC=0.4049064146430583),
                 _F(MAILLE='M2',
                    POINT=2,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X10',
-                   VALE_CALC=0.808744833438479),
+                   VALE_CALC=0.4049064146430583),
                 # X11 = coefficient d'abattement g
                 _F(MAILLE='M1',
                    POINT=1,
@@ -707,7 +444,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X11',
-                   VALE_CALC=0.3730700795069738,
+                   VALE_CALC=0.3788455666188711,
                    VALE_REFE=post_roche_analytic._g[0]),
                 _F(MAILLE='M1',
                    POINT=2,
@@ -716,7 +453,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X11',
-                   VALE_CALC=0.38254709774180523,
+                   VALE_CALC=0.3788455666188711,
                    VALE_REFE=post_roche_analytic._g[1]),
                 _F(MAILLE='M2',
                    POINT=1,
@@ -725,7 +462,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X11',
-                   VALE_CALC=0.3825470977418063,
+                   VALE_CALC=0.3788455666188711,
                    VALE_REFE=post_roche_analytic._g[2]),
                 _F(MAILLE='M2',
                    POINT=2,
@@ -734,7 +471,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X11',
-                   VALE_CALC=0.3825470977418063,
+                   VALE_CALC=0.3788455666188711,
                    VALE_REFE=post_roche_analytic._g[3]),
                 # X12 = coefficient d'abattement gs
                 _F(MAILLE='M1',
@@ -744,7 +481,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X12',
-                   VALE_CALC=0.28780001566475794,
+                   VALE_CALC=0.31955038357627746,
                    VALE_REFE=post_roche_analytic._g_s[0]),
                 _F(MAILLE='M1',
                    POINT=2,
@@ -753,7 +490,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X12',
-                   VALE_CALC=0.47069664043955783,
+                   VALE_CALC=0.49458472195684455,
                    VALE_REFE=post_roche_analytic._g_s[1]),
                 _F(MAILLE='M2',
                    POINT=1,
@@ -762,7 +499,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X12',
-                   VALE_CALC=0.5721145598182666,
+                   VALE_CALC=0.49458472195684455,
                    VALE_REFE=post_roche_analytic._g_s[2]),
                 _F(MAILLE='M2',
                    POINT=2,
@@ -780,28 +517,28 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X13',
-                   VALE_CALC=0.37686125439238416),
+                   VALE_CALC=0.3788455666188711),
                 _F(MAILLE='M1',
                    POINT=2,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X13',
-                   VALE_CALC=0.38254709774180606),
+                   VALE_CALC=0.3788455666188711),
                 _F(MAILLE='M2',
                    POINT=1,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X13',
-                   VALE_CALC=0.3825470977418063),
+                   VALE_CALC=0.3788455666188711),
                 _F(MAILLE='M2',
                    POINT=2,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X13',
-                   VALE_CALC=0.3825470977418063),
+                   VALE_CALC=0.3788455666188711),
                 # X14 = coefficient d'abattement optimisé gsOpt
                 _F(MAILLE='M1',
                    POINT=1,
@@ -809,21 +546,21 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X14',
-                   VALE_CALC=0.5345223284320106),
+                   VALE_CALC=0.4536387356437366),
                 _F(MAILLE='M1',
                    POINT=2,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X14',
-                   VALE_CALC=0.5600426892046365),
+                   VALE_CALC=0.49458472195684605),
                 _F(MAILLE='M2',
                    POINT=1,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X14',
-                   VALE_CALC=0.5721145598182666),
+                   VALE_CALC=0.49458472195684583),
                 _F(MAILLE='M2',
                    POINT=2,
                    RESULTAT=resuPostRoche,
@@ -839,7 +576,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X15',
-                   VALE_CALC=48171790.86535862,
+                   VALE_CALC=29148813.041733082,
                    VALE_REFE=post_roche_analytic._sigma_eq[0]),
                 _F(MAILLE='M1',
                    POINT=2,
@@ -848,7 +585,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X15',
-                   VALE_CALC=17281614.270636257,
+                   VALE_CALC=10185687.028488198,
                    VALE_REFE=post_roche_analytic._sigma_eq[1]),
                 _F(MAILLE='M2',
                    POINT=1,
@@ -857,7 +594,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X15',
-                   VALE_CALC=15980132.92618753,
+                   VALE_CALC=10185687.028488223,
                    VALE_REFE=post_roche_analytic._sigma_eq[2]),
                 _F(MAILLE='M2',
                    POINT=2,
@@ -866,7 +603,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X15',
-                   VALE_CALC=4850732.26109282,
+                   VALE_CALC=4185425.596891385,
                    VALE_REFE=post_roche_analytic._sigma_eq[3]),
                 # X16 = contrainte équivalente optimisée
                 _F(MAILLE='M1',
@@ -875,28 +612,28 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X16',
-                   VALE_CALC=53493492.95672578),
+                   VALE_CALC=30529848.998718902),
                 _F(MAILLE='M1',
                    POINT=2,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X16',
-                   VALE_CALC=18403586.313146226),
+                   VALE_CALC=10185687.028488198),
                 _F(MAILLE='M2',
                    POINT=1,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X16',
-                   VALE_CALC=15980132.92618753),
+                   VALE_CALC=10185687.02848823),
                 _F(MAILLE='M2',
                    POINT=2,
                    RESULTAT=resuPostRoche,
                    INST=1,
                    NOM_CHAM='UT01_ELNO',
                    NOM_CMP='X16',
-                   VALE_CALC=4850732.26109282),
+                   VALE_CALC=4185425.596891385),
                 # X17 = indicateur sigmaV <sigmaP 
                 _F(MAILLE='M1',
                    POINT=1,
@@ -1042,7 +779,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X1',
-                   VALE_CALC=14541953.839530045,
+                   VALE_CALC=13384615.38461538,
                    VALE_REFE=post_roche_analytic._sigma_deplacement_ref[0]),
                 # X2 = contrainte de référence S2
                 _F(MAILLE='M1',
@@ -1052,7 +789,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X2',
-                   VALE_CALC=43474610.549473695,
+                   VALE_CALC=29235194.152436085,
                    VALE_REFE=post_roche_analytic._sigma_sismique_ref[0]),
                 # X3 = réversibilité locale t
                 _F(MAILLE='M1',
@@ -1062,7 +799,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X3',
-                   VALE_CALC=0.8527002357080138,
+                   VALE_CALC=0.8180652597627946,
                    VALE_REFE=post_roche_analytic._t[0]),
                 # X4 = réversibilité locale ts
                 _F(MAILLE='M1',
@@ -1072,7 +809,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X4',
-                   VALE_CALC=1.4743576660612867,
+                   VALE_CALC=1.2090325502738972,
                    VALE_REFE=post_roche_analytic._t_s[0]),
                 # X5 = réversibilité totale T
                 _F(MAILLE='M1',
@@ -1082,8 +819,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X5',
-                   VALE_CALC=0.8275566726302965,
-                   VALE_REFE=post_roche_analytic._T[0]),
+                   VALE_CALC=0.8180652597627946,
+                   VALE_REFE=post_roche_analytic._T),
                 # X6 = réversibilité totale Ts
                 _F(MAILLE='M1',
                    POINT=1,
@@ -1092,8 +829,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X6',
-                   VALE_CALC=1.3091377252304939,
-                   VALE_REFE=post_roche_analytic._T_s[0]),
+                   VALE_CALC=1.0603460405433702,
+                   VALE_REFE=post_roche_analytic._T_s),
                 # X7 = facteur d'effet de ressort r_M
                 _F(MAILLE='M1',
                    POINT=1,
@@ -1123,7 +860,8 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X9',
-                   VALE_CALC=0.011602268589494757),
+                   ORDRE_GRANDEUR=1.,
+                   VALE_CALC=0.0),
                 # X10 = facteur d'effet de ressort maximal r_S_Max
                 _F(MAILLE='M1',
                    POINT=1,
@@ -1131,7 +869,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X10',
-                   VALE_CALC=0.808744833438479),
+                   VALE_CALC=0.404906414643059),
                 # X11 = coefficient d'abattement g
                 _F(MAILLE='M1',
                    POINT=1,
@@ -1140,7 +878,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X11',
-                   VALE_CALC=0.3730700795069738,
+                   VALE_CALC=0.3788455666188711,
                    VALE_REFE=post_roche_analytic._g[0]),
                 # X12 = coefficient d'abattement gs
                 _F(MAILLE='M1',
@@ -1149,7 +887,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X12',
-                   VALE_CALC=0.3429897490765403),
+                   VALE_CALC=0.3727025965312079),
                 # X13 = coefficient d'abattement optimisé gOpt
                 _F(MAILLE='M1',
                    POINT=1,
@@ -1157,7 +895,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X13',
-                   VALE_CALC=0.37686125439238416),
+                   VALE_CALC=0.3788455666188711),
                 # X14 = coefficient d'abattement optimisé gsOpt
                 _F(MAILLE='M1',
                    POINT=1,
@@ -1165,7 +903,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X14',
-                   VALE_CALC=0.5547497679339365),
+                   VALE_CALC=0.48502971474540674),
                 # X15 = contrainte équivalente
                 _F(MAILLE='M1',
                    POINT=1,
@@ -1174,7 +912,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X15',
-                   VALE_CALC=48171790.86535862,
+                   VALE_CALC=29148813.041733082,
                    VALE_REFE=post_roche_analytic._sigma_eq[0]),
                 # X16 = contrainte équivalente optimisée
                 _F(MAILLE='M1',
@@ -1183,7 +921,7 @@ TEST_RESU(RESU=(# X1 = contrainte de référence
                    INST=0,
                    NOM_CHAM='UT02_ELNO',
                    NOM_CMP='X16',
-                   VALE_CALC=53493492.95672578),
+                   VALE_CALC=30529848.998718902,),
                 )
         )
 

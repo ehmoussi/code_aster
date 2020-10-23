@@ -4,6 +4,6 @@ P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist ci verification sequential
-F comm sdll157a.py D 1
-F nom sdll157a.mmed D 0
+F comm sdll157a.comm D 1
+F mmed sdll157a.mmed D 20
 F libr sdll157a.21 D 21

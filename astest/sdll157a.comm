@@ -16,9 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-  
-import code_aster
-from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
@@ -40,8 +37,7 @@ hc=0.0135
 
 # maillage, modele, caraelem
 
-maillage = code_aster.Mesh()
-maillage.readMedFile("sdll157a.mmed")
+maillage = LIRE_MAILLAGE()
 
 modele = AFFE_MODELE(MAILLAGE = maillage,
                     AFFE = _F(MODELISATION = "POU_D_T",
@@ -95,7 +91,6 @@ blocage = AFFE_CHAR_MECA(MODELE=modele,
                          DDL_IMPO=(_F(GROUP_NO=('ENCA1','ENCA2'),
                                       DX=0,DY=0,DZ=0,DRX=0, DRY=0, DRZ=0)))
 
-# TODO : valeur des déplacements ? integrale de l'accelero pour calcul du déplacement et utilisation du déplacement max ?
 deplacement = AFFE_CHAR_MECA(MODELE=modele,
                              DDL_IMPO=(_F(GROUP_NO='ENCA1',
                                           DX=0,DY=0,DZ=0,DRX=0, DRY=0, DRZ=0),

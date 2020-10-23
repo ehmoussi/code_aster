@@ -23,7 +23,7 @@ def fsolve(func, x0):
     eps = epsfcn**0.5
     delta_x = 1.
     x = x0
-    while abs(delta_x) > 1.49012e-08:
+    while abs(delta_x) > eps:
         f_x = func(x)
         d_x = max(eps, eps*abs(x))
         df_x = (func(x+d_x) - f_x) / d_x

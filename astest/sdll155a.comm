@@ -1,0 +1,325 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+# maillage, modele, caraelem
+
+maillage = LIRE_MAILLAGE()
+
+modele = AFFE_MODELE(MAILLAGE = maillage,
+                    AFFE = _F(MODELISATION = "POU_D_T",
+                              PHENOMENE = "MECANIQUE",
+                              TOUT = "OUI",))
+
+acier=DEFI_MATERIAU(ELAS=_F(E = 2.E11,
+                            RHO = 7800,
+                            ALPHA = 1.2E-5,
+                            NU = 0.3),
+                    RAMBERG_OSGOOD=_F(FACTEUR=0.01,
+                                     EXPOSANT=2)
+                    )
+
+
+t_ini=CREA_CHAMP(
+    TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MODELE=modele,
+    AFFE=_F(TOUT='OUI', NOM_CMP='TEMP', VALE=20,),)
+
+t_final=CREA_CHAMP(
+                            TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MODELE=modele,
+                            AFFE=_F(TOUT='OUI', NOM_CMP='TEMP', VALE=120.0,),)
+
+resu_temp = CREA_RESU(TYPE_RESU = 'EVOL_THER',
+                        NOM_CHAM='TEMP',
+                        OPERATION='AFFE',
+                        AFFE=(
+                            _F(CHAM_GD=t_ini, INST=0.0),
+                            _F(CHAM_GD=t_final, INST=1.0),))
+
+
+ch_mater=AFFE_MATERIAU(MAILLAGE=maillage,
+                       AFFE_VARC=_F(TOUT='OUI',NOM_VARC = 'TEMP',EVOL=resu_temp,VALE_REF=20.0,),
+                       AFFE=_F(TOUT="OUI", MATER = acier))
+
+cara_elem=AFFE_CARA_ELEM(MODELE=modele, INFO=2,
+                         POUTRE=_F(GROUP_MA="TUYAU", SECTION = 'CERCLE',
+                                   VARI_SECT = 'HOMOTHETIQUE',
+                                   CARA = ('R_DEBUT', 'R_FIN', 'EP_DEBUT', 'EP_FIN'),
+                                   VALE = (0.01, 0.005, 0.005, 0.0025)))
+
+rochElno = CALC_CHAM_ELEM(OPTION= 'ROCH_ELNO',
+                                         MODELE=modele, 
+                                         CHAM_MATER=ch_mater,
+                                         CARA_ELEM=cara_elem,
+                                         )
+
+IMPR_RESU(UNITE=6, FORMAT='RESULTAT',RESU=_F(CHAM_GD=rochElno))
+
+
+TEST_RESU(CHAM_ELEM=(_F(MAILLE='M1',
+                        POINT=1,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='E',
+                        VALE_CALC=2.E11),
+                     _F(MAILLE='M2',
+                        POINT=1,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='K_FACT',
+                        VALE_CALC=0.01,),
+                     _F(MAILLE='M2',
+                        POINT=2,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='N_EXPO',
+                        VALE_CALC=2,),
+                      _F(MAILLE='M1',
+                        POINT=1,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='A',
+                        VALE_CALC=2.35619449019235E-04,),
+                      _F(MAILLE='M1',
+                        POINT=2,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='A',
+                        VALE_CALC=1.32535940073319E-04,),
+                      _F(MAILLE='M2',
+                        POINT=1,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='A',
+                        VALE_CALC=1.32535940073319E-04,),
+                      _F(MAILLE='M1',
+                        POINT=1,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='I',
+                        VALE_CALC=7.36310778185108E-09,),
+                      _F(MAILLE='M1',
+                        POINT=2,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='I',
+                        VALE_CALC=2.32973332160132E-09,),
+                      _F(MAILLE='M2',
+                        POINT=1,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='I',
+                        VALE_CALC=2.32973332160132E-09,),
+                      _F(MAILLE='M1',
+                        POINT=2,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='I2',
+                        VALE_CALC=7.36310778185108E-09,),
+                      _F(MAILLE='M1',
+                        POINT=1,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='R',
+                        VALE_CALC=1.00000000000000E-02,),
+                      _F(MAILLE='M1',
+                        POINT=2,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='R',
+                        VALE_CALC=7.50000000000000E-03,),
+                      _F(MAILLE='M2',
+                        POINT=1,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='R',
+                        VALE_CALC=7.50000000000000E-03,),
+                      _F(MAILLE='M1',
+                        POINT=2,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='R2',
+                        VALE_CALC=1.00000000000000E-02,),
+                      _F(MAILLE='M1',
+                        POINT=1,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='EP',
+                        VALE_CALC=5.00000000000000E-03,),
+                      _F(MAILLE='M1',
+                        POINT=2,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='EP',
+                        VALE_CALC=3.75000000000000E-03,),
+                      _F(MAILLE='M2',
+                        POINT=1,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='EP',
+                        VALE_CALC=3.75000000000000E-03,),
+                      _F(MAILLE='M1',
+                        POINT=2,
+                        CHAM_GD=rochElno,
+                        NOM_CMP='EP2',
+                        VALE_CALC=5.00000000000000E-03,),
+                     ),
+         )
+
+# conditions aux limites
+
+blocage_a = AFFE_CHAR_MECA(MODELE=modele,
+                           DDL_IMPO=(_F(GROUP_NO='A',
+                                        DX=0,DY=0,DZ=0,DRX=0, DRY=0, DRZ=0)))
+
+blocage_b = AFFE_CHAR_MECA(MODELE=modele,
+                           DDL_IMPO=(_F(GROUP_NO='B',
+                                        DX=0, DZ=0)))
+
+deplacement_b = AFFE_CHAR_MECA(MODELE=modele,
+                               DDL_IMPO=(_F(GROUP_NO='B',
+                                               DRX=0.02,)))
+
+poids = AFFE_CHAR_MECA(MODELE=modele,
+                       PESANTEUR=_F(GRAVITE=9.81,DIRECTION=( 0., 0., -1.),)
+                       )
+
+acce_xy=DEFI_FONCTION(NOM_PARA='FREQ',    INTERPOL='LOG',
+                      VALE=(1.0, 1.962, 10.0, 19.62,
+                            30.0,  19.62,   100.0,    1.962,
+                            10000.0,   1.962,          )       )
+spect_xy=DEFI_NAPPE(NOM_PARA='AMOR',
+                    INTERPOL=('LIN', 'LOG'),
+                    PARA=(0.015, 0.02, 0.025,),
+                    FONCTION=(acce_xy, acce_xy, acce_xy))
+
+# modes
+
+ASSEMBLAGE(MODELE=modele,
+           CHAM_MATER=ch_mater,
+           CARA_ELEM=cara_elem,
+           CHARGE=(blocage_a, blocage_b),
+           NUME_DDL=CO('nddl'),
+           MATR_ASSE=(_F(MATRICE=CO('matrice_rigi'),
+                         OPTION='RIGI_MECA',),
+                      _F(MATRICE=CO('matrice_mass'),
+                         OPTION='MASS_MECA',),),);
+
+modes_dyn=CALC_MODES(MATR_RIGI=matrice_rigi,
+                     MATR_MASS=matrice_mass,
+                     CALC_FREQ=_F(NMAX_FREQ=4),
+                     )
+modes_dyn=CALC_CHAMP(reuse=modes_dyn,
+                     RESULTAT=modes_dyn,
+                     CONTRAINTE='EFGE_ELNO')
+
+modes_sta=MODE_STATIQUE(MATR_RIGI=matrice_rigi,
+                        MATR_MASS=matrice_mass,
+                        PSEUDO_MODE=_F(  AXE = ( 'X',  'Y',  'Z', )))
+modes_sta=CALC_CHAMP(reuse=modes_sta,
+                     RESULTAT=modes_sta,
+                     CONTRAINTE='EFGE_ELNO')
+
+# resultats
+
+poids_propre = MECA_STATIQUE(MODELE=modele,
+                             CHAM_MATER=ch_mater,
+                             CARA_ELEM=cara_elem,
+                             EXCIT=(_F(CHARGE=blocage_a),
+                                    _F(CHARGE=poids)),
+                             INST = 0.0)
+poids_propre = CALC_CHAMP(reuse=poids_propre,
+                            RESULTAT=poids_propre,
+                            CONTRAINTE='EFGE_ELNO')
+
+deplacement_impose = MECA_STATIQUE(MODELE=modele,
+                                   CHAM_MATER=ch_mater,
+                                   CARA_ELEM=cara_elem,
+                                   EXCIT=(_F(CHARGE=blocage_a),
+                                           _F(CHARGE=deplacement_b)),
+                                   INST = 0.0)
+deplacement_impose = CALC_CHAMP(reuse=deplacement_impose,
+                                RESULTAT=deplacement_impose,
+                                CONTRAINTE='EFGE_ELNO')
+
+
+
+# IMPR_RESU(UNITE=6, FORMAT='RESULTAT', RESU=_F(RESULTAT=deplacement_impose, NOM_CHAM='EFGE_ELNO'))
+
+
+tabInteg = POST_ELEM(MODELE=modele,
+                     RESULTAT=deplacement_impose,
+                     NUME_ORDRE=1, 
+                     INTEGRALE=_F(NOM_CHAM = 'EFGE_ELNO',
+                                  NOM_CMP='MT',
+                                  TYPE_MAILLE = '1D',
+                                  TOUT='OUI',
+                                  ))
+
+# IMPR_TABLE(UNITE=6, TABLE= tabInteg)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=4.85479633968203,
+           VALE_REFE=2*2.42739816984101E+00,
+           NOM_PARA='INTE_MT',
+           TABLE=tabInteg,
+           FILTRE=_F(NOM_PARA='NUME_ORDRE',
+                     VALE_I=1,),
+           )
+
+
+dilatation_thermique = MECA_STATIQUE(MODELE=modele,
+                                     CHAM_MATER=ch_mater,
+                                     CARA_ELEM=cara_elem,
+                                     EXCIT=(_F(CHARGE=blocage_a,),
+                                            _F(CHARGE=blocage_b,)),
+                                     INST = 1.0)
+dilatation_thermique = CALC_CHAMP(reuse=dilatation_thermique,
+                                  RESULTAT=dilatation_thermique,
+                                  CONTRAINTE='EFGE_ELNO')
+
+sismique = COMB_SISM_MODAL(MODE_MECA=modes_dyn,
+                           AMOR_REDUIT=0.02,
+                           CORR_FREQ='NON',
+                           MODE_CORR=modes_sta,
+                           MONO_APPUI = 'OUI',
+                           EXCIT=_F( TRI_SPEC = 'OUI',
+                                     SPEC_OSCI = ( spect_xy,  spect_xy, spect_xy, ),
+                           ECHELLE = ( 1.,  1.,  0.5, )),
+                           COMB_MODE=_F(  TYPE = 'SRSS'),
+                           COMB_DIRECTION=_F(  TYPE = 'QUAD'),
+                           OPTION=('EFGE_ELNO')
+                          )
+
+# appel à POST_ROCHE
+
+chPostRocheTout = POST_ROCHE(ZONE_ANALYSE=(_F(
+                                     TOUT='OUI',
+                                     GROUP_NO_ORIG = 'A',
+                                    ),
+                                  ),
+                    RESU_MECA=(
+                               _F(TYPE_CHAR='POIDS',
+                                 RESULTAT=poids_propre,
+                                 NUME_ORDRE=1,
+                                 ),
+                               _F(TYPE_CHAR='DILAT_THERM',
+                                 RESULTAT=dilatation_thermique,
+                                 NUME_ORDRE=1,
+                                 ),
+                               _F(TYPE_CHAR='DEPLACEMENT',
+                                 RESULTAT=deplacement_impose,
+                                 NUME_ORDRE=1,
+                                 ),
+                                _F(TYPE_CHAR='SISM_INER_SPEC',
+                                 RESULTAT=sismique,
+                                 DIRECTION='COMBI',
+                                 ),
+                                ),
+                     PRESSION=(_F(
+                                     TOUT='OUI',
+                                     VALE = 1E6,
+                                    ),
+                                  ),
+                    )
+
+FIN()

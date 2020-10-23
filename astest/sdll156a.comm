@@ -16,22 +16,24 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-  
-import code_aster
-from code_aster.Commands import *
-import numpy as np
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 # maillage, modele, caraelem
 
-maillage = code_aster.Mesh()
-maillage.readMedFile("sdll154a.mmed")
+maillage = LIRE_MAILLAGE()
 
 modele = AFFE_MODELE(MAILLAGE = maillage,
-                    AFFE = _F(MODELISATION = "POU_D_T",
+                    AFFE = (_F(MODELISATION = "POU_D_T",
                               PHENOMENE = "MECANIQUE",
-                              TOUT = "OUI",))
+                              GROUP_MA = "RUN",),
+                            _F(MODELISATION = "POU_D_T",
+                              PHENOMENE = "MECANIQUE",
+                              GROUP_MA = "BRANCH",)
+                              
+                              
+                              
+                              ))
 
 acier=DEFI_MATERIAU(ELAS=_F(E = 2.E11,
                             RHO = 7800,
@@ -75,7 +77,11 @@ blocage_a = AFFE_CHAR_MECA(MODELE=modele,
 
 blocage_b = AFFE_CHAR_MECA(MODELE=modele,
                            DDL_IMPO=(_F(GROUP_NO='B',
-                                        DX=0, DZ=0)))
+                                        DX=0)))
+
+blocage_c = AFFE_CHAR_MECA(MODELE=modele,
+                           DDL_IMPO=(_F(GROUP_NO='C',
+                                        DZ=0)))
 
 deplacement_b = AFFE_CHAR_MECA(MODELE=modele,
                                DDL_IMPO=(_F(GROUP_NO='B',
@@ -99,7 +105,7 @@ spect_xy=DEFI_NAPPE(NOM_PARA='AMOR',
 ASSEMBLAGE(MODELE=modele,
            CHAM_MATER=ch_mater,
            CARA_ELEM=cara_elem,
-           CHARGE=(blocage_a, blocage_b),
+           CHARGE=blocage_a,
            NUME_DDL=CO('nddl'),
            MATR_ASSE=(_F(MATRICE=CO('matrice_rigi'),
                          OPTION='RIGI_MECA',),
@@ -143,34 +149,11 @@ deplacement_impose = CALC_CHAMP(reuse=deplacement_impose,
                                 RESULTAT=deplacement_impose,
                                 CONTRAINTE='EFGE_ELNO')
 
-# IMPR_RESU(UNITE=6, FORMAT='RESULTAT', RESU=_F(RESULTAT=deplacement_impose, NOM_CHAM='EFGE_ELNO'))
-
-
-tabInteg = POST_ELEM(MODELE=modele,
-                     RESULTAT=deplacement_impose,
-                     NUME_ORDRE=1, 
-                     INTEGRALE=_F(NOM_CHAM = 'EFGE_ELNO',
-                                  NOM_CMP='MT',
-                                  TYPE_MAILLE = '1D',
-                                  TOUT='OUI',
-                                  ))
-
-# IMPR_TABLE(UNITE=6, TABLE= tabInteg)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=22.655716251849473,
-           VALE_REFE=2*1.13278581259247E+01,
-           NOM_PARA='INTE_MT',
-           TABLE=tabInteg,
-           FILTRE=_F(NOM_PARA='NUME_ORDRE',
-                     VALE_I=1,),
-           )
-
 dilatation_thermique = MECA_STATIQUE(MODELE=modele,
                                      CHAM_MATER=ch_mater,
                                      CARA_ELEM=cara_elem,
                                      EXCIT=(_F(CHARGE=blocage_a,),
-                                            _F(CHARGE=blocage_b,)),
+                                            _F(CHARGE=blocage_c,)),
                                      INST = 1.0)
 dilatation_thermique = CALC_CHAMP(reuse=dilatation_thermique,
                                   RESULTAT=dilatation_thermique,
@@ -189,58 +172,14 @@ sismique = COMB_SISM_MODAL(MODE_MECA=modes_dyn,
                            OPTION=('EFGE_ELNO')
                           )
 
-# calcul des references pour POST_ROCHE, on extrait uniquement les valeurs de MT, MFY et MFZ non nulles
-
-table = CREA_TABLE(RESU=_F(RESULTAT=poids_propre,
-                            NOM_CHAM="EFGE_ELNO",
-                            TOUT="OUI",
-                            NOM_CMP=("MT", "MFY", "MFZ")))
-poids_propre_values = table.EXTR_TABLE().values()
-mfy_poids_propre = np.array(poids_propre_values["MFY"])
-
-table = CREA_TABLE(RESU=_F(RESULTAT=deplacement_impose,
-                            NOM_CHAM="EFGE_ELNO",
-                            TOUT="OUI",
-                            NOM_CMP=("MT", "MFY", "MFZ")))
-deplacement_impose_values = table.EXTR_TABLE().values()
-mt_deplacement_impose = np.array(deplacement_impose_values["MT"])
-
-table = CREA_TABLE(RESU=_F(RESULTAT=dilatation_thermique,
-                            NOM_CHAM="EFGE_ELNO",
-                            TOUT="OUI",
-                            NOM_CMP=("MT", "MFY", "MFZ")))
-dilatation_thermique_values = table.EXTR_TABLE().values()
-
-table = CREA_TABLE(RESU=_F(RESULTAT=sismique,
-                            NUME_ORDRE=14,
-                            NOM_CHAM="EFGE_ELNO",
-                            TOUT="OUI",
-                            NOM_CMP=("MT", "MFY", "MFZ")))
-sismique_dyn_values = table.EXTR_TABLE().values()
-mfy_sismique_dyn = np.array(sismique_dyn_values["MFY"])
-mfz_sismique_dyn = np.array(sismique_dyn_values["MFZ"])
-
-table = CREA_TABLE(RESU=_F(RESULTAT=sismique,
-                            NUME_ORDRE=24,
-                            NOM_CHAM="EFGE_ELNO",
-                            TOUT="OUI",
-                            NOM_CMP=("MT", "MFY", "MFZ")))
-sismique_qs_values = table.EXTR_TABLE().values()
-mfy_sismique_qs = np.array(sismique_qs_values["MFY"])
-mfz_sismique_qs = np.array(sismique_qs_values["MFZ"])
-
-from sdll154a_fonctions import PostRocheAnalytic
-post_roche_analytic = PostRocheAnalytic(mfy_poids_propre, mt_deplacement_impose, mfy_sismique_dyn, mfz_sismique_dyn, mfy_sismique_qs, mfz_sismique_qs)
-post_roche_analytic.calcul_ressort()
-post_roche_analytic.calcul_abattement()
-post_roche_analytic.calcul_sigma_eq()
-
 # appel à POST_ROCHE
 
-chPostRocheTout = POST_ROCHE(ZONE_ANALYSE=(_F(
-                                     TOUT='OUI',
-                                     GROUP_NO_ORIG = 'A',
-                                    ),
+chPostRocheTout = POST_ROCHE(ZONE_ANALYSE=(_F(GROUP_MA='RUN',
+                                               GROUP_NO_ORIG = 'A',
+                                              ),
+                                            _F(GROUP_MA='BRANCH',
+                                               GROUP_NO_ORIG = 'C',
+                                              ),
                                   ),
                     RESU_MECA=(
                                _F(TYPE_CHAR='POIDS',
@@ -266,98 +205,5 @@ chPostRocheTout = POST_ROCHE(ZONE_ANALYSE=(_F(
                                     ),
                                   ),
                     )
-
-IMPR_RESU(UNITE=6, FORMAT='RESULTAT', 
-           RESU=_F(CHAM_GD=chPostRocheTout, 
-                   NOM_CMP=('X1','X2','X3','X4','X5','X6',
-                            'X7','X8','X9','X10','X11','X12',
-                            'X13','X14','X15','X16','X17','X18','X19','X20')))
-
-chPostRocheGrMa = POST_ROCHE(ZONE_ANALYSE=(_F(
-                                     GROUP_MA='TUYAU',
-                                     GROUP_NO_ORIG = 'A',
-                                    ),
-                                  ),
-                    RESU_MECA=(
-                               _F(TYPE_CHAR='POIDS',
-                                 RESULTAT=poids_propre,
-                                 NUME_ORDRE=1,
-                                 ),
-                               _F(TYPE_CHAR='DILAT_THERM',
-                                 RESULTAT=dilatation_thermique,
-                                 NUME_ORDRE=1,
-                                 ),
-                               _F(TYPE_CHAR='DEPLACEMENT',
-                                 RESULTAT=deplacement_impose,
-                                 NUME_ORDRE=1,
-                                 ),
-                                _F(TYPE_CHAR='SISM_INER_SPEC',
-                                 RESULTAT=sismique,
-                                 DIRECTION='COMBI',
-                                 ),
-                                ),
-                     PRESSION=(_F(
-                                     GROUP_MA='TUYAU',
-                                     VALE = 1E6,
-                                    ),
-                                  ),
-                    )
-
-# TEST_RESU
-
-TEST_RESU(CHAM_ELEM=(
-                     # X15 = contrainte équivalente
-                     _F(MAILLE='M1',
-                        POINT=1,
-                        REFERENCE="ANALYTIQUE",
-                        CHAM_GD=chPostRocheTout,
-                        NOM_CMP='X15',
-                        VALE_CALC=29148813.041733082,
-                        VALE_REFE=post_roche_analytic._sigma_eq[0]),
-                     _F(MAILLE='M1',
-                        POINT=2,
-                        REFERENCE="ANALYTIQUE",
-                        CHAM_GD=chPostRocheTout,
-                        NOM_CMP='X15',
-                        VALE_CALC=10185687.028488198,
-                        VALE_REFE=post_roche_analytic._sigma_eq[1]),
-                     _F(MAILLE='M2',
-                        POINT=1,
-                        REFERENCE="ANALYTIQUE",
-                        CHAM_GD=chPostRocheTout,
-                        NOM_CMP='X15',
-                        VALE_CALC=10185687.028488223,
-                        VALE_REFE=post_roche_analytic._sigma_eq[2]),
-                     _F(MAILLE='M2',
-                        POINT=2,
-                        REFERENCE="ANALYTIQUE",
-                        CHAM_GD=chPostRocheTout,
-                        NOM_CMP='X15',
-                        VALE_CALC=4185425.596891385,
-                        VALE_REFE=post_roche_analytic._sigma_eq[3]),
-                     # X16 = contrainte équivalente optimisée
-                     _F(MAILLE='M1',
-                        POINT=1,
-                        CHAM_GD=chPostRocheTout,
-                        NOM_CMP='X16',
-                        VALE_CALC=30529848.998718902),
-                     _F(MAILLE='M1',
-                        POINT=2,
-                        CHAM_GD=chPostRocheTout,
-                        NOM_CMP='X16',
-                        VALE_CALC=10185687.028488198),
-                     _F(MAILLE='M2',
-                        POINT=1,
-                        CHAM_GD=chPostRocheTout,
-                        NOM_CMP='X16',
-                        VALE_CALC=10185687.02848823),
-                     _F(MAILLE='M2',
-                        POINT=2,
-                        CHAM_GD=chPostRocheTout,
-                        NOM_CMP='X16',
-                        VALE_CALC=4185425.596891385),
-                )
-        )
-
 
 FIN()

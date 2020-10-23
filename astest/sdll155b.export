@@ -5,6 +5,7 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist ci verification sequential
 
-F comm sdll155b.py D 1
-F nom sdll154a.mmed D 0
+F comm sdll155b.comm D 1
+F comm sdll155b.com1 D 1
+F mmed sdll154a.mmed D 20
 F nom sdll155a_fonctions.py D 0
