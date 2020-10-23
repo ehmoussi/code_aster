@@ -485,13 +485,10 @@ class PostRocheCommon():
                 
                 if typeres in ['DYN_QS','DYN'] :
                 
-                    if typeres =='DYN_QS' :
-#                       msi : part dynamique de la réponse
-#                       nume_ordre 11, 12, 13 et 14
-                        iordr = 10+ind
-                    else:                    
-                        iordr = ind
-                    
+#                   msi : part dynamique de la réponse
+#                   nume_ordre 11, 12, 13 et 14
+                    iordr = 10+ind
+
                     __FIELD[nbfield] = CREA_CHAMP (OPERATION = 'EXTR',
                                                    TYPE_CHAM = 'ELNO_SIEF_R',
                                                    RESULTAT  = resin, 
@@ -510,12 +507,9 @@ class PostRocheCommon():
 
                 if typeres in ['DYN_QS','QS'] :
                 
-                    if typeres =='DYN_QS' :
-#                       MSI  : part quasi-statique de la réponse
-#                       nume_ordre 21, 22, 23 et 24
-                        iordr = 20+ind
-                    else:
-                        iordr = ind
+#                   MSI  : part quasi-statique de la réponse
+#                   nume_ordre 21, 22, 23 et 24
+                    iordr = 20+ind
 
                     __FIELD[nbfield] = CREA_CHAMP (OPERATION = 'EXTR',
                                                    TYPE_CHAM = 'ELNO_SIEF_R',

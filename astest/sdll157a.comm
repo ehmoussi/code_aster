@@ -104,11 +104,20 @@ poids = AFFE_CHAR_MECA(MODELE=modele,
 spectre02=LIRE_FONCTION(UNITE=21,
                         NOM_PARA='FREQ', INTERPOL='LOG',
                         PROL_GAUCHE='CONSTANT',
-                        PROL_DROITE='CONSTANT',);
+                        PROL_DROITE='CONSTANT',)
+
+spectre99=LIRE_FONCTION(UNITE=22,
+                        NOM_PARA='FREQ', INTERPOL='LOG',
+                        PROL_GAUCHE='CONSTANT',
+                        PROL_DROITE='CONSTANT',)
 
 sro02=DEFI_NAPPE(NOM_PARA='AMOR',
                  PARA=0.02,
                  FONCTION=spectre02)
+
+sro99=DEFI_NAPPE(NOM_PARA='AMOR',
+                 PARA=0.99,
+                 FONCTION=spectre99)
 
 # modes
 
@@ -179,6 +188,19 @@ sismique = COMB_SISM_MODAL(MODE_MECA=modes_dyn,
                            OPTION=('EFGE_ELNO')
                           )
 
+sismique2 = COMB_SISM_MODAL(MODE_MECA=modes_dyn,
+                           AMOR_REDUIT=0.99,
+                           CORR_FREQ='NON',
+                           MODE_CORR=modes_sta,
+                           MONO_APPUI = 'OUI',
+                           EXCIT=_F(TRI_AXE=(1.,1.,1.),
+                                    SPEC_OSCI=sro99,
+                                    ECHELLE=90.09,),
+                           COMB_MODE=_F(TYPE='CQC'),
+                           COMB_DIRECTION=_F(TYPE='QUAD'),
+                           OPTION=('EFGE_ELNO')
+                          )
+
 # appel à POST_ROCHE
 
 chPostRocheTout = POST_ROCHE(ZONE_ANALYSE=(_F(
@@ -202,6 +224,12 @@ chPostRocheTout = POST_ROCHE(ZONE_ANALYSE=(_F(
                                 _F(TYPE_CHAR='SISM_INER_SPEC',
                                  RESULTAT=sismique,
                                  DIRECTION='COMBI',
+                                 TYPE_RESU='DYN'
+                                 ),
+                                _F(TYPE_CHAR='SISM_INER_SPEC',
+                                 RESULTAT=sismique2,
+                                 DIRECTION='COMBI',
+                                 TYPE_RESU='QS'
                                  ),
                                 ),
                      PRESSION=(_F(
@@ -246,9 +274,12 @@ TEST_RESU(CHAM_ELEM=(
                         VALE_CALC=51345567.86167478),
                     # X2 = contrainte de référence S2
                      _F(TYPE_TEST="MAX",
+                        REFERENCE="SOURCE_EXTERNE",
                         CHAM_GD=chPostRocheTout,
                         NOM_CMP='X2',
-                        VALE_CALC=438043471.4142695),
+                        VALE_CALC=438043471.4142695,
+                        PRECISION=0.01,
+                        VALE_REFE=441.9e6),
                     # X3 = réversibilité locale t
                      _F(TYPE_TEST="MAX",
                         CHAM_GD=chPostRocheTout,
@@ -276,9 +307,12 @@ TEST_RESU(CHAM_ELEM=(
                         VALE_CALC=5.35433317228734),
                     # X8 = facteur d'effet de ressort r_S
                      _F(TYPE_TEST="MAX",
+                        REFERENCE="SOURCE_EXTERNE",
                         CHAM_GD=chPostRocheTout,
                         NOM_CMP='X8',
-                        VALE_CALC=5.745545770638011),
+                        VALE_CALC=5.745545770638011,
+                        PRECISION=0.11,
+                        VALE_REFE=5.21),
                     # X9 = facteur d'effet de ressort maximal r_M_Max
                      _F(TYPE_TEST="MAX",
                         CHAM_GD=chPostRocheTout,
@@ -314,15 +348,22 @@ TEST_RESU(CHAM_ELEM=(
                         REFERENCE="AUTRE_ASTER",
                         CHAM_GD=chPostRocheTout,
                         NOM_CMP='X15',
-                        VALE_CALC=350425920.4053404,
+                        VALE_CALC=350428159.9299071,
                         PRECISION=0.5,
                         VALE_REFE=240.2e6),
+                     _F(TYPE_TEST="MAX",
+                        REFERENCE="SOURCE_EXTERNE",
+                        CHAM_GD=chPostRocheTout,
+                        NOM_CMP='X15',
+                        VALE_CALC=350428159.9299071,
+                        PRECISION=0.05,
+                        VALE_REFE=366.2e6),
                     # X16 = contrainte équivalente optimisée
                      _F(TYPE_TEST="MAX",
                         REFERENCE="AUTRE_ASTER",
                         CHAM_GD=chPostRocheTout,
                         NOM_CMP='X16',
-                        VALE_CALC=349389994.531175,
+                        VALE_CALC=349392227.2613443,
                         PRECISION=0.5,
                         VALE_REFE=240.2e6),
                     )
