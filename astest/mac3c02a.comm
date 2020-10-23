@@ -23,10 +23,10 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='OUI',DEBUG=_F(SDVERI='NON'),)
 
 tabn = LIRE_TABLE(UNITE      = 38,
-                 FORMAT      = 'LIBRE',
-                 SEPARATEUR  = '\t')
+                  FORMAT      = 'LIBRE',
+                  SEPARATEUR  = '\t')
 
-MA1=LIRE_MAILLAGE(FORMAT='MED',UNITE=20);
+MA1=LIRE_MAILLAGE(FORMAT='MED',UNITE=20)
 
 
 RESU = CALC_MAC3COEUR( TYPE_COEUR    = 'TEST',
@@ -37,50 +37,42 @@ RESU = CALC_MAC3COEUR( TYPE_COEUR    = 'TEST',
                        LAME          = _F( UNITE_THYC    =  32,
                                            COEF_MULT_THV = 1.0,
                                            COEF_MULT_THT = 1.0,
-                                           ))
+                       ))
 
 post_i = RESU.LIST_PARA()['INST'][-1]
 
 TABP1 = POST_MAC3COEUR(RESULTAT    =  RESU,
-               TYPE_COEUR  = 'TEST',
-               INST        =  post_i,
-               TABLE      = tabn,
-               LAME        = (
-                              _F( FORMAT = 'TABLE', UNITE = 30,                 ),
-                              _F( FORMAT = 'GRACE', UNITE = 31, NUME_GRILLE =  5),
-                               ),
-               DEFORMATION = (
-                              _F( FORMAT = 'GRACE', UNITE = 32, TYPE_RESU   = 'MAXI', TYPE_VISU = 'AMPLITUDE',),
-                              _F( FORMAT = 'GRACE', UNITE = 33, TYPE_RESU   = 'MAXI', TYPE_VISU = 'MODULE',),
-                              _F( FORMAT = 'GRACE', UNITE = 34, TYPE_RESU   = 'MAXI', TYPE_VISU = 'VECTEUR',),
-                              _F( FORMAT = 'GRACE', UNITE = 35, POSITION = 'A_B', CONCEPTION = 'AFAXL_N4', TYPE_VISU = 'DEFORME',),
-                              _F( FORMAT = 'TABLE', UNITE = 36, NOM_SITE='BIDON'),
-                             )
-               )
+                    TYPE_COEUR  = 'TEST',
+                       INST        =  post_i,
+                       TABLE      = tabn,
+                       LAME        = (
+                           _F( FORMAT = 'TABLE', UNITE = 30,                 ),
+                           _F( FORMAT = 'GRACE', UNITE = 31, NUME_GRILLE =  5),
+                       ),
+                       DEFORMATION = (
+                           _F( FORMAT = 'GRACE', UNITE = 32, TYPE_RESU   = 'MAXI', TYPE_VISU = 'AMPLITUDE',),
+                           _F( FORMAT = 'GRACE', UNITE = 33, TYPE_RESU   = 'MAXI', TYPE_VISU = 'MODULE',),
+                           _F( FORMAT = 'GRACE', UNITE = 34, TYPE_RESU   = 'MAXI', TYPE_VISU = 'VECTEUR',),
+                           _F( FORMAT = 'GRACE', UNITE = 35, POSITION = 'A_B', CONCEPTION = 'AFAXL_N4', TYPE_VISU = 'DEFORME',),
+                        _F( FORMAT = 'TABLE', UNITE = 36, NOM_SITE='BIDON'),
+                       )
+)
 
 TABP2 = POST_MAC3COEUR(RESULTAT    =  RES_LM,
-               TYPE_COEUR  = 'TEST',
-               INST        =  post_i,
-               TABLE      = tabn,
-               #LAME        = (
-                              #_F( FORMAT = 'TABLE', UNITE = 37,                 ),
-                              ##_F( FORMAT = 'GRACE', UNITE = 31, NUME_GRILLE =  5),
-                               #),
-               DEFORMATION = (
-                              #_F( FORMAT = 'GRACE', UNITE = 32, TYPE_RESU   = 'MAXI', TYPE_VISU = 'AMPLITUDE',),
-                              #_F( FORMAT = 'GRACE', UNITE = 33, TYPE_RESU   = 'MAXI', TYPE_VISU = 'MODULE',),
-                              #_F( FORMAT = 'GRACE', UNITE = 34, TYPE_RESU   = 'MAXI', TYPE_VISU = 'VECTEUR',),
-                              #_F( FORMAT = 'GRACE', UNITE = 35, POSITION = 'A_B', CONCEPTION = 'AFAXL_N4', TYPE_VISU = 'DEFORME',),
-                              _F( FORMAT = 'TABLE', UNITE = 46, NOM_SITE='BIDON'),
-                              _F( FORMAT = 'TABLE', UNITE = 47, NOM_SITE='BIDON', FORMAT_R='STANDARD'),
-               ))
+                       TYPE_COEUR  = 'TEST',
+                       INST        =  post_i,
+                       TABLE      = tabn,
+                       DEFORMATION = (
+                           _F( FORMAT = 'TABLE', UNITE = 46, NOM_SITE='BIDON'),
+                           _F( FORMAT = 'TABLE', UNITE = 47, NOM_SITE='BIDON', FORMAT_R='STANDARD'),
+                       ))
 
 TABP3 = POST_MAC3COEUR(RESULTAT    =  RESU,
-               TYPE_COEUR  = 'TEST',
-               INST        =  post_i,
-               TABLE       = tabn,
-               FORCE_CONTACT  = ( _F( FORMAT = 'TABLE', UNITE = 48,),),
-               );
+                       TYPE_COEUR  = 'TEST',
+                       INST        =  post_i,
+                       TABLE       = tabn,
+                       FORCE_CONTACT  = ( _F( FORMAT = 'TABLE', UNITE = 48,)
+                       ))
 
 # tests de la sortie de CALC_MAC3COEUR / LAME
 TAB1 = CREA_TABLE(RESU=_F(RESULTAT=RESU,NOM_CHAM='VARI_ELGA',
@@ -114,16 +106,15 @@ TAB7 = CREA_TABLE(RESU=_F(RESULTAT=RESU,NOM_CHAM='VARI_ELGA',
 TAB2_CB = CREA_TABLE(RESU=_F(RESULTAT=RES_LM,NOM_CHAM='DEPL',INST=post_i,NOM_CMP=('DZ'),
                             GROUP_MA=('TG_C_B')))
 
-post_i=0.001
-
 TAB3_CB = CREA_TABLE(RESU=_F(RESULTAT=RES_LM,NOM_CHAM='DEPL',INST=post_i,NOM_CMP=('DZ'),
                             GROUP_MA=('TG_C_B')))
 
+post_i=0.001
 
 # tests de la sortie de CALC_MAC3COEUR / LAME
 TEST_TABLE(CRITERE='ABSOLU',
            REFERENCE='ANALYTIQUE',
-           VALE_CALC=-5.9596947357329604E-08,
+           VALE_CALC=-5.710400347101307E-08,
            VALE_REFE=0.0,
            NOM_PARA='V8',
            TABLE=TAB1,
@@ -133,11 +124,11 @@ TEST_TABLE(CRITERE='ABSOLU',
                       VALE_I=1,),
                    _F(NOM_PARA='INST',
                       VALE=1.E-3,),
-                   ),
-           )
+           ),
+)
 
 TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=0.0003734631370195465,
+           VALE_CALC=0.00032871069040165367,
            NOM_PARA='V8',
            TABLE=TAB1,
            FILTRE=(_F(NOM_PARA='MAILLE',
@@ -151,7 +142,7 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='ABSOLU',
            REFERENCE='ANALYTIQUE',
-           VALE_CALC=-5.9596947357383814E-08,
+           VALE_CALC=-5.710400347231411E-08,
            VALE_REFE=0.0,
            NOM_PARA='V8',
            TABLE=TAB2,
@@ -165,7 +156,7 @@ TEST_TABLE(CRITERE='ABSOLU',
            )
 
 TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=0.00037569624905813036,
+           VALE_CALC=0.00033105464491578853,
            NOM_PARA='V8',
            TABLE=TAB2,
            FILTRE=(_F(NOM_PARA='MAILLE',
@@ -179,7 +170,7 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
-           VALE_CALC=0.002780214114458192,
+           VALE_CALC=0.002780211250569196,
            VALE_REFE=2.78E-3,
            NOM_PARA='V8',
            TABLE=TAB3,
@@ -193,7 +184,7 @@ TEST_TABLE(CRITERE='RELATIF',
            )
 
 TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=0.006428084808070848,
+           VALE_CALC=0.006417416971313412,
            NOM_PARA='V8',
            TABLE=TAB3,
            FILTRE=(_F(NOM_PARA='MAILLE',
@@ -207,7 +198,7 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
-           VALE_CALC=0.0027802141144583213,
+           VALE_CALC=0.0027802112505693243,
            VALE_REFE= 2.78E-3,
            NOM_PARA='V8',
            TABLE=TAB4,
@@ -221,7 +212,7 @@ TEST_TABLE(CRITERE='RELATIF',
            )
 
 TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=0.0012966419046224883,
+           VALE_CALC=0.0013073301608164988,
            NOM_PARA='V8',
            TABLE=TAB4,
            FILTRE=(_F(NOM_PARA='MAILLE',
@@ -263,7 +254,7 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',
-           VALE_CALC=0.0027801788453408432,
+           VALE_CALC=0.0027801713644995583,
            VALE_REFE= 2.78E-3,
            NOM_PARA='V8',
            TABLE=TAB6,
@@ -277,7 +268,7 @@ TEST_TABLE(CRITERE='RELATIF',
            )
 
 TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=0.0034885421392608705,
+           VALE_CALC=0.0035332945052965513,
            NOM_PARA='V8',
            TABLE=TAB6,
            FILTRE=(_F(NOM_PARA='MAILLE',
@@ -323,13 +314,13 @@ TEST_TABLE(CRITERE='RELATIF',
 TAB30 = LIRE_TABLE(UNITE=30)
 
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
-           VALE_CALC=0.3734631,
-           VALE_REFE= 0.3734631,
+           VALE_CALC=0.3287107,
+           VALE_REFE=0.3287107,
            NOM_PARA ='RES_ABBB',
            TABLE=TAB30,
            FILTRE=_F(NOM_PARA='COOR_X',
                      VALE=2.18074),
-           )
+)
 
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
            VALE_CALC=1.481614,
@@ -338,25 +329,23 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
            TABLE=TAB30,
            FILTRE=_F(NOM_PARA='COOR_X',
                      VALE=2.18074),
-           )
+)
 
-#IMPR_TABLE(TABLE=TAB2_CB)
-
-TEST_TABLE(VALE_CALC=-0.0009533971168149203,
+TEST_TABLE(VALE_CALC=-0.0009980376599879053,
            NOM_PARA='DZ',
            TYPE_TEST='MIN',
            TABLE=TAB2_CB,
-           )
+)
 
-TEST_TABLE(VALE_CALC=0.0012981174647970642,
+TEST_TABLE(VALE_CALC=0.0012910373448349454,
            NOM_PARA='DZ',
            TYPE_TEST='MAX',
            TABLE=TAB2_CB,
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_REFE= -0.00166,
-           VALE_CALC=-0.0016601669575510864,
+           VALE_REFE=-0.0009980376599879053,
+           VALE_CALC=-0.0009980376599879053,
            NOM_PARA='DZ',
            TYPE_TEST='MIN',
            TABLE=TAB3_CB,
@@ -367,58 +356,58 @@ TAB46 = LIRE_TABLE(UNITE=46,SEPARATEUR='\t')
 IMPR_TABLE(TABLE=TAB46)
 
 TEST_TABLE(
-          VALE_CALC=2.5,
-          TABLE = TAB46,
-          NOM_PARA = 'XG5',
-          FILTRE=_F(
-            NOM_PARA='Repere',
-            VALE_K='FX0RH3'))
+    VALE_CALC=2.5,
+    TABLE = TAB46,
+    NOM_PARA = 'XG5',
+    FILTRE=_F(
+        NOM_PARA='Repere',
+        VALE_K='FX0RH3'))
 
 TAB47 = LIRE_TABLE(UNITE=47,SEPARATEUR='\t')
 
 IMPR_TABLE(TABLE=TAB47)
 
 TEST_TABLE(
-          VALE_CALC=2.47482,
-          TABLE = TAB47,
-          NOM_PARA = 'XG5',
-          FILTRE=_F(
-            NOM_PARA='Repere',
-            VALE_K='FX0RH3'))
+    VALE_CALC=2.46418,
+    TABLE = TAB47,
+    NOM_PARA = 'XG5',
+    FILTRE=_F(
+        NOM_PARA='Repere',
+        VALE_K='FX0RH3'))
 
 TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_CU_G4_70', VALE_CALC=1.484)
 TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_CU_G4_80', VALE_CALC=1.484)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_CU_G4_90', VALE_CALC=1.5935)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_CU_G4_95', VALE_CALC=1.7524)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_CU_G4_99', VALE_CALC=1.8958)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_AC_G4_70', VALE_CALC=2.5842)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_AC_G4_80', VALE_CALC=3.1232)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_AC_G4_90', VALE_CALC=3.6622)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_AC_G4_95', VALE_CALC=3.9317)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_AC_G4_99', VALE_CALC=4.1472)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_G4_70', VALE_CALC=1.5448)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_G4_80', VALE_CALC=1.9317)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_G4_90', VALE_CALC=2.4044)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_G4_95', VALE_CALC=2.8537)
-TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_G4_99', VALE_CALC=3.9317)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_CU_G4_90', VALE_CALC=1.6049)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_CU_G4_95', VALE_CALC=1.7718)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_CU_G4_99', VALE_CALC=1.9218)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_AC_G4_70', VALE_CALC=2.573)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_AC_G4_80', VALE_CALC=3.1023)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_AC_G4_90', VALE_CALC=3.6316)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_AC_G4_95', VALE_CALC=3.8962)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_AC_G4_99', VALE_CALC=4.1079)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_G4_70', VALE_CALC=1.5512)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_G4_80', VALE_CALC=1.9593)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_G4_90', VALE_CALC=2.3964)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_G4_95', VALE_CALC=2.8376)
+TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_G4_99', VALE_CALC=3.8962)
 TEST_TABLE(TABLE=TABP1, NOM_PARA='QuanLE_CU_G5_70', VALE_CALC=1.4816)
 
-TEST_TABLE(TABLE=TABP2, NOM_PARA='moyRhoCoeur', VALE_CALC=2.0274)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='moRAFAXL_N4', VALE_CALC=2.0274)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maxRhoCoeur', VALE_CALC=2.4868)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maRAFAXL_N4', VALE_CALC=2.4868)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='moyGravCoeur', VALE_CALC=3.4726)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maxGravCoeur', VALE_CALC=4.8983)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='sigGravCoeur', VALE_CALC=1.8089)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maGAFAXL_N4', VALE_CALC=4.8983)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille2', VALE_CALC=0.9298)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille3', VALE_CALC=1.8208)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille4', VALE_CALC=2.1713)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille5', VALE_CALC=2.4748)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille6', VALE_CALC=2.3979)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille7', VALE_CALC=2.4868)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille8', VALE_CALC=2.11)
-TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille9', VALE_CALC=1.0932)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='moyRhoCoeur', VALE_CALC=2.0553)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='moRAFAXL_N4', VALE_CALC=2.0553)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maxRhoCoeur', VALE_CALC=2.4935)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maRAFAXL_N4', VALE_CALC=2.4935)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='moyGravCoeur', VALE_CALC=3.5782)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maxGravCoeur', VALE_CALC=5.0646)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='sigGravCoeur', VALE_CALC=1.8724)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maGAFAXL_N4', VALE_CALC=5.0646)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille2', VALE_CALC=0.9309)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille3', VALE_CALC=1.8189)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille4', VALE_CALC=2.1587)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille5', VALE_CALC=2.4642)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille6', VALE_CALC=2.3885)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille7', VALE_CALC=2.4935)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille8', VALE_CALC=2.1255)
+TEST_TABLE(TABLE=TABP2, NOM_PARA='maxDeplGrille9', VALE_CALC=1.1021)
 TEST_TABLE(TABLE=TABP2, NOM_PARA='locMaxRho', VALE_CALC_K='B02')
 TEST_TABLE(TABLE=TABP2, NOM_PARA='locMaxGrav', VALE_CALC_K='B03')
 TEST_TABLE(TABLE=TABP2, NOM_PARA='locMaxDeplG2', VALE_CALC_K='B02')
@@ -427,14 +416,13 @@ TEST_TABLE(TABLE=TABP2, NOM_PARA='locMaxDeplG9', VALE_CALC_K='B02')
 
 TAB48 = LIRE_TABLE(UNITE=48)
 
-TEST_TABLE(VALE_CALC=51.80412,
+TEST_TABLE(VALE_CALC=54.07441,
            NOM_PARA ='CU_BA_W',
            TABLE=TAB48,
            FILTRE=_F(NOM_PARA='COOR_X',
-                     VALE=2.18074),
-           )
+                     VALE=2.18074))
 
-TEST_TABLE(VALE_CALC=130.0575,
+TEST_TABLE(VALE_CALC=133.5322,
            NOM_PARA ='RES_BCBB',
            TABLE=TAB48,
            FILTRE=_F(NOM_PARA='COOR_X',
