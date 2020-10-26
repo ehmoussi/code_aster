@@ -47,6 +47,7 @@ export INCLUDES_HDF5="${PREREQ_PATH}/prerequisites/Hdf5-1103/include"
 
 export LIBPATH_MED="${PREREQ_PATH}/prerequisites/Medfichier-410/lib"
 export INCLUDES_MED="${PREREQ_PATH}/prerequisites/Medfichier-410/include"
+export PYPATH_MED="${PREREQ_PATH}/prerequisites/Medfichier-410/lib/python3.6/site-packages"
 
 export LIBPATH_METIS="${PREREQ_PATH}/prerequisites/Metis_aster-510_aster4/lib"
 export INCLUDES_METIS="${PREREQ_PATH}/prerequisites/Metis_aster-510_aster4/include"
@@ -84,7 +85,7 @@ export LIB_BOOST="boost_python3-mt"
 export LD_LIBRARY_PATH=${LIBPATH_HDF5}:${LIBPATH_MED}:${LIBPATH_METIS}:${LIBPATH_SCOTCH}:${LIBPATH_MUMPS}:${LIBPATH_MFRONT}:${LIBPATH_BOOST}:${LD_LIBRARY_PATH}
 export LD_LIBRARY_PATH=${LIBPATH_PARMETIS}:${LIBPATH_PETSC}:${LIBPATH_MEDCOUPLING}:${LIBPATH_MPI4PY}:${LD_LIBRARY_PATH}
 
-export PYTHONPATH=${PYPATH_NUMPY}:${PYPATH_ASRUN}:${PYPATH_MFRONT}:${PYPATH_MEDCOUPLING}:${PYPATH_MPI4PY}:${PYTHONPATH}
+export PYTHONPATH=${PYPATH_NUMPY}:${PYPATH_ASRUN}:${PYPATH_MFRONT}:${PYPATH_MEDCOUPLING}:${PYPATH_MPI4PY}:${PYPATH_MED}:${PYTHONPATH}
 
 export PATH=\
 ${PREREQ_PATH}/prerequisites/Medfichier-410/bin:\
