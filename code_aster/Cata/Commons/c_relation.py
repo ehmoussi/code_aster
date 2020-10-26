@@ -199,6 +199,7 @@ def C_RELATION( COMMAND ):
                                         "VISC_CIN2_NRAD",
                                         "VISC_MEMO_NRAD",
                                         "VISC_DRUC_PRAG",
+                                        "VISC_GTN",
                                         "VISC_IRRA_LOG",
                                         "VISC_ISOT_LINE",
                                         "VISC_ISOT_NL",

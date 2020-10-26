@@ -1,3 +1,22 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
 # ---------------------------------------------------------------------
 #  Evolution de la porosite sous germination pure dans GTN
 #  Germination fonction de la variable d'ecrouissage
@@ -122,7 +141,7 @@ TEST_TABLE(
     CRITERE   = 'RELATIF',
     REFERENCE = 'ANALYTIQUE',
     PRECISION = 0.05,
-    VALE_CALC = 0.15056795396586212,
+    VALE_CALC = 0.15056836489070727,
     VALE_REFE = eps*2.0/3.0,
     NOM_PARA  = 'EPXX',
     FILTRE=_F(
@@ -140,7 +159,7 @@ TEST_TABLE(
     CRITERE   = 'RELATIF',
     REFERENCE = 'ANALYTIQUE',
     PRECISION = 0.05,
-    VALE_CALC = 0.1470479603591232,
+    VALE_CALC = 0.14704833706176834,
     VALE_REFE = ka,
     NOM_PARA  = 'V1',
     FILTRE=_F(
@@ -158,7 +177,7 @@ TEST_TABLE(
     CRITERE   = 'RELATIF',
     REFERENCE = 'ANALYTIQUE',
     PRECISION = 0.05,
-    VALE_CALC = 0.018992005106860502,
+    VALE_CALC = 0.018992223623622226,
     VALE_REFE = fk,
     NOM_PARA  = 'V2',
     FILTRE=_F(
@@ -176,7 +195,7 @@ TEST_TABLE(
     CRITERE   = 'RELATIF',
     REFERENCE = 'ANALYTIQUE',
     PRECISION = 0.05,
-    VALE_CALC = 0.14784251243426838,
+    VALE_CALC = 0.1478429233625327,
     VALE_REFE = ep*2.0/3.0,
     NOM_PARA  = 'V10',
     FILTRE=_F(
@@ -194,7 +213,7 @@ TEST_TABLE(
     CRITERE   = 'RELATIF',
     REFERENCE = 'ANALYTIQUE',
     PRECISION = 0.05,
-    VALE_CALC = 0.017992005105603136,
+    VALE_CALC = 0.017992223622519572,
     VALE_REFE = fk-f0,
     NOM_PARA  = 'V11',
     FILTRE=_F(
@@ -212,7 +231,7 @@ TEST_TABLE(
     CRITERE   = 'RELATIF',
     REFERENCE = 'ANALYTIQUE',
     PRECISION = 0.05,
-    VALE_CALC = 2.9440181067626265,
+    VALE_CALC = 2.944029612420055,
     VALE_REFE = math.log(fk) - math.log(f0),
     NOM_PARA  = 'V12',
     FILTRE=_F(

@@ -26,6 +26,7 @@ subroutine lc0076(fami, kpg, ksp, ndim, imate,&
 
  
 ! aslint: disable=W1504,W0104
+    use Behaviour_module, only : behaviourOption
     use vmis_isot_nl_module, only: CONSTITUTIVE_LAW, Init, InitViscoPlasticity, Integrate 
     implicit none
 #include "asterfort/assert.h"
@@ -43,6 +44,7 @@ subroutine lc0076(fami, kpg, ksp, ndim, imate,&
     character(len=8)    :: typmod(*)
     character(len=*)    :: fami
 ! ----------------------------------------------------------------------
+    aster_logical :: lMatr, lVect, lSigm, lVari
     integer     :: ndimsi
     real(kind=8):: eps(2*ndim), sig(2*ndim),dsde(2*ndim,2*ndim),vi(nvi)
     type(CONSTITUTIVE_LAW):: cl
@@ -55,9 +57,13 @@ subroutine lc0076(fami, kpg, ksp, ndim, imate,&
     ndimsi = 2*ndim
     eps    = epsm(1:ndimsi) + deps(1:ndimsi)
     
+    call behaviourOption(option, compor,lMatr , lVect ,lVari , lSigm)
+
     cl = Init(ndimsi, option, fami, kpg, ksp, imate, nint(carcri(1)), &
             carcri(3))
-            
+    ASSERT(.not. lMatr .or. cl%rigi)
+    ASSERT(.not. lVari .or. cl%resi)
+    
     if (compor(1)(1:4) .eq. 'VISC') &
         call InitViscoPlasticity(cl,fami,kpg,ksp,imate,instap-instam)
         
@@ -66,9 +72,9 @@ subroutine lc0076(fami, kpg, ksp, ndim, imate,&
     codret = cl%exception
     if (codret.ne.0) goto 999
 
-    if (cl%resi) sigp(1:ndimsi) = sig
-    if (cl%vari) vip(1:nvi) = vi
-    if (cl%rigi) dsidep(1:ndimsi,1:ndimsi) = dsde
+    if (lSigm) sigp(1:ndimsi) = sig
+    if (lVari) vip(1:nvi) = vi
+    if (lMatr) dsidep(1:ndimsi,1:ndimsi) = dsde
 
 999 continue                      
 end subroutine

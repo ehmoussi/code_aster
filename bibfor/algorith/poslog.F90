@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -198,6 +198,7 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
 !       pour gagner du temps : on stocke TP comme variable interne
 !       --------------------------------
         ivtn=lgpg-6+1
+        vip(lgpg-1:lgpg)=0.d0
         call dcopy(2*ndim, tp, 1, vip(ivtn), 1)
 !
     endif

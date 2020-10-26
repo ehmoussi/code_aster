@@ -154,14 +154,15 @@ integer,intent(out)            :: codret
     neu = 2*ndim
     neg = 2+ndim
     tbid = 0.d0
-    codret = 0
+    
 
     call gdlog_init(gdlm,ndu,nnu,axi,lMatr)
     call gdlog_init(gdlp,ndu,nnu,axi,lMatr)
     if (lVect) fint = 0
     if (lMatr) matr = 0
     cod = 0
-
+    silcp = 0
+    
     ! tableaux de reference bloc (depl,inco,grad) -> numero du ddl
     forall (i=1:ndg,n=1:nng) xg(i,n) = (n-1)*(ndu+ndg) + ndu + i
     forall (i=1:ndu,n=1:nng) xu(i,n) = (n-1)*(ndu+ndg) + i
@@ -233,6 +234,7 @@ integer,intent(out)            :: codret
 
         ! Archivage des contraintes mecaniques en t+ (tau tilda) dans les vi
         if (lVari) then
+            vip(lgpg-1:lgpg,g) = 0.d0
             vip(lgpg-5:lgpg-6+neu,g) = silcp(1:neu)
         end if
 

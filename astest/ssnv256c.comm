@@ -214,12 +214,12 @@ SXX12 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX1[k])))
 TEST_TABLE(TABLE = SXX11,
        NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 724.421547331,
+           VALE_CALC = 724.4214543822861,
            )
 TEST_TABLE(TABLE = SXX12,
        NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 776.593909352,
+           VALE_CALC = 776.5937149673109,
            )
 
 # INST2 = 0.80     (INST_TOTAL = 1.00)
@@ -238,12 +238,12 @@ SXX22 = CREA_TABLE(LISTE = (_F(PARA='SIXX',LISTE_R = SIXX2[k])))
 TEST_TABLE(TABLE = SXX21,
        NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 410.071451584,
+           VALE_CALC = 410.07142197040616,
            )
 TEST_TABLE(TABLE = SXX22,
        NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 758.512748577,
+           VALE_CALC = 758.5125327299668,
            )
 
 
@@ -270,12 +270,12 @@ V112 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V11[k])))
 TEST_TABLE(TABLE = V111,
        NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.932956293834,
+           VALE_CALC = 0.9329560287805331,
            )
 TEST_TABLE(TABLE = V112,
        NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.947931301639,
+           VALE_CALC = 0.9479309978815962,
            )
 
 #  POROSITE
@@ -286,12 +286,12 @@ V122 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V12[k])))
 TEST_TABLE(TABLE = V121,
        NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.0329235483441,
+           VALE_CALC = 0.03292354042817127,
            )
 TEST_TABLE(TABLE = V122,
        NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.00366818227864,
+           VALE_CALC = 0.003668181106032876,
            )
 
 
@@ -314,12 +314,12 @@ V212 = CREA_TABLE(LISTE = (_F(PARA='V1',LISTE_R = V21[k])))
 TEST_TABLE(TABLE = V211,
        NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 1.2815367262,
+           VALE_CALC = 1.2815364036376933,
            )
 TEST_TABLE(TABLE = V212,
        NOM_PARA = 'V1',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 1.35471600569,
+           VALE_CALC = 1.3547156295915237,
            )
 
 #  POROSITE
@@ -330,11 +330,11 @@ V222 = CREA_TABLE(LISTE = (_F(PARA='V2',LISTE_R = V22[k])))
 TEST_TABLE(TABLE = V221,
        NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.117433231099,
+           VALE_CALC = 0.11743319303403475,
            )
 TEST_TABLE(TABLE = V222,
        NOM_PARA = 'V2',
            TYPE_TEST = 'MAX',
-           VALE_CALC = 0.0125635616053,
+           VALE_CALC = 0.012563556810907922,
            )
 FIN()

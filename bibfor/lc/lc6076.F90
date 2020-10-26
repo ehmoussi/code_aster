@@ -24,6 +24,7 @@ subroutine lc6076(fami, kpg, ksp, ndim, imate,&
 
 
 ! aslint: disable=W1504,W0104
+    use Behaviour_module, only : behaviourOption
     use vmis_isot_nl_module, only: CONSTITUTIVE_LAW, Init, InitGradVari, InitViscoPlasticity, &
                                     Integrate 
     implicit none
@@ -46,6 +47,7 @@ subroutine lc6076(fami, kpg, ksp, ndim, imate,&
 ! --------------------------------------------------------------------------------------------------
 !  Loi de comportement VMIS_ISOT_NL + GRAD_VARI
 ! --------------------------------------------------------------------------------------------------
+    aster_logical :: lMatr, lVect, lSigm, lVari
     integer     :: ndimsi
     real(kind=8):: sig(2*ndim),vi(nvi),ka
     real(kind=8):: deps_sig(2*ndim,2*ndim),deps_vi(2*ndim),dphi_sig(2*ndim),dphi_vi
@@ -63,9 +65,13 @@ subroutine lc6076(fami, kpg, ksp, ndim, imate,&
     lag    = eps(ndimsi+2)
     grad   = eps(ndimsi+3:ndimsi+2+ndim)
 
+    call behaviourOption(option, compor,lMatr , lVect ,lVari , lSigm)
+
     cl = Init(ndimsi, option, fami, kpg, ksp, imate, nint(carcri(1)), &
             carcri(3))
-
+    ASSERT(.not. lMatr .or. cl%rigi)
+    ASSERT(.not. lVari .or. cl%resi)
+    
     call InitGradVari(cl,fami,kpg,ksp,imate,lag,apg)
 
     if (compor(1)(1:4) .eq. 'VISC') &
@@ -77,10 +83,10 @@ subroutine lc6076(fami, kpg, ksp, ndim, imate,&
     codret = cl%exception
     if (codret.ne.0) goto 999
 
-    if (cl%vari) vip(1:nvi) = vi
+    if (lVari) vip(1:nvi) = vi
 
     ka = merge(vi(1),vim(1),cl%vari)
-    call lcgrad(cl%resi, cl%rigi, sig, apg, lag, grad, ka, &
+    call lcgrad(lSigm, lMatr, sig, apg, lag, grad, ka, &
               cl%mat%r, cl%mat%c, deps_sig, dphi_sig, deps_vi, dphi_vi, sigp, dsidep)
 
 999 continue    

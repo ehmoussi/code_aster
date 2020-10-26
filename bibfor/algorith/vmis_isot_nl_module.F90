@@ -256,7 +256,7 @@ subroutine Integrate(self, eps, vim, sig, vip, deps_sig, dphi_sig, deps_vi, dphi
 ! --------------------------------------------------------------------------------------------------
 ! eps       strain at the end of the time step
 ! vim       internal variables at the beginning of the time step
-! sig       stress at the end of the time step
+! sig       stress at the end of the time step (resi) or the beginning of the time step (not resi)
 ! vip       internal variables at the end of the time step
 ! deps_sig  derivee dsig / deps
 ! dphi_sig  derivee dsig / dphi   (grad_vari)
@@ -323,7 +323,7 @@ subroutine ComputePlasticity(self, eps, ka, state, ep, &
 ! ka        variable d'ecrouissage kappa (in=debut pas de temps, out=fin)
 ! state     etat pendant le pas (0=elastique, 1=plastique, 2=singulier) (in=debut, out=fin)
 ! ep        deformation plastique (in=debut, out=fin)
-! t         contrainte en fin de pas de temps
+! t         ontrainte en fin de pas de temps (resi) ou au debut du pas de temps (not resi)
 ! deps_t    derivee dt / deps
 ! dphi_t    derivee dt / dphi   (grad_vari)
 ! deps_ka   derivee dka / deps  (grad_vari)
@@ -505,6 +505,10 @@ subroutine ComputePlasticity(self, eps, ka, state, ep, &
     dphi_t  = 0
     deps_ka = 0
     dphi_ka = 0
+    
+    ! Contrainte sans correction de plasticite en phase de prediction
+    if (self%pred) t = tel
+
 
     ! Etat pour choisir l'operateur tangent en phase de prediction
     if (self%pred) then

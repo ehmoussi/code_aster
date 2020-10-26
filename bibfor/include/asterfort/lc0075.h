@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,20 +35,20 @@ interface
         real(kind=8) :: instam
         real(kind=8) :: instap
         integer :: neps
-        real(kind=8) :: epsm(*)
-        real(kind=8) :: deps(*)
+        real(kind=8) :: epsm(neps)
+        real(kind=8) :: deps(neps)
         integer :: nsig
-        real(kind=8) :: sigm(*)
+        real(kind=8) :: sigm(nsig)
         integer :: nvi
-        real(kind=8) :: vim(*)
+        real(kind=8) :: vim(nvi)
         character(len=16) :: option
         real(kind=8) :: angmas(*)
-        real(kind=8) :: sigp(*)
-        real(kind=8) :: vip(*)
+        real(kind=8) :: sigp(nsig)
+        real(kind=8) :: vip(nvi)
         character(len=8) :: typmod(*)
         integer :: icomp
         integer :: ndsde
-        real(kind=8) :: dsidep(*)
+        real(kind=8) :: dsidep(nsig,neps)
         integer :: codret
     end subroutine lc0075
 end interface

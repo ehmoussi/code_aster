@@ -274,6 +274,7 @@ integer,intent(out)            :: codret
 
         ! Archivage des contraintes mecaniques en t+ (tau tilda) dans les vi
         if (lVari) then
+            vip(lgpg-1:lgpg,g) = 0.d0
             vip(lgpg-5:lgpg-6+neu,g) = silcp(1:neu)
         end if
 

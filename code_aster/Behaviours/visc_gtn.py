@@ -21,14 +21,14 @@
 from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
-    nom            = 'GTN',
+    nom            = 'VISC_GTN',
     lc_type        = None,
-    doc            = """Loi de plasticité de Gurson Tvergaard Needleman [R5.03.29]"""  ,
+    doc            = """Loi de viscoplasticité de Gurson Tvergaard Needleman [R5.03.29]"""  ,
     num_lc         = 75,
     nb_vari        = 12,
     nom_vari       = ('EPSPEQ','POROSITE','INDIPLAS','EPSPXX','EPSPYY',
         'EPSPZZ','EPSPXY','EPSPXZ','EPSPYZ','EPCUM','PORO_NUC','PORO_LOG'),
-    mc_mater       = ('ELAS','ECRO_NL','GTN','NONLOCAL'),
+    mc_mater       = ('ELAS','ECRO_NL','GTN','NORTON','NONLOCAL'),
     modelisation   = ('3D','AXIS','D_PLAN','GRADVARI',),
     deformation    = ('PETIT','GDEF_LOG',),
     algo_inte      = ('SPECIFIQUE',),

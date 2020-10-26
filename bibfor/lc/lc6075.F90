@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ subroutine lc6075(fami, kpg, ksp, ndim, imate,&
 !
 !
 ! aslint: disable=W1504,W0104
+    use Behaviour_module, only : behaviourOption
     use lcgtn_module, only: CONSTITUTIVE_LAW, Init, InitGradVari, InitViscoPlasticity, &
                                     Integrate 
 
@@ -48,10 +49,11 @@ subroutine lc6075(fami, kpg, ksp, ndim, imate,&
 ! ----------------------------------------------------------------------
 !  Loi de comportement GTN
 ! ----------------------------------------------------------------------
+    aster_logical :: lMatr, lVect, lSigm, lVari,visc
     integer     :: ndimsi
     real(kind=8):: sig(2*ndim),vi(nvi),ka
     real(kind=8):: deps_sig(2*ndim,2*ndim),deps_vi(2*ndim),dphi_sig(2*ndim),dphi_vi
-    real(kind=8):: apg,lag,grad(ndim),eps(neps)
+    real(kind=8):: apg,lag,grad(ndim),eps_gene(neps),eps_meca(2*ndim)
     type(CONSTITUTIVE_LAW):: cl
 ! --------------------------------------------------------------------------------------------------
     ASSERT (neps*nsig .eq. ndsde)
@@ -60,29 +62,34 @@ subroutine lc6075(fami, kpg, ksp, ndim, imate,&
     ASSERT (neps .ge. 3*ndim+2)
 ! --------------------------------------------------------------------------------------------------
     ndimsi = 2*ndim
-    eps    = epsm(1:neps)+deps(1:neps)
-    apg    = eps(ndimsi+1)
-    lag    = eps(ndimsi+2)
-    grad   = eps(ndimsi+3:ndimsi+2+ndim)
+    eps_gene = epsm(1:neps)+deps(1:neps)
+    eps_meca = eps_gene(1:ndimsi)
+    apg      = eps_gene(ndimsi+1)
+    lag      = eps_gene(ndimsi+2)
+    grad     = eps_gene(ndimsi+3:ndimsi+2+ndim)
 
+    call behaviourOption(option, compor,lMatr , lVect ,lVari , lSigm)
+    
     cl = Init(ndimsi, option, fami, kpg, ksp, imate, nint(carcri(1)), &
             carcri(3))
-
+    ASSERT(.not. lMatr .or. cl%rigi)
+    ASSERT(.not. lVari .or. cl%vari)
+    
     call InitGradVari(cl,fami,kpg,ksp,imate,lag,apg)
 
-    if (compor(1)(1:4) .eq. 'VISC') &
-        call InitViscoPlasticity(cl,fami,kpg,ksp,imate,instap-instam)
+    visc = compor(1)(1:4) .eq. 'VISC'
+    call InitViscoPlasticity(cl,visc,fami,kpg,ksp,imate,instap-instam)
         
-    call Integrate(cl, eps(1:ndimsi), vim(1:nvi), sig, &
+    call Integrate(cl, eps_meca, vim(1:nvi), sig, &
             vi, deps_sig, dphi_sig, deps_vi, dphi_vi)
 
     codret = cl%exception
     if (codret.ne.0) goto 999
 
-    if (cl%vari) vip(1:nvi) = vi
+    if (lVari) vip(1:nvi) = vi
 
     ka = merge(vi(1),vim(1),cl%vari)
-    call lcgrad(cl%resi, cl%rigi, sig, apg, lag, grad, ka, &
+    call lcgrad(lSigm, lMatr, sig, apg, lag, grad, ka, &
               cl%mat%r, cl%mat%c, deps_sig, dphi_sig, deps_vi, dphi_vi, sigp, dsidep)
 
 999 continue    
