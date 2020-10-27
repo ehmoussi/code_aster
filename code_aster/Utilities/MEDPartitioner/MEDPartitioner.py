@@ -67,20 +67,20 @@ class MEDPartitioner:
         """ Return the partition of the mesh"""
         return self._meshPartitioned
 
-    def partitionMesh(self, verbose=False):
+    def partitionMesh(self, verbose=0):
         """ Partition the mesh
 
         Arguments:
-            verbose = False (bool): active verbosity mode
+            verbose (int) : 0 - warnings
+                            1 - informations about main steps
+                            2 - informations about all steps
         """
-        if verbose:
-            level = logger.getEffectiveLevel()
-            setVerbose(2, True)
+        level = logger.getEffectiveLevel()
+        setVerbose(verbose, True)
 
         self._meshPartitioned = MakeThePartition(self._filename, self._meshname, GetGraphPartitioner(None))
 
-        if verbose:
-            logger.setLevel(level)
+        logger.setLevel(level)
 
     def writeMesh(self, path=None):
         """ Write the partitioning mesh file in MED format

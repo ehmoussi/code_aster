@@ -71,7 +71,7 @@ pMesh3 = code_aster.ParallelMesh()
 pMesh3.readMedFile("ssnv187a.mmed")
 
 # 4) With LIRE_MAILLAGE (internal partitioning)
-pMesh4 = LIRE_MAILLAGE(UNITE=20, FORMAT="MED", PARTITIONNEUR="PTSCOTCH")
+pMesh4 = LIRE_MAILLAGE(UNITE=20, FORMAT="MED", PARTITIONNEUR="PTSCOTCH", INFO_MED=2)
 
 model = AFFE_MODELE(MAILLAGE=pMesh4,
                     AFFE=_F(MODELISATION='3D', PHENOMENE='MECANIQUE', TOUT='OUI'),)

@@ -24,7 +24,7 @@ code_aster.init("--test")
 
 test = code_aster.TestCase()
 
-pMesh = LIRE_MAILLAGE(UNITE=20, FORMAT="MED", PARTITIONNEUR="PTSCOTCH")
+pMesh = LIRE_MAILLAGE(UNITE=20, FORMAT="MED", PARTITIONNEUR="PTSCOTCH", INFO_MED=1)
 
 model = AFFE_MODELE(MAILLAGE=pMesh,
                     AFFE=_F(MODELISATION='3D', PHENOMENE='MECANIQUE', TOUT='OUI'),)

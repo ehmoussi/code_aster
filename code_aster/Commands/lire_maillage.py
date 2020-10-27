@@ -89,13 +89,8 @@ class MeshReader(ExecuteCommand):
                       CREA_GROUP_COUL=coul)
 
         if self._result.isParallel():
-            if keywords['INFO'] > 1:
-                verbose = True
-            else:
-                verbose = False
-
             filename = LogicalUnitFile.filename_from_unit(unit)
-            self._result.readMedFile(filename, partitioned=False, verbose=verbose)
+            self._result.readMedFile(filename, partitioned=False, verbose=keywords['INFO_MED']-1)
         else:
             if keywords['FORMAT'] == "MED" and keywords['PARTITIONNEUR'] == "PTSCOTCH":
                 assert getMPINumberOfProcs() == 1

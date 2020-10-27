@@ -26,6 +26,8 @@ import logging
 
 import argparse, sys
 
+from resource import getrusage, RUSAGE_SELF
+
 from distutils.version import StrictVersion
 
 import med
@@ -67,21 +69,42 @@ def setVerbose(verbose=1, code_aster=False):
     logger.setLevel(verbose_map[verbose])
 
 
+def memory_peak(mess=None, debug=False):
+    # memory peak in Mo
+    mem_used = int(getrusage(RUSAGE_SELF).ru_maxrss / 1024)
+    if mess is not None:
+        pat = "Memory peak of \"{}\" : {} Mo".format(mess,mem_used)
+    else:
+        pat = "Memory peak : {} Mo".format(mem_used)
+
+    if debug:
+        logger.debug(pat)
+    else:
+        logger.info(pat)
 
 class ChronoCtxMg:
-    def __init__(self,what):
+    def __init__(self,what, debug=False):
         self._what = what
+        self._debug = debug
     def __enter__(self):
         pat = "Start de \"{}\"".format(self._what)
-        logger.info(pat)
+        if self._debug:
+            logger.debug(pat)
+        else:
+            logger.info(pat)
         self.start = datetime.now()
 
     def __exit__(self, exctype, exc, tb):
         self.stop = datetime.now()
         pat = "Fin de \"{}\"".format(self._what)
-        logger.info(pat)
         delta = self.stop - self.start
-        logger.info("Time spent for \"{}\" : {}".format(self._what,delta))
+        if self._debug:
+            logger.debug(pat)
+            logger.debug("Time spent for \"{}\" : {}".format(self._what,delta))
+        else:
+            logger.info(pat)
+            logger.info("Time spent for \"{}\" : {}".format(self._what,delta))
+        memory_peak(self._what)
 
 class MasterChronoCtxMg:
     def __init__(self,what):
@@ -91,6 +114,7 @@ class MasterChronoCtxMg:
             pat = "Start de \"{}\"".format(self._what)
             logger.info(pat)
             self.start = datetime.now()
+            memory_peak(pat)
 
     def __exit__(self, exctype, exc, tb):
         if MPI.COMM_WORLD.rank == 0:
@@ -99,6 +123,7 @@ class MasterChronoCtxMg:
             delta = self.stop - self.start
             logger.info(pat)
             logger.info("Time spent for \"{}\" : {}".format(self._what,delta))
+            memory_peak(pat)
 
 def BuildPartNameFromOrig(fn, rank):
     return "{}_new_{}.med".format(os.path.splitext(fn)[0],rank)
@@ -714,54 +739,54 @@ def MakeThePartition(fileName, meshName, MyPartitioner):
     with ChronoCtxMg("création de la partition via ptscotch"):
         nodesPartition = NodesPartition(neighborsOfNodes, MyPartitioner)
 
-    logger.debug("récupération des elements de la partition")
 
     # on rajoute tous les levels
 
-    mm_levs = { }
-    for lev in partialMedFileUMesh.getMEDFileUMesh().getNonEmptyLevels():
-        logger.debug("ajout du niveau: "+str(lev))
+    with ChronoCtxMg("récupération des elements de la partition"):
+        mm_levs = { }
+        for lev in partialMedFileUMesh.getMEDFileUMesh().getNonEmptyLevels():
+            with ChronoCtxMg("ajout du niveau: "+str(lev), True):
+                pm_lev, fam_field_node = partialMedFileUMesh.getParaUMeshAtLevel(lev)
 
-        pm_lev, fam_field_node = partialMedFileUMesh.getParaUMeshAtLevel(lev)
-        logger.debug("récupération des cells du niveau: "+str(lev))
-        if lev == 0:
+            with ChronoCtxMg("récupération des cells du niveau: "+str(lev), True):
+                if lev == 0:
+                    cellsPartition_lev = pm_lev.getCellIdsLyingOnNodes(nodesPartition.nodes,False)
+                else:
+                    cellsPartition_lev = pm_lev.getCellIdsLyingOnNodes(globalNodeIdsOfRk0,True)
+            #  connaissant les cells du niveau lev dont j ai besoin j appelle la communauté pour me donner mon morceau
+            with ChronoCtxMg("creation du maillage unitaire avec les cells du niveau "+str(lev), True):
+                mm_lev = GetUMeshFrom(pm_lev, partialMedFileUMesh.getMEDFileUMesh().getFamilyFieldAtLevel(lev) , fam_field_node, cellsPartition_lev)
+            #
+            if lev == 0:
+                logger.debug("recuperation nodes id")
+                globalNodeIdsOfRk0 = mm_lev.getGlobalNumFieldAtLevel(1)[mm_lev[0].computeFetchedNodeIds()]
+                globalNodeIdsOfRk0 = globalNodeIdsOfRk0.buildUnion(nodesPartition.nodes)
+            #
+            mm_levs[lev] = mm_lev
+            pass
+
+    with ChronoCtxMg("ajout des POINT1"):
+        if partialMedFileUMesh.presenceOfPoint1():
+            pm_lev, fam_field_node = partialMedFileUMesh.getParaUMeshAtLevelZero()
             cellsPartition_lev = pm_lev.getCellIdsLyingOnNodes(nodesPartition.nodes,False)
-        else:
-            cellsPartition_lev = pm_lev.getCellIdsLyingOnNodes(globalNodeIdsOfRk0,True)
-        #  connaissant les cells du niveau lev dont j ai besoin j appelle la communauté pour me donner mon morceau
-        logger.debug("creation du maillage unitaire avec les cells du niveau "+str(lev))
-        mm_lev = GetUMeshFrom(pm_lev, partialMedFileUMesh.getMEDFileUMesh().getFamilyFieldAtLevel(lev) , fam_field_node, cellsPartition_lev)
-        #
-        if lev == 0:
-            logger.debug("recuperation nodes id")
-            globalNodeIdsOfRk0 = mm_lev.getGlobalNumFieldAtLevel(1)[mm_lev[0].computeFetchedNodeIds()]
-            globalNodeIdsOfRk0 = globalNodeIdsOfRk0.buildUnion(nodesPartition.nodes)
-        #
-        mm_levs[lev] = mm_lev
-        pass
+            mm_lev = GetUMeshFrom(pm_lev, partialMedFileUMesh.getFamilyFieldAtLevelZero() , fam_field_node, cellsPartition_lev)
+            mm_levs[-partialMedFileUMesh.getMeshDimension()] = mm_lev
 
-    logger.debug("ajout des point1")
-    if partialMedFileUMesh.presenceOfPoint1():
-        pm_lev, fam_field_node = partialMedFileUMesh.getParaUMeshAtLevelZero()
-        cellsPartition_lev = pm_lev.getCellIdsLyingOnNodes(nodesPartition.nodes,False)
-        mm_lev = GetUMeshFrom(pm_lev, partialMedFileUMesh.getFamilyFieldAtLevelZero() , fam_field_node, cellsPartition_lev)
-        mm_levs[-partialMedFileUMesh.getMeshDimension()] = mm_lev
-
-    logger.debug("fusion des niveaux")
     meshResult = FuseLevels(mm_levs)
+
     # on rajoute les noms des familles/groupes attachés aux ids
+    with ChronoCtxMg("ajout des groupes"):
+        famsPy,grpsPy = RetrieveFamGrpsMap(medFileContext)
+        for fam,famid in famsPy.items():
+            meshResult.addFamily(fam,famid)
+            meshResult.setGroupsOnFamily(fam,grpsPy[fam])
+            pass
 
-    logger.debug("ajout des groupes")
-    famsPy,grpsPy = RetrieveFamGrpsMap(medFileContext)
-    for fam,famid in famsPy.items():
-        meshResult.addFamily(fam,famid)
-        meshResult.setGroupsOnFamily(fam,grpsPy[fam])
-        pass
-
-    logger.debug("ajout des raccords")
-    medJoints = MedJoints(meshResult, nodesPartition.nodes)
-    medJoints.setGlobalNumField()
-    medJoints.write()
+    # on rajouter les joints
+    with ChronoCtxMg("ajout des raccords"):
+        medJoints = MedJoints(meshResult, nodesPartition.nodes)
+        medJoints.setGlobalNumField()
+        medJoints.write()
 
     # on rajoute sur le noeud 0 les noeuds orphelins s'il y en avait
 

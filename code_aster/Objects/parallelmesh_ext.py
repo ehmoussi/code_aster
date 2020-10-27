@@ -32,14 +32,16 @@ from ..Utilities.MEDPartitioner import MEDPartitioner
 @injector(ParallelMesh)
 class ExtendedParallelMesh(object):
 
-    def readMedFile(self, filename, partitioned=False, verbose=False) :
+    def readMedFile(self, filename, partitioned=False, verbose=0) :
         """Read a MED file containing a mesh and eventually partition it
 
         Arguments:
             filename (string): name of the MED file
             partitioned (bool) : False if the mesh is not yet partitioned and have to
             be partitioned before readinf
-            verbose (bool) : Active verbosity mode
+            verbose (int) : 0 - warnings
+                            1 - informations about main steps
+                            2 - informations about all steps
 
         Returns:
             bool: True if reading and partionning is ok
