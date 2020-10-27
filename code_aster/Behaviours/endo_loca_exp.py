@@ -38,4 +38,5 @@ endommagement scalaire, seuil exponentiel et
     syme_matr_tang = ('No',),
     exte_vari      = None,
     deform_ldc     = ('MECANIQUE',),
+    regu_visc      = ('No',),
 )

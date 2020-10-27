@@ -2303,6 +2303,30 @@ void DEFSS(LCDEFORMLDC, lcdeformldc, _IN char *compor, STRING_SIZE lcompor,
    Py_XDECREF(catalc);
 }
 
+void DEFSS(LCREGUVISC, lcreguvisc, 
+           _IN char *compor      , STRING_SIZE lcompor,
+           _OUT char *reguvisc   , STRING_SIZE lreguvisc)
+{
+/*
+   Retourne la nature de la régularisation visqueuse
+
+      CALL LCREGUVISC(COMPOR, REGU_VISC)
+      ==> regu_visc = catalc.get_reguvisc(COMPOR)
+*/
+   PyObject *catalc, *res;
+
+   catalc = GetJdcAttr("catalc");
+   res = PyObject_CallMethod(catalc, "get_reguvisc", "s#", compor, lcompor);
+   if (res == NULL) {
+      MYABORT("Echec lors de la récuperation de la nature de la  " \
+              "régularisation visqueuse !");
+   }
+   convertxt(1, res, reguvisc, lreguvisc);
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
+
 void DEFPSS(LCKITREAD, lckitread,_IN ASTERINTEGER *nbkit,
                                  _IN char *lkit, STRING_SIZE llkit,
                                  _OUT char *lrela, STRING_SIZE llrela)

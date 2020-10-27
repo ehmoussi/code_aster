@@ -143,7 +143,8 @@ class Base(object):
 
     __properties__ = ('deformation', 'mc_mater', 'modelisation', 'nb_vari',
                       'nom_vari', 'proprietes', 'algo_inte',
-                      'type_matr_tang', 'syme_matr_tang', 'exte_vari', 'lc_type', 'deform_ldc')
+                      'type_matr_tang', 'syme_matr_tang', 'exte_vari', 'lc_type', 'deform_ldc',
+                      'regu_visc')
 
     def copy(self):
         """Copie d'un objet LoiComportement"""
@@ -201,6 +202,7 @@ class Base(object):
    nom des variables d'état externes : %(exte_vari)r
    type de la loi de comportement    : %(lc_type)r
    déformations en entrée de la loi  : %(deform_ldc)r
+   régularisation visqueuse          : %(regu_visc)r
 """
         return template % self.dict_info()
 
@@ -287,6 +289,8 @@ class LoiComportement(Base):
         'lc_type', (str, str), "Type de la loi de comportement")
     deform_ldc = Base.gen_property(
         'deform_ldc', (str, str), "Déformations en entrée de la loi")
+    regu_visc = Base.gen_property(
+        'regu_visc', (str, str), "Régularisation visqueuse")
 
     def check_vari(self):
         """Vérifie la cohérence de la définition des variables internes"""
@@ -377,7 +381,7 @@ class KIT(Base):
     symbol_mfront = property(Base.gen_getfunc(first,        'symbol_mfront'))
     exte_vari = property(Base.gen_getfunc(intersection, 'exte_vari'))
     deform_ldc = property(Base.gen_getfunc(first, 'deform_ldc')) #On a mis "first" comme sélection de la propriété pour un kit, mais en vrai, on ne peut pas travailler en kit avec des ldc qui n'ont pas la même valeur de "deform_ldc" ?
-
+    regu_visc = property(Base.gen_getfunc(intersection, 'regu_visc'))
     @property
     def ldctype(self):
         """Return the class type"""
@@ -606,6 +610,17 @@ class CataLoiComportement(metaclass=Singleton):
             print('catalc.get_deformldc - args =', loi)
         comport = self.get(loi)
         return comport.deform_ldc
+
+    def get_reguvisc(self, loi):
+        """Retourne la nature de la régularisation visqueuse
+
+        CALL LCREGUVISC(COMPOR, REGU_VISC)
+         ==> regu_visc = catalc.get_reguvisc(COMPOR)"""
+
+        if self.debug:
+            print('catalc.get_reguvisc - args =', loi)
+        comport = self.get(loi)
+        return comport.regu_visc
 
     def get_kit(self, *list_kit):
 #        """Identifie les LdC pour le kit THM """
