@@ -42,5 +42,3 @@ def petscInitialize(options=" "):
         options[str]: PETSc options
     """
     _petscInitializeWithOptions(options)
-
-del _petscInitializeWithOptions
