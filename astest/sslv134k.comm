@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -65,7 +65,10 @@ CHAMD = [None]*2
 THETA = [None]*2
 G0 = [None]*2
 GK0 = [None]*2
-
+GREF_CALC = [None]*2
+GREF_CALC = [23.596101090925938,23.593751954610312]
+GLOC_CALC = [11.798050545462969,11.796875977305156]
+K1_CALC = [1647041.1466479977,1646863.9737626186]
 
 MO[0]=AFFE_MODELE(  MAILLAGE=MA,
                       AFFE=_F(  TOUT = 'OUI',
@@ -76,6 +79,7 @@ MO[1]=AFFE_MODELE(  MAILLAGE=MA,
                       AFFE=_F(  TOUT = 'OUI',
                              PHENOMENE = 'MECANIQUE',
                              MODELISATION = 'AXIS_INCO_UP') )
+
 
 for i in range(2):
    SYME[i]=AFFE_CHAR_MECA(  MODELE=MO[i],
@@ -129,27 +133,23 @@ for i in range(2):
    TEST_TABLE(TABLE=G0[i],
               NOM_PARA='G',
               REFERENCE='ANALYTIQUE',
-              VALE_CALC=23.59375195461,
+              VALE_CALC=GREF_CALC[i],
               VALE_REFE=GREF,
               PRECISION=0.02)
 
    TEST_TABLE(TABLE=GK0[i],
               NOM_PARA='G',
               REFERENCE='ANALYTIQUE',
-              VALE_CALC=11.796875977305,
+              VALE_CALC=GLOC_CALC[i],
               VALE_REFE=GLOC,
               PRECISION=0.02)
 
    TEST_TABLE(TABLE=GK0[i],
               NOM_PARA='K1',
               REFERENCE='ANALYTIQUE',
-              VALE_CALC=1.64686397E+06,
+              VALE_CALC=K1_CALC[i],
               VALE_REFE=K1,
               PRECISION=0.035)
-
-   TEST_TABLE(TABLE=GK0[i],
-              NOM_PARA='K1',
-              VALE_CALC=1.64686397E+06)
 
 FIN()
 #

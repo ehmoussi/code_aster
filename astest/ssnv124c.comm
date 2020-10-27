@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ CH1=AFFE_CHAR_MECA(MODELE=MO,
                                     FX=1.0,),);
 
 L_INST=DEFI_LIST_REEL(DEBUT=0.0,
-                      INTERVALLE=_F(JUSQU_A=1.69897,
+                      INTERVALLE=_F(JUSQU_A=5,
                                     NOMBRE=1,),);
 # -------------- CALCUL AVEC LA LOI DE NORTON-HOFF -----------------
 
@@ -84,20 +84,23 @@ RESU=STAT_NON_LINE(MODELE=MO,
 
 ECHL=POST_ELEM(CHAR_LIMITE=_F(),NUME_ORDRE=1,
                RESULTAT=RESU,);
+IMPR_TABLE(FORMAT='TABLEAU',
+           TABLE=ECHL,
+           UNITE=8)
 #--------------------------------------------------------------
 #      TEST DE LA CHARGE LIMITE
 #--------------------------------------------------------------
 
 TEST_TABLE(VALE_REFE=12.6857,
-           VALE_CALC=12.686379152897,
+           VALE_CALC=12.686229520220268,
            REFERENCE='ANALYTIQUE',
            PRECISION=1.E-3,
            NOM_PARA='CHAR_LIMI_SUP',
            TABLE=ECHL,)
 
 TEST_TABLE(PRECISION=0.02,
-           VALE_CALC=8.7215153560866,
-           VALE_REFE=8.55450,
+           VALE_CALC=12.683770440524135,
+           VALE_REFE=12.6830,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='CHAR_LIMI_ESTIM',
            TABLE=ECHL,)

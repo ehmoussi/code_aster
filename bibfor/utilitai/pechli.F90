@@ -56,12 +56,12 @@ subroutine pechli(resu, modele, mateco)
     aster_logical :: chrcst
     integer :: i, iret, jinst, jpilo
     integer :: nbord, jord, numord
-    real(kind=8) :: chlim(3), chmax(3), inst, eta, prec, valer(3), f0u, m
+    real(kind=8) :: chlim(3), chmax(3), inst, eta, prec, valer(4), f0u, m
     complex(kind=8) :: c16b
 !
     character(len=8) :: crit, result, lpain(4), lpaout(1)
-    character(len=8) :: k8b, typarr(4), chli(3)
-    character(len=16) :: option, noparr(4)
+    character(len=8) :: k8b, typarr(5), chli(3)
+    character(len=16) :: option, noparr(5)
     character(len=24) :: ligrmo, chgeom, depla, chtime
     character(len=24) :: lchin(4), lchout(1), lisord
     character(len=72) :: rep
@@ -99,19 +99,21 @@ subroutine pechli(resu, modele, mateco)
     typarr(2) = 'R'
     typarr(3) = 'R'
     typarr(4) = 'R'
+    typarr(5) = 'R'
 !
     noparr(1) = 'NUME_ORDRE'
     noparr(2) = 'INST'
-    noparr(3) = 'CHAR_LIMI_SUP'
+    noparr(3) = 'M'
+    noparr(4) = 'CHAR_LIMI_SUP'
 !
     if (chrcst) then
-        noparr(4) = 'PUIS_CHAR_CSTE'
+        noparr(5) = 'PUIS_CHAR_CSTE'
     else
-        noparr(4) = 'CHAR_LIMI_ESTIM'
+        noparr(5) = 'CHAR_LIMI_ESTIM'
     endif
 !
     call tbcrsd(resu, 'G')
-    call tbajpa(resu, 4, noparr, typarr)
+    call tbajpa(resu, 5, noparr, typarr)
 !
 !
 !
@@ -149,6 +151,9 @@ subroutine pechli(resu, modele, mateco)
         inst = zr(jinst)
         call mecact('V', chtime, 'MODELE', ligrmo, 'INST_R',&
                     ncmp=1, nomcmp='INST', sr=inst)
+                    
+!     CALCUL DES VALEUR DE M EN FONCTION DE L'INSTANT
+        m = 1 + 10** (1-inst)
 !
 !
 !      CALCUL DES TERMES ELEMENTAIRES
@@ -186,7 +191,6 @@ subroutine pechli(resu, modele, mateco)
             call rsadpa(result, 'L', 1, 'ETA_PILOTAGE', numord,&
                         0, sjv=jpilo, styp=k8b)
             eta = zr(jpilo)
-            m = 1 + 10** (1-inst)
             f0u = m*chlim(2) - eta
             chlim(1) = chlim(1) - f0u
         else
@@ -200,13 +204,14 @@ subroutine pechli(resu, modele, mateco)
 !
 !      ECRITURE DANS LA TABLE RESU DE LA CHARGE LIMITE
         valer(1) = inst
-        valer(2) = chlim(1)
+        valer(2) = m
+        valer(3) = chlim(1)
         if (chrcst) then
-            valer(3) = f0u
+            valer(4) = f0u
         else
-            valer(3) = chlim(2)
+            valer(4) = chlim(2)
         endif
-        call tbajli(resu, 4, noparr, [numord], valer,&
+        call tbajli(resu, 5, noparr, [numord], valer,&
                     [c16b], k8b, 0)
 !
         call jedema()

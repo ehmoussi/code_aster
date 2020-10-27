@@ -198,9 +198,9 @@ class MIAXQU8(Element):
             SetOfNodes('EN2', (5,6,7,8,)),
         )
     elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG9','NOEU=NOEU','FPG1=FPG1',), mater=('RIGI','MASS','NOEU','FPG1',),),
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG9',),),
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG9',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4','MASS=FPG9','NOEU=NOEU','FPG1=FPG1',), mater=('RIGI','MASS','NOEU','FPG1',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4',),),
         )
     calculs = (
 
