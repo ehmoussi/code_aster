@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -276,7 +276,7 @@ def process_mfront(self, node):
     wrkdir = node.parent.find_or_declare(name)
     # print "DEBUG: node:", node, "wkrdir:", wrkdir.abspath()
     wrkdir.mkdir()
-    files = [name, "aster" + name] + getAdditionalOutputs(node.abspath())
+    files = [name, "aster" + name] + getAdditionalOutputs(node)
 
     _nod = wrkdir.find_or_declare
     outputs = [_nod(osp.join("src", i + ".cxx")) for i in files]
@@ -291,15 +291,17 @@ def process_mfront(self, node):
 import re
 RE_OUTPUT = re.compile('^//output *(.*?) *$', re.M)
 
-def getAdditionalOutputs(filename):
+def getAdditionalOutputs(node):
     """Search additional outputs in a MFront file"""
-    found = RE_OUTPUT.findall(open(filename, 'r').read())
+    found = RE_OUTPUT.findall(node.read())
     return found
 
 class mfront2cxx(Task.Task):
     """Convert a MFront source file into C++"""
     color   = 'PINK'
     ext_out = ['.h', '.cxx']
+    # force sequential to avoid dead locks
+    semaphore = Task.TaskSemaphore(1)
 
     def run(self):
         """Call MFront to convert `.mfront` to C++"""
@@ -352,7 +354,7 @@ class mfront_capy(Task.Task):
             lines.extend(_capy_comport(comport + '_FO', props,
                                        "fonction_sdaster", " " * 8))
         lines.append(capy_footer)
-        open(target.abspath(), 'w').write(os.linesep.join(lines))
+        target.write(os.linesep.join(lines))
         target.sig = Utils.h_file(target.abspath())
 
 @TaskGen.feature('fake_mfront_mater')
@@ -369,7 +371,7 @@ class fake_mfront_capy(Task.Task):
         """Create a .capy file for the MFront behaviours"""
         target = self.outputs[0]
         lines = [capy_header, capy_footer]
-        open(target.abspath(), 'w').write(os.linesep.join(lines))
+        target.write(os.linesep.join(lines))
         target.sig = Utils.h_file(target.abspath())
 
 ###############################################################################
