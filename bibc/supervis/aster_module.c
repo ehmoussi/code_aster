@@ -43,31 +43,6 @@
 #ifdef _HAVE_PETSC
 #include "petsc.h"
 
-void DEFSP(ASTER_PETSC_INITIALIZE,aster_petsc_initialize, _IN char* options,
-           _IN STRING_SIZE loptions, ASTERINTEGER* ierr)
-{
-    int a = 0;
-    char** myargs;
-    char* options2;
-    int myargc;
-
-    options2 = MakeCStrFromFStr(options, loptions);
-    myargs = (char**) malloc(2500 * sizeof(*myargs));
-
-    charToPetscArgcArgv(options2, " ", myargs, &myargc);
-
-   *ierr = (ASTERINTEGER)PetscInitialize(&myargc, &myargs, NULL, NULL);
-    PetscInitializeFortran();
-
-    FreeStr(options2);
-    free(myargs);
-};
-
-void DEF0(ASTER_PETSC_FINALIZE,aster_petsc_finalize)
-{
-    PetscFinalize();
-};
-
 void charToPetscArgcArgv(char *buffer, char * delim, char ** Output, int* index) {
 
     int partcount = 0;
@@ -85,13 +60,37 @@ void charToPetscArgcArgv(char *buffer, char * delim, char ** Output, int* index)
             Output[partcount++] = ptr + strlen(delim);
             ptr = ptr + strlen(delim);
             *index+=1;
-            if (*index > 2499)MYABORT("Erreur dans charToPetscArgcArgv");
+            if (*index > 2499) MYABORT("Erreur dans charToPetscArgcArgv");
         }
     }
     Output[partcount++] = NULL;
     *index+=1;
 }
 
+void DEFSP(ASTER_PETSC_INITIALIZE,aster_petsc_initialize, _IN char* options,
+           _IN STRING_SIZE loptions, ASTERINTEGER* ierr)
+{
+    int a = 0;
+    char** myargs;
+    char* options2;
+    int myargc;
+
+    options2 = MakeCStrFromFStr(options, loptions);
+    myargs = (char**) malloc(2500 * sizeof(*myargs));
+
+    charToPetscArgcArgv(options2, " ", myargs, &myargc);
+
+    *ierr = (ASTERINTEGER)PetscInitialize(&myargc, &myargs, NULL, NULL);
+    PetscInitializeFortran();
+
+    FreeStr(options2);
+    free(myargs);
+};
+
+void DEF0(ASTER_PETSC_FINALIZE,aster_petsc_finalize)
+{
+    PetscFinalize();
+};
 
 #endif
 

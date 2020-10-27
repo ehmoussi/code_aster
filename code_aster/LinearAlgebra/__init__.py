@@ -28,9 +28,9 @@ NB: The Cython language is required to build this interface.
 
 # silently pass to build documentation without the interface build
 try:
-    from Petsc4PyTest import *
+    from Petsc4PyTest import AssemblyMatrixToPetsc4Py
 except ImportError as exc:
-    print("Module Petsc4PyTest unavailable: {}".format(exc))
+    pass
 
 from libaster import _petscInitializeWithOptions, petscFinalize
 
