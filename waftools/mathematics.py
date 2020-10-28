@@ -151,13 +151,15 @@ def detect_math_lib(self):
     # lapack
     opt_lapack = False
     if 'openblas' in self.env.get_flat(varlib):
+        # check that lapack is embedded in openblas
         try:
-            self.check_math_libs_call(color='YELLOW')
+            self.check_math_libs_call_blas_lapack(color='YELLOW')
             opt_lapack = True
         except:
             pass
     if not opt_lapack:
         self.check_math_libs('lapack', list(LAPACK) + lapacklibs, embed)
+        self.check_math_libs_call_blas_lapack()
 
     def _scalapack():
         """Check scalapack"""
@@ -291,6 +293,13 @@ def _detect_libnames_in_ldd_line(line, libnames):
 
 @Configure.conf
 def check_math_libs_call(self, color='RED'):
+    """Compile and check programs with blas/lapack, blacs and openmp"""
+    self.check_math_libs_call_blas_lapack(color)
+    self.check_math_libs_call_blacs(color)
+    self.check_math_libs_call_openmp(color)
+
+@Configure.conf
+def check_math_libs_call_blas_lapack(self, color='RED'):
     """Compile and run a small blas/lapack program"""
     self.start_msg('Checking for a program using blas/lapack')
     try:
@@ -307,6 +316,9 @@ def check_math_libs_call(self, color='RED'):
     else:
         self.end_msg('yes')
 
+@Configure.conf
+def check_math_libs_call_blacs(self, color='RED'):
+    """Compile and run a minimal blacs program"""
     if self.get_define('HAVE_MPI'):
         self.start_msg('Checking for a program using blacs')
         try:
@@ -319,6 +331,9 @@ def check_math_libs_call(self, color='RED'):
         else:
             self.end_msg('yes')
 
+@Configure.conf
+def check_math_libs_call_openmp(self, color='RED'):
+    """Compile and run a minimal openmp program"""
     self.start_msg('Checking for a program using omp thread')
     try:
         ret = self.check_fc(fragment=omp_thread_fragment, use='MATH OPENMP MPI',
