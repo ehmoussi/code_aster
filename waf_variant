@@ -29,7 +29,7 @@ builddir="build/${WAF_SUFFIX}"
 jobs=4
 
 # backup original arguments
-orig="$@"
+orig=("$@")
 OPTS=$(getopt --quiet -o o:j: --long out:,jobs: -n $(basename $0) -- "$@")
 eval set -- "$OPTS"
 while true; do
@@ -42,4 +42,4 @@ while true; do
     shift
 done
 
-./waf.main ${orig} --out=${builddir} --jobs=${jobs}
+./waf.main "${orig[@]}" --out=${builddir} --jobs=${jobs}
