@@ -123,7 +123,7 @@ character(len=8), intent(out) :: fapg(*)
         fapg(8) = 'FPG23'
         fapg(9) = 'FPG4NOS'
 !
-    else if (elrefa.eq.'TE8') then
+    else if (elrefa.eq.'TE9') then
         vol = 1.d0/6.d0
 !
         nbfpg = 9

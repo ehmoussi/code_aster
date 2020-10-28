@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine cm0408(mesh_in, mesh_out, nb_list_elem, list_elem, prefix,&
-                      ndinit)
-        integer, intent(in) :: ndinit, nb_list_elem, list_elem(nb_list_elem)
+    subroutine cm09ma(nb_elem_mesh, nb_list_elem, nb_node_add, nb_node_mesh,&
+                  list_elem, &
+                   mesh_in, mesh_out, nomima)
+        integer, intent(in) :: nb_elem_mesh, nb_node_add, nb_list_elem, nb_node_mesh
+        integer, intent(in) :: list_elem(nb_list_elem)
+        integer, intent(in) :: nomima(nb_node_add, nb_list_elem)
         character(len=8), intent(in) :: mesh_in, mesh_out
-        character(len=8), intent(in) :: prefix
-    end subroutine cm0408
+    end subroutine cm09ma
 end interface

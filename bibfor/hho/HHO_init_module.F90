@@ -262,9 +262,9 @@ contains
             typma = 'TRIA7'
             nbnodes = 7
             elem_dim = 2
-        elseif(typma(1:3) == 'TE8') then
-            typma = 'TETRA8'
-            nbnodes = 8
+        elseif(typma(1:3) == 'TE9') then
+            typma = 'TETRA9'
+            nbnodes = 9
             elem_dim = 3
         else
             ASSERT(ASTER_FALSE)
@@ -531,7 +531,7 @@ contains
             nbnodes_faces(6) = 4
             type_faces(6) = 'QUAD4'
 !
-        else if(typma(1:6) == 'TETRA8') then
+        else if(typma(1:6) == 'TETRA9') then
             hhoCell%typema = 'TETRA4'
             hhoCell%nbnodes = 4
             hhoCell%ndim = 3

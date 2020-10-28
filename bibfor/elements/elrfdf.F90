@@ -411,7 +411,7 @@ real(kind=8), intent(out) :: dff(3, *)
             dff(3,4) = zero
 !
 !         ------------------------------------------------------------------
-        case('TE8')
+        case('TE9')
 !
             x0 = x(1)
             y0 = x(2)
@@ -429,7 +429,7 @@ real(kind=8), intent(out) :: dff(3, *)
             dff(1,4) = un
             dff(2,4) = zero
             dff(3,4) = zero
-            dff(1:3,5:8) = zero
+            dff(1:3,5:9) = zero
 !
         case('T10')
 !

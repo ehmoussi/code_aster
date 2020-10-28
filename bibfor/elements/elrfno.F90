@@ -202,8 +202,8 @@ real(kind=8), optional, intent(out) :: coorno(3,27)
                 coorno(2,5:10) = [ 0.5d0,  0.d0,  0.5d0, 0.5d0, 0.d0,  0.d0]
                 coorno(3,5:10) = [ 0.5d0,  0.5d0, 0.d0,  0.d0,  0.5d0, 0.d0]
             end if
-        case('TE8')
-            nno   = 8
+        case('TE9')
+            nno   = 9
             nnos_ = 4
             ndim_ = 3
 !
@@ -220,6 +220,10 @@ real(kind=8), optional, intent(out) :: coorno(3,27)
                 coorno(1,5:8) = [    0.d0,  untiers,  untiers,  untiers]
                 coorno(2,5:8) = [ untiers,  untiers,  untiers,     0.d0]
                 coorno(3,5:8) = [ untiers,  untiers,     0.d0,  untiers]
+!
+!   NOEUDS BARYCENTRE
+!
+                coorno(1:3,9) = [ 0.25d0,  0.25d0,  0.25d0]
             end if
         case('PY5')
             nno   = 5

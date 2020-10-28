@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine cm0408(mesh_in, mesh_out, nb_list_elem, list_elem, prefix,&
+subroutine cm0409(mesh_in, mesh_out, nb_list_elem, list_elem, prefix,&
                   ndinit)
 !
 implicit none
@@ -27,9 +27,9 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/cm08na.h"
-#include "asterfort/cm08nd.h"
-#include "asterfort/cm08ma.h"
+#include "asterfort/cm09na.h"
+#include "asterfort/cm09nd.h"
+#include "asterfort/cm09ma.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/cpclma.h"
@@ -51,7 +51,7 @@ character(len=8), intent(in) :: mesh_in, mesh_out
 character(len=8), intent(in) :: prefix
 !
 ! ----------------------------------------------------------------------
-!         TRANSFORMATION DES MAILLES TETRA4 en TETRA8
+!         TRANSFORMATION DES MAILLES TETRA4 en TETRA9
 ! ----------------------------------------------------------------------
 ! IN        mesh_in   K8  NOM DU MAILLAGE INITIAL
 ! IN/JXOUT  mesh_out  K8  NOM DU MAILLAGE TRANSFORME
@@ -62,9 +62,10 @@ character(len=8), intent(in) :: prefix
 ! ----------------------------------------------------------------------
 !
     integer, pointer :: v_mesh_dime(:) => null()
-    integer :: nb_node_mesh, nb_elem_mesh, add_node_total, nb_node_new, i_node, nbnomx
+    integer :: nb_node_mesh, nb_elem_mesh, add_node_total_face, nb_node_new, i_node, nbnomx
+    integer :: add_node_total_bary
 ! nb_node_add: nombre de noeuds ajoutés à l'élément
-    integer, parameter :: nb_node_add = 4
+    integer, parameter :: nb_node_add =5
 ! nb_node_face: nombre de noeuds définissant une face (ici triangle)
     integer, parameter :: nb_node_face = 3
 ! nfmax: nombre maximum de face connectées à un noeud (indicateur de complexité du maillage)
@@ -76,6 +77,7 @@ character(len=8), intent(in) :: prefix
     integer, pointer :: nomima(:) => null()
     integer, pointer :: milieu(:) => null()
     integer, pointer :: nomipe(:) => null()
+    integer, pointer :: nobary(:) => null()
     character(len=8) :: node_name
     character(len=24), pointer :: v_refe(:) => null()
     real(kind=8), pointer :: v_coor(:) => null()
@@ -95,15 +97,16 @@ character(len=8), intent(in) :: prefix
     AS_ALLOCATE(vi=nomima, size = nb_node_add*nb_list_elem)
     AS_ALLOCATE(vi=milieu, size = nb_node_face*nfmax*nb_node_mesh)
     AS_ALLOCATE(vi=nomipe, size = nbno_fac*nbfac_modi*nb_list_elem)
+    AS_ALLOCATE(vi=nobary, size = 4*nb_list_elem)
 !
 ! - Create nodes
 !
-    call cm08na(mesh_in     ,&
+    call cm09na(mesh_in     ,&
                 nb_node_mesh, nb_list_elem, list_elem,&
                 nb_node_face, nfmax, nb_node_add,&
                 nbno_fac, nbfac_modi,&
-                milieu, nomima, nomipe,&
-                add_node_total)
+                milieu, nomima, nomipe, nobary,&
+                add_node_total_face, add_node_total_bary)
 !
 ! - Duplicate groups
 !
@@ -113,7 +116,7 @@ character(len=8), intent(in) :: prefix
 !
 ! - Total number of nodes
 !
-    nb_node_new = nb_node_mesh + add_node_total
+    nb_node_new = nb_node_mesh + add_node_total_face + add_node_total_bary
     call jedupo(mesh_in//'.DIME', 'G', mesh_out//'.DIME', ASTER_FALSE)
     call jeveuo(mesh_out//'.DIME', 'E', vi = v_mesh_dime)
     v_mesh_dime(1) = nb_node_new
@@ -137,8 +140,8 @@ character(len=8), intent(in) :: prefix
 ! - Add new nodes
 !
     call jeveuo(mesh_out// '.COORDO    .VALE', 'E', vr = v_coor)
-    call cm08nd(nb_node_mesh, add_node_total, prefix, ndinit, &
-                nb_list_elem, nbno_fac, nbfac_modi, nomipe,&
+    call cm09nd(nb_node_mesh, add_node_total_face, add_node_total_bary, prefix, ndinit, &
+                nb_list_elem, nbno_fac, nbfac_modi, nomipe, nobary,&
                 mesh_out, v_coor)
 !
 ! - Updates cells (types)
@@ -153,7 +156,7 @@ character(len=8), intent(in) :: prefix
 !
 ! - Updates cells
 !
-    call cm08ma(nb_elem_mesh, nb_list_elem, nb_node_add, nb_node_mesh,&
+    call cm09ma(nb_elem_mesh, nb_list_elem, nb_node_add, nb_node_mesh,&
                 list_elem, &
                 mesh_in, mesh_out, nomima)
 !
@@ -166,6 +169,7 @@ character(len=8), intent(in) :: prefix
     AS_DEALLOCATE(vi=nomima)
     AS_DEALLOCATE(vi=milieu)
     AS_DEALLOCATE(vi=nomipe)
+    AS_DEALLOCATE(vi=nobary)
 !
     call jedema()
 end subroutine

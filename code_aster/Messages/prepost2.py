@@ -153,7 +153,7 @@ Le filtre TYPE_MAILLE a éliminée %(i1)d mailles .
 """),
 
     86 : _("""
- L'élément TETRA8 est inexistant dans IDEAS, il est converti en TETRA4.
+ L'élément TETRA9 est inexistant dans IDEAS, il est converti en TETRA4.
 """),
 
     93 : _("""

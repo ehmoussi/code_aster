@@ -5383,7 +5383,7 @@ phen.add('3D_HHO#2', Modelisation(dim=(3,3), code='3D_',
     ),
     elements=(
         (MT.HEXA27    , EL.MECA3DH27_HHO222),
-        (MT.TETRA8    , EL.MECA3DTE8_HHO222),
+        (MT.TETRA9    , EL.MECA3DTE9_HHO222),
         (MT.QUAD9     , EL.MECA3DQU9_HHO2_F),
         (MT.TRIA4     , EL.MECA3DTR4_HHO2_F),
     )))
@@ -5398,7 +5398,7 @@ phen.add('3D_HHO#1', Modelisation(dim=(3,3), code='3D_',
     ),
     elements=(
         (MT.HEXA27    , EL.MECA3DH27_HHO121),
-        (MT.TETRA8    , EL.MECA3DTE8_HHO121),
+        (MT.TETRA9    , EL.MECA3DTE9_HHO121),
         (MT.QUAD9     , EL.MECA3DQU9_HHO1_F),
         (MT.TRIA4     , EL.MECA3DTR4_HHO1_F),
     )))

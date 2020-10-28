@@ -361,7 +361,7 @@ real(kind=8), intent(out) :: coopg(*), poipg(*)
         end do
 !
 !     ------------------------------------------------------------------
-    else if (elrefa.eq.'TE4' .or. elrefa.eq.'TE8' .or. elrefa.eq.'T10') then
+    else if (elrefa.eq.'TE4' .or. elrefa.eq.'TE9' .or. elrefa.eq.'T10') then
 !
         if (fapg .eq. 'FPG4') then
 !

@@ -335,7 +335,7 @@ Contactez le support technique.
  Cas particulier pour l'impression des mailles suivantes, on traite :
      - les PENTA18 en oubliant le(s) noeud(s) au centre
      - les SEG4 en oubliant les 2 noeuds centraux
-     - les TETRA8 en oubliant les 4 noeuds au centre des faces
+     - les TETRA9 en oubliant les 4 noeuds au centre des faces
      - les TRIA4 en oubliant le noeud central
 """),
 

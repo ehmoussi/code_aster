@@ -90,7 +90,7 @@ character(len=*) :: nomamd
     integer :: codret
     integer :: ipoin, ityp, letype
     integer :: ino
-    integer :: ima, ite04, ite08, itr03, itr04
+    integer :: ima, ite04, ite09, itr03, itr04
     integer :: jnomma(MT_NTYMAX), jnumma(MT_NTYMAX), jcnxma(MT_NTYMAX)
     integer :: ifm, niv
     character(len=8) :: saux08
@@ -116,18 +116,18 @@ character(len=*) :: nomamd
         nmatyp(typma(ima)) = nmatyp(typma(ima)) + 1
     end do
 !
-!     ON TRAITE LE TETRA8, ON OUBLIE LES 4 DERNIERS NOEUDS
+!     ON TRAITE LE TETRA9, ON OUBLIE LES 5 DERNIERS NOEUDS
 !     ON L'IMPRIME COMME UN TETRA4
 !     POUR LE TRIA4, ON OUBLIE LE NOEUD CENTRAL (LE DERNIER)
 !     ON L'IMPRIME COMME UN TRIA3
     lnocen = ASTER_FALSE
-    call jenonu(jexnom('&CATA.TM.NOMTM', 'TETRA8'), ite08)
+    call jenonu(jexnom('&CATA.TM.NOMTM', 'TETRA9'), ite09)
     call jenonu(jexnom('&CATA.TM.NOMTM', 'TETRA4'), ite04)
     call jenonu(jexnom('&CATA.TM.NOMTM', 'TRIA4'), itr04)
     call jenonu(jexnom('&CATA.TM.NOMTM', 'TRIA3'), itr03)
-    if (nmatyp(ite08) .ne. 0) then
-        nmatyp(ite04)=nmatyp(ite04)+nmatyp(ite08)
-        nmatyp(ite08)=0
+    if (nmatyp(ite09) .ne. 0) then
+        nmatyp(ite04)=nmatyp(ite04)+nmatyp(ite09)
+        nmatyp(ite09)=0
         lnocen = ASTER_TRUE
     endif
     if (nmatyp(itr04) .ne. 0) then
@@ -177,11 +177,11 @@ character(len=*) :: nomamd
 !
     do ima = 1, nbmail
         ityp = typma(ima)
-!     POUR LE TETRA8, ON OUBLIE LES 4 DERNIERS NOEUDS
+!     POUR LE TETRA9, ON OUBLIE LES 5 DERNIERS NOEUDS
 !     ON L'IMPRIME COMME UN TETRA4
 !     POUR LE TRIA4, ON OUBLIE LE NOEUD CENTRAL (LE DERNIER)
 !     ON L'IMPRIME COMME UN TRIA3
-        if (ityp .eq. ite08) ityp=ite04
+        if (ityp .eq. ite09) ityp=ite04
         if (ityp .eq. itr04) ityp=itr03
         ipoin = point(ima)
         nmatyp(ityp) = nmatyp(ityp) + 1

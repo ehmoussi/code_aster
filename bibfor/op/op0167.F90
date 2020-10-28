@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/chckma.h"
 #include "asterfort/chcoma.h"
 #include "asterfort/chcomb.h"
-#include "asterfort/cm0408.h"
+#include "asterfort/cm0409.h"
 #include "asterfort/cm1518.h"
 #include "asterfort/cm2027.h"
 #include "asterfort/cmcovo.h"
@@ -245,13 +245,13 @@ implicit none
     endif
 !
 ! ----------------------------------------------------------------------
-!          TRAITEMENT DES MOTS CLES "PENTA15_18","HEXA20_27","TETRA4_8"
+!          TRAITEMENT DES MOTS CLES "PENTA15_18","HEXA20_27","TETRA4_9"
 ! ----------------------------------------------------------------------
 !
     do k = 1, 3
         if (k .eq. 1) motfac='HEXA20_27'
         if (k .eq. 2) motfac='PENTA15_18'
-        if (k .eq. 3) motfac='TETRA4_8'
+        if (k .eq. 3) motfac='TETRA4_9'
         call getfac(motfac, nbmoma)
         if (nbmoma .gt. 0) then
             if (nn1 .eq. 0) then
@@ -297,8 +297,8 @@ implicit none
             else if (motfac.eq.'PENTA15_18') then
                 call cm1518(nomain, nomaou, nbma, zi(jlima), prefix,&
                             ndinit)
-            else if (motfac.eq.'TETRA4_8') then
-                call cm0408(nomain, nomaou, nbma, zi(jlima), prefix,&
+            else if (motfac.eq.'TETRA4_9') then
+                call cm0409(nomain, nomaou, nbma, zi(jlima), prefix,&
                             ndinit)
             endif
             goto 350

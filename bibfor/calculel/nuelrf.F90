@@ -40,7 +40,7 @@ integer, intent(out) :: nujni
 !
     if (elrefe .eq. 'HE8' .or. elrefe .eq. 'H20' .or. elrefe .eq. 'H27' .or.&
         elrefe .eq. 'PE6' .or. elrefe .eq. 'P15' .or. elrefe .eq. 'TE4' .or.&
-        elrefe .eq. 'TE8' .or. elrefe .eq. 'TR4' .or.&
+        elrefe .eq. 'TE9' .or. elrefe .eq. 'TR4' .or.&
         elrefe .eq. 'T10' .or. elrefe .eq. 'PY5' .or. elrefe .eq. 'P13' .or.&
         elrefe .eq. 'QU4' .or. elrefe .eq. 'QU8' .or. elrefe .eq. 'QU9' .or.&
         elrefe .eq. 'TR3' .or. elrefe .eq. 'TR6' .or. elrefe .eq. 'TR7' .or.&

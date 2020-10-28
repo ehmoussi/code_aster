@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,12 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine cm08na(mesh_in     ,&
+subroutine cm09na(mesh_in     ,&
                   nb_node_mesh, nb_list_elem, list_elem,&
                   nb_node_face, nfmax, nb_node_add,&
                   nbno_fac, nbfac_modi,&
-                  milieu, nomima, nomipe,&
-                  add_node_total)
+                  milieu, nomima, nomipe, nobary,&
+                  add_node_total_face, add_node_total_bary)
 !
 implicit none
 !
@@ -43,7 +43,9 @@ integer, intent(in) :: nb_node_mesh, nb_node_face, nfmax, nb_node_add, nbno_fac,
 integer, intent(inout) :: milieu(nb_node_face, nfmax, nb_node_mesh)
 integer, intent(inout) :: nomima(nb_node_add, nb_list_elem)
 integer, intent(inout) :: nomipe(nbno_fac, nbfac_modi*nb_list_elem)
-integer, intent(out) :: add_node_total
+integer, intent(inout) :: nobary(4, nb_list_elem)
+integer, intent(out) :: add_node_total_face
+integer, intent(out) :: add_node_total_bary
 !
 ! ----------------------------------------------------------------------
 !                   DETERMINATION DES NOEUDS DES FACES
@@ -65,7 +67,8 @@ integer, intent(out) :: add_node_total
 !
     call jeveuo(mesh_in//'.TYPMAIL', 'L', vi=v_typmail)
     milieu = 0
-    add_node_total = 0
+    add_node_total_face = 0
+    add_node_total_bary = 0
     nomima = 0
     nomipe = 0
     elem_te4_n = 'TETRA4'
@@ -110,11 +113,11 @@ integer, intent(out) :: add_node_total
                         nomi = milieu(3,i,noeud(1))
                         goto 31
                     else if (milieu(1,i,noeud(1)) .eq.0) then
-                        add_node_total = add_node_total + 1
+                        add_node_total_face = add_node_total_face + 1
                         milieu(1,i,noeud(1)) = noeud(2)
                         milieu(2,i,noeud(1)) = noeud(3)
-                        milieu(3,i,noeud(1)) = add_node_total
-                        nomi = add_node_total
+                        milieu(3,i,noeud(1)) = add_node_total_face
+                        nomi = add_node_total_face
                         goto 31
                     endif
                 end do
@@ -125,6 +128,10 @@ integer, intent(out) :: add_node_total
                 nomima(i_face, i_elem) = nomi
                 nomipe(1:3,nomi) = noeud(1:3)
             end do
+! ------------- Add node to the barycenter
+            add_node_total_bary = add_node_total_bary + 1
+            nomima(5, i_elem) = add_node_total_bary
+            nobary(1:4, add_node_total_bary) = v_connex(1:4)
         elseif (elem_type .eq. elem_tr3_i) then
             i_face = 1
             noeud(1:3) = v_connex(1:3)
@@ -138,11 +145,11 @@ integer, intent(out) :: add_node_total
                     nomi = milieu(3,i,noeud(1))
                     goto 32
                 else if (milieu(1,i,noeud(1)) .eq.0) then
-                    add_node_total = add_node_total + 1
+                    add_node_total_face = add_node_total_face + 1
                     milieu(1,i,noeud(1)) = noeud(2)
                     milieu(2,i,noeud(1)) = noeud(3)
-                    milieu(3,i,noeud(1)) = add_node_total
-                    nomi = add_node_total
+                    milieu(3,i,noeud(1)) = add_node_total_face
+                    nomi = add_node_total_face
                     goto 32
                 endif
             end do

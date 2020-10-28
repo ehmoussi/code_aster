@@ -82,7 +82,7 @@ real(kind=8), intent(out) :: mganos(nbpgmx, nbnomx)
         elref2 = 'PE6'
     else if (elrefa.eq.'P13') then
         elref2 = 'PY5'
-    else if ((elrefa.eq.'T10') .or. (elrefa.eq.'TE8')) then
+    else if ((elrefa.eq.'T10') .or. (elrefa.eq.'TE9')) then
         elref2 = 'TE4'
     else if ((elrefa.eq.'TR4') .or. (elrefa.eq.'TR6') .or. (elrefa.eq.'TR7')) then
         elref2 = 'TR3'

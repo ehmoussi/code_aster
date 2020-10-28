@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ subroutine irmasu(ifc, ndim, nno, coordo, nbma,&
     integer :: maxnod, connex(*), typma(*), point(*), typel(*)
     integer :: nodsup(32), nodast(32), permut(maxnod, *), codgra(*), codphy(*)
     integer :: icodno, icodma, versio, codphd(*)
-    integer :: itri7, iqua9, iseg4, ihex27, ipen18, ite8
+    integer :: itri7, iqua9, iseg4, ihex27, ipen18, ite9
     aster_logical :: lmasu, lpout, lmod
 ! ---------------------------------------------------------------------
 !-----------------------------------------------------------------------
@@ -98,7 +98,7 @@ subroutine irmasu(ifc, ndim, nno, coordo, nbma,&
     iseg4 = 0
     ihex27 = 0
     ipen18 = 0
-    ite8 = 0
+    ite9 = 0
 !
 !     RECHERCHE DE LA PRESENCE DE POUTRES
 !
@@ -223,12 +223,12 @@ subroutine irmasu(ifc, ndim, nno, coordo, nbma,&
             endif
             ipen18 = 1
             nnoe = nnoe - 3
-        else if (nomtm .eq. 'TETRA8') then
-            if (ite8 .eq. 0) then
+        else if (nomtm .eq. 'TETRA9') then
+            if (ite9 .eq. 0) then
                 call utmess('I', 'PREPOST2_86')
             endif
-            ite8 = 1
-            nnoe = nnoe - 4
+            ite9 = 1
+            nnoe = nnoe - 5
         else if (nomtm .eq. 'QUAD9') then
             if (iqua9 .eq. 0) then
                 call utmess('I', 'PREPOST2_80')

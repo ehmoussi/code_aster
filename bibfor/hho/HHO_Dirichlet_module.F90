@@ -960,7 +960,7 @@ contains
             hhoDiriDeca = 4
         elseif(typma2 == 'TR7' .or. typma2 == 'TRIA7') then
             hhoDiriDeca = 4
-        elseif(typma2 == 'TE8' .or. typma2 == 'TETRA8') then
+        elseif(typma2 == 'TE9' .or. typma2 == 'TETRA9') then
             hhoDiriDeca = 5
         else
             ASSERT(ASTER_FALSE)

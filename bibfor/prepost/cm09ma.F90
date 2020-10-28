@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine cm08ma(nb_elem_mesh, nb_list_elem, nb_node_add, nb_node_mesh,&
+subroutine cm09ma(nb_elem_mesh, nb_list_elem, nb_node_add, nb_node_mesh,&
                   list_elem, &
                    mesh_in, mesh_out, nomima)
 !
@@ -40,7 +40,7 @@ integer, intent(in) :: nb_elem_mesh, nb_node_add, nb_list_elem, nb_node_mesh
 integer, intent(in) :: list_elem(nb_list_elem)
 integer, intent(in) :: nomima(nb_node_add, nb_list_elem)
 character(len=8), intent(in) :: mesh_in, mesh_out
-!           MISE A JOUR DES MAILLES (CREA_MAILLAGE
+!           MISE A JOUR DES MAILLES (CREA_MAILLAGE)
 ! ----------------------------------------------------------------------
 ! IN        nb_elem_mesh  NOMBRE TOTAL DE MAILLES DU MAILLAGE
 ! IN        nb_list_elem    NOMBRE DE MAILLES DE LA LISTE DES MAILLES A TRAITER
@@ -58,8 +58,8 @@ character(len=8), intent(in) :: mesh_in, mesh_out
     aster_logical, pointer :: v_mamo(:) => null()
     integer, pointer :: v_posmai(:) => null()
     integer, pointer :: v_typema(:) => null()
-    character(len=8) :: elem_te4_n, elem_te8_n, elem_tr4_n, elem_tr3_n, elem_se2_n
-    integer :: elem_te4_i, elem_te8_i, elem_tr4_i, elem_tr3_i, elem_se2_i
+    character(len=8) :: elem_te4_n, elem_te9_n, elem_tr4_n, elem_tr3_n, elem_se2_n
+    integer :: elem_te4_i, elem_te9_i, elem_tr4_i, elem_tr3_i, elem_se2_i
     integer, pointer :: v_connexin(:) => null()
     integer, pointer :: v_connexout(:) => null()
 ! ----------------------------------------------------------------------
@@ -71,8 +71,8 @@ character(len=8), intent(in) :: mesh_in, mesh_out
     call jeveuo(mesh_out// '.TYPMAIL', 'E', vi = v_typema)
     elem_te4_n = 'TETRA4'
     call jenonu(jexnom('&CATA.TM.NOMTM', elem_te4_n), elem_te4_i)
-    elem_te8_n = 'TETRA8'
-    call jenonu(jexnom('&CATA.TM.NOMTM', elem_te8_n), elem_te8_i)
+    elem_te9_n = 'TETRA9'
+    call jenonu(jexnom('&CATA.TM.NOMTM', elem_te9_n), elem_te9_i)
     elem_tr4_n = 'TRIA4'
     call jenonu(jexnom('&CATA.TM.NOMTM', elem_tr4_n), elem_tr4_i)
     elem_tr3_n = 'TRIA3'
@@ -116,8 +116,8 @@ character(len=8), intent(in) :: mesh_in, mesh_out
                 elem_type_out = elem_tr4_i
             elseif (elem_type_in .eq. elem_te4_i) then
                 nbnoin = 4
-                nbnoou = 8
-                elem_type_out = elem_te8_i
+                nbnoou = 9
+                elem_type_out = elem_te9_i
             else
 ! ------------- Que des TETRA4/TRIA3 !
                 ASSERT(ASTER_FALSE)

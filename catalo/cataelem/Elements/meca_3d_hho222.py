@@ -280,8 +280,8 @@ class MECA3DH27_HHO222(Element):
     meshType = MT.HEXA27
     nodes = (
             SetOfNodes('EN1', (21,22,23,24,25,26,)),
-            SetOfNodes('EN2', (2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,27,)),
-            SetOfNodes('EN3', (1,)),
+            SetOfNodes('EN2', (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,)),
+            SetOfNodes('EN3', (27,)),
         )
     elrefe =(
             ElrefeLoc(MT.H27, gauss = ('RIGI=FPG27','FPG1=FPG1','MTGA=FPG27',), mater=('RIGI', 'FPG1','MTGA',),),
@@ -523,16 +523,16 @@ class MECA3DH27_HHO222(Element):
         ),
     )
 #------------------------------------------------------------
-class MECA3DTE8_HHO222(MECA3DH27_HHO222):
+class MECA3DTE9_HHO222(MECA3DH27_HHO222):
     """Please document this element"""
-    meshType = MT.TETRA8
+    meshType = MT.TETRA9
     nodes = (
            SetOfNodes('EN1', (5,6,7,8)),
-           SetOfNodes('EN2', (2,3,4,)),
-           SetOfNodes('EN3', (1,)),
+           SetOfNodes('EN2', (1,2,3,4,)),
+           SetOfNodes('EN3', (9,)),
        )
     elrefe =(
-           ElrefeLoc(MT.TE8, gauss = ('RIGI=FPG11','FPG1=FPG1','MTGA=FPG11',), mater=('RIGI', 'FPG1','MTGA',),),
+           ElrefeLoc(MT.TE9, gauss = ('RIGI=FPG11','FPG1=FPG1','MTGA=FPG11',), mater=('RIGI', 'FPG1','MTGA',),),
            ElrefeLoc(MT.TR4, gauss = ('RIGI=FPG6',),),
        )
 

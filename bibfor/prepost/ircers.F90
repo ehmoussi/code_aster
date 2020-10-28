@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -484,8 +484,8 @@ subroutine ircers(ifi, ligrel, nbgrel, longr, ncmpmx,&
                                 else if (ktype .eq. 'TRIA7') then
                                     nnoe = nnoe - 1
                                     lnocen=.true.
-                                else if (ktype .eq. 'TETRA8') then
-                                    nnoe = nnoe - 4
+                                else if (ktype .eq. 'TETRA9') then
+                                    nnoe = nnoe - 5
                                     lnocen=.true.
                                 else if (ktype .eq. 'PENTA18') then
                                     nnoe = nnoe - 3

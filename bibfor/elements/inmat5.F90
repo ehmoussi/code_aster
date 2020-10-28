@@ -185,7 +185,7 @@ real(kind=8), intent(out) :: mgano2(nbpgmx, nbnomx)
 !
         endif
 !
-    else if (elrefa.eq.'TE8') then
+    else if (elrefa.eq.'TE9') then
         ASSERT(nnos.eq.4)
         nosom(5,1) = quart
         nosom(5,2) = quart
@@ -202,6 +202,8 @@ real(kind=8), intent(out) :: mgano2(nbpgmx, nbnomx)
         nosom(8,2) = quart
         nosom(8,3) = quart
         nosom(8,4) = quart
+!
+        nosom(9,1:4) = demi/4.d0
 !
     else if (elrefa.eq.'T10') then
         ASSERT(nnos.eq.4)
