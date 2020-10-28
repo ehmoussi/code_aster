@@ -5413,8 +5413,8 @@ phen.add('D_PLAN_HHO#2', Modelisation(dim=(2,2), code='DPL',
         (AT.NBSIGM,'4'),
     ),
     elements=(
-        (MT.QUAD8    , EL.MECA_DPQ8_HHO222),
-        (MT.TRIA6    , EL.MECA_DPT6_HHO222),
+        (MT.QUAD9    , EL.MECA_DPQ9_HHO222),
+        (MT.TRIA7    , EL.MECA_DPT7_HHO222),
         (MT.SEG3     , EL.MECA_2D_HHO2_F),
     )))
 
@@ -5427,8 +5427,8 @@ phen.add('D_PLAN_HHO#1', Modelisation(dim=(2,2), code='DPL',
         (AT.NBSIGM,'4'),
     ),
     elements=(
-        (MT.QUAD8    , EL.MECA_DPQ8_HHO121),
-        (MT.TRIA6    , EL.MECA_DPT6_HHO121),
+        (MT.QUAD9    , EL.MECA_DPQ9_HHO121),
+        (MT.TRIA7    , EL.MECA_DPT7_HHO121),
         (MT.SEG3     , EL.MECA_2D_HHO1_F),
     )))
 

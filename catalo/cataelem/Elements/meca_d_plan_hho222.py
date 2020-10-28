@@ -255,16 +255,16 @@ MMATUHR  = ArrayOfComponents(phys=PHY.MDEP_R, locatedComponents=HHO_MECA)
 MMATUHS  = ArrayOfComponents(phys=PHY.MDNS_R, locatedComponents=HHO_MECA)
 
 #------------------------------------------------------------
-class MECA_DPQ8_HHO222(Element):
+class MECA_DPQ9_HHO222(Element):
     """Please document this element"""
-    meshType = MT.QUAD8
+    meshType = MT.QUAD9
     nodes = (
             SetOfNodes('EN1', (5,6,7,8,)),
-            SetOfNodes('EN2', (2, 3, 4,)),
-            SetOfNodes('EN3', (1,)),
+            SetOfNodes('EN2', (1,2,3,4,)),
+            SetOfNodes('EN3', (9,)),
         )
     elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','FPG1=FPG1','MTGA=FPG9',), mater=('RIGI', 'FPG1','MTGA',),),
+            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','FPG1=FPG1','MTGA=FPG9',), mater=('RIGI', 'FPG1','MTGA',),),
             ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG1',),),
         )
     calculs = (
@@ -504,16 +504,16 @@ class MECA_DPQ8_HHO222(Element):
         ),
     )
 #------------------------------------------------------------
-class MECA_DPT6_HHO222(MECA_DPQ8_HHO222):
+class MECA_DPT7_HHO222(MECA_DPQ9_HHO222):
     """Please document this element"""
-    meshType = MT.TRIA6
+    meshType = MT.TRIA7
     nodes = (
             SetOfNodes('EN1', (4,5,6,)),
-            SetOfNodes('EN2', (2, 3,)),
-            SetOfNodes('EN3', (1,)),
+            SetOfNodes('EN2', (1,2,3,)),
+            SetOfNodes('EN3', (7,)),
         )
     elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6','FPG1=FPG1','MTGA=FPG6',), mater=('RIGI', 'FPG1','MTGA',),),
+            ElrefeLoc(MT.TR7, gauss = ('RIGI=FPG6','FPG1=FPG1','MTGA=FPG6',), mater=('RIGI', 'FPG1','MTGA',),),
             ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG1',),),
         )
     calculs = (

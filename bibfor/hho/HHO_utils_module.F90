@@ -45,7 +45,7 @@ private
 !
 ! --------------------------------------------------------------------------------------------------
     public :: hhoCopySymPartMat, hhoPrintMat, hhoNorm2Mat, hhoProdSmatVec
-    public :: hhoPrintTensor4, hhoPrintTensor4Mangle
+    public :: hhoPrintTensor4, hhoPrintTensor4Mangle, hhoRenumMecaVec, hhoRenumMecaMat
     public :: hhoGetTypeFromModel, MatScal2Vec
     public :: SigVec2Mat, hhoGetMatrElem
 !    private  ::
@@ -465,6 +465,92 @@ contains
                                 = mat_scal(ibeginVec:iendVec, 1:cbs_comp)
             end do
         end do
+!
+    end subroutine
+!
+!===================================================================================================
+!
+!===================================================================================================
+!
+    subroutine hhoRenumMecaVec(hhoCell, hhoData, vec)
+!
+    implicit none
+!
+        type(HHO_Cell), intent(in)  :: hhoCell
+        type(HHO_Data), intent(in)  :: hhoData
+        real(kind=8), intent(inout) :: vec(MSIZE_TDOFS_VEC)
+!
+! --------------------------------------------------------------------------------------------------
+!   HHO
+!
+!   Renumbering of HHO unknowns:
+!   From (vT, vF1, ..., vFn) to (vF1, ..., vFn, vT)
+!
+!   In hhoCell      : the current HHO Cell
+!   In hhoData      : information on HHO methods
+!   IOut vec        : vector to renumber
+!
+! --------------------------------------------------------------------------------------------------
+!
+        integer :: cbs, fbs, total_dofs, faces_dofs
+        real(kind=8) :: vec_tmp(MSIZE_TDOFS_VEC)
+! --------------------------------------------------------------------------------------------------
+!
+! ---- Number of dofs
+        call hhoMecaDofs(hhoCell, hhoData, cbs, fbs, total_dofs)
+        faces_dofs = total_dofs - cbs
+!
+        call dcopy(total_dofs, vec, 1, vec_tmp, 1)
+! --- v_F
+        call dcopy(faces_dofs, vec_tmp(cbs+1), 1, vec, 1)
+! --- v_T
+        call dcopy(cbs, vec_tmp, 1, vec(faces_dofs+1), 1)
+!
+    end subroutine
+!
+!===================================================================================================
+!
+!===================================================================================================
+!
+    subroutine hhoRenumMecaMat(hhoCell, hhoData, mat)
+!
+    implicit none
+!
+        type(HHO_Cell), intent(in)  :: hhoCell
+        type(HHO_Data), intent(in)  :: hhoData
+        real(kind=8), intent(inout) :: mat(MSIZE_TDOFS_VEC, MSIZE_TDOFS_VEC)
+!
+! --------------------------------------------------------------------------------------------------
+!   HHO
+!
+!   Renumbering of HHO unknowns:
+!   From (vTT, vTF) to (vFF, vFT)
+!        (vFT, vFF)    (vTF, vTT)
+!
+!   In hhoCell      : the current HHO Cell
+!   In hhoData      : information on HHO methods
+!   IOut mat        : matrix to renumber
+!
+! --------------------------------------------------------------------------------------------------
+!
+        integer :: cbs, fbs, total_dofs, faces_dofs
+        real(kind=8) :: mat_tmp(MSIZE_TDOFS_VEC, MSIZE_TDOFS_VEC)
+! --------------------------------------------------------------------------------------------------
+!
+! ---- Number of dofs
+        call hhoMecaDofs(hhoCell, hhoData, cbs, fbs, total_dofs)
+        faces_dofs = total_dofs - cbs
+!
+        mat_tmp(1:total_dofs, 1:total_dofs) = mat(1:total_dofs, 1:total_dofs)
+!
+! ---- K_FF
+        mat(1:faces_dofs,1:faces_dofs) = mat_tmp((cbs+1):total_dofs, (cbs+1):total_dofs)
+! ---- K_FT
+        mat(1:faces_dofs, (faces_dofs+1):total_dofs) = mat_tmp((cbs+1):total_dofs,1:cbs)
+! ---- K_TF
+        mat((faces_dofs+1):total_dofs, 1:faces_dofs) = mat_tmp(1:cbs,(cbs+1):total_dofs)
+! ---- K_TT
+        mat((faces_dofs+1):total_dofs, (faces_dofs+1):total_dofs) = mat_tmp(1:cbs,1:cbs)
 !
     end subroutine
 !

@@ -158,6 +158,7 @@ implicit none
 !
 ! -- Copy of rhs in PVECTUR ('OUT' to fill)
 !
+            call hhoRenumMecaVec(hhoCell, hhoData, rhs)
             call writeVector('PVECTUR', total_dofs, rhs)
 !
             l_matrix = .not.(nomopt == "RAPH_MECA")
@@ -167,6 +168,7 @@ implicit none
 !
                 call jevech('PCARCRI', 'L', icarcr)
                 call nmtstm(zr(icarcr), jmatt, matsym)
+                call hhoRenumMecaMat(hhoCell, hhoData, lhs)
 !
                 if(matsym) then
                     call writeMatrix('PMATUUR', total_dofs, total_dofs, ASTER_TRUE, lhs)

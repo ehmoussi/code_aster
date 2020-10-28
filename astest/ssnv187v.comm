@@ -25,8 +25,11 @@ MAIL0 = MODI_MAILLAGE(reuse=MAIL0,
                       MAILLAGE=MAIL0,
                       ORIE_PEAU_2D=_F(GROUP_MA=('Sup',)))
 
-MAIL = CREA_MAILLAGE(MAILLAGE=MAIL0,
+MAIL1 = CREA_MAILLAGE(MAILLAGE=MAIL0,
                      LINE_QUAD=_F(TOUT='OUI',),)
+
+MAIL = CREA_MAILLAGE(MAILLAGE=MAIL1,
+                   MODI_MAILLE=_F(TOUT='OUI',OPTION="TRIA6_7", PREF_NOEUD='NH'),)
 
 MAIL = MODI_MAILLAGE(reuse=MAIL,
                      MAILLAGE=MAIL,

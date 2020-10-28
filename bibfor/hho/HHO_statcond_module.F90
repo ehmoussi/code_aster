@@ -223,12 +223,12 @@ contains
         rhs_F = 0.d0
         codret = 0
 !
-        K_TT(1:cbs, 1:cbs) = lhs(1:cbs, 1:cbs)
-        K_TF(1:cbs, 1 : faces_dofs) = lhs(1 : cbs, (cbs+1) : total_dofs)
-        K_FF(1 : faces_dofs, 1 : faces_dofs) = lhs((cbs+1) : total_dofs, (cbs+1) : total_dofs)
-        K_FT(1 : faces_dofs, 1 : cbs) = lhs((cbs+1) : total_dofs, 1 : cbs)
-        rhs_T(1:cbs) = rhs(1:cbs)
-        rhs_F(1:faces_dofs) = rhs((cbs+1):total_dofs)
+        K_TT(1:cbs, 1:cbs) = lhs((faces_dofs+1):total_dofs, (faces_dofs+1):total_dofs)
+        K_TF(1:cbs, 1:faces_dofs) = lhs((faces_dofs+1):total_dofs, 1:faces_dofs)
+        K_FF(1:faces_dofs, 1:faces_dofs) = lhs(1:faces_dofs, 1:faces_dofs)
+        K_FT(1:faces_dofs, 1:cbs) = lhs(1:faces_dofs, (faces_dofs+1):total_dofs)
+        rhs_T(1:cbs) = rhs((faces_dofs+1):total_dofs)
+        rhs_F(1:faces_dofs) = rhs(1:faces_dofs)
 !
         info = 0
         if(l_lhs_sym) then
