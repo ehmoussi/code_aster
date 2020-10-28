@@ -59,7 +59,7 @@ def check_opts_math_lib(self):
     opts = self.options
     embed = opts.embed_math or opts.embed_all
     check_lib = lambda lib: self.check_cc(**{
-        'mandatory':True, 'uselib_store':'MATH', 'use':'MPI',
+        'mandatory':True, 'uselib_store':'MATH', 'use':'MATH MPI',
         ('st' * embed + 'lib'):lib})
 
     for lib in Utils.to_list(opts.maths_libs):
