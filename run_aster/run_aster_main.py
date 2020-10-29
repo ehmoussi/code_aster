@@ -175,6 +175,7 @@ def parse_args(argv):
         logger.setLevel(WARNING)
     if args.debug:
         logger.setLevel(DEBUG)
+        os.environ["DEBUG"] = str(os.environ.get("DEBUG") or 1)
     if args.version:
         tag = CFG.get('version_tag')
         sha1 = CFG.get('version_sha1')[:12]
