@@ -82,8 +82,11 @@ def deprecated(case=1, help=None):
     an error to remove all of them.
 
     Arguments:
-        replaced (bool): Tell if the decorated function will be replaced
-            or if it will be just removed (default: *True*, replaced).
+        case (int):
+            Case 1: the feature still works but it will be removed.
+            Case 2: the feature does nothing, it has been removed.
+            Case 3: the feature still works but has a new implementation.
+            Case 4: the feature does nothing but has a new implementation.
         help (str): Additional help message.
     """
     def deprecated_decorator(func):

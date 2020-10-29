@@ -213,7 +213,7 @@ Fermeture des bases jeveux afin de permettre la POURSUITE ultérieure du calcul.
  Le nombre d'enregistrements (NMAX_ENRE) et leurs longueurs (LONG_ENRE) conduisent à un
  fichier dont la taille maximale en Mo (%(i1)d) est supérieure à limite autorisée :  %(i2)d
 
- Vous pouvez augmenter cette limite en utilisant l'argument "-max_base" sur la ligne
+ Vous pouvez augmenter cette limite en utilisant l'argument "--max_base" sur la ligne
  de commande suivi d'une valeur en Mo.
 
 """),

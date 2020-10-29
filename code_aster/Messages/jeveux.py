@@ -223,7 +223,7 @@ Contactez le support technique.
     42 : _("""
      Fichier saturé, le nombre maximum d'enregistrement %(i1)d de la base %(k1)s est atteint
      il faut relancer le calcul en passant une taille maximum de base sur la ligne de commande
-     argument "-max_base" suivi de la valeur en Mo.
+     argument "--max_base" suivi de la valeur en Mo.
 """),
 
     43 : _("""

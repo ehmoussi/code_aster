@@ -48,6 +48,7 @@ from run_aster.export import Export
 
 from .as_timer import ASTER_TIMER
 from .base_utils import Singleton, no_new_attributes
+from .compatibility import deprecate
 from .logger import DEBUG, INFO, logger
 from .options import Options
 from .strfunc import convert
@@ -367,6 +368,8 @@ class ExecutionParameter(metaclass=Singleton):
 
         logger.debug(f"Ignored arguments: {ignored!r}")
         logger.debug(f"Read options: {vars(args)!r}")
+        if "-max_base" in " ".join(ignored):
+            deprecate("-max_base", case=4, help="Use '--max_base' instead.")
 
         # assign parameter values
         for opt, value in list(vars(args).items()):
