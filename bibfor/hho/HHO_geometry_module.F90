@@ -26,6 +26,8 @@ private
 #include "asterc/r8prem.h"
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/elrfvf.h"
+#include "asterfort/elrfdf.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -254,7 +256,7 @@ contains
 !
 ! --------------------------------------------------------------------------------------------------
 !  In typma              :: type of face
-!  In nodes_coor         :: cordiante of the face
+!  In nodes_coor         :: coordinates of the face
 !  In normal cell        :: normal to the cell (use for 2D cell)
 !  Out normal            :: outward normal of the face
 ! --------------------------------------------------------------------------------------------------
@@ -455,29 +457,24 @@ contains
 ! In basis  : evaluation of the basis at the point pt
 ! ---------------------------------------------------------------------------------
 !
+        integer :: nno
         basis = 0.d0
 !
         select case (typema)
             case ('SE2')
-                basis(1:2) = (/ 0.5d0 * (1.d0 - pt(1)), 0.5d0 * (1.d0 + pt(1)) /)
+                call elrfvf('SE2', pt, 8, basis, nno)
             case ('TRIA3')
-                basis(1:3) = (/ 1.d0 - pt(1) - pt(2), pt(1), pt(2) /)
+                call elrfvf('TR6', pt, 8, basis, nno)
             case ('QUAD4')
-                basis(1) = (1.d0 - pt(1)) * (1.d0 - pt(2)) / 4.d0
-                basis(2) = (1.d0 + pt(1)) * (1.d0 - pt(2)) / 4.d0
-                basis(3) = (1.d0 + pt(1)) * (1.d0 + pt(2)) / 4.d0
-                basis(4) = (1.d0 - pt(1)) * (1.d0 + pt(2)) / 4.d0
+                call elrfvf('QU4', pt, 8, basis, nno)
             case ('TETRA4')
-                basis(1:4) = (/ pt(2), pt(3), 1.d0 - pt(1) - pt(2) - pt(3), pt(1) /)
+                call elrfvf('TE4', pt, 8, basis, nno)
+            case ('PYRAM5')
+                call elrfvf('PY5', pt, 8, basis, nno)
+            case ('PENTA6')
+                call elrfvf('PE6', pt, 8, basis, nno)
             case ('HEXA8')
-                basis(1) = (1.d0 - pt(1)) * (1.d0 - pt(2)) * (1.d0 - pt(3)) / 8.d0
-                basis(2) = (1.d0 + pt(1)) * (1.d0 - pt(2)) * (1.d0 - pt(3)) / 8.d0
-                basis(3) = (1.d0 + pt(1)) * (1.d0 + pt(2)) * (1.d0 - pt(3)) / 8.d0
-                basis(4) = (1.d0 - pt(1)) * (1.d0 + pt(2)) * (1.d0 - pt(3)) / 8.d0
-                basis(5) = (1.d0 - pt(1)) * (1.d0 - pt(2)) * (1.d0 + pt(3)) / 8.d0
-                basis(6) = (1.d0 + pt(1)) * (1.d0 - pt(2)) * (1.d0 + pt(3)) / 8.d0
-                basis(7) = (1.d0 + pt(1)) * (1.d0 + pt(2)) * (1.d0 + pt(3)) / 8.d0
-                basis(8) = (1.d0 - pt(1)) * (1.d0 + pt(2)) * (1.d0 + pt(3)) / 8.d0
+                call elrfvf('HE8', pt, 8, basis, nno)
             case default
                 ASSERT(ASTER_FALSE)
         end select
@@ -506,56 +503,22 @@ contains
 ! ---------------------------------------------------------------------------------
 !
 !
+        integer :: nno, ndim
         dbasis = 0.d0
 !
         select case (typema)
             case ('SE2')
-                dbasis(1,1:2) = (/ -0.5d0 , 0.5d0 /)
+                call elrfdf('SE2', pt, 24, dbasis, nno, ndim)
             case ('TRIA3')
-                dbasis(1,1:3) = (/ -1.d0, 1.d0, 0.d0 /)
-                dbasis(2,1:3) = (/ -1.d0, 0.d0, 1.d0 /)
+                call elrfdf('TR3', pt, 24, dbasis, nno, ndim)
             case ('QUAD4')
-                dbasis(1,1) = -(1.d0 - pt(2)) / 4.d0
-                dbasis(1,2) =  (1.d0 - pt(2)) / 4.d0
-                dbasis(1,3) =  (1.d0 + pt(2)) / 4.d0
-                dbasis(1,4) = -(1.d0 + pt(2)) / 4.d0
-!
-                dbasis(2,1) = -(1.d0 - pt(1)) / 4.d0
-                dbasis(2,2) = -(1.d0 + pt(1)) / 4.d0
-                dbasis(2,3) =  (1.d0 + pt(1)) / 4.d0
-                dbasis(2,4) =  (1.d0 - pt(1)) / 4.d0
+                call elrfdf('QU4', pt, 24, dbasis, nno, ndim)
             case ('TETRA4')
-                dbasis(1,1:4) = (/ 0.d0, 0.d0, -1.d0, 1.d0 /)
-                dbasis(2,1:4) = (/ 1.d0, 0.d0, -1.d0, 0.d0 /)
-                dbasis(3,1:4) = (/ 0.d0, 1.d0, -1.d0, 0.d0 /)
+                call elrfdf('TE4', pt, 24, dbasis, nno, ndim)
+            case ('PYRAM5')
+                call elrfdf('PY5', pt, 24, dbasis, nno, ndim)
             case ('HEXA8')
-                dbasis(1,1) = -(1.d0 - pt(2)) * (1.d0 - pt(3)) / 8.d0
-                dbasis(1,2) =  (1.d0 - pt(2)) * (1.d0 - pt(3)) / 8.d0
-                dbasis(1,3) =  (1.d0 + pt(2)) * (1.d0 - pt(3)) / 8.d0
-                dbasis(1,4) = -(1.d0 + pt(2)) * (1.d0 - pt(3)) / 8.d0
-                dbasis(1,5) = -(1.d0 - pt(2)) * (1.d0 + pt(3)) / 8.d0
-                dbasis(1,6) =  (1.d0 - pt(2)) * (1.d0 + pt(3)) / 8.d0
-                dbasis(1,7) =  (1.d0 + pt(2)) * (1.d0 + pt(3)) / 8.d0
-                dbasis(1,8) = -(1.d0 + pt(2)) * (1.d0 + pt(3)) / 8.d0
-!
-                dbasis(2,1) = -(1.d0 - pt(1)) * (1.d0 - pt(3)) / 8.d0
-                dbasis(2,2) = -(1.d0 + pt(1)) * (1.d0 - pt(3)) / 8.d0
-                dbasis(2,3) =  (1.d0 + pt(1)) * (1.d0 - pt(3)) / 8.d0
-                dbasis(2,4) =  (1.d0 - pt(1)) * (1.d0 - pt(3)) / 8.d0
-                dbasis(2,5) = -(1.d0 - pt(1)) * (1.d0 + pt(3)) / 8.d0
-                dbasis(2,6) = -(1.d0 + pt(1)) * (1.d0 + pt(3)) / 8.d0
-                dbasis(2,7) =  (1.d0 + pt(1)) * (1.d0 + pt(3)) / 8.d0
-                dbasis(2,8) =  (1.d0 - pt(1)) * (1.d0 + pt(3)) / 8.d0
-!
-                dbasis(3,1) = -(1.d0 - pt(1)) * (1.d0 - pt(2)) / 8.d0
-                dbasis(3,2) = -(1.d0 + pt(1)) * (1.d0 - pt(2)) / 8.d0
-                dbasis(3,3) = -(1.d0 + pt(1)) * (1.d0 + pt(2)) / 8.d0
-                dbasis(3,4) = -(1.d0 - pt(1)) * (1.d0 + pt(2)) / 8.d0
-                dbasis(3,5) =  (1.d0 - pt(1)) * (1.d0 - pt(2)) / 8.d0
-                dbasis(3,6) =  (1.d0 + pt(1)) * (1.d0 - pt(2)) / 8.d0
-                dbasis(3,7) =  (1.d0 + pt(1)) * (1.d0 + pt(2)) / 8.d0
-                dbasis(3,8) =  (1.d0 - pt(1)) * (1.d0 + pt(2)) / 8.d0
-!
+                call elrfdf('HE8', pt, 24, dbasis, nno, ndim)
             case default
                 ASSERT(ASTER_FALSE)
         end select

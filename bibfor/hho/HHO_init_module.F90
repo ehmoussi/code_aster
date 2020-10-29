@@ -266,6 +266,18 @@ contains
             typma = 'TETRA9'
             nbnodes = 9
             elem_dim = 3
+        elseif(typma(1:3) == 'T15') then
+            typma = 'TETRA15'
+            nbnodes = 15
+            elem_dim = 3
+        elseif(typma(1:3) == 'P19') then
+            typma = 'PYRAM19'
+            nbnodes = 19
+            elem_dim = 3
+        elseif(typma(1:3) == 'P21') then
+            typma = 'PENTA21'
+            nbnodes = 21
+            elem_dim = 3
         else
             ASSERT(ASTER_FALSE)
         end if
@@ -351,6 +363,10 @@ contains
             nbnodes = 4
             elem_dim = 2
         elseif(typma(1:3) == 'TR4') then
+            typma = 'TRIA3'
+            nbnodes = 3
+            elem_dim = 2
+        elseif(typma(1:3) == 'TR7') then
             typma = 'TRIA3'
             nbnodes = 3
             elem_dim = 2
@@ -506,54 +522,110 @@ contains
             hhoCell%nbfaces = 6
 !
 ! ----- !!!! Attention l'ordre des faces doit etre le meme que celui du catalogue
-! ----- Face 1
+! ----- Face 1 -> N21
             nodes_faces(1:4,1) = (/1, 4, 3, 2/)
             nbnodes_faces(1) = 4
             type_faces(1) = 'QUAD4'
-! ----- Face 2
+! ----- Face 2 -> N22
             nodes_faces(1:4,2) = (/1, 2, 6, 5/)
             nbnodes_faces(2) = 4
             type_faces(2) = 'QUAD4'
-! ----- Face 3
+! ----- Face 3 -> N23
             nodes_faces(1:4,3) = (/2, 3, 7, 6/)
             nbnodes_faces(3) = 4
             type_faces(3) = 'QUAD4'
-! ----- Face 4
+! ----- Face 4 -> N24
             nodes_faces(1:4,4) = (/3, 4, 8, 7/)
             nbnodes_faces(4) = 4
             type_faces(4) = 'QUAD4'
-! ----- Face 5
-            nodes_faces(1:4,5) = (/4, 1, 5, 8/)
+! ----- Face 5 -> N25
+            nodes_faces(1:4,5) = (/1, 5, 8, 4/)
             nbnodes_faces(5) = 4
             type_faces(5) = 'QUAD4'
-! ----- Face 6
+! ----- Face 6 -> N26
             nodes_faces(1:4,6) = (/5, 6, 7, 8/)
             nbnodes_faces(6) = 4
             type_faces(6) = 'QUAD4'
 !
-        else if(typma(1:6) == 'TETRA9') then
+        else if(typma(1:6) == 'TETRA9' .or. typma(1:6) == 'TETRA15') then
             hhoCell%typema = 'TETRA4'
             hhoCell%nbnodes = 4
             hhoCell%ndim = 3
             hhoCell%nbfaces = 4
 !
 ! ----- !!!! Attention l'ordre des faces doit etre le meme que celui du catalogue
-! ----- Face 1
-            nodes_faces(1:3,1) = (/1, 2, 3/)
+! ----- Face 1 -> N11
+            nodes_faces(1:3,1) = (/1, 3, 2/)
             nbnodes_faces(1) = 3
             type_faces(1) = 'TRIA3'
-! ----- Face 2
+! ----- Face 2 -> N12
             nodes_faces(1:3,2) = (/1, 2, 4/)
             nbnodes_faces(2) = 3
             type_faces(2) = 'TRIA3'
-! ----- Face 3
-            nodes_faces(1:3,3) = (/1, 3, 4/)
+! ----- Face 3 -> N13
+            nodes_faces(1:3,3) = (/1, 4, 3/)
             nbnodes_faces(3) = 3
             type_faces(3) = 'TRIA3'
-! ----- Face 4
+! ----- Face 4 -> N14
             nodes_faces(1:3,4) = (/2, 3, 4/)
             nbnodes_faces(4) = 3
             type_faces(4) = 'TRIA3'
+!
+        else if(typma(1:6) == 'PYRAM19') then
+            hhoCell%typema = 'PYRAM5'
+            hhoCell%nbnodes = 5
+            hhoCell%ndim = 3
+            hhoCell%nbfaces = 5
+!
+! ----- !!!! Attention l'ordre des faces doit etre le meme que celui du catalogue
+! ----- Face 1 -> N14
+            nodes_faces(1:4,1) = (/1, 2, 3, 4/)
+            nbnodes_faces(1) = 4
+            type_faces(1) = 'QUAD4'
+! ----- Face 2 -> N15
+            nodes_faces(1:3,2) = (/1, 2, 5/)
+            nbnodes_faces(2) = 3
+            type_faces(2) = 'TRIA3'
+! ----- Face 3 -> N16
+            nodes_faces(1:3,3) = (/2, 3, 5/)
+            nbnodes_faces(3) = 3
+            type_faces(3) = 'TRIA3'
+! ----- Face 4 -> N17
+            nodes_faces(1:3,4) = (/3, 4, 5/)
+            nbnodes_faces(4) = 3
+            type_faces(4) = 'TRIA3'
+! ----- Face 5 -> N18
+            nodes_faces(1:3,5) = (/4, 1, 5/)
+            nbnodes_faces(5) = 3
+            type_faces(5) = 'TRIA3'
+!
+        else if(typma(1:6) == 'PENTA21') then
+            hhoCell%typema = 'PENTA6'
+            hhoCell%nbnodes = 6
+            hhoCell%ndim = 3
+            hhoCell%nbfaces = 5
+!
+! ----- !!!! Attention l'ordre des faces doit etre le meme que celui du catalogue
+! ----- Face 1 -> N16
+            nodes_faces(1:4,1) = (/1, 2, 5, 4/)
+            nbnodes_faces(1) = 4
+            type_faces(1) = 'QUAD4'
+! ----- Face 2 -> N17
+            nodes_faces(1:4,2) = (/2, 3, 6, 5/)
+            nbnodes_faces(2) = 4
+            type_faces(2) = 'QUAD4'
+! ----- Face 3 -> N18
+            nodes_faces(1:4,3) = (/1, 4, 6, 3/)
+            nbnodes_faces(3) = 3
+            type_faces(3) = 'QUAD4'
+! ----- Face 4 -> N19
+            nodes_faces(1:3,4) = (/1, 3, 2/)
+            nbnodes_faces(4) = 3
+            type_faces(4) = 'TRIA3'
+! ----- Face 5 -> N20
+            nodes_faces(1:3,5) = (/4, 5, 6/)
+            nbnodes_faces(5) = 3
+            type_faces(5) = 'TRIA3'
 !
         else if(typma(1:5) == 'QUAD8' .or. typma(1:5) == 'QUAD9') then
             hhoCell%typema = 'QUAD4'
@@ -562,19 +634,19 @@ contains
             hhoCell%nbfaces = 4
 !
 ! ----- !!!! Attention l'ordre des faces doit etre le meme que celui du catalogue
-! ----- Face 1
+! ----- Face 1 -> N5
             nodes_faces(1:2,1) = (/1, 2/)
             nbnodes_faces(1) = 2
             type_faces(1) = 'SEG2'
-! ----- Face 2
+! ----- Face 2 -> N6
             nodes_faces(1:2,2) = (/2, 3/)
             nbnodes_faces(2) = 2
             type_faces(2) = 'SEG2'
-! ----- Face 3
+! ----- Face 3 -> N7
             nodes_faces(1:2,3) = (/3, 4/)
             nbnodes_faces(3) = 2
             type_faces(3) = 'SEG2'
-! ----- Face 4
+! ----- Face 4 -> N8
             nodes_faces(1:2,4) = (/4, 1/)
             nbnodes_faces(4) = 2
             type_faces(4) = 'SEG2'
@@ -586,15 +658,15 @@ contains
             hhoCell%nbfaces = 3
 !
 ! ----- !!!! Attention l'ordre des faces doit etre le meme que celui du catalogue
-! ----- Face 1
+! ----- Face 1 -> N4
             nodes_faces(1:2,1) = (/1, 2/)
             nbnodes_faces(1) = 2
             type_faces(1) = 'SEG2'
-! ----- Face 2
+! ----- Face 2 -> N5
             nodes_faces(1:2,2) = (/2, 3/)
             nbnodes_faces(2) = 2
             type_faces(2) = 'SEG2'
-! ----- Face 3
+! ----- Face 3 -> N6
             nodes_faces(1:2,3) = (/3, 1/)
             nbnodes_faces(3) = 2
             type_faces(3) = 'SEG2'

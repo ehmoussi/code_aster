@@ -41,6 +41,7 @@ private
     public   :: hhoMeasureCell,  hhoMeasureFace,hhoDiameterCell, hhoDiameterFace, hho_surface_tri
     public   :: hhoLengthBoundingBoxCell
     private  :: hho_vol_hexa, hho_vol_tetra, hho_surface_quad, hho_length_edge
+    private  :: hho_vol_prism, hho_vol_pyram
     private  :: hhoDiameter, prod_vec
 !
 contains
@@ -100,6 +101,77 @@ contains
 !
         vol = 0.d0
         do i =1, 5
+            do j = 1, 4
+                nodestet(1:3, j) = nodes(1:3, tets(j,i))
+            end do
+            vol = vol + hho_vol_tetra(nodestet)
+        end do
+!
+    end function
+!
+!===================================================================================================
+!
+!===================================================================================================
+!
+    function hho_vol_prism(nodes) result(vol)
+!
+    implicit none
+!
+        real(kind=8), dimension(3,6), intent(in)   :: nodes
+        real(kind=8)                               :: vol
+!
+! --------------------------------------------------------------------------------------------------
+!  In nodes        :: list of nodes
+!  Out vol         :: volume
+! --------------------------------------------------------------------------------------------------
+!
+        integer, dimension(4,3)  :: tets
+        integer :: i, j
+        real(kind=8) :: nodestet(3,4)
+! --------------------------------------------------------------------------------------------------
+!
+! --- split the hexa in 3 tets
+        tets(1:4,1) = (/1,2,3,4/)
+        tets(1:4,2) = (/2,3,4,5/)
+        tets(1:4,3) = (/3,4,5,6/)
+!
+        vol = 0.d0
+        do i = 1, 3
+            do j = 1, 4
+                nodestet(1:3, j) = nodes(1:3, tets(j,i))
+            end do
+            vol = vol + hho_vol_tetra(nodestet)
+        end do
+!
+    end function
+!
+!===================================================================================================
+!
+!===================================================================================================
+!
+    function hho_vol_pyram(nodes) result(vol)
+!
+    implicit none
+!
+        real(kind=8), dimension(3,5), intent(in)   :: nodes
+        real(kind=8)                               :: vol
+!
+! --------------------------------------------------------------------------------------------------
+!  In nodes        :: list of nodes
+!  Out vol         :: volume
+! --------------------------------------------------------------------------------------------------
+!
+        integer, dimension(4,2)  :: tets
+        integer :: i, j
+        real(kind=8) :: nodestet(3,4)
+! --------------------------------------------------------------------------------------------------
+!
+! --- split the pyramid in 2 tets
+        tets(1:4,1) = (/1,2,3,5/)
+        tets(1:4,2) = (/1,3,4,5/)
+!
+        vol = 0.d0
+        do i = 1, 2
             do j = 1, 4
                 nodestet(1:3, j) = nodes(1:3, tets(j,i))
             end do
@@ -248,13 +320,17 @@ contains
 !
         measure = 0.d0
 !
-        if(cell%typema(1:5) == 'HEXA8') then
+        if(cell%typema == 'HEXA8') then
             measure = hho_vol_hexa(cell%coorno(1:3,1:8))
-        elseif(cell%typema(1:6) == 'TETRA4') then
+        elseif(cell%typema == 'TETRA4') then
             measure = hho_vol_tetra(cell%coorno(1:3,1:4))
-        elseif(cell%typema(1:5) == 'QUAD4') then
+        elseif(cell%typema == 'PYRAM5') then
+            measure = hho_vol_pyram(cell%coorno(1:3,1:5))
+        elseif(cell%typema == 'PENTA6') then
+            measure = hho_vol_prism(cell%coorno(1:3,1:6))
+        elseif(cell%typema == 'QUAD4') then
             measure = hho_surface_quad(cell%coorno(1:3,1:4))
-        elseif(cell%typema(1:5) == 'TRIA3') then
+        elseif(cell%typema == 'TRIA3') then
             measure = hho_surface_tri(cell%coorno(1:3,1:3))
         else
             ASSERT(ASTER_FALSE)
@@ -342,13 +418,17 @@ contains
 !
         measure = 0.d0
 !
-        if(cell%typema(1:5) == 'HEXA8') then
+        if(cell%typema == 'HEXA8') then
             measure = hhoDiameter(cell%coorno(1:3,1:8),8)
-        elseif(cell%typema(1:6) == 'TETRA4') then
+        elseif(cell%typema == 'TETRA4') then
             measure = hhoDiameter(cell%coorno(1:3,1:4),4)
-        elseif(cell%typema(1:5) == 'QUAD4') then
+        elseif(cell%typema == 'PYRAM5') then
+            measure = hhoDiameter(cell%coorno(1:3,1:5),5)
+        elseif(cell%typema == 'PENTA6') then
+            measure = hhoDiameter(cell%coorno(1:3,1:6),6)
+        elseif(cell%typema == 'QUAD4') then
             measure = hhoDiameter(cell%coorno(1:3,1:4),4)
-        elseif(cell%typema(1:5) == 'TRIA3') then
+        elseif(cell%typema == 'TRIA3') then
             measure = hhoDiameter(cell%coorno(1:3,1:3),3)
         else
             ASSERT(ASTER_FALSE)
@@ -373,11 +453,11 @@ contains
 ! --------------------------------------------------------------------------------------------------
 !
         measure = 0.d0
-        if(face%typema(1:5) == 'QUAD4') then
+        if(face%typema == 'QUAD4') then
             measure = hhoDiameter(face%coorno(1:3,1:4),4)
-        elseif(face%typema(1:5) == 'TRIA3') then
+        elseif(face%typema == 'TRIA3') then
             measure = hhoDiameter(face%coorno(1:3,1:3),3)
-        elseif(face%typema(1:4) == 'SEG2') then
+        elseif(face%typema == 'SEG2') then
             measure = hhoDiameter(face%coorno(1:3,1:2),2)
         else
             ASSERT(ASTER_FALSE)

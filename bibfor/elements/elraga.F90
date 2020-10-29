@@ -685,6 +685,7 @@ real(kind=8), intent(out) :: coopg(*), poipg(*)
     else if (elrefa.eq.'PY5' .or. elrefa.eq.'P13') then
 !
         if (fapg .eq. 'FPG5') then
+!       ORDRE 2
 !
             p1 = 0.1333333333333333d0
             h1 = 0.1531754163448146d0
@@ -715,7 +716,7 @@ real(kind=8), intent(out) :: coopg(*), poipg(*)
             hpg(5) = p1
 !
         else if (fapg.eq.'FPG6') then
-!
+! ORDRE 3
             p1 = 0.1024890634400000d0
             p2 = 0.1100000000000000d0
             p3 = 0.1467104129066667d0

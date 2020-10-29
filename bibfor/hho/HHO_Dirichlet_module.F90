@@ -952,6 +952,14 @@ contains
 !
         if(typma2 == 'H27' .or. typma2 == 'HEXA27') then
             hhoDiriDeca = 21
+        elseif(typma2 == 'TE9' .or. typma2 == 'TETRA9') then
+            hhoDiriDeca = 5
+        elseif(typma2 == 'T15' .or. typma2 == 'TETRA15') then
+            hhoDiriDeca = 11
+        elseif(typma2 == 'P21' .or. typma2 == 'PENTA21') then
+            hhoDiriDeca = 16
+        elseif(typma2 == 'P19' .or. typma2 == 'PYRAM19') then
+            hhoDiriDeca = 15
         elseif(typma2 == 'QU8' .or. typma2 == 'QUAD8') then
             hhoDiriDeca = 5
         elseif(typma2 == 'QU9' .or. typma2 == 'QUAD9') then
@@ -960,8 +968,6 @@ contains
             hhoDiriDeca = 4
         elseif(typma2 == 'TR7' .or. typma2 == 'TRIA7') then
             hhoDiriDeca = 4
-        elseif(typma2 == 'TE9' .or. typma2 == 'TETRA9') then
-            hhoDiriDeca = 5
         else
             ASSERT(ASTER_FALSE)
         end if
