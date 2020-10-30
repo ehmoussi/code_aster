@@ -40,7 +40,9 @@ from subprocess import TimeoutExpired, run
 
 from .logger import logger
 
-ROOT = osp.dirname(osp.dirname(osp.dirname(osp.dirname(osp.abspath(__file__)))))
+# installation root is defined by launcher script or relatively to this file
+ROOT = os.environ.get("RUNASTER_ROOT",
+    osp.dirname(osp.dirname(osp.dirname(osp.dirname(osp.abspath(__file__))))))
 
 
 def copy(src, dst, verbose=False):

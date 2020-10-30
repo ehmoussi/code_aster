@@ -9,6 +9,7 @@ set_prefix() {
 
 set_prefix "${0}"
 
+export RUNASTER_ROOT="${prefix}"
 source "${prefix}/share/aster/profile.sh"
 python3 -m run_aster.run_aster_main "${@}"
 exit ${?}
