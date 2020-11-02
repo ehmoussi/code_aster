@@ -292,7 +292,7 @@ class MAIL_PY:
     def ToAster(self, unite=None):
         # Récupération d'une unité logique libre si besoin
         if unite is None:
-            fileObject = LogicalUnitFile.new_free(new=True)
+            fileObject = LogicalUnitFile.new_free(access=FileAccess.New)
             unite = fileObject.unit
         else:
             fileObject = LogicalUnitFile.from_number(unite)

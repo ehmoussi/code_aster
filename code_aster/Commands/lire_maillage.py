@@ -22,7 +22,7 @@
 from ..Cata.Commands.lire_maillage import keywords as main_keywords
 from ..Cata.DataStructure import maillage_sdaster
 from ..Cata.Syntax import OPER, SIMP, tr
-from ..Helpers import LogicalUnitFile
+from ..Helpers import (FileAccess, FileType,LogicalUnitFile)
 from ..Objects import Mesh, ParallelMesh
 from ..Supervis import ExecuteCommand
 from ..Messages import UTMESS
@@ -72,7 +72,7 @@ class MeshReader(ExecuteCommand):
         fmt = keywords['FORMAT']
 
         if fmt in need_conversion:
-            tmpfile = LogicalUnitFile.new_free(new=True)
+            tmpfile = LogicalUnitFile.new_free(access=FileAccess.New)
             unit_op = tmpfile.unit
             keywords['FORMAT'] = 'ASTER'
         else:

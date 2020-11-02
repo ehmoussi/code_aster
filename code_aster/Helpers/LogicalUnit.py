@@ -166,7 +166,7 @@ class LogicalUnitFile(object):
         return cls(unit, filename, Action.Open, typ, access)
 
     @classmethod
-    def new_free(cls, filename=None, ascii=True, new=False):
+    def new_free(cls, filename=None, typ=FileType.Ascii, access=FileAccess.New):
         """Factory that returns a new free *LogicalUnitFile* for the given name.
 
         Arguments:
@@ -180,9 +180,7 @@ class LogicalUnitFile(object):
             LogicalUnitFile: New logical unit.
         """
         unit = cls._get_free_number()
-        return cls(unit, filename, Action.Open,
-                   FileType.Ascii if ascii else FileType.Binary,
-                   FileAccess.New if new else FileAccess.Append)
+        return cls(unit, filename, Action.Open, typ, access)
 
     @staticmethod
     def register(unit, filename, action,
@@ -336,9 +334,9 @@ class DefineUnitFile(ExecuteCommandOps):
                 keywords.get("UNITE") is None):
             # ask for a free unit
             filename = keywords.get("FICHIER")
-            is_ascii = keywords.get("TYPE", "ASCII") == "ASCII"
-            mode = keywords.get("ACCES", "NEW") == "NEW"
-            fileobj = LogicalUnitFile.new_free(filename, is_ascii, mode)
+            typ    = FileType.value( keywords.get("TYPE") )
+            access = FileAccess.value( keywords.get("ACCES") )
+            fileobj = LogicalUnitFile.new_free(filename, typ, access)
             self._result = fileobj.unit
         else:
             self._result = None

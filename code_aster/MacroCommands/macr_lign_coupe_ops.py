@@ -25,7 +25,7 @@ import aster
 from ..Cata.Syntax import _F
 from ..Commands import (COPIER, CREA_RESU, CREA_TABLE, DEFI_GROUP, LIRE_MAILLAGE,
                                  MODI_REPERE, POST_RELEVE_T, PROJ_CHAMP)
-from ..Helpers import LogicalUnitFile
+from ..Helpers import (FileAccess, FileType,LogicalUnitFile)
 from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 #
@@ -682,7 +682,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     # obligatoire dans AsterStudy
     UNITE_MAILLAGE = args.get("UNITE_MAILLAGE")
     if not UNITE_MAILLAGE:
-        logical_unit = LogicalUnitFile.new_free(new=True)
+        logical_unit = LogicalUnitFile.new_free(access=FileAccess.New)
         UNITE_MAILLAGE = logical_unit.unit
 
     # On importe les definitions des commandes a utiliser dans la macro

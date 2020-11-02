@@ -22,7 +22,7 @@
 import types
 
 import aster
-from .LogicalUnit import LogicalUnitFile
+from .LogicalUnit import (FileAccess, FileType,LogicalUnitFile)
 
 
 class UniteAster:
@@ -42,7 +42,17 @@ class UniteAster:
                 removed if it exists. *False* means that the file may exist.
             ascii (bool): If *True* the file is opened in text mode.
         """
-        logical_unit = LogicalUnitFile.new_free(nom, ascii, new)
+        if ( ascii ):
+            typ=FileType.Ascii
+        else:
+            typ=FileType.Free
+        #
+        if ( new ):
+            access=FileAccess.New
+        else:
+            access=FileAccess.Old
+        #
+        logical_unit = LogicalUnitFile.new_free(nom, typ, access)
         return logical_unit.unit
 
     def Nom(self, ul):

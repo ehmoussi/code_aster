@@ -39,7 +39,7 @@ from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_CHAR_MECA_F,
                         IMPR_RESU, IMPR_TABLE, LIRE_FONCTION, MODI_MAILLAGE,
                         NUME_DDL, POST_DYNA_ALEA, RECU_FONCTION,
                         REST_SPEC_TEMP)
-from ..Helpers import LogicalUnitFile
+from ..Helpers import (FileAccess, FileType,LogicalUnitFile)
 from ..Objects import Mesh
 
 
@@ -627,7 +627,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
         __GG = [None] * (nbmat + 1)
         __DG = [None] * (nbmat + 1)
 
-        tabfile = LogicalUnitFile.new_free(new=True)
+        tabfile = LogicalUnitFile.new_free(access=FileAccess.New)
         utabequ = tabfile.unit
         IMPR_TABLE(TABLE=args['TABLE_GEQUI_GMAX'], UNITE=utabequ)
         IMPR_TABLE(TABLE=args['TABLE_AMOR_EQUI'], UNITE=utabequ)
