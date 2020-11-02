@@ -98,7 +98,6 @@ implicit none
     integer, pointer :: p_mesh_type_geom(:) => null()
     integer, pointer :: p_wk_mail1(:) => null()
     integer, pointer :: p_wk_mail2(:) => null()
-    integer, pointer :: p_wk_mail3(:) => null()
     character(len=24) :: model_liel
     integer, pointer :: p_model_liel(:) => null()
     character(len=24) :: model_maille
@@ -197,13 +196,11 @@ implicit none
 ! ----- Working objects
         AS_ALLOCATE(vi = p_wk_mail1, size = nb_mesh_elem)
         AS_ALLOCATE(vi = p_wk_mail2, size = nb_mesh_elem)
-        AS_ALLOCATE(vi = p_wk_mail3, size = nb_mesh_elem)
 ! ----- Loop on AFFE keyword
         do iaffe = 1, nb_affe
             nb_elem = 0
             dim_topo_init=-99
             p_wk_mail2(1:nb_mesh_elem) = 0
-            p_wk_mail3(1:nb_mesh_elem) = 0
 ! --------- Get Only ONE phénomene !
             call getvtx(keywordfact, 'PHENOMENE', iocc=iaffe, scal=phenomRead)
             if (phenomRead .ne. phenom) then
@@ -248,7 +245,6 @@ implicit none
                     nume_type_geom = p_mesh_type_geom(nume_elem)
                     if (p_cata_model(nume_type_geom) .gt. 0) then
                         p_model_maille(nume_elem) = p_cata_model(nume_type_geom)
-                        p_wk_mail3(nume_elem) = p_cata_model(nume_type_geom)
                     endif
                     p_wk_mail1(nume_elem) = 1
                     if (p_cata_dim(nume_type_geom) .eq. dim_topo_init) then
@@ -272,19 +268,7 @@ implicit none
                 vali(3) = dim_topo_init
                 call utmess('A', 'MODELE1_70', ni=3, vali=vali)
             endif
-! --------- ON VERIFIE QUE L'OCCURRENCE A UN EFFET, C'EST A DIRE QU'ELLE A AFFECTE
-! --------- OU REAFFECTE AU MOINS UNE MAILLE
-            ico=0
-            do nume_elem = 1, nb_mesh_elem
-                if ((p_wk_mail2(nume_elem).eq.1) .and. (p_wk_mail3(nume_elem).ne.0)) then
-                    ico=ico+1
-                endif
-            end do
-            if (ico .eq. 0) then
-                vali(1) = iaffe
-                vali(2) = dim_topo_init
-                call utmess('A', 'MODELE1_71', ni=2, vali=vali)
-            endif
+
 ! --------- Check if user elements have been affected
             nb_elem_naffe = 0
             do ielem = 1, nb_mesh_elem
@@ -387,7 +371,6 @@ implicit none
 !
         AS_DEALLOCATE(vi = p_wk_mail1)
         AS_DEALLOCATE(vi = p_wk_mail2)
-        AS_DEALLOCATE(vi = p_wk_mail3)
     endif
 !
 ! - AFFE_SOUS_STRUCT

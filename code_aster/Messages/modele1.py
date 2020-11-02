@@ -121,16 +121,6 @@ Il est d'usage d'utiliser un maillage dans le plan Z passant par l'origine pour 
                         ))
 """),
 
-    71 : _("""
- Possible erreur utilisateur dans la commande AFFE_MODELE :
-   Un problème a été détecté lors de l'affectation des éléments finis.
-   Pour l'occurrence AFFE de numéro %(i1)d, aucune maille de même dimension topologique
-   que la modélisation (ici dimension = %(i2)d) n'a pu être affectée.
-
-   Cela veut dire que cette occurrence n'a aucun effet.
-"""),
-
-
     80 : _("""On a détecté %(i1)d mailles qui ont une modélisation de type interaction fluide-structure dont on va vérifier l'orientation des normales."""),
 
     81 : _("""Les mailles concernées sont de dimension topologique 1 (segments)."""),
