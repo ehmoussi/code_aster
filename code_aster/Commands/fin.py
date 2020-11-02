@@ -32,6 +32,7 @@ A call to the function :py:func:`~code_aster.Supervis.Serializer.saveObjects`
 is equivalent.
 """
 
+import sys
 import libaster
 
 from ..Supervis import ExecuteCommand, saveObjects
@@ -41,6 +42,16 @@ from ..Utilities import ExecutionParameter, logger
 class Closer(ExecuteCommand):
     """Command that closes the execution."""
     command_name = "FIN"
+    _exit = None
+
+    def adapt_syntax(self, keywords):
+        """Consume argument to force to exit after the command.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        self._exit = keywords.pop("exit", False)
 
     def _call_oper(self, dummy):
         """Save objects that exist in the context of the caller.
@@ -53,6 +64,15 @@ class Closer(ExecuteCommand):
             saveObjects(level=5)
 
         logger.info(repr(ExecutionParameter().timer))
+
+    def post_exec(self, keywords):
+        """Force to exit if `exit=True` option was passed.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        if self._exit:
+            sys.exit()
 
 
 FIN = Closer.run
