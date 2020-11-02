@@ -124,41 +124,41 @@ subroutine verif_affe_carte(ligrmo,carte,comment,non_lin)
     AS_ALLOCATE(vi=num_grel, size=2*nbma)
     num_grel=0
 
-    do igrel=1,nbgrel
-       call jeveuo(jexnum(ligrmo//'.LIEL', igrel), 'L', jligrmo)
-       call jelira(jexnum(ligrmo//'.LIEL', igrel), 'LONMAX', n1)
-       te=zi(jligrmo-1+n1)
-       do k=1,n1-1
-           ima=zi(jligrmo-1+k)
-           if (ima.gt.0) then
-               num_grel(2*(ima-1)+1)=igrel
-               num_grel(2*(ima-1)+2)=te
-           endif
-       enddo
-       do kop=1,nbop
-           ioptte=zi(joptte-1+(te-1)*nbop + kop)
-           if (ioptte.gt.0) then
-               call jeveuo(jexnum('&CATA.TE.OPTMOD', ioptte), 'L', joptmod)
-               nucalc=zi(joptmod-1+1)
-               if (nucalc.lt.0) goto 1
-
-               nbin=zi(joptmod-1+2)
-               do kin=1,nbin
-                   moloc=zi(joptmod-1+3+kin)
-                   call jeveuo(jexnum('&CATA.TE.MODELOC', moloc), 'L', jmodeloc)
-                   if (zi(jmodeloc-1+2).eq.numgd) then
-                       ASSERT(zi(jmodeloc-1+4).lt.10000)
-                       ASSERT(zi(jmodeloc-1+4).gt.0)
-                       do kcmp = 1, nbcmp
-                           if (exisdg(zi(jmodeloc-1+5),kcmp)) then
-                                   a_un_sens((igrel-1)*nbcmp+kcmp)=1
-                           endif
-                       enddo
-                   endif
-               enddo
-1              continue
-           endif
-       enddo
+    do igrel = 1, nbgrel
+        call jeveuo(jexnum(ligrmo//'.LIEL', igrel), 'L', jligrmo)
+        call jelira(jexnum(ligrmo//'.LIEL', igrel), 'LONMAX', n1)
+        te = zi(jligrmo-1+n1)
+! ----- Loop on elements
+        do k=1,n1-1
+            ima=zi(jligrmo-1+k)
+            if (ima.gt.0) then
+                num_grel(2*(ima-1)+1) = igrel
+                num_grel(2*(ima-1)+2) = te
+            endif
+        enddo
+        do kop=1,nbop
+            ioptte = zi(joptte-1+(te-1)*nbop + kop)
+            if (ioptte.gt.0) then
+                call jeveuo(jexnum('&CATA.TE.OPTMOD', ioptte), 'L', joptmod)
+                nucalc = zi(joptmod-1+1)
+                if (nucalc.ge.0) then
+                    nbin=zi(joptmod-1+2)
+                    do kin=1,nbin
+                        moloc=zi(joptmod-1+3+kin)
+                        call jeveuo(jexnum('&CATA.TE.MODELOC', moloc), 'L', jmodeloc)
+                        if (zi(jmodeloc-1+2).eq.numgd) then
+                            ASSERT(zi(jmodeloc-1+4).lt.10000)
+                            ASSERT(zi(jmodeloc-1+4).gt.0)
+                            do kcmp = 1, nbcmp
+                                if (exisdg(zi(jmodeloc-1+5),kcmp)) then
+                                    a_un_sens((igrel-1)*nbcmp+kcmp)=1
+                                endif
+                            enddo
+                        endif
+                    enddo
+                endif
+            endif
+        enddo
     enddo
 
 
@@ -315,6 +315,10 @@ subroutine verif_affe_carte(ligrmo,carte,comment,non_lin)
             else if (tsca(1:2).eq.'K8') then
                 if (zk8(jvale-1+iad1).eq.' ') cycle
                 if (zk8(jvale-1+iad1).eq.'&FOZERO') cycle
+                if (zk8(jvale-1+iad1).eq.'GLOBAL') cycle
+                if (zk8(jvale-1+iad1).eq.'LOCAL') cycle
+                if (zk8(jvale-1+iad1).eq.'VENT') cycle
+                if (zk8(jvale-1+iad1).eq.'LOCAL_PR') cycle
             else if (tsca(1:3).eq.'K16') then
                 if (zk16(jvale-1+iad1).eq.' ') cycle
                 if (zk16(jvale-1+iad1).eq.'&FOZERO') cycle
