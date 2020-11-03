@@ -35,4 +35,6 @@ bool create_enthalpy(const FunctionPtr &rho_cp_func, const FunctionPtr &beta_fun
     const std::string name_out = (*beta_func).getName();
 
     CALLO_CREATE_ENTHALPY( name_in, name_out );
+
+    return true;
 };

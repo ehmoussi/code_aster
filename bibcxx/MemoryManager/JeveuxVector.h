@@ -188,6 +188,7 @@ class JeveuxVectorClass : public JeveuxObjectClass, private AllowedJeveuxType< V
 
         const std::string param( "DOCU" );
         CALLO_JEECRA_STRING_WRAP( _name, param, value );
+        return true;
     };
 
     /**
