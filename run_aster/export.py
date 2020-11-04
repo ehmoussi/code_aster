@@ -261,7 +261,7 @@ class File:
     @property
     def as_argument(self):
         """str: String to be passed on command_line"""
-        return ":".join(self._astext())
+        return "::".join(self._astext())
 
     @classmethod
     def from_argument(cls, line):
@@ -271,7 +271,7 @@ class File:
         Arguments:
             line (str): Line as formatted by `File.as_argument`
         """
-        typ, filetype, path, drc, unit = line.split(":")
+        typ, filetype, path, drc, unit = line.split("::")
         return cls(path, filetype, unit, typ == "R",
                    "D" in drc, "R" in drc, "C" in drc)
 
@@ -391,6 +391,9 @@ class Export(Store):
                 unit = spl.pop()
                 drc = spl.pop()
                 path = " ".join(spl)
+                if ":" in path:
+                    logger.warning(f"remote path not supported: {path}")
+                    path = path.split(":")[-1]
                 entry = File(path, filetype, unit, isdir,
                              "D" in drc, "R" in drc, "C" in drc)
                 self.add_file(entry)
