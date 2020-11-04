@@ -116,10 +116,13 @@ resnonl = CALC_CHAMP(
     CRITERES=('SIEQ_NOEU','SIEQ_ELGA'),
     PROPRIETES=('MATE_ELEM', 'MATE_ELGA'),
     CONTRAINTE=('SIEF_ELNO','SIEF_NOEU',),
+    DEFORMATION=('EPSI_ELNO','EPSI_ELGA','EPSP_ELGA'),
+    VARI_INTERNE = ('VARC_ELGA'),
     MODELE=model,
     RESULTAT=resnonl,
 )
-
+rescoor=CALC_CHAM_ELEM(MODELE=model,
+                       OPTION='COOR_ELGA',);
 TEST_RESU(RESU=_F(INST=1.0,
                   GROUP_NO=('A', ),
                   REFERENCE='AUTRE_ASTER',
@@ -191,6 +194,32 @@ TEST_RESU(RESU=_F(INST=1.0,
                   VALE_CALC=CT,
                   CRITERE='RELATIF',),
           )
+TEST_RESU(RESU=_F(INST=1.0,
+                  MAILLE=('M1152'),
+                  NOEUD=('N515',),
+                  RESULTAT=resnonl,
+                  NOM_CHAM='EPSI_ELNO',
+                  NOM_CMP='EPXY',
+                  VALE_CALC=0.009460092381436025,
+                  CRITERE='RELATIF',),
+          )
 
+TEST_RESU(RESU=_F(INST=1.0,
+                  MAILLE=('M1152'),
+                  POINT=1,
+                  RESULTAT=resnonl,
+                  NOM_CHAM='EPSI_ELGA',
+                  NOM_CMP='EPXY',
+                  VALE_CALC=0.012001044339102429,
+                  CRITERE='RELATIF',),
+          )
+TEST_RESU(CHAM_ELEM=_F(
+                       POINT=1,
+                       NOM_CMP='X',
+                       MAILLE='M1152',
+                       CHAM_GD=rescoor,
+                   VALE_CALC=21.63397459621556,
+                       ),
+          )
 
 FIN()

@@ -100,10 +100,14 @@ resnonl = CALC_CHAMP(
     reuse=resnonl,
     CHAM_MATER=fieldmat,
     CRITERES=('SIEQ_NOEU',),
+    DEFORMATION = ('EPSI_ELGA',
+                   'EPSP_ELGA'
+                   ),
     MODELE=model,
     RESULTAT=resnonl,
 )
-
+rescoor=CALC_CHAM_ELEM(MODELE=model,
+                       OPTION='COOR_ELGA',);
 IMPR_RESU(UNITE=80,
             RESU=_F(RESULTAT=resnonl,
                     IMPR_NOM_VARI='OUI',),
@@ -167,6 +171,35 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CMP='TRSIG',
                   VALE_CALC=CT,
                   CRITERE='RELATIF',),
+          )
+TEST_RESU(RESU=_F(INST=1.0,
+                  MAILLE=('M200'),
+                  POINT=1,
+                  RESULTAT=resnonl,
+                  NOM_CHAM='EPSP_ELGA',
+                  NOM_CMP='EPXY',
+                  VALE_CALC=0.015089300060840114,
+                  CRITERE='RELATIF',),
+          )
+
+TEST_RESU(RESU=_F(INST=1.0,
+                  MAILLE=('M200'),
+                  POINT=1,
+                  RESULTAT=resnonl,
+                  NOM_CHAM='EPSI_ELGA',
+                  NOM_CMP='EPXY',
+                  VALE_CALC=0.018110649467529646 ,
+                  CRITERE='RELATIF',),
+          )
+
+
+TEST_RESU(CHAM_ELEM=_F(
+                       POINT=1,
+                       NOM_CMP='X',
+                       MAILLE='M200',
+                       CHAM_GD=rescoor,
+                   VALE_CALC=21.338104996137776,
+                       ),
           )
 
 

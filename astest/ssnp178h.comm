@@ -36,6 +36,12 @@ mesh = CREA_MAILLAGE(MAILLAGE=mesh1, TETRA4_9=_F(TOUT='OUI'))
 mesh = MODI_MAILLAGE(reuse=mesh, MAILLAGE=mesh,
                      ORIE_PEAU_3D=_F(GROUP_MA=('Encast', 'load',),),)
 
+mesh = DEFI_GROUP(reuse = mesh,
+                MAILLAGE = mesh,
+                CREA_GROUP_MA = _F(NOM = 'MA3D',
+                                   TYPE_MAILLE = '3D',
+                                   TOUT = 'OUI'),)
+
 E = 70
 mater = DEFI_MATERIAU(
     ECRO_LINE=_F(D_SIGM_EPSI=0.13474, SY=0.243), ELAS=_F(E=E, NU=0.4999, RHO=1.0)
@@ -109,9 +115,14 @@ resnonl = CALC_CHAMP(
     CRITERES=('SIEQ_NOEU','SIEQ_ELGA'),
     PROPRIETES=('MATE_ELEM', 'MATE_ELGA'),
     CONTRAINTE=('SIEF_ELNO','SIEF_NOEU',),
+    DEFORMATION=('EPSI_ELNO','EPSI_ELGA','EPSP_ELGA'),
+    VARI_INTERNE = ('VARC_ELGA'),
     MODELE=model,
     RESULTAT=resnonl,
 )
+rescoor=CALC_CHAM_ELEM(MODELE=model,
+                       OPTION='COOR_ELGA',
+                       GROUP_MA= 'MA3D');
 
 TEST_RESU(RESU=_F(INST=1.0,
                   GROUP_NO=('A', ),
@@ -173,5 +184,32 @@ TEST_RESU(RESU=_F(INST=1.0,
                   CRITERE='RELATIF',),
           )
 
+TEST_RESU(RESU=_F(INST=1.0,
+                  MAILLE=('M1797'),
+                  NOEUD=('N187',),
+                  RESULTAT=resnonl,
+                  NOM_CHAM='EPSI_ELNO',
+                  NOM_CMP='EPXY',
+                  VALE_CALC=0.006820455853020405,
+                  CRITERE='RELATIF',),
+          )
+
+TEST_RESU(RESU=_F(INST=1.0,
+                  MAILLE=('M1797'),
+                  POINT=1,
+                  RESULTAT=resnonl,
+                  NOM_CHAM='EPSI_ELGA',
+                  NOM_CMP='EPXY',
+                  VALE_CALC=0.006820455853020404,
+                  CRITERE='RELATIF',),
+          )
+TEST_RESU(CHAM_ELEM=_F(
+                       POINT=1,
+                       NOM_CMP='X',
+                       MAILLE='M1797',
+                       CHAM_GD=rescoor,
+                   VALE_CALC=23.349555125707617,
+                       ),
+          )
 
 FIN()

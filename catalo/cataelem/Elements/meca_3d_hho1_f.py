@@ -167,6 +167,11 @@ class MECA3DQU9_HHO1_F(Element):
             para_in=((SP.PFR2D3D, NFORCER), (SP.PGEOMER, NGEOMER),),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
+        
+        OP.COOR_ELGA(te=479,
+            para_in=((SP.PGEOMER, NGEOMER), ),
+            para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
+        ),
 
         OP.INIT_VARC(te=99,
             para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), (OP.INIT_VARC.PVARCNO, LC.ZVARCNO),),
