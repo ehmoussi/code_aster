@@ -23,7 +23,7 @@ cata_msg = {
 
     1 : _("""
   Erreur d'utilisation :
-    Pour la méthodes itérative GCPC, on ne peut pas encore utiliser
+    Pour la méthode itérative GCPC, on ne peut pas encore utiliser
     de matrice non-symétrique.
 
   Conseil : Changer de solveur
