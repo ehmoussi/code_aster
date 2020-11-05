@@ -89,7 +89,6 @@ class ExecutionStarter:
         params.testresu_print = testresu_print
         copy_datafiles(params.export.datafiles)
         aster_core.register(params, MessageLog)
-        libaster.onFatalError("ABORT")
         libaster.jeveux_init()
         cls._is_initialized = True
         return True
@@ -98,7 +97,7 @@ class ExecutionStarter:
 class Starter(ExecuteCommand):
     """Define the command DEBUT."""
     command_name = "DEBUT"
-    restart = False
+    arg_init = []
 
     def adapt_syntax(self, keywords):
         """Adapt keywords.
@@ -109,6 +108,18 @@ class Starter(ExecuteCommand):
         if keywords.pop("PAR_LOT", None):
             deprecate("PAR_LOT", case=2, level=6)
 
+    @staticmethod
+    def _code_enabled(keywords):
+        """Tell if CODE is enabled.
+
+        Arguments:
+            keywords (dict): User's keywords, changed in place.
+
+        Returns:
+            bool: *True* if CODE is present, *False* otherwise.
+        """
+        return keywords.get("CODE")
+
     @classmethod
     def run(cls, **keywords):
         """Run the Command.
@@ -116,9 +127,7 @@ class Starter(ExecuteCommand):
         Arguments:
             keywords (dict): User keywords
         """
-        if not ExecutionStarter.init(["--continue"]
-                                     if cls.command_name == "POURSUITE"
-                                     else []):
+        if not ExecutionStarter.init(cls.arg_init):
             return
 
         super(Starter, cls).run(**keywords)
@@ -149,8 +158,10 @@ class Starter(ExecuteCommand):
         """
         iwarn = False
         stop_with = "EXCEPTION"
+        if ExecutionParameter().option & Options.Abort:
+            stop_with = "ABORT"
         if (ExecutionParameter().option & Options.TestMode or
-                keywords.get('CODE')):
+                self._code_enabled(keywords)):
             ExecutionParameter().enable(Options.TestMode)
             stop_with = "ABORT"
             iwarn = True
@@ -162,6 +173,7 @@ class Starter(ExecuteCommand):
                 stop_with = erreur['ERREUR_F']
         if ExecutionParameter().option & Options.SlaveMode:
             stop_with = "EXCEPTION"
+        # must be the first call to correctly set 'vini' in onerrf
         libaster.onFatalError(stop_with)
 
         debug = keywords.get('DEBUG')
@@ -208,7 +220,19 @@ class Starter(ExecuteCommand):
 class Restarter(Starter):
     """Define the command POURSUITE."""
     command_name = "POURSUITE"
-    restart = True
+    arg_init = ["--continue"]
+
+    @staticmethod
+    def _code_enabled(keywords):
+        """Tell if CODE is enabled.
+
+        Arguments:
+            keywords (dict): User's keywords, changed in place.
+
+        Returns:
+            bool: *True* if CODE is present, *False* otherwise.
+        """
+        return keywords.get("CODE") == "OUI"
 
     def _call_oper(self, syntax):
         """Call fortran operator.

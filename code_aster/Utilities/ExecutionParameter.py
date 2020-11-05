@@ -220,8 +220,6 @@ class ExecutionParameter(metaclass=Singleton):
         if option & Options.ShowDeprecated:
             # disabled by default in python2.7
             warnings.simplefilter('default')
-        if option & Options.Abort:
-            libaster.onFatalError("ABORT")
 
     def disable(self, option):
         """Disable a boolean option.
@@ -236,8 +234,6 @@ class ExecutionParameter(metaclass=Singleton):
             logger.setLevel(INFO)
         if option & Options.ShowDeprecated:
             warnings.resetwarnings()
-        if option & Options.Abort:
-            libaster.onFatalError("EXCEPTION")
 
     @property
     def option(self):
