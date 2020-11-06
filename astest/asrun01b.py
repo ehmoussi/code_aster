@@ -714,6 +714,13 @@ class TestFromShell(unittest.TestCase):
 
     def test(self):
         iret = os.system("bash fort.88 > asrun01b.88.o 2> asrun01b.88.e")
+        if iret != 0:
+            print("STDOUT:")
+            with open("asrun01b.88.o") as fobj:
+                print(fobj.read())
+            print("STDERR:")
+            with open("asrun01b.88.e") as fobj:
+                print(fobj.read())
         self.assertEqual(iret, 0)
 
 
