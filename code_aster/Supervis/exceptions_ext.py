@@ -46,13 +46,17 @@ The class hierarchy for code_aster exceptions is:
      |
      +-- TimeLimitError
             Raised when the time limit is reached.
+
+The arguments of *AsterError* exceptions are the *message identifier (idmess)*
+and, optionally and in this order, *list of strings (valk)*,
+*list of ints (vali)* and *list of floats (valr)*.
 """
 
 import aster
 from libaster import (AsterError, ContactError, ConvergenceError,
                       IntegrationError, SolverError, TimeLimitError)
-from ..Messages import message_exception
 
+from ..Messages import message_exception
 from ..Utilities import convert
 
 
@@ -99,4 +103,3 @@ AsterError.__repr__ = format_exception
 AsterError.__str__ = format_exception
 AsterError.id_message = property(get_idmess)
 AsterError.message = property(format_exception)
-

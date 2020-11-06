@@ -57,18 +57,17 @@ try:
     import aster_core
     import aster_fonctions
     import med_aster
-
     # libaster must be imported after embedded submodules
     import libaster
 
     from .Algorithms import (ConstitutiveLaw, IntegrationAlgorithm, StrainType,
-                            TangentMatrixType)
+                             TangentMatrixType)
     from .Commands.debut import init
     from .Commands.fin import FIN as close
     from .Objects import *
     from .Supervis import (AsterError, ContactError, ConvergenceError,
-                        IntegrationError, SolverError, TimeLimitError,
-                        saveObjects)
+                           IntegrationError, SolverError,
+                           TimeLimitError, saveObjects)
     from .Utilities import TestCase
 
 except ImportError:

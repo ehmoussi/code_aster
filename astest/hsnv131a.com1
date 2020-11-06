@@ -34,7 +34,8 @@ INCLUDE_MATERIAU(
     EXTRACTION=_F(TEMP_EVAL=30., COMPOR='THER'),
 )
 
-with test.assertRaises(code_aster.AsterError):
+idmess = ""
+try:
     INCLUDE_MATERIAU(
         NOM_AFNOR='Z2CND1712',
         TYPE_MODELE='REF',
@@ -43,6 +44,12 @@ with test.assertRaises(code_aster.AsterError):
         UNITE_LONGUEUR='MM',
         EXTRACTION=_F(TEMP_EVAL=10., COMPOR='THER'),
     )
+except code_aster.AsterError as exc:
+    idmess = exc.id_message
+
+test.assertEqual(idmess, "FONCT0_29",
+                 msg="expecting exception with message 'FONCT0_29'")
+
 
 INCLUDE_MATERIAU(
     NOM_AFNOR='Z2CND1712',

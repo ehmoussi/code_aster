@@ -725,6 +725,10 @@ def __fake__():
     # dans TestResult.py
     UTMESS('I', 'TEST0_12')
     UTMESS('I', 'TEST0_19')
+    # dans fucntion_py.py
+    UTMESS('I', 'FONCT0_27')
+    UTMESS('I', 'FONCT0_28')
+    UTMESS('I', 'FONCT0_29')
 
     # TODO : current problem in asterxx in jefini.F90
     UTMESS('I', 'JEVEUX1_77')

@@ -26,17 +26,15 @@ import math
 import os
 import traceback
 
-import numpy as NP
-
 import aster_fonctions
-from ..Messages import ASSERT, UTMESS
+import numpy as NP
+from libaster import AsterError
 
 from ..Cata.Syntax import _F
 from ..Commands import DEFI_FONCTION, DEFI_NAPPE, IMPR_FONCTION
-from ..Objects import Function, FunctionComplex, Function2D
-from ..Objects.function_py import (FonctionError, InterpolationError,
-                                   ParametreError, ProlongementError,
-                                   enveloppe, fractile, homo_support_nappe,
+from ..Messages import ASSERT, UTMESS
+from ..Objects import Function, Function2D, FunctionComplex
+from ..Objects.function_py import (enveloppe, fractile, homo_support_nappe,
                                    moyenne, t_fonction, t_fonction_c, t_nappe)
 from ..Utilities import force_list
 from .defi_inte_spec_ops import tocomplex
@@ -155,13 +153,7 @@ def calc_fonction_ops(self, **args):
     operation = CalcFonctionOper.factory(self, ctxt, args)
     try:
         result = operation.run()
-    except InterpolationError as msg:
-        UTMESS('F', 'FONCT0_27', valk=(ctxt.f, str(msg)))
-    except ParametreError as msg:
-        UTMESS('F', 'FONCT0_28', valk=(ctxt.f, str(msg)))
-    except ProlongementError as msg:
-        UTMESS('F', 'FONCT0_29', valk=(ctxt.f, str(msg)))
-    except FonctionError as msg:
+    except AsterError as msg:
         UTMESS('F', 'FONCT0_30',
                valk=(ctxt.f, str(msg), traceback.format_exc()))
     return result
@@ -951,7 +943,7 @@ class CalcFonction_REGR_POLYNOMIALE(CalcFonctionOper):
         deg = self.kw['DEGRE']
         coef = NP.polyfit(f_in.vale_x, f_in.vale_y, deg)
         if coef is None:
-            raise FonctionError("La régression polynomiale n'a pas convergé.")
+            raise AsterError("La régression polynomiale n'a pas convergé.")
         # interpolation sur une liste d'abscisses
         absc = f_in.vale_x
         if self.args['LIST_PARA'] is not None:
