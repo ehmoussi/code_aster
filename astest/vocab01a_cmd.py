@@ -25,13 +25,13 @@ import tempfile
 import types
 
 import code_aster
-from code_aster.Cata.Commands import commandStore
+from code_aster.Cata.Commands import DEFI_MATERIAU, commandStore
 from code_aster.Cata.DataStructure import UnitType
 from code_aster.Cata.Language.DataStructure import UnitBaseType
-from code_aster.Cata.Language.SyntaxObjects import IDS, Command
+from code_aster.Cata.Language.Rules import AtLeastOne
+from code_aster.Cata.Language.SyntaxObjects import IDS, Command, FactorKeyword
 from code_aster.Cata.Language.SyntaxUtils import add_none_sdprod
 from code_aster.Cata.Syntax import *
-from code_aster.Commands import CREA_TABLE, TEST_TABLE
 from code_aster.Messages import UTMESS
 from code_aster.Supervis.ExecuteCommand import UserMacro
 from code_aster.Utilities import CR, force_list, logger
@@ -250,15 +250,45 @@ class CataChecker:
         self.check_unit(step)
 
 
+class InspectDEFI_MATERIAU:
+    """Visitor object to inspect DEFI_MATERIAU"""
+
+    def __init__(self):
+        """Initialization"""
+        self.lfact = []
+
+    def visitCommand(self, step, userDict=None):
+        """Visit a Command object"""
+        for name, entity in step.entities.items():
+            if isinstance(entity, FactorKeyword):
+                self.lfact.append(name)
+            entity.accept(self)
+
+    visitMacro = visitCommand
+
+    def nothing(self, *_, **__):
+        pass
+
+    # ignore keywords under conditional blocks
+    visitBloc = nothing
+    visitFactorKeyword = nothing
+    visitSimpleKeyword = nothing
+
+
 def getListOfCommands():
     """Build the list of operators"""
     commands = [cmd for cmd in list(commandStore.values())
                 if isinstance(cmd, Command)]
     return commands
 
-def checkDefinition( commands ):
-    """Check the definition of the catalog of the commands (see N_ENTITE.py)"""
-    print(">>> Vérification des catalogues de commandes...")
+def checkDefinition(test, commands):
+    """Check the definition of the catalog of the commands (see N_ENTITE.py)
+
+    Arguments:
+        test (TestCase): Tester object that reports the results.
+        commands (list[Command]): List of Command catalogs.
+    """
+    print(">>> Checking for catalogs of the commands...")
     err = []
     for cmd in commands:
         checker = CataChecker()
@@ -278,7 +308,7 @@ def checkDefinition( commands ):
     if err:
         raise TypeError("{0} erreurs sur {1} commandes."
                         .format(len(err), len(commands)))
-    print("    ok\n")
+    test.assertTrue(not err, msg="errors found in commands description")
 
 def check_sdprod(command, func_prod, sd_prod, verbose=True):
     """Check that 'sd_prod' is type allowed by the function 'func_prod'
@@ -353,17 +383,23 @@ def get_entite( obj, typ="values" ):
             lsub.extend(get_entite(sub, typ=typ))
     return lsub
 
-def checkDocStrings( commands ):
-    """Extract and check the fr/ang docstrings"""
-    print(">>> Vérification des textes explicatifs des mots-clés...")
+def checkDocStrings(test, commands):
+    """Extract and check the fr/ang docstrings.
+
+    Arguments:
+        test (TestCase): Tester object that reports the results.
+        commands (list[Command]): List of Command catalogs.
+    """
+    print(">>> Checking for docstrings of keywords...")
     lang = {}
     for cmd in commands:
         objs = [cmd] + get_entite( cmd, typ="values" )
         for entity in objs:
             if getattr(entity, 'ang', None):
                 lang[id(entity)] = (entity.fr, entity.ang)
-    assert len(lang) == 0, "'ang' is deprecated and not used anymore, please remove it"
-    print("    ok\n")
+    test.assertEqual(len(lang), 0,
+                     msg="'ang' is deprecated and not used anymore, "
+                         "please remove it")
 
 def extractKeywords( commands ):
     """Return the list of all the keywords (simple or factor)"""
@@ -409,6 +445,37 @@ def printKeywordsUsage( commands, fileList=None ):
         print("\n")
     return allKwd
 
+def check_material_def(test):
+    """Check `AtLeastOne` rule in DEFI_MATERIAU.
+
+    Arguments
+        test (TestCase): Tester object that reports the results.
+    """
+    print("\n>>> Checking for DEFI_MATERIAU rule...")
+    # in the case that there is several AtLeastOne rules (only one today),
+    # only keep those with a lot of keywords!
+    atleastone = [rule for rule in DEFI_MATERIAU.rules
+                  if isinstance(rule, AtLeastOne) and len(rule.ruleArgs) > 50]
+    test.assertEqual(len(atleastone), 1,
+                     msg="expect exactly one AtLeastOne/AU_MOINS_UN rule")
+
+    args = atleastone[0].ruleArgs if atleastone else []
+    inspect = InspectDEFI_MATERIAU()
+    DEFI_MATERIAU.accept(inspect)
+    kwds = set(inspect.lfact)
+    # add exceptions
+    kwds.add("COMP_THM")
+
+    missing = set(kwds).difference(args)
+    unknown = set(args).difference(kwds)
+
+    test.assertTrue(not unknown,
+                    msg="unknown keyword in the AU_MOINS_UN rule: "
+                        + ", ".join(unknown))
+    test.assertTrue(not missing,
+                    msg="These keywords must be added into the "
+                        "AU_MOINS_UN rule: " + ", ".join(missing))
+
 
 def vocab01_ops(self, EXISTANT, INFO, **kwargs):
     """Fake macro-command to check the catalog"""
@@ -416,10 +483,10 @@ def vocab01_ops(self, EXISTANT, INFO, **kwargs):
 
     # start the job
     commands = getListOfCommands()
-    checkDefinition( commands )
-    checkDocStrings( commands )
+    checkDefinition(test, commands)
+    checkDocStrings(test, commands)
 
-    print("\n>>> Vérification des mots-clés...")
+    print("\n>>> Checking for keywords...")
     fileList = None
     if INFO == 2:
         fileList = tempfile.NamedTemporaryFile( prefix="vocab01a_" ).name
@@ -456,9 +523,7 @@ def vocab01_ops(self, EXISTANT, INFO, **kwargs):
                      "pour produire la nouvelle liste :" % nbDel,
                      str(list(diff)) ))
 
-    print("\n>>> Vérification des règles de DEFI_MATERIAU...")
-    test.assertTrue(True,
-                     msg="règle AU_MOINS_UN de DEFI_MATERIAU incorrecte")
+    check_material_def(test)
 
     print("\n>>> Tests de vocab01a")
     test.printSummary()
