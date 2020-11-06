@@ -304,7 +304,8 @@ class ExecuteCommand(object):
         logger.info(command_separator())
         logger.info(command_header(self._counter, filename, lineno))
         max_print = ExecutionParameter().get_option("max_print")
-        user_name = get_user_name(self.command_name,filename,lineno)
+        user_name = get_user_name(self.command_name, filename, lineno,
+                                  strict=False)
         logger.info(command_text(self.name, printed_args, user_name,
                                  limit=max_print))
 
@@ -676,21 +677,27 @@ def publish_in(context, dict_objects):
         context[name] = value
 
 
-def get_user_name(command, filename, lineno):
+def get_user_name(command, filename, lineno, strict=True):
     """Parse the caller syntax to extract the name used by the user.
 
     Arguments:
         command (str): Command name.
         filename (str): Filename of the caller
         lineno (int): Line number in the file.
+        strict (bool, optional): Tell if the name must be a valid Python
+            variable name.
 
     Returns:
         str: Variable name used by the user, empty if not found.
     """
     re_comment = re.compile(r"^\s*#.*")
     re_oper = re.compile(r"\b{0}\s*\(".format(command))
-    re_name = re.compile(r"^\s*(?P<name>\w+)\s*"
-                         r"=\s*{0}\s*\(".format(command))
+    if strict:
+        re_name = re.compile(r"^\s*(?P<name>\w+)\s*"
+                             r"=\s*{0}\s*\(".format(command))
+    else:
+        re_name = re.compile(r"^\s*(?P<name>.+)\s*"
+                             r"=\s*{0}\s*\(".format(command))
 
     while lineno > 0:
         line = linecache.getline(filename, lineno)
