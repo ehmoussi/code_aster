@@ -68,11 +68,6 @@ class MEFS_FACE3(Element):
             para_out = ((SP.PVECTUR, MVECTUR), ),
         ),
 
-        OP.COOR_ELGA(te=488,
-            para_in  = ((SP.PGEOMER, LC.EGEOM3D),),
-            para_out = ((OP.COOR_ELGA.PCOORPG, LC.EGGAU3D),),
-        ),
-
         OP.MASS_MECA(te=172,
             para_in  = ((SP.PGEOMER, LC.EGEOM3D), (SP.PMATERC, LC.CMATERC),),
             para_out = ((SP.PMATUUR, MMATUUR),),

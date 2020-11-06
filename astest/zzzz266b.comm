@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,6 +35,14 @@ model3d=AFFE_MODELE(MAILLAGE=mail,
                     AFFE=_F(MAILLE=('M5','M6',),
                             PHENOMENE='MECANIQUE',MODELISATION='3D',), )
 
+modelFluidUPPHI=AFFE_MODELE(MAILLAGE=mail,
+                       AFFE=_F(TOUT='OUI',
+                               PHENOMENE='MECANIQUE',FORMULATION='U_P_PHI', MODELISATION='2D_FLUIDE',), )
+
+modelFluidUP=AFFE_MODELE(MAILLAGE=mail,
+                       AFFE=_F(TOUT='OUI',
+                               PHENOMENE='MECANIQUE',FORMULATION='U_P', MODELISATION='2D_FLUIDE',), )
+
 bidon=DEFI_MATERIAU(ELAS=_F(E=1.0, NU=0.2,),)
 
 mater=AFFE_MATERIAU(MAILLAGE=mail, AFFE=_F(TOUT='OUI', MATER=bidon,), )
@@ -49,10 +57,14 @@ mail=MODI_MAILLAGE(reuse=mail,
                                DIR=(0,1,0,),
                                ANGLE=30,),);
 coor3d=CALC_CHAM_ELEM(MODELE=model3d, OPTION='COOR_ELGA',)
+coorFluidUPPHI=CALC_CHAM_ELEM(MODELE=modelFluidUPPHI, OPTION='COOR_ELGA',)
+coorFluidUP=CALC_CHAM_ELEM(MODELE=modelFluidUP, OPTION='COOR_ELGA',)
 
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=coordp,),)
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=coorcp,),)
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=coor3d,),)
+IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=coorFluidUPPHI,),)
+IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=coorFluidUP,),)
 
 # =============================================================================================
 #  On peut verifier que l'on obtient bien la bonne longueur de la maille M5

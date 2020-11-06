@@ -68,11 +68,6 @@ class MEFSSE2(Element):
             para_out = ((SP.PVECTUR, MVECTUR), ),
         ),
 
-        OP.COOR_ELGA(te=478,
-            para_in  = ((SP.PGEOMER, LC.EGEOM2D),),
-            para_out = ((OP.COOR_ELGA.PCOORPG, LC.EGGAU2D),),
-        ),
-
         OP.MASS_MECA(te=257,
             para_in  = ((SP.PGEOMER, LC.EGEOM2D), (SP.PMATERC, LC.CMATERC),),
             para_out = ((SP.PMATUUR, MMATUUR),),
