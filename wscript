@@ -113,7 +113,7 @@ def options(self):
     self.load('parallel', tooldir='waftools')
     self.load('python_cfg', tooldir='waftools')
     self.load('mathematics', tooldir='waftools')
-    self.load('med', tooldir='waftools')
+    self.load('med_cfg', tooldir='waftools')
     self.load('metis', tooldir='waftools')
     self.load('parmetis', tooldir='waftools')
     self.load('mumps', tooldir='waftools')
@@ -207,7 +207,7 @@ def configure(self):
     self.env.append_value('CFLAGS', '-fPIC')
     self.env.append_value('CXXFLAGS', '-fPIC')
 
-    self.load('med', tooldir='waftools')
+    self.load('med_cfg', tooldir='waftools')
     self.load('metis', tooldir='waftools')
     self.load('parmetis', tooldir='waftools')
     self.load('mumps', tooldir='waftools')

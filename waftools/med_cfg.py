@@ -191,6 +191,7 @@ def check_med(self):
     self.check_sizeof_med_int()
     self.check_sizeof_med_idt()
     self.check_med_version()
+    self.check_med_python()
 
 @Configure.conf
 def check_med_libs(self):
@@ -244,6 +245,22 @@ int main(void){
         self.define("MED_NUM_MINOR", int(minor))
         self.define("MED_NUM_RELEASE", int(release))
         self.end_msg(ret)
+
+@Configure.conf
+def check_med_python(self):
+    if not self.env['PYTHON']:
+        self.fatal('load python tool first')
+    self.start_msg('Checking for med python module')
+    try:
+        self.env.stash()
+        self.check_python_module('med')
+        import med
+        self.end_msg(med.__file__)
+    except Errors.ConfigurationError:
+        self.env.revert()
+        if self.env.BUILD_MPI:
+            raise
+        self.end_msg("not found", color="YELLOW")
 
 @Configure.conf
 def check_sizeof_med_int(self):
