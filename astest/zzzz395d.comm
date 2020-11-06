@@ -131,6 +131,10 @@ thnl=THER_NON_LINE(MODELE=model,
                              ITER_LINE_MAXI=3,),
                    CONVERGENCE=_F(RESI_GLOB_MAXI=1e-5,),);
 
+thnl = CALC_CHAMP(reuse=thnl,
+                  RESULTAT=thnl,
+                  THERMIQUE='FLUX_NOEU',);
+
 # Test non-regression values on complete problem
 TEST_RESU(RESU=(
                 _F(RESULTAT=thnl,
@@ -192,6 +196,42 @@ TEST_RESU(RESU=(
                    NOEUD='N7',
                    NOM_CMP='TEMP',
                    VALE_CALC=999.12502482,
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=thnl,
+                   INST= 7.0,
+                   NOM_CHAM='FLUX_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='FLUX',
+                   VALE_CALC=-0.0005673343795326032,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 10.0,
+                   NOM_CHAM='FLUX_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='FLUX',
+                   VALE_CALC=-0.003152488515227189,
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=thnl,
+                   INST= 7.0,
+                   NOM_CHAM='FLUX_NOEU',
+                   NOEUD='N7',
+                   NOM_CMP='FLUX',
+                   VALE_CALC=0.0011356797075429094,
+                   ),
+                _F(RESULTAT=thnl,
+                   INST= 10.0,
+                   NOM_CHAM='FLUX_NOEU',
+                   NOEUD='N7',
+                   NOM_CMP='FLUX',
+                   VALE_CALC=0.0063191212851786,
                    ),
                 ),
           );
@@ -262,6 +302,9 @@ redu=THER_NON_LINE(MODELE=model_r,INFO=2,
                     ),
                    CONVERGENCE=_F(RESI_GLOB_MAXI=1e-5,),);
 
+redu = CALC_CHAMP(reuse=redu,
+                  RESULTAT=redu,
+                  THERMIQUE='FLUX_NOEU',);
 
 # Test du modèle hyper-réduit par rapport au modèle complet
 TEST_RESU(RESU=(
@@ -310,7 +353,7 @@ TEST_RESU(RESU=(
 
 ####################################################################################################
 #
-# Reconstruction du résultat complet par Gappy-POD
+# Reconstruction de la température sur le domaine complet par Gappy-POD
 #
 ####################################################################################################
 
@@ -371,6 +414,79 @@ TEST_RESU(RESU=(
                    VALE_CALC=999.103604755,
                    REFERENCE='AUTRE_ASTER',
                    PRECISION=0.00003,
+                   ),
+                ),
+          );
+
+####################################################################################################
+#
+# Reconstruction du résultat complet pour FLUX_NOEU
+#
+####################################################################################################
+
+# Get empiric modes from previous computation (from zzzz395b)
+base_d = LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
+                   FORMAT     = 'MED',
+                   MODELE     = model,
+                   UNITE      = 71,
+                   FORMAT_MED = _F(NOM_CHAM_MED = 'base_d__FLUX_NOEU',
+                                   NOM_CHAM     = 'FLUX_NOEU',),
+                   TOUT_ORDRE = 'OUI',);
+
+# Gappy-POD (reconstruction tout le domaine)
+reduS = REST_REDUIT_COMPLET(
+    MODELE           = model,
+    RESULTAT_REDUIT  = redu,
+    CHAM_GD          = _F(NOM_CHAM  = 'FLUX_NOEU',
+                          BASE      = base_d,
+                          OPERATION = 'GAPPY_POD',),
+    INFO             = 2,)
+
+# Test values computed by Gappy-POD
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduS,
+                   INST= 7.0,
+                   NOM_CHAM='FLUX_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='FLUX',
+                   VALE_REFE=-0.0005673343795326032,
+                   VALE_CALC=-0.0007007857834434022,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=0.24,
+                   ),
+                _F(RESULTAT=reduS,
+                   INST= 10.0,
+                   NOM_CHAM='FLUX_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='FLUX',
+                   VALE_REFE=-0.003152488515227189,
+                   VALE_CALC= -0.0033831012130552994,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=0.074,
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduS,
+                   INST= 7.0,
+                   NOM_CHAM='FLUX_NOEU',
+                   NOEUD='N7',
+                   NOM_CMP='FLUX',
+                   VALE_REFE=0.0011356797075429094,
+                   VALE_CALC=0.0015885875289319,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=0.40,
+                   ),
+                _F(RESULTAT=reduS,
+                   INST= 10.0,
+                   NOM_CHAM='FLUX_NOEU',
+                   NOEUD='N7',
+                   NOM_CMP='FLUX',
+                   VALE_REFE=0.0063191212851786,
+                   VALE_CALC=0.005699749938645396,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=0.099,
                    ),
                 ),
           );
