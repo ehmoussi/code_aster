@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist submit ci verification sequential
 
 F comm hsnv131a.comm D 1
+F comm hsnv131a.com1 D 1
 F mail hsnv100a.mail D 20
