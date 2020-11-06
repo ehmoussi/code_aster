@@ -30,8 +30,6 @@ import unittest.case as case
 from functools import partial, wraps
 from unittest.util import safe_repr
 
-import libaster
-
 # TODO use the logger object
 # TODO tell the Helpers to increase the exit status in case of failure
 #      (through the logger) ?
@@ -120,7 +118,7 @@ class TestCase(unittest.TestCase):
         else:
             self._failure += 1
             fmt = "NOOK {0:>16} failed: {1}"
-        libaster.write(fmt.format(funcTest, msg))
+        print(fmt.format(funcTest, msg))
 
     # just use a derivated context class
     def assertRaises(self, excClass, callableObj=None, *args, **kwargs):

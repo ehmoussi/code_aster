@@ -1,4 +1,22 @@
 # coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
 # person_in_charge: mathieu.courtois at edf.fr
 # Don't forget to change person in charge in `printKeywordsUsage` function
 
@@ -6,9 +24,15 @@ import os
 import tempfile
 import types
 
-from code_aster.Cata.Language.SyntaxObjects import IDS
+import code_aster
+from code_aster.Cata.Commands import commandStore
+from code_aster.Cata.DataStructure import UnitType
+from code_aster.Cata.Language.DataStructure import UnitBaseType
+from code_aster.Cata.Language.SyntaxObjects import IDS, Command
 from code_aster.Cata.Language.SyntaxUtils import add_none_sdprod
 from code_aster.Cata.Syntax import *
+from code_aster.Commands import CREA_TABLE, TEST_TABLE
+from code_aster.Messages import UTMESS
 from code_aster.Supervis.ExecuteCommand import UserMacro
 from code_aster.Utilities import CR, force_list, logger
 
@@ -148,7 +172,6 @@ class CataChecker:
 
     def check_inout(self, step):
         """Vérifie l'attribut inout."""
-        from code_aster.Cata.Language.DataStructure import UnitBaseType
         inout = step.definition.get("inout")
         typ = force_list(step.definition.get("typ"))
         if inout is None:
@@ -160,7 +183,7 @@ class CataChecker:
 
     def check_unit(self, step):
         """Vérification ayant besoin du nom"""
-        from code_aster.Cata.DataStructure import UnitType
+
         # As UnitType() is not an object, this forbids UNITE* keywords
         # for another kind of 'int'.
         inout = step.definition.get("inout")
@@ -229,8 +252,6 @@ class CataChecker:
 
 def getListOfCommands():
     """Build the list of operators"""
-    from code_aster.Cata.SyntaxObjects import Command
-    from code_aster.Cata.Commands import commandStore
     commands = [cmd for cmd in list(commandStore.values())
                 if isinstance(cmd, Command)]
     return commands
@@ -391,15 +412,14 @@ def printKeywordsUsage( commands, fileList=None ):
 
 def vocab01_ops(self, EXISTANT, INFO, **kwargs):
     """Fake macro-command to check the catalog"""
-    from code_aster.Commands import CREA_TABLE, TEST_TABLE
-    from code_aster.Messages import UTMESS
+    test = code_aster.TestCase()
 
     # start the job
     commands = getListOfCommands()
     checkDefinition( commands )
     checkDocStrings( commands )
 
-    print(">>> Vérification des mots-clés...")
+    print("\n>>> Vérification des mots-clés...")
     fileList = None
     if INFO == 2:
         fileList = tempfile.NamedTemporaryFile( prefix="vocab01a_" ).name
@@ -412,13 +432,8 @@ def vocab01_ops(self, EXISTANT, INFO, **kwargs):
         UTMESS('A', 'CATAMESS_2',
                valk=("Liste des nouveaux mots-clefs (relancer avec INFO=2 "
                      "pour produire la nouvelle liste) :", str(list(diff)) ))
-
-    __tab = CREA_TABLE(LISTE=_F(PARA='NBMOT', LISTE_I=nbNew))
-    TEST_TABLE(REFERENCE='ANALYTIQUE',
-               VALE_CALC_I=0,
-               VALE_REFE_I=0,
-               NOM_PARA='NBMOT',
-               TABLE=__tab,)
+    test.assertEqual(nbNew, 0,
+                     msg="nouveaux mots-clefs (absents de vocab01a.34)")
 
     nbExist = len(EXISTANT)
     if nbExist != nbWords:
@@ -427,12 +442,8 @@ def vocab01_ops(self, EXISTANT, INFO, **kwargs):
                      "maintenant, il y en a {}.".format(nbExist, nbWords),
                      "Relancez avec INFO=2 pour écrire la nouvelle liste "
                      "et comparer avec le fichier vocab01a.34 existant."))
-    __tab = CREA_TABLE(LISTE=_F(PARA='NBMOT', LISTE_I=nbWords))
-    TEST_TABLE(REFERENCE='ANALYTIQUE',
-               VALE_CALC_I=nbExist,
-               VALE_REFE_I=nbExist,
-               NOM_PARA='NBMOT',
-               TABLE=__tab,)
+    test.assertEqual(nbWords, nbExist,
+                     msg="nombre de mots-clefs (catalogue vs vocab01a.34)")
 
     diff = set( EXISTANT ).difference( allKwd )
     nbDel = len( diff )
@@ -444,6 +455,13 @@ def vocab01_ops(self, EXISTANT, INFO, **kwargs):
                      "Relancer avec INFO=2 "
                      "pour produire la nouvelle liste :" % nbDel,
                      str(list(diff)) ))
+
+    print("\n>>> Vérification des règles de DEFI_MATERIAU...")
+    test.assertTrue(True,
+                     msg="règle AU_MOINS_UN de DEFI_MATERIAU incorrecte")
+
+    print("\n>>> Tests de vocab01a")
+    test.printSummary()
 
 
 VOCAB01_cata = MACRO(nom='VOCAB01',

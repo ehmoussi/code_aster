@@ -193,6 +193,9 @@ class RunAster:
             idx (int): Index of execution.
             last (bool): *True* for the last command file.
             timeout (float): Remaining time.
+
+        Returns:
+            Status: Status object.
         """
         logger.info(f"TITLE Command line #{idx + 1}:")
         timeout = int(max(1, timeout))
@@ -308,6 +311,9 @@ class RunAster:
         Arguments:
             exitcode (int): Return code.
             last (bool): *True* for the last command file, *False* otherwise.
+
+        Returns:
+            Status: Status object.
         """
         status = get_status(exitcode, TMPMESS, test=self._test and last)
         expected = self.export.get("expected_diag", [])
