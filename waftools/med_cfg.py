@@ -192,6 +192,7 @@ def check_med(self):
     self.check_sizeof_med_idt()
     self.check_med_version()
     self.check_med_python()
+    self.check_medcoupling()
 
 @Configure.conf
 def check_med_libs(self):
@@ -253,6 +254,18 @@ def check_med_python(self):
     try:
         self.env.stash()
         self.check_python_module('med')
+    except Errors.ConfigurationError:
+        self.env.revert()
+        if self.env.BUILD_MPI:
+            raise
+
+@Configure.conf
+def check_medcoupling(self):
+    if not self.env['PYTHON']:
+        self.fatal('load python tool first')
+    try:
+        self.env.stash()
+        self.check_python_module('medcoupling')
     except Errors.ConfigurationError:
         self.env.revert()
         if self.env.BUILD_MPI:
