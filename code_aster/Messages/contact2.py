@@ -106,4 +106,6 @@ Si l'orientation est incorrecte vous pouvez avoir des problèmes de détection d
 Pour désactiver cette alarme, utilisez VERI_NORM='NON' dans DEFI_CONTACT.
 """),
 
+    21 : _("""La méthode de gestion du contact LAC n'est pas compatible avec le critère de convergence RESI_REFE_RELA."""),
+
 }
