@@ -106,7 +106,7 @@ implicit none
     aster_logical :: exitim, lstr, lstr2, ldist, dbg_ob, dbgv_ob, ltest, lsdpar, lcpu, lbid
     aster_logical :: lPilo1, lPilo2
     real(kind=8) :: etan, time, partps(3), omega2, coef(3), raux
-    real(kind=8) :: rctfin, rctdeb, rctfini, rctdebi
+    real(kind=8) :: rctfin, rctdeb, rctfini, rctdebi, freq
     real(kind=8), pointer :: cgmp(:) => null()
     real(kind=8), pointer :: chmp(:) => null()
     real(kind=8), pointer :: fono(:) => null()
@@ -581,6 +581,8 @@ implicit none
                 call asasve(vecgmp, nume, 'R', vacgmp)
                 call ascova('D', vacgmp, fomult, 'INST', time, 'R', cncgmp)
             else
+                call rsadpa(resuin, 'L', 1, 'FREQ', iordr,0, sjv=jvPara, styp=ctyp)
+                freq=zr(jvPara)
                 if (ligrel(1:8) .ne. modele) then
 !pour les DYNA_HARMO
 !pour l instant je ne fais le calcul de REAC_NODA que sur le modele en entier
@@ -602,7 +604,7 @@ implicit none
                 para = 'FREQ'
                 cnchmpc='&&'//nompro//'.CHARGE'
                 call vtcreb(cnchmpc, 'V', 'C', nume_ddlz = nume, nb_equa_outz = neq)
-                call ascomb(listLoad, vechmp, 'C', para, time, cnchmpc)
+                call ascomb(listLoad, vechmp, 'C', para, freq, cnchmpc)
             endif
 
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -275,6 +275,45 @@ TEST_RESU(RESU=(
                    VALE_REFE_C=rn,
                    REFERENCE='ANALYTIQUE',
                    CRITERE='RELATIF',
+                 ),
+        ),)
+
+# Test REAC_NODA with function of frequency
+
+FCMPLX2=DEFI_FONCTION(    NOM_PARA='FREQ',
+                         PROL_DROITE='CONSTANT',
+                         PROL_GAUCHE='CONSTANT',
+                         VALE_C=(F_DEBUT, 0.33, 0., F_FIN, 0.44, 0.,) )
+
+DYHAN2=DYNA_VIBRA(TYPE_CALCUL='HARM',
+                 BASE_CALCUL='PHYS',
+                 MODELE=MODELE,
+                 CARA_ELEM=CHAMPCAR,
+                 MATR_MASS=MATRMASS,
+                 MATR_RIGI=MATRRIGI,
+                 MATR_AMOR=MATRAMOR,
+                 LIST_FREQ=L_FREQ,
+                 TOUT_CHAM='OUI',
+                 EXCIT=(
+                        _F(FONC_MULT_C=FCMPLX2,    
+                           CHARGE=CHFX),
+                        ),
+             );
+
+DYHAN2=CALC_CHAMP(reuse=DYHAN2,RESULTAT=DYHAN2,
+                 EXCIT=(
+                        _F(FONC_MULT_C=FCMPLX2,  
+                           CHARGE=CHFX),
+                        ),
+                 FORCE=('FORC_NODA','REAC_NODA',),
+               )
+TEST_RESU(RESU=(
+                _F(FREQ=0.1,
+                   RESULTAT=DYHAN2,
+                   NOM_CHAM='REAC_NODA',
+                   GROUP_NO='GROUP_NO_MOBILE',
+                   NOM_CMP='DX',
+                   VALE_CALC_C=(-0.385+3.552713678800501E-15j),
                  ),
         ),)
 
