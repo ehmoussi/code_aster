@@ -297,9 +297,9 @@ class TestFile(unittest.TestCase):
         self.assertTrue(fobj.resu)
         self.assertFalse(fobj.compr)
         self.assertEqual(repr(fobj), "F libr /a/filename R 0")
-        self.assertEqual(fobj.as_argument, "F:libr:/a/filename:R:0")
+        self.assertEqual(fobj.as_argument, "F::libr::/a/filename::R::0")
 
-        fobj = File.from_argument("F:libr:/a/filename:R:0")
+        fobj = File.from_argument("F::libr::/a/filename::R::0")
         self.assertEqual(fobj.path, "/a/filename")
         self.assertEqual(fobj.filetype, "libr")
         self.assertFalse(fobj.is_tests_data)
@@ -309,7 +309,7 @@ class TestFile(unittest.TestCase):
         self.assertTrue(fobj.resu)
         self.assertFalse(fobj.compr)
         self.assertEqual(repr(fobj), "F libr /a/filename R 0")
-        self.assertEqual(fobj.as_argument, "F:libr:/a/filename:R:0")
+        self.assertEqual(fobj.as_argument, "F::libr::/a/filename::R::0")
 
     def test_directory(self):
         tmpdir = os.getcwd()
@@ -322,7 +322,7 @@ class TestFile(unittest.TestCase):
         self.assertFalse(wrk.resu)
         self.assertFalse(wrk.compr)
         self.assertEqual(repr(wrk), f"R libr {tmpdir} D 0")
-        self.assertEqual(wrk.as_argument, f"R:libr:{tmpdir}:D:0")
+        self.assertEqual(wrk.as_argument, f"R::libr::{tmpdir}::D::0")
 
     def test_special(self):
         fobj = File("/a/filename", filetype="tests_data", data=True)
