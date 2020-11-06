@@ -406,6 +406,7 @@ def info_fonction_ops(self, INFO, **args):
                     if ariask <= valsup:
                         break
                 dphfor = __i2.vale_x[j] - __i2.vale_x[i]
+                l_table.append(_F(LISTE_R=__i2.vale_x[i], PARA='DEBUT_PHAS_FORT'))
                 l_table.append(_F(LISTE_R=dphfor, PARA='DUREE_PHAS_FORT'))
         C_out = CREA_TABLE(LISTE=l_table)
 

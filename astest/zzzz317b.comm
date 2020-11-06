@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',))
 #
 from math import pi
 arias =0.05
-DT=0.01           
+DT=0.01
 frr=5.0
 amor=0.4
 wg=frr*2.*pi
@@ -43,52 +43,66 @@ tini=0.5
 #"JENNINGS_HOUSNER"
 #----------------------------------------------------------------
 #
-ACCE4=GENE_ACCE_SEISME( INFO  =2, INIT_ALEA=10000,
-              PAS_INST       = DT,PESANTEUR =9.81,DUREE_PHASE_FORTE =TSM,
-              FREQ_FILTRE=0.05, FREQ_CORNER = 0.25,FREQ_PENTE=fp,
-              DSP        = _F(AMOR_REDUIT  =amor,  FREQ_FOND =frr, ),
-              MODULATION      = _F(TYPE=   "JENNINGS_HOUSNER", INTE_ARIAS =arias), )
+ACCE4 = GENE_ACCE_SEISME(INFO=2,
+                         INIT_ALEA=10000,
+                         PAS_INST=DT,
+                         PESANTEUR=9.81,
+                         DUREE_PHASE_FORTE=TSM,
+                         FREQ_FILTRE=0.05,
+                         FREQ_CORNER=0.25,
+                         FREQ_PENTE=fp,
+                         DSP=_F(
+                             AMOR_REDUIT=amor,
+                             FREQ_FOND=frr,
+                         ),
+                         MODULATION=_F(TYPE="JENNINGS_HOUSNER",
+                                       INTE_ARIAS=arias))
 
-FONCT4=RECU_FONCTION(    TABLE=ACCE4,
-                              FILTRE=_F(  NOM_PARA = 'NUME_ORDRE',
-                                       VALE_I = 1),
-                              NOM_PARA_TABL='FONCTION',)
+FONCT4 = RECU_FONCTION(
+    TABLE=ACCE4,
+    FILTRE=_F(NOM_PARA='NUME_ORDRE', VALE_I=1),
+    NOM_PARA_TABL='FONCTION',
+)
 
-N4_intea=INFO_FONCTION(  NOCI_SEISME=_F(
-                             FONCTION = FONCT4,
-                             PESANTEUR = 9.81,OPTION = ('INTE_ARIAS') ))
+N4_intea = INFO_FONCTION(NOCI_SEISME=_F(FONCTION=FONCT4,
+                                        PESANTEUR=9.81,
+                                        OPTION=('INTE_ARIAS')), )
 
+N4_duree = INFO_FONCTION(NOCI_SEISME=_F(FONCTION=FONCT4,
+                                        PESANTEUR=9.81,
+                                        OPTION=('DUREE_PHAS_FORT')), )
 
-N4_duree=INFO_FONCTION(  NOCI_SEISME=_F(
-                             FONCTION = FONCT4,
-                             PESANTEUR = 9.81, OPTION = ('DUREE_PHAS_FORT' ) ))
-
-
-RMS4=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT4))
+RMS4 = INFO_FONCTION(ECART_TYPE=_F(FONCTION=FONCT4))
 #
 TEST_TABLE(
-           VALE_CALC = 0.0692962334718  ,
-           NOM_PARA='INTE_ARIAS',
-           TABLE=N4_intea,
-           )
+    VALE_CALC=0.0692962334718,
+    NOM_PARA='INTE_ARIAS',
+    TABLE=N4_intea,
+)
 
 TEST_TABLE(
-           VALE_CALC=5.02,
-           NOM_PARA='DUREE_PHAS_FORT',
-           TABLE=N4_duree,
-           )
+    VALE_CALC=1.49,
+    NOM_PARA='DEBUT_PHAS_FORT',
+    TABLE=N4_duree,
+)
 
 TEST_TABLE(
-           VALE_CALC=0.16980052702,
-           NOM_PARA='ECART_TYPE',
-           TABLE=RMS4,
-           )
+    VALE_CALC=5.02,
+    NOM_PARA='DUREE_PHAS_FORT',
+    TABLE=N4_duree,
+)
+
+TEST_TABLE(
+    VALE_CALC=0.16980052702,
+    NOM_PARA='ECART_TYPE',
+    TABLE=RMS4,
+)
 
 #################################################################
 #"GAMMA"
 #----------------------------------------------------------------
 #
-ACCE5=GENE_ACCE_SEISME( INFO =2, INIT_ALEA=1356000, 
+ACCE5=GENE_ACCE_SEISME( INFO =2, INIT_ALEA=1356000,
                PESANTEUR =9.81,  DUREE_PHASE_FORTE =TSM, PAS_INST = DT, FREQ_PENTE=0.0,
                DSP        = _F(AMOR_REDUIT  =amor,  FREQ_FOND =frr, ),
                MODULATION      = _F( TYPE=   "GAMMA", INST_INI= tini, INTE_ARIAS=arias),)
@@ -133,7 +147,7 @@ TEST_TABLE(
 #----------------------------------------------------------------
 ecart=1.0/9.81
 TSM=3.0
-ACCEXY=GENE_ACCE_SEISME( INFO =2, INIT_ALEA=100000, 
+ACCEXY=GENE_ACCE_SEISME( INFO =2, INIT_ALEA=100000,
                PESANTEUR =9.81,  DUREE_PHASE_FORTE =TSM, PAS_INST = DT, FREQ_PENTE=-0.5, COEF_CORR=0.5,
                DSP        = _F(AMOR_REDUIT  =amor,  FREQ_FOND =frr, ),
                MODULATION      = _F( TYPE=   "GAMMA", INST_INI= tini, ECART_TYPE = ecart),)
