@@ -33,6 +33,7 @@ def configure(self):
     self.check_python()
     self.check_numpy()
     self.check_asrun()
+    self.check_mpi4py()
 
 ###############################################################################
 @Configure.conf
@@ -50,19 +51,10 @@ def check_python(self):
 
 @Configure.conf
 def check_numpy(self):
-    self.check_numpy_module()
-    self.check_numpy_version((1, 4, 0))
-    self.check_numpy_headers()
-
-@Configure.conf
-def check_numpy_module(self):
     if not self.env['PYTHON']:
         self.fatal('load python tool first')
-    # getting python module
-    self.start_msg('Checking for numpy')
     self.check_python_module('numpy')
-    import numpy
-    self.end_msg(numpy.__file__)
+    self.check_numpy_headers()
 
 @Configure.conf
 def check_numpy_headers(self):
@@ -85,39 +77,28 @@ def check_numpy_headers(self):
     )
     self.end_msg(numpy_includes)
 
-@Configure.conf
-def check_numpy_version(self, minver=None):
-    """Check if the numpy module is found matching a given minimum version.
-    minver should be a tuple, eg. to check for numpy >= 1.4 pass (1,4,0) as minver.
-    """
-    if not self.env['PYTHON']:
-        self.fatal('load python tool first')
-    assert isinstance(minver, tuple)
-    cmd = self.env['PYTHON'] + ['-c', 'import numpy; print(numpy.__version__)']
-    res = self.cmd_and_log(cmd)
-    npyver = res.strip()
-    if minver is None:
-        self.msg('Checking for numpy version', npyver)
-        return
-    minver_str = '.'.join(map(str, minver))
-    result = LooseVersion(npyver) >= LooseVersion(minver_str)
-    self.msg('Checking for numpy version', npyver, ">= %s" % (minver_str,) and 'GREEN' or 'YELLOW')
-
-    if not result:
-        self.fatal('The NumPy version is too old, expecting %r' % (minver,))
 
 @Configure.conf
 def check_asrun(self):
     if not self.env['PYTHON']:
         self.fatal('load python tool first')
-    # getting python module
-    self.start_msg('Checking for asrun')
     try:
         self.check_python_module('asrun')
-        import asrun
-        self.end_msg(asrun.__file__)
     except Errors.WafError:
-        self.end_msg("no", "YELLOW")
+        # optional
+        pass
+
+@Configure.conf
+def check_mpi4py(self):
+    if not self.env.BUILD_MPI:
+        return
+    if not self.env['PYTHON']:
+        self.fatal('load python tool first')
+    try:
+        self.check_python_module('mpi4py')
+    except Errors.ConfigurationError:
+        # optional
+        pass
 
 @Configure.conf
 def check_optimization_python(self):
