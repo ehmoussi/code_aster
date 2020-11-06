@@ -97,8 +97,8 @@ def check_mpi4py(self):
     try:
         self.check_python_module('mpi4py')
     except Errors.ConfigurationError:
-        # optional
-        pass
+        if self.options.with_py_mpi4py:
+            raise
 
 @Configure.conf
 def check_optimization_python(self):

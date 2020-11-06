@@ -256,7 +256,7 @@ def check_med_python(self):
         self.check_python_module('med')
     except Errors.ConfigurationError:
         self.env.revert()
-        if self.env.BUILD_MPI:
+        if self.env.BUILD_MPI and self.options.with_py_med:
             raise
 
 @Configure.conf
@@ -268,7 +268,7 @@ def check_medcoupling(self):
         self.check_python_module('medcoupling')
     except Errors.ConfigurationError:
         self.env.revert()
-        if self.env.BUILD_MPI:
+        if self.env.BUILD_MPI and self.options.with_py_medcoupling:
             raise
 
 @Configure.conf

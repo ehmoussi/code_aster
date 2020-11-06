@@ -42,6 +42,9 @@ def configure(self):
         opts.with_prog_xmgrace = True
         opts.with_prog_gracebat = True
         opts.with_prog_mdump = True
+        opts.with_py_med = True
+        opts.with_py_medcoupling = True
+        opts.with_py_mpi4py = True
         self.check_prerequisites_package(os.environ['PREREQ_PATH'],
                                          os.environ['PREREQ_VERSION'])
 

@@ -263,9 +263,7 @@ def get_mathlib_from_numpy(self):
     liblapack = []
     pathlapack = []
 
-    self.load('python')
-
-    self.check_python_module('numpy')
+    # numpy already checked
     pymodule_path = self.get_python_variables(
         ['lapack_lite.__file__'],
         ['from numpy.linalg import lapack_lite'])[0]

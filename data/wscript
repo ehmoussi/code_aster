@@ -94,6 +94,16 @@ def options(self):
     group.add_option('--with-prog-mdump', action='store_true', default=None,
                      dest='with_prog_mdump',
                      help='Force support of mdump program')
+    # python modules
+    group.add_option('--with-py-med', action='store_true', default=None,
+                     dest='with_py_med',
+                     help='Force support of med python module')
+    group.add_option('--with-py-medcoupling', action='store_true', default=None,
+                     dest='with_py_medcoupling',
+                     help='Force support of medcoupling python module')
+    group.add_option('--with-py-mpi4py', action='store_true', default=None,
+                     dest='with_py_mpi4py',
+                     help='Force support of mpi4py python module')
 
 
 def configure(self):
