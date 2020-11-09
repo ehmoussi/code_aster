@@ -21,7 +21,7 @@
 import code_aster
 from code_aster.Commands import *
 
-code_aster.init("--continue")
+code_aster.init("--test", "--continue")
 
 test.assertEqual(func[0](1), 1)
 test.assertEqual(func[1](1), 2)
@@ -31,6 +31,18 @@ test.assertEqual(tup[1](1), 2)
 
 test.assertEqual(results["one"](1), 1)
 test.assertEqual(results["two"](1), 2)
+
+test.assertEqual(dfunc["flist"][0](1), 1)
+test.assertEqual(dfunc["flist"][1](1), 2)
+
+test.assertEqual(ldfunc[0]["flist"][0](1), 1)
+test.assertEqual(ldfunc[0]["flist"][1](1), 2)
+
+dtest = l12dfunc
+for _ in range(12):
+    dtest = dtest[0]
+test.assertEqual(dtest["flist"][0](1), 1)
+test.assertEqual(dtest["flist"][1](1), 2)
 
 code_aster.saveObjects()
 

@@ -24,14 +24,15 @@ test = code_aster.TestCase()
 
 code_aster.init("--test")
 
+# list of DataStructures
 func = [None, None]
-
 func[0] = DEFI_FONCTION(VALE=(0, 0, 1, 1), NOM_PARA='X')
 func[1] = DEFI_FONCTION(VALE=(0, 0, 1, 2), NOM_PARA='X')
 
 test.assertEqual(func[0](1), 1)
 test.assertEqual(func[1](1), 2)
 
+# dict of DataStructures
 results = dict(
     one=DEFI_FONCTION(VALE=(0, 0, 1, 1), NOM_PARA='X'),
     two=DEFI_FONCTION(VALE=(0, 0, 1, 2), NOM_PARA='X')
@@ -40,7 +41,19 @@ results = dict(
 test.assertEqual(results["one"](1), 1)
 test.assertEqual(results["two"](1), 2)
 
+# tuple of DataStructures
 tup = tuple(func)
+
+# dict of list of DataStructures
+dfunc = dict(flist=func)
+
+# list of dict of list of DataStructures
+ldfunc = [dfunc]
+
+# list of ...x12... dict of list of DataStructures
+l12dfunc = dfunc
+for _ in range(12):
+    l12dfunc = [l12dfunc]
 
 code_aster.saveObjects()
 

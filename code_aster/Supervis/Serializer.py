@@ -168,7 +168,7 @@ class Serializer(object):
                     continue
                 try:
                     logger.info(f"{name:<24s} {type(obj)}")
-                    pickler.save_one(obj, main=True)
+                    pickler.save_one(obj)
                     objList.append(name)
                 except Exception:
                     logger.warning(f"object can not be pickled: {name}")
@@ -366,25 +366,27 @@ class AsterPickler(pickle.Pickler):
     def __init__(self, *args, **kwargs):
         pickle.Pickler.__init__(self, *args, **kwargs)
         self._memods = set()
+        self._depth = 0
 
-    def save_one(self, obj, main=False):
+    def save_one(self, obj):
         """Save one object.
 
         Arguments:
             obj (*misc*): Object to save.
         """
-        logger.debug(f"SAVE_ONE: {main} / {obj}")
-        if main and isinstance(obj, (list, tuple)):
+        self._depth += 1
+        logger.debug(f"SAVE_ONE: {self._depth} / {obj}")
+        if isinstance(obj, (list, tuple)):
             if obj and contains_datastructure(obj):
                 self.save_one(LIST)
                 self.save_one(len(obj))
                 for item in obj:
                     self.save_one(item)
-        elif main and isinstance(obj, dict):
-            if obj and contains_datastructure(list(obj.values())):
+        elif isinstance(obj, dict):
+            if obj and contains_datastructure(obj.values()):
                 self.save_one(DICT)
                 self.save_one(len(obj))
-                for item in list(obj.values()):
+                for item in obj.values():
                     self.save_one(item)
         elif isinstance(obj, DataStructure):
             ds_id = unique_id(obj)
@@ -418,6 +420,7 @@ class AsterPickler(pickle.Pickler):
                 logger.debug(f"skip object {ds_id}")
 
         self.dump(obj)
+        self._depth -= 1
 
     def persistent_id(self, obj):
         """Compute a persistent id for DataStructure.
