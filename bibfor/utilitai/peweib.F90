@@ -88,7 +88,7 @@ subroutine peweib(resu, modele, mate, mateco, cara, chmat,&
     character(len=24) :: chgeom, chcara(18), chharm
     character(len=24) :: valk(2), nomgrm
     character(len=24) :: mlggma, mlgnma, ligrel, lchin(9), compor
-    character(len=24) :: lchout(2), contg, defog, varig, depla, ssoup
+    character(len=24) :: lchout(2), contg, defog, varig, ssoup
     character(len=24) :: kvalrc, kvalrk, vale2(2)
     aster_logical :: opti
     complex(kind=8) :: c16b
@@ -286,8 +286,6 @@ subroutine peweib(resu, modele, mate, mateco, cara, chmat,&
             call rsexch('F', resul, 'SIEF_ELGA', numord, contg,&
                         iret)
             call rsexch('F', resul, 'VARI_ELGA', numord, varig,&
-                        iret)
-            call rsexch('F', resul, 'DEPL', numord, depla,&
                         iret)
         endif
 !
