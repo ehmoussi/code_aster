@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -85,23 +85,23 @@ implicit none
 !
     if (typesd .eq. 'NUME_DDL') then
         if (present(tabl_equa)) then
-            call select_dof_2(tabl_equa = tabl_equa_p, &
-                            nume_ddlz = resu, &
-                            nb_cmpz   = nb_cmp, list_cmpz  = list_cmp_p)
+            call select_dof_2(tablEqua_ = tabl_equa_p, &
+                              numeDofZ_ = resu, &
+                              nbCmpToSelect_ = nb_cmp, listCmpToSelect_  = list_cmp_p)
         else
-            call select_dof_2(list_equa = list_equa_p, &
-                            nume_ddlz = resu, &
-                            nb_cmpz   = nb_cmp, list_cmpz  = list_cmp_p)
+            call select_dof_2(listEqua_ = list_equa_p, &
+                              numeDofZ_ = resu, &
+                              nbCmpToSelect_ = nb_cmp, listCmpToSelect_ = list_cmp_p)
         endif
     else if (typesd .eq. 'CHAM_NO') then
         if (present(tabl_equa)) then
-            call select_dof_2(tabl_equa = tabl_equa_p, &
-                            chamnoz   = resu,&
-                            nb_cmpz   = nb_cmp, list_cmpz  = list_cmp_p)
+            call select_dof_2(tablEqua_  = tabl_equa_p, &
+                              fieldNodeZ_ = resu,&
+                              nbCmpToSelect_ = nb_cmp, listCmpToSelect_ = list_cmp_p)
         else
-            call select_dof_2(list_equa = list_equa_p, &
-                            chamnoz   = resu,&
-                            nb_cmpz   = nb_cmp, list_cmpz  = list_cmp_p)
+            call select_dof_2(listEqua_   = list_equa_p, &
+                              fieldNodeZ_ = resu,&
+                              nbCmpToSelect_ = nb_cmp, listCmpToSelect_ = list_cmp_p)
         endif
     else
         ASSERT(.false.)

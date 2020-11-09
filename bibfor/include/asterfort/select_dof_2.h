@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine select_dof_2(list_equa, tabl_equa ,&
-                            nume_ddlz, chamnoz   ,&
-                            nb_cmpz  , list_cmpz)
-        integer, pointer, optional :: list_equa(:)
-        integer, pointer, optional :: tabl_equa(:,:)
-        character(len=*), optional, intent(in) :: nume_ddlz
-        character(len=*), optional, intent(in) :: chamnoz
-        integer, optional, intent(in) :: nb_cmpz
-        character(len=8), pointer, optional :: list_cmpz(:)
+    subroutine select_dof_2(listEqua_     , tablEqua_        ,&
+                            numeDofZ_     , fieldNodeZ_      ,&
+                            nbCmpToSelect_, listCmpToSelect_)
+        integer, pointer, optional :: listEqua_(:), tablEqua_(:, :)
+        character(len=*), optional, intent(in) :: numeDofZ_, fieldNodeZ_
+        integer, optional, intent(in) :: nbCmpToSelect_
+        character(len=8), pointer, optional :: listCmpToSelect_(:)
     end subroutine select_dof_2
 end interface

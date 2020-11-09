@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine select_dof_2(list_equa, tabl_equa ,&
-                        nume_ddlz, chamnoz   ,&
-                        nb_cmpz  , list_cmpz)
+!
+subroutine select_dof_2(listEqua_     , tablEqua_       ,&
+                        numeDofZ_     , fieldNodeZ_     ,&
+                        nbCmpToSelect_, listCmpToSelect_)
 !
 implicit none
 !
@@ -26,228 +26,218 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/wkvect.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jenuno.h"
-#include "asterfort/jenonu.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jexnom.h"
-#include "asterfort/jexnum.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/utmess.h"
 #include "asterfort/exisdg.h"
-#include "asterfort/nueq_chck.h"
+#include "asterfort/jeexin.h"
+#include "asterfort/jelira.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexnum.h"
 #include "asterfort/nbec.h"
 #include "asterfort/select_dof_gene.h"
 !
-!
-    integer, pointer, optional :: list_equa(:)
-    integer, pointer, optional :: tabl_equa(:,:)
-    character(len=*), optional, intent(in) :: nume_ddlz
-    character(len=*), optional, intent(in) :: chamnoz
-    integer, optional, intent(in) :: nb_cmpz
-    character(len=8), pointer, optional :: list_cmpz(:)
+integer, pointer, optional :: listEqua_(:), tablEqua_(:, :)
+character(len=*), optional, intent(in) :: numeDofZ_, fieldNodeZ_
+integer, optional, intent(in) :: nbCmpToSelect_
+character(len=8), pointer, optional :: listCmpToSelect_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Select dof from list of nodes and components
+! Utility for nodal field
+!
+! Select dof from list of components - On all LIGREL
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Output:
-!    list_equa    : vector on complete numbering [1:nb_equa]
-!                   for ieq =  [1:nb_equa]
-!                      list_equa[ieq] = 0 if node+component not present
-!                      list_equa[ieq] = 1 if node+component is present
-!    tabl_equa    : table on complete numbering [1:nb_equa, 1:nb_cmp]
-!                   for ieq = [1:nb_equa]
-!                      for icmp = [1:nb_cmp]
-!                         tabl_equa[ieq,icmp] = 0 if node+component not present
-!                         tabl_equa[ieq,icmp] = 1 if node+component is present
+! Select output: listEqua/tablEqua/tablCmp
+! Select input:
+!    On numbering of nodal field (numeDof / fieldNode)
+!    On which components (nbCmpToSelect / listCmpToSelect)
+!                   if none => all components
 !
-! IO  list_equa     : list of equations
-! IO  tabl_equa     : table of equations by components
-! IO  list_idx_dof  : list of index of dof
-! In  nume_ddl      : name of numbering (NUME_DDL)
-! In  chamno        : name of nodal field (CHAMNO)
-! In  nb_cmp        : number of components
-! In  list_cmp      : list of components (name)
-!
-! --------------------------------------------------------------------------------------------------
-!
-    integer :: desc_gran(10)
-    character(len=24) :: lili, prno, nueq
-    character(len=8) :: name_cmp, mesh
-    character(len=19) :: prof_chno, nume_equl, prof_gene
-    integer :: iexi, nume_node, idx_gd
-    logical :: l_matr_dist, l_prof_gene
-    integer :: i_equ, i_node, i_cmp, i_dof, i_equ_l, i_cmp_glob, i_ec, i_ligr
-    integer :: nb_ec, nb_cmp, nb_cmp_gd, nb_cmp_node, nb_ligr, nb_node
-    integer, pointer :: cmp_sele(:) => null()
-    integer, pointer :: v_prno(:) => null()
-    integer, pointer :: v_nueq(:) => null()
-    integer, pointer :: v_nugl(:) => null()
-    character(len=8), pointer :: p_cata_cmp(:) => null()
+! Ptr listEqua             : pointer to all equations [1:nbEqua] with
+!                       for iEqua =  [1:nbEqua]
+!                           listEqua[iEqua] = 0 if node+component not present
+!                           listEqua[iEqua] = 1 if node+component is present
+! Ptr tablEqua             : pointer to all equations and all components 
+!                            [1:nbEqua, 1:nbCmpToSelect] with
+!                       for iEqua = [1:nbEqua]
+!                           for iCmp = [1:nbCmpToSelect]
+!                               tablEqua[iEqua,iCmp] = 0 if node+component not present
+!                               tablEqua[iEqua,iCmp] = 1 if node+component is present
+! In  numeDof              : name of numbering (NUME_DDL)
+! In  fieldNode            : name of nodal field (CHAMNO)
+! In  nbCmpToSelect        : number of components (if none => all components)
+! Ptr listCmpToSelect      : pointer to the list of components (name)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    prof_chno   = ' '
-    l_matr_dist = .false.
+    integer, parameter :: nbEcMax = 10
+    integer :: physDesc(nbEcMax)
+    character(len=8) :: cmpName, mesh
+    character(len=19) :: profChno, profGene, fieldNode, numeEqul
+    character(len=14) :: numeDof
+    integer :: iexi
+    aster_logical :: lProfGene
+    aster_logical :: lMatrDist
+    integer :: nodeNume, physNume, prnoLength
+    integer :: iLigr, nbLigr, nbNode
+    integer :: numeEqua, iNode, iCmp, dofNume, numeEquaL, numeCmp, iEc
+    integer :: nb_ec, nbCmpToSelect, physNbCmp, nbCmpNode
+    integer, pointer :: cmpSelect(:) => null()
+    integer, pointer :: prno(:) => null()
+    integer, pointer :: nueq(:) => null()
+    integer, pointer :: nugl(:) => null()
+    character(len=8), pointer :: physCataName(:) => null()
+!
+! --------------------------------------------------------------------------------------------------
+!
+    numeDof   = ' '
+    fieldNode = ' '
+    lMatrDist = ASTER_FALSE
 !
 ! - Check output parameters
 !
-    ASSERT(EXCLUS2(tabl_equa, list_equa))
+    ASSERT(EXCLUS2(tablEqua_, listEqua_))
 !
-! - Get name prof_chno
+! - Get PROF_CHNO
 !
-    if (present(nume_ddlz)) then
-        ASSERT(.not.present(chamnoz))
-        call dismoi('PROF_CHNO', nume_ddlz, 'NUME_DDL', repk=prof_chno)
-    elseif (present(chamnoz)) then
-        ASSERT(.not.present(nume_ddlz))
-        call dismoi('PROF_CHNO', chamnoz  , 'CHAM_NO', repk=prof_chno)
+    profChno  = ' '
+    if (present(numeDofZ_)) then
+        numeDof = numeDofZ_
+        ASSERT(.not.present(fieldNodeZ_))
+        call dismoi('PROF_CHNO', numeDof, 'NUME_DDL', repk = profChno)
+    elseif (present(fieldNodeZ_)) then
+        fieldNode = fieldNodeZ_
+        ASSERT(.not.present(numeDofZ_))
+        call dismoi('PROF_CHNO', fieldNode, 'CHAM_NO', repk = profChno)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Check if nume_ddl is correct (Distributed matrix)
 !
-    if (present(nume_ddlz)) then
-        nume_equl   = nume_ddlz//'.NUML'
-        call jeexin(nume_equl(1:19)//'.NUGL', iexi)
-        l_matr_dist = iexi.ne.0
-        if (l_matr_dist) then
-            call jeveuo(nume_equl(1:19)//'.NUGL', 'L', vi = v_nugl)
+    if (present(numeDofZ_)) then
+        numeEqul = numeDof//'.NUML'
+        call jeexin(numeEqul(1:19)//'.NUGL', iexi)
+        lMatrDist = iexi.ne.0
+        if (lMatrDist) then
+            call jeveuo(numeEqul(1:19)//'.NUGL', 'L', vi = nugl)
         endif
     endif
 !
-! - Get GRANDEUR informations
+! - Get informations about physical quantity
 !
-    idx_gd = 0
-    nb_ec  = 0
-    if (present(nume_ddlz)) then
-        call dismoi('NUM_GD_SI', nume_ddlz, 'NUME_DDL', repi=idx_gd)
-    elseif (present(chamnoz)) then
-        call dismoi('NUM_GD'   , chamnoz  , 'CHAM_NO' , repi=idx_gd)
+    physNume = 0
+    nb_ec    = 0
+    if (present(numeDofZ_)) then
+        call dismoi('NUM_GD_SI', numeDof  , 'NUME_DDL', repi = physNume)
+    elseif (present(fieldNodeZ_)) then
+        call dismoi('NUM_GD'   , fieldNode, 'CHAM_NO' , repi = physNume)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
-    ASSERT(idx_gd.ne.0)
-    nb_ec = nbec(idx_gd)
-    ASSERT(nb_ec.le.10)
+    ASSERT(physNume .ne. 0)
+    nb_ec = nbec(physNume)
+    ASSERT(nb_ec .le. nbEcMax)
 !
 ! - Access to catalog
 !
-    call jelira(jexnum('&CATA.GD.NOMCMP', idx_gd), 'LONMAX', nb_cmp_gd)
-    call jeveuo(jexnum('&CATA.GD.NOMCMP', idx_gd), 'L', vk8 = p_cata_cmp)
+    call jelira(jexnum('&CATA.GD.NOMCMP', physNume), 'LONMAX', physNbCmp)
+    call jeveuo(jexnum('&CATA.GD.NOMCMP', physNume), 'L', vk8 = physCataName)
 !
-! - Number of components
+! - Select number of components
 !
-    if (present(list_cmpz)) then
-        ASSERT(present(nb_cmpz))
-        nb_cmp = nb_cmpz
+    if (present(listCmpToSelect_)) then
+        ASSERT(present(nbCmpToSelect_))
+        nbCmpToSelect = nbCmpToSelect_
     else
-        nb_cmp = nb_cmp_gd
+        nbCmpToSelect = physNbCmp
     endif
+!
+! - Select components
+!
+    AS_ALLOCATE(vi = cmpSelect, size = physNbCmp)
+    do iCmp = 1, nbCmpToSelect
+        if (present(listCmpToSelect_)) then
+            cmpName = listCmpToSelect_(iCmp)
+        else
+            cmpName = physCataName(iCmp)
+        endif
+        numeCmp = indik8(physCataName, cmpName, 1, physNbCmp)
+        if (numeCmp .ne. 0) then
+            cmpSelect(numeCmp) = iCmp
+        endif
+    end do
 !
 ! - PROF_CHNO or PROF_GENE ?
 !
-    call jeexin(prof_chno//'.DESC', iexi)
-    l_prof_gene = (iexi.gt.0)
-    if (l_prof_gene) then
-        prof_gene = prof_chno
-        call select_dof_gene(prof_gene, nb_cmp, p_cata_cmp, list_cmpz, list_equa,&
-                             tabl_equa)
+    call jeexin(profChno//'.DESC', iexi)
+    lProfGene = (iexi .gt. 0)
+    if (lProfGene) then
+        profGene = profChno
+        call select_dof_gene(profGene        , nbCmpToSelect, physCataName,&
+                             listCmpToSelect_, listEqua_    , tablEqua_)
         goto 99
     endif
-!
-! - Objects in PROF_CHNO
-!
-    lili      = prof_chno(1:19)//'.LILI'
-    prno      = prof_chno(1:19)//'.PRNO'
-    nueq      = prof_chno(1:19)//'.NUEQ'
-    call jeveuo(nueq, 'L', vi = v_nueq)
 !
 ! - Get mesh
 !
     mesh = ' '
-    if (present(nume_ddlz)) then
-        call dismoi('NOM_MAILLA', nume_ddlz, 'NUME_DDL', repk=mesh)
-    elseif (present(chamnoz)) then
-        call dismoi('NOM_MAILLA', chamnoz  , 'CHAM_NO' , repk=mesh)
+    if (present(numeDofZ_)) then
+        call dismoi('NOM_MAILLA', numeDof, 'NUME_DDL', repk = mesh)
+    elseif (present(fieldNodeZ_)) then
+        call dismoi('NOM_MAILLA', fieldNode, 'CHAM_NO' , repk = mesh)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
-! - Create index for components
+! - Get objects
 !
-    AS_ALLOCATE(vi=cmp_sele, size = nb_cmp_gd)
-    do i_cmp = 1, nb_cmp
-        if (present(list_cmpz)) then
-            name_cmp = list_cmpz(i_cmp)
-        else
-            name_cmp = p_cata_cmp(i_cmp)
-        endif
-        i_cmp_glob = indik8(p_cata_cmp, name_cmp, 1, nb_cmp_gd)
-        if (i_cmp_glob.ne.0) then
-            cmp_sele(i_cmp_glob) = i_cmp
-        endif
-    end do
+    call jeveuo(profChno(1:19)//'.NUEQ', 'L', vi = nueq)
 !
 ! - Loop on LIGRELs
 !
-    call jelira(prno, 'NMAXOC', nb_ligr)
-    do i_ligr = 1, nb_ligr
-!
-! ----- Get number of nodes
-!
-        call jelira(jexnum(prno, i_ligr), 'LONMAX', nb_node)
-        nb_node = nb_node/(nb_ec+2)
-!
-! ----- Loop on nodes
-!
-        if (nb_node.ne.0) then
-            call jeveuo(jexnum(prno, i_ligr), 'L', vi = v_prno)
+    call jelira(profChno(1:19)//'.PRNO', 'NMAXOC', nbLigr)
+    do iLigr = 1, nbLigr
 
-            do i_node = 1, nb_node
-!
-! ------------- Current node
-!
-                nume_node = i_node
-!
-! ------------- Get informations on current node
-!
-                i_dof       = v_prno(((nb_ec+2)*(nume_node-1)+1)) - 1
-                nb_cmp_node = v_prno(((nb_ec+2)*(nume_node-1)+2))
-!
+! ----- Get number of nodes
+        call jelira(jexnum(profChno(1:19)//'.PRNO', iLigr), 'LONMAX', prnoLength)
+        nbNode = prnoLength/(nb_ec+2)
+
+! ----- Loop on nodes
+        if (nbNode.ne.0) then
+            call jeveuo(jexnum(profChno(1:19)//'.PRNO', iLigr), 'L', vi = prno)
+            do iNode = 1, nbNode
+                nodeNume  = iNode
+
+! ------------- Parameters of current node
+                dofNume   = prno((nb_ec+2)*(nodeNume-1)+1) - 1
+                nbCmpNode = prno((nb_ec+2)*(nodeNume-1)+2)
+
 ! ------------- Vector containing active components on current node
-!
-                desc_gran(1:10) = 0
-                if (nb_cmp_node.ne.0) then
-                    do i_ec = 1, nb_ec
-                        desc_gran(i_ec) = v_prno(((nb_ec+2)*(nume_node-1)+2+i_ec))
+                physDesc  = 0
+                if (nbCmpNode .ne. 0) then
+                    do iEc = 1, nb_ec
+                        physDesc(iEc) = prno((nb_ec+2)*(nodeNume-1)+2+iEc)
                     end do
                 endif
-!
+
 ! ------------- Loop on components to seek
-!
-                do i_cmp_glob = 1, nb_cmp_gd
-                    i_cmp = cmp_sele(i_cmp_glob)
-                    if (exisdg(desc_gran, i_cmp_glob)) then
-                        i_dof = i_dof + 1
-                        if (i_cmp.ne.0) then
-                            i_equ      = v_nueq(i_dof)
-                            if (l_matr_dist) then
-                                i_equ_l = v_nugl(i_equ)
+                do iCmp = 1, physNbCmp
+                    if (exisdg(physDesc, iCmp)) then
+                        dofNume = dofNume + 1
+                        numeCmp = cmpSelect(iCmp)
+                        if (numeCmp .ne. 0) then
+                            numeEqua = nueq(dofNume)
+                            if (lMatrDist) then
+                                numeEquaL = nugl(numeEqua)
                             else
-                                i_equ_l = i_equ
+                                numeEquaL = numeEqua
                             endif
-                            if (present(list_equa)) then
-                                list_equa(i_equ_l) = 1
-                            elseif (present(tabl_equa)) then
-                                tabl_equa(i_equ_l, i_cmp) = 1
+                            if (present(listEqua_)) then
+                                listEqua_(numeEquaL) = 1
+                            elseif (present(tablEqua_)) then
+                                tablEqua_(numeEquaL, numeCmp) = 1
                             endif
                         endif
                     endif
@@ -256,7 +246,10 @@ implicit none
         endif
     end do
 !
-    AS_DEALLOCATE(vi=cmp_sele)
-!
 99  continue
+!
+! - Clean
+!
+    AS_DEALLOCATE(vi = cmpSelect)
+!
 end subroutine

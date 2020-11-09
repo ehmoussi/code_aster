@@ -37,7 +37,8 @@ implicit none
 #include "asterfort/nbec.h"
 #include "asterfort/select_dof_gene.h"
 !
-integer, pointer, optional :: listEqua_(:), tablEqua_(:, :), tablCmp_(:)
+integer, pointer, optional :: listEqua_(:), tablEqua_(:, :)
+integer, pointer, optional :: tablCmp_(:)
 character(len=*), optional, intent(in) :: numeDofZ_, fieldNodeZ_
 integer, optional, intent(in) :: nbNodeToSelect_
 integer, pointer, optional :: listNodeToSelect_(:)
@@ -48,7 +49,7 @@ character(len=8), pointer, optional :: listCmpToSelect_(:)
 !
 ! Utility for nodal field
 !
-! Select dof from list of nodes and components
+! Select dof from list of nodes and components - Only on mesh
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,11 +61,11 @@ character(len=8), pointer, optional :: listCmpToSelect_(:)
 !    On which components (nbCmpToSelect / listCmpToSelect)
 !                   if none => all components
 !
-! Ptr listEqua_            : pointer to all equations [1:nbEqua] with
+! Ptr listEqua             : pointer to all equations [1:nbEqua] with
 !                       for iEqua =  [1:nbEqua]
 !                           listEqua[iEqua] = 0 if node+component not present
 !                           listEqua[iEqua] = 1 if node+component is present
-! Ptr tablEqua_            : pointer to all equations and all components 
+! Ptr tablEqua             : pointer to all equations and all components 
 !                            [1:nbEqua, 1:nbCmpToSelect] with
 !                       for iEqua = [1:nbEqua]
 !                           for iCmp = [1:nbCmpToSelect]
@@ -86,26 +87,29 @@ character(len=8), pointer, optional :: listCmpToSelect_(:)
     integer, parameter :: iLigrMesh = 1
     integer, parameter :: nbEcMax = 10
     integer :: physDesc(nbEcMax)
-
     character(len=24) :: liliName
     character(len=8) :: cmpName, mesh
-    character(len=19) :: profChno, profGene, fieldNode
+    character(len=19) :: profChno, profGene, fieldNode, numeEqul
     character(len=14) :: numeDof
     integer :: iexi
-    logical :: lProfGene
-    integer :: numeNode, physNume, prnoLength
-    integer :: numeEqua, iNode, iCmp, dofNume, numeCmp, iEc
-    integer :: nbNodeToSelect, nb_ec, nbCmpToSelect, physNbCmp, nbNodeMesh, nbCmpNode
+    aster_logical :: lProfGene
+    aster_logical :: lMatrDist
+    integer :: nodeNume, physNume, prnoLength
+    integer :: nbNodeToSelect
+    integer :: numeEqua, iNode, iCmp, dofNume, numeEquaL, numeCmp, iEc, nbNodeMesh
+    integer :: nb_ec, nbCmpToSelect, physNbCmp, nbCmpNode
     integer, pointer :: cmpSelect(:) => null()
     integer, pointer :: nodeSelect(:) => null()
     integer, pointer :: prno(:) => null()
     integer, pointer :: nueq(:) => null()
+    integer, pointer :: nugl(:) => null()
     character(len=8), pointer :: physCataName(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
     numeDof   = ' '
     fieldNode = ' '
+    lMatrDist = ASTER_FALSE
 !
 ! - Check output parameters
 !
@@ -134,6 +138,17 @@ character(len=8), pointer, optional :: listCmpToSelect_(:)
         call dismoi('PROF_CHNO', fieldNode, 'CHAM_NO', repk = profChno)
     else
         ASSERT(ASTER_FALSE)
+    endif
+!
+! - Check if nume_ddl is correct (Distributed matrix)
+!
+    if (present(numeDofZ_)) then
+        numeEqul = numeDof//'.NUML'
+        call jeexin(numeEqul(1:19)//'.NUGL', iexi)
+        lMatrDist = iexi.ne.0
+        if (lMatrDist) then
+            call jeveuo(numeEqul(1:19)//'.NUGL', 'L', vi = nugl)
+        endif
     endif
 !
 ! - Get informations about physical quantity
@@ -186,8 +201,8 @@ character(len=8), pointer, optional :: listCmpToSelect_(:)
     lProfGene = (iexi .gt. 0)
     if (lProfGene) then
         profGene = profChno
-        call select_dof_gene(profGene, nbCmpToSelect, physCataName,&
-                             listCmpToSelect_, listEqua_, tablEqua_)
+        call select_dof_gene(profGene        , nbCmpToSelect, physCataName,&
+                             listCmpToSelect_, listEqua_    , tablEqua_)
         goto 99
     endif
 !
@@ -217,13 +232,13 @@ character(len=8), pointer, optional :: listCmpToSelect_(:)
     AS_ALLOCATE(vi = nodeSelect, size = nbNodeToSelect)
     if (present(listNodeToSelect_)) then
         do iNode = 1, nbNodeToSelect
-            numeNode          = listNodeToSelect_(iNode)
-            nodeSelect(iNode) = numeNode
+            nodeNume          = listNodeToSelect_(iNode)
+            nodeSelect(iNode) = nodeNume
         end do
     else
         do iNode = 1, nbNodeToSelect
-            numeNode          = iNode
-            nodeSelect(iNode) = numeNode
+            nodeNume          = iNode
+            nodeSelect(iNode) = nodeNume
         end do
     endif
 !
@@ -243,27 +258,38 @@ character(len=8), pointer, optional :: listCmpToSelect_(:)
 !
     if (nbNodeToSelect.ne.0) then
         do iNode = 1, nbNodeToSelect
-            numeNode  = nodeSelect(iNode)
-            dofNume   = prno((nb_ec+2)*(numeNode-1)+1) - 1
-            nbCmpNode = prno((nb_ec+2)*(numeNode-1)+2)
+            nodeNume  = nodeSelect(iNode)
+
+! --------- Parameters of current node
+            dofNume   = prno((nb_ec+2)*(nodeNume-1)+1) - 1
+            nbCmpNode = prno((nb_ec+2)*(nodeNume-1)+2)
+
+! --------- Vector containing active components on current node
             physDesc  = 0
             if (nbCmpNode .ne. 0) then
                 do iEc = 1, nb_ec
-                    physDesc(iEc) = prno((nb_ec+2)*(numeNode-1)+2+iEc)
+                    physDesc(iEc) = prno((nb_ec+2)*(nodeNume-1)+2+iEc)
                 end do
             endif
+
+! --------- Loop on components to seek
             do iCmp = 1, physNbCmp
                 if (exisdg(physDesc, iCmp)) then
                     dofNume = dofNume + 1
                     numeCmp = cmpSelect(iCmp)
                     if (numeCmp .ne. 0) then
                         numeEqua = nueq(dofNume)
+                        if (lMatrDist) then
+                            numeEquaL = nugl(numeEqua)
+                        else
+                            numeEquaL = numeEqua
+                        endif
                         if (present(tablCmp_)) then
-                            tablCmp_(numeCmp) = numeEqua
+                            tablCmp_(numeCmp)    = numeEquaL
                         elseif (present(listEqua_)) then
-                            listEqua_(numeEqua) = 1
+                            listEqua_(numeEquaL) = 1
                         elseif (present(tablEqua_)) then
-                            tablEqua_(numeEqua, numeCmp) = 1
+                            tablEqua_(numeEquaL, numeCmp) = 1
                         endif
                     endif
                 endif
@@ -271,10 +297,11 @@ character(len=8), pointer, optional :: listCmpToSelect_(:)
         end do
     endif
 !
+99  continue
+!
 ! - Clean
 !
     AS_DEALLOCATE(vi = cmpSelect)
     AS_DEALLOCATE(vi = nodeSelect)
 !
-99  continue
 end subroutine
