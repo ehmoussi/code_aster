@@ -7,7 +7,7 @@ export WAFBUILD_ENV=$(readlink -n -f ${BASH_SOURCE})
 # DEVTOOLS_COMPUTER_ID avoids waf to re-source the environment
 export DEVTOOLS_COMPUTER_ID=calibre9
 # expected version of official prerequisites
-export OFFICIAL_PLATFORM=1
+#export OFFICIAL_PLATFORM=1
 export PREREQ_PATH=${HOME}/dev/codeaster-prerequisites/v15
 export PREREQ_VERSION=20201005
 
